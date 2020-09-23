@@ -29,7 +29,7 @@ let package = Package(
         .testTarget(
             name: "DAWFileKitTests",
             dependencies: ["DAWFileKit"],
-			resources: [.copy("Resources/PTSessionTextExports")]),
+			resources: [.copy("Pro Tools/Resources/PTSessionTextExports")]),
     ]
 	
 )
