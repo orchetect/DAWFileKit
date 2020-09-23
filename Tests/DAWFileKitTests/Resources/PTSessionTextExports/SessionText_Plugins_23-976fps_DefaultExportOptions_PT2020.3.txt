@@ -1,0 +1,68 @@
+SESSION NAME:	PluginsTextTest
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:55:00
+TIMECODE FORMAT:	23.976 Frame
+# OF AUDIO TRACKS:	3
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+O N L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+O F F L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+AIR Music Technology    	AIR Kill EQ             	1.2.0.18799     	AAX Native      	Stereo / Stereo         	1 active
+                        	AIR Non-Linear Reverb   	1.2.0.18799     	AAX Native      	Mono / Mono             	1 active
+Avid                    	Dither                  	20.3.0d163      	AAX Native      	Stereo / Stereo         	1 active
+Blue Cat Audio          	BCPatchWorkSynth        	2.42            	AAX Native      	Stereo / Stereo         	1 active
+FabFilter               	FabFilter Saturn        	1.20            	AAX Native      	Mono / Mono             	1 active
+                        	FabFilter Timeless 2    	2.30            	AAX Native      	Stereo / Stereo         	1 active
+Native Instruments      	Kontakt                 	6.2.2 (R51), Copyright © 2020 	AAX Native      	Stereo / Stereo         	1 active
+Plogue Art et Technologie, Inc	chipsounds              	2056            	AAX Native      	Stereo / Stereo         	1 active
+Plugin Alliance         	Schoeps Mono Upmix 1to2 	1.0.0           	AAX Native      	Mono / Stereo           	1 active
+                        	Unfiltered Audio Byome  	1.1.0           	AAX Native      	Mono / Mono             	1 active
+                        	Vertigo VSM-3           	1.6.1           	AAX Native      	Stereo / Stereo         	1 active
+                        	bx_boom                 	1.13.1          	AAX Native      	Mono / Mono             	1 active
+                        	bx_rooMS                	1.5.1           	AAX Native      	Stereo / Stereo         	1 active
+accusonus               	ERA 4 Voice Leveler     	4.0.00          	AAX Native      	Stereo / Stereo         	1 active
+oeksound                	soothe2                 	1.0.3           	AAX Native      	Stereo / Stereo         	1 active
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	Audio 1 (Stereo)
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: Muted 
+PLUG-INS: 	AIR Kill EQ (stereo)	ERA 4 Voice Leveler (stereo)	FabFilter Timeless 2 (stereo)	soothe2 (stereo)	Kontakt (stereo)
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+
+
+TRACK NAME:	Audio 2 (Stereo)
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: Muted 
+PLUG-INS: 	bx_rooMS (stereo)	Dither (stereo)	chipsounds (stereo)	Vertigo VSM-3 (stereo)	Blue Cat's PatchWork Synth (stereo)
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+
+
+TRACK NAME:	Audio 3
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: Muted 
+PLUG-INS: 	FabFilter Saturn (mono)	bx_boom (mono)	AIR Non-Linear Reverb (mono)	Unfiltered Audio Byome (mono)	Schoeps Mono Upmix 1to2 (mono/stereo)
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS

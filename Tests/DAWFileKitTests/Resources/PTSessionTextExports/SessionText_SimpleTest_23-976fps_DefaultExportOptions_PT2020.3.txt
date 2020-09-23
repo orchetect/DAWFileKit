@@ -1,0 +1,40 @@
+SESSION NAME:	SessionText_SimpleTest
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:55:00
+TIMECODE FORMAT:	23.976 Frame
+# OF AUDIO TRACKS:	1
+# OF AUDIO CLIPS:	1
+# OF AUDIO FILES:	1
+
+
+O N L I N E  F I L E S  I N  S E S S I O N
+Filename      	Location
+Audio 1_01.wav	Macintosh HD:Users:stef:Desktop:SessionText_SimpleTest:Audio Files:
+
+
+O F F L I N E  F I L E S  I N  S E S S I O N
+Filename      	Location
+
+
+O N L I N E  C L I P S  I N  S E S S I O N
+CLIP NAME 	Source File
+Audio 1_01	Audio 1_01.wav
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	Audio 1
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+PLUG-INS: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Audio 1_01                    	   01:00:00:00	   01:00:05:00	   00:00:05:00	Unmuted
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
