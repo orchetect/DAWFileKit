@@ -71,7 +71,7 @@ extension Cubase.TrackArchive {
 			let startNode = XMLElement(name: "member",
 									   attributes: [("name","Start")])
 			
-			let value = stc.realTime.seconds.stringValueHighPrecision
+			let value = stc.realTimeValue.seconds.stringValueHighPrecision
 			
 			startNode.addChild(XMLElement(name: "float",
 										  attributes: [("name", "Time"),
@@ -87,7 +87,7 @@ extension Cubase.TrackArchive {
 			let startNode = XMLElement(name: "member",
 									   attributes: [("name","Length")])
 			
-			let value = ltc.realTime.seconds.string
+			let value = ltc.realTimeValue.seconds.string
 			
 			startNode.addChild(XMLElement(name: "float",
 										  attributes: [("name", "Time"),
@@ -266,7 +266,7 @@ extension Cubase.TrackArchive {
 				newNode.addChild(XMLElement(name: "float",
 											attributes: [("name", "Start"),
 														 ("value", event.startTimecode
-															.realTime.seconds
+															.realTimeValue.seconds
 															.stringValueHighPrecision)]))
 			}
 			
@@ -288,7 +288,7 @@ extension Cubase.TrackArchive {
 					newNode.addChild(XMLElement(name: "float",
 												attributes: [("name", "Length"),
 															 ("value", marker.lengthTimecode
-																.realTime.seconds
+																.realTimeValue.seconds
 																.stringValueHighPrecision)]))
 				}
 				
