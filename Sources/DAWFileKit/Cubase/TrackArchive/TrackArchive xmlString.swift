@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OTCore
+@_implementationOnly import OTCore
 
 extension Cubase.TrackArchive {
 	
@@ -157,7 +157,7 @@ extension Cubase.TrackArchive {
 							  attributes: [("name", "track"),
 										   ("type", "obj")])
 		
-		#warning("needs coding - add tracks and tempo events")
+		#warning("> needs coding - add tracks and tempo events")
 		
 		for track in tracks ?? [] {
 			

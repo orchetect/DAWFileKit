@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OTCore
+@_implementationOnly import OTCore
 import TimecodeKit
 
 
@@ -122,7 +122,7 @@ extension Cubase.TrackArchive {
 				realTimeAccumulator += ppqDuration / (Self.xmlPPQ.double / (60.0 / currentTempoEvent.tempo))
 				
 			case .ramp:
-				#warning("This calculation is not accurate, it is merely approximate.")
+				#warning("> This calculation is not accurate, it is merely approximate.")
 				// Cubase (and other DAWs like Logic Pro X) have mysterious tempo ramp calculation algorithms
 				// I was not able to precisely reverse engineer the algo Cubase uses
 				// This is as close as I could get to approximate the calculation

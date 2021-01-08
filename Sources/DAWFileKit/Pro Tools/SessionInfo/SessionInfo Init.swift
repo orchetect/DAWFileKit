@@ -69,7 +69,7 @@ extension ProTools.SessionInfo {
 		// SESSION START TIMECODE
 		let tempStartTimecode: String = getHeader[3]
 		
-		#warning("(Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)")
+		#warning("> (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)")
 		
 		// TIMECODE FORMAT
 		switch getHeader[4] {
@@ -786,7 +786,7 @@ fileprivate extension ProTools.SessionInfo {
 			
 			let columnData = line.split(separator: "\t").map { String($0) } // split into array by tab character
 			
-			#warning("may need to add logic to detect what format the 'Location' value is in - whether it's frames (timecode), samples, etc.")
+			#warning("> may need to add logic to detect what format the 'Location' value is in - whether it's frames (timecode), samples, etc.")
 			
 			let strNumber = columnData[safe: 0]?.trimmed				// nil if not found
 			let strTimecode = columnData[safe: 1]?.trimmed				// nil if not found
