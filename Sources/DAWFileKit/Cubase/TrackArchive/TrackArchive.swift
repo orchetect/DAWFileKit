@@ -6,7 +6,8 @@
 //  Copyright © 2020 Steffan Andrews. All rights reserved.
 //
 
-import Foundation
+#if os(macOS) // XMLNode only works on macOS
+
 import TimecodeKit
 
 // MARK: - Cubase.TrackArchive
@@ -229,3 +230,5 @@ extension Cubase.TrackArchive {
 	}
 	
 }
+
+#endif

@@ -6,8 +6,6 @@
 //  Copyright © 2018 Steffan Andrews. All rights reserved.
 //
 
-import Foundation
-
 // MARK: Fix extended characters (Pro Tools ASCII issues)
 
 fileprivate let fixPTExtendedCharacters_Chars = ["É" : "...",

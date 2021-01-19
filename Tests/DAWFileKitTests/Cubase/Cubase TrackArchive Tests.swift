@@ -6,11 +6,12 @@
 //  Copyright © 2018 Steffan Andrews. All rights reserved.
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import XCTest
 @testable import DAWFileKit
 import OTCore
 import TimecodeKit
-
 
 // MARK: XML_BasicMarkers
 
@@ -792,19 +793,18 @@ fileprivate let XML_RoundingTest = """
 </tracklist2>
 """
 
-
 class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
-
+	
 	override func setUp() { }
 	override func tearDown() { }
 	
 	func testBasicMarkers() {
 		
 		guard let data = XML_BasicMarkers.toData()
-			else { XCTFail() ; return }
+		else { XCTFail() ; return }
 		
 		guard let trackArchive = Cubase.TrackArchive(fromData: data)
-			else { XCTFail() ; return }
+		else { XCTFail() ; return }
 		
 		// ---- main ----
 		
@@ -916,10 +916,10 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
 	func testMusicalAndLinearTest() {
 		
 		guard let data = XML_MusicalAndLinearTest.toData()
-			else { XCTFail() ; return }
+		else { XCTFail() ; return }
 		
 		guard let trackArchive = Cubase.TrackArchive(fromData: data)
-			else { XCTFail() ; return }
+		else { XCTFail() ; return }
 		
 		// ---- tracks ----
 		
@@ -984,10 +984,10 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
 	func testRoundingTest() {
 		
 		guard let data = XML_RoundingTest.toData()
-			else { XCTFail() ; return }
+		else { XCTFail() ; return }
 		
 		guard let trackArchive = Cubase.TrackArchive(fromData: data)
-			else { XCTFail() ; return }
+		else { XCTFail() ; return }
 		
 		// ---- tracks ----
 		
@@ -1064,3 +1064,5 @@ class DAWFileKit_Cubase_Helper_Tests: XCTestCase {
 	}
 	
 }
+
+#endif

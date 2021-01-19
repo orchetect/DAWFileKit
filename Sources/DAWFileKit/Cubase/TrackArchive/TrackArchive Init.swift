@@ -6,17 +6,18 @@
 //  Copyright © 2020 Steffan Andrews. All rights reserved.
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import Foundation
 @_implementationOnly import OTCore
 import TimecodeKit
-
 
 // MARK: - Init
 
 extension Cubase.TrackArchive {
 	
 	/// Input text file contents exported from Pro Tools and returns `SessionInfo`
-	public init?(fromData: Data) {
+		public init?(fromData: Data) {
 		
 		// load XML tree
 		
@@ -46,7 +47,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-	private mutating func _parseSetup(root: XMLElement) {
+		private mutating func _parseSetup(root: XMLElement) {
 		
 		// setup section
 		
@@ -54,7 +55,7 @@ extension Cubase.TrackArchive {
 			.filter(nameAttribute: "Setup")
 			.first
 			else {
-				print("Could not extract global session information. Setup block could not be located.")
+				Log.debug("Could not extract global session information. Setup block could not be located.")
 				return }
 		
 		// frame rate
@@ -145,7 +146,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-	private mutating func _parseTempoTrack(root: XMLElement) {
+		private mutating func _parseTempoTrack(root: XMLElement) {
 		
 		// tempo track
 		
@@ -157,7 +158,7 @@ extension Cubase.TrackArchive {
 			.children?
 			.first
 			else {
-				print("Could not extract tempo information. First track could not be located.")
+				Log.debug("Could not extract tempo information. First track could not be located.")
 				return }
 		
 		let eventTree = firstTrack.children?
@@ -224,7 +225,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-	private mutating func _parseTracks(root: XMLElement) {
+		private mutating func _parseTracks(root: XMLElement) {
 		
 		guard let tracks = root.children?
 			.filter(elementName: "list")
@@ -232,7 +233,7 @@ extension Cubase.TrackArchive {
 			.first?
 			.children
 			else {
-				print("No tracks found.")
+				Log.debug("No tracks found.")
 				return }
 		
 		// init property if nil
@@ -266,7 +267,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-	private mutating func _parseTracks_MarkerTrack(track: XMLNode) {
+		private mutating func _parseTracks_MarkerTrack(track: XMLNode) {
 		
 		var newTrack = MarkerTrack()
 		
@@ -389,7 +390,7 @@ extension Cubase.TrackArchive {
 				if newMarker != nil { newTrack.events.append(newMarker!) }
 				
 			default:
-				print("Unrecognized marker track event in XML")
+				Log.debug("Unrecognized marker track event in XML")
 			}
 			
 		}
@@ -399,3 +400,5 @@ extension Cubase.TrackArchive {
 	}
 	
 }
+
+#endif

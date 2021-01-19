@@ -6,10 +6,11 @@
 //  Copyright © 2020 Steffan Andrews. All rights reserved.
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import Foundation
 @_implementationOnly import OTCore
 import TimecodeKit
-
 
 // MARK: - Helper methods
 
@@ -224,3 +225,5 @@ extension Collection where Element == CubaseTrackArchiveMarker {
 	}
 	
 }
+
+#endif

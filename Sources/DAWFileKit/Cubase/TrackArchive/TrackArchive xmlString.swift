@@ -6,6 +6,8 @@
 //  Copyright © 2020 Steffan Andrews. All rights reserved.
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import Foundation
 @_implementationOnly import OTCore
 
@@ -55,9 +57,9 @@ extension Cubase.TrackArchive {
 	fileprivate func __addSetup(_ root: XMLElement) {
 		
 		let setupNode = XMLElement(name: "obj",
-							   attributes: [("class", "PArrangeSetup"),
-											("name", "Setup"),
-											("ID", getNewID().string)])
+								   attributes: [("class", "PArrangeSetup"),
+												("name", "Setup"),
+												("ID", getNewID().string)])
 		
 		// frame rate
 		if let value = Self.FrameRateTable.first(where: { $0.value == main.frameRate })?.key {
@@ -154,8 +156,8 @@ extension Cubase.TrackArchive {
 	fileprivate func __addTrackListAndTempoEvents(_ root: XMLElement) {
 		
 		let listNode = XMLElement(name: "list",
-							  attributes: [("name", "track"),
-										   ("type", "obj")])
+								  attributes: [("name", "track"),
+											   ("type", "obj")])
 		
 		#warning("> needs coding - add tracks and tempo events")
 		
@@ -206,7 +208,7 @@ extension Cubase.TrackArchive {
 				__addTrackMarker(using: newTrack, track: typed)
 				
 			default:
-				print("Unhandled track type while building XML file for track named:", (track.name ?? "").quoted)
+				Log.debug("Unhandled track type while building XML file for track named:", (track.name ?? "").quoted)
 			}
 			
 			// Track Device
@@ -237,7 +239,7 @@ extension Cubase.TrackArchive {
 		
 		newTrack.name = "obj"
 		newTrack.addAttributes([("class", "MMarkerTrackEvent"),
-								 ("ID", getNewID().string)])
+								("ID", getNewID().string)])
 		
 		// MListNode
 		let mlistNode = newTrack.children?
@@ -248,8 +250,8 @@ extension Cubase.TrackArchive {
 		
 		// MListNode.Events
 		let eventsNode = XMLElement(name: "list",
-								   attributes: [("name","Events"),
-												("type", "obj")])
+									attributes: [("name","Events"),
+												 ("type", "obj")])
 		
 		for event in track.events {
 			
@@ -293,7 +295,7 @@ extension Cubase.TrackArchive {
 				}
 				
 			default:
-				print("Unhandled marker event type while building XML file.")
+				Log.debug("Unhandled marker event type while building XML file.")
 				continue
 			}
 			
@@ -334,3 +336,5 @@ fileprivate func getNewID() -> Int {
 	return IDcounter
 	
 }
+
+#endif

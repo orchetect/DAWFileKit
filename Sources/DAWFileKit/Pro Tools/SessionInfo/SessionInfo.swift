@@ -6,7 +6,6 @@
 //  Copyright © 2018 Steffan Andrews. All rights reserved.
 //
 
-import Foundation
 import TimecodeKit
 
 // MARK: - ProTools.SessionInfo
@@ -202,5 +201,7 @@ extension ProTools.SessionInfo {
 			return timecode != nil
 			
 		}
+		
 	}
+	
 }

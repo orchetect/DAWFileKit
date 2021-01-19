@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import DAWFileKit
+import OTCore
 import TimecodeKit
 
 class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
