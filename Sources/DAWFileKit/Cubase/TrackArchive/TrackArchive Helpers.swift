@@ -116,7 +116,7 @@ extension Cubase.TrackArchive {
 				ppqDuration = nextTempoEvent!.startTimeAsPPQ - currentTempoEvent.startTimeAsPPQ
 			}
 			
-			// perform calcuation
+			// perform calculation
 			
 			switch tempoCalculationType {
 			case .jump:

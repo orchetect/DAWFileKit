@@ -45,6 +45,7 @@ extension ProTools.SessionInfo {
 		
 		let getHeader = remainingTextBlock
 			.regexMatches(captureGroupsFromPattern: headerRegex)
+			.dropFirst()
 			.map( { $0 ?? "<<NIL>>" })
 		
 		guard getHeader.count == 9 else {
@@ -631,7 +632,9 @@ fileprivate extension ProTools.SessionInfo {
 			
 			let getParams = trackLines
 				.joined(separator: "\n")
-				.regexMatches(captureGroupsFromPattern: paramsRegex).map { $0 ?? "<<NIL>>" }
+				.regexMatches(captureGroupsFromPattern: paramsRegex)
+				.dropFirst()
+				.map { $0 ?? "<<NIL>>" }
 			
 			guard getParams.count == 6 else {
 				Log.debug("Parse: Track Listing block: Text does not contain parameter block, or parameter block is not formatted as expected.")
