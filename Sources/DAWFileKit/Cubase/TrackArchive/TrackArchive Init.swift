@@ -316,7 +316,7 @@ extension Cubase.TrackArchive {
 				
 				var name: String?
 				var tcStart: Timecode?
-				var tcStartRealTime: TimeValue?
+				var tcStartRealTime: TimeInterval?
 				
 				// marker name
 				name = event.children?
@@ -339,7 +339,7 @@ extension Cubase.TrackArchive {
 							tcStart = CalculateStartTimecode(ofRealTimeValue: toNum)
 							
 							// add real time value to the marker as well
-							tcStartRealTime = TimeValue(seconds: toNum)
+							tcStartRealTime = toNum
 						}
 					}
 				}
@@ -355,7 +355,7 @@ extension Cubase.TrackArchive {
 				case "MRangeMarkerEvent": // cycle marker
 					
 					var tcLength: Timecode?
-					var tcLengthRealTime: TimeValue?
+					var tcLengthRealTime: TimeInterval?
 					
 					// length time
 					if let str = event.children?
@@ -372,7 +372,7 @@ extension Cubase.TrackArchive {
 								tcLength = CalculateLengthTimecode(ofRealTimeValue: toNum)
 								
 								// add real time value to the marker as well
-								tcLengthRealTime = TimeValue(seconds: toNum)
+								tcLengthRealTime = toNum
 							}
 						}
 					}

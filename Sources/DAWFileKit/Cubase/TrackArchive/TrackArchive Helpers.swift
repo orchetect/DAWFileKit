@@ -19,27 +19,28 @@ extension Cubase.TrackArchive {
 	/// Internal use
 	/// Requires main.frameRate to not be nil.
 	/// Real Time measured in seconds.
-	internal func CalculateStartTimecode(ofRealTimeValue: Double?) -> Timecode? {
+	internal func CalculateStartTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
 		
 		guard ofRealTimeValue != nil else { return nil }
 		guard main.startTimeSeconds != nil else { return nil }
 		
-		return CalculateLengthTimecode(ofRealTimeValue: main.startTimeSeconds! + ofRealTimeValue!)
+		let diff = main.startTimeSeconds! + ofRealTimeValue!
+		
+		return CalculateLengthTimecode(ofRealTimeValue: diff)
 		
 	}
 	
 	/// Internal use
 	/// Requires main.frameRate to not be nil.
 	/// Real Time measured in seconds.
-	internal func CalculateLengthTimecode(ofRealTimeValue: Double?) -> Timecode? {
+	internal func CalculateLengthTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
 		
 		guard ofRealTimeValue != nil else { return nil }
-		
 		guard main.frameRate != nil else { return nil }
 		
 		var tc = Timecode(at: main.frameRate!)
 		let seconds = ofRealTimeValue!
-		tc.setTimecode(from: TimeValue(seconds: seconds))
+		tc.setTimecode(fromRealTimeValue: seconds)
 		
 		return tc
 		
@@ -185,14 +186,24 @@ extension Collection where Element : XMLNode {
 	
 	/// DAWFileKit: Filters by the given "name" attribute
 	internal func filter(nameAttribute: String) -> [XMLNode] {
-		return self
-			.filter { $0.asElement?.attribute(forName: "name")?.stringValue == nameAttribute }
+		
+		filter {
+			$0.asElement?
+				.attribute(forName: "name")?
+				.stringValue == nameAttribute
+		}
+		
 	}
 	
 	/// DAWFileKit: Filters by the given "class" attribute
 	internal func filter(classAttribute: String) -> [XMLNode] {
-		return self
-			.filter { $0.asElement?.attribute(forName: "class")?.stringValue == classAttribute }
+		
+		filter {
+			$0.asElement?
+				.attribute(forName: "class")?
+				.stringValue == classAttribute
+		}
+		
 	}
 	
 }

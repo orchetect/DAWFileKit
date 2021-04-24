@@ -8,6 +8,7 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
+import Foundation
 import TimecodeKit
 
 // MARK: - Cubase.TrackArchive
@@ -117,7 +118,7 @@ public protocol CubaseTrackArchiveMarker {
 	var name: String { get set }
 	
 	var startTimecode: Timecode { get set }
-	var startRealTime: TimeValue? { get set }
+	var startRealTime: TimeInterval? { get set }
 	
 }
 
@@ -141,11 +142,11 @@ extension Cubase.TrackArchive {
 		public var name: String = ""
 		
 		public var startTimecode: Timecode
-		public var startRealTime: TimeValue?
+		public var startRealTime: TimeInterval?
 		
 		public init(name: String,
 					startTimecode: Timecode,
-					startRealTime: TimeValue? = nil)
+					startRealTime: TimeInterval? = nil)
 		{
 			
 			self.name = name
@@ -186,16 +187,16 @@ extension Cubase.TrackArchive {
 		public var name: String = ""
 		
 		public var startTimecode: Timecode
-		public var startRealTime: TimeValue?
+		public var startRealTime: TimeInterval?
 		
 		public var lengthTimecode: Timecode
-		public var lengthRealTime: TimeValue?
+		public var lengthRealTime: TimeInterval?
 		
 		public init(name: String,
 					startTimecode: Timecode,
-					startRealTime: TimeValue? = nil,
+					startRealTime: TimeInterval? = nil,
 					lengthTimecode: Timecode,
-					lengthRealTime: TimeValue? = nil)
+					lengthRealTime: TimeInterval? = nil)
 		{
 			
 			self.name = name

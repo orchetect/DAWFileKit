@@ -22,13 +22,13 @@ A Swift library for reading and writing common import/export file formats betwee
 
 ## Supported File Formats
 
-|              Format               |  Read   |  Write  |
-| :-------------------------------: | :-----: | :-----: |
-|     Cubase: Track Archive XML     |  yes†   |  yes†   |
-| Pro Tools: Session Info Text file |   yes   |   n/a   |
-|           Logic Pro X‡            | future? | future? |
-|        Digital Performer‡         | future? | future? |
-|   (more to be added in future)‡   |         |         |
+|                  Format                  |  Read   |  Write  |
+| :--------------------------------------: | :-----: | :-----: |
+|        Cubase: Track Archive XML         |  yes†   |  yes†   |
+|    Pro Tools: Session Info Text file     |   yes   |   n/a   |
+|               Logic Pro X‡               | future? | future? |
+|            Digital Performer‡            | future? | future? |
+| (more platforms may be added in future)‡ |         |         |
 
 *† Full read/write support for Cubase Track Archive XML files is implemented for tracks with absolute timebase, as well as tracks with musical timebase where the tempo track uses only 'Jump' tempo events and there are no 'Ramp' tempo events*
 
@@ -57,9 +57,12 @@ Core unit tests implemented. More exhaustive tests can be added in future.
 
 - Currently, the parser relies on certain export options to be selected when exporting a Session Text file from Pro Tools so that the parser can read it correctly. Additional routines/heuristics need to be added to add ruggedness to the parser so that it can detect all of the various export options based on the text file contents, and successfully parse the file regardless and/or output meaningful error conditions that describe why the file may not be in a parsable format.
 
-  - [ ] Add subframes capability
-
-  - [ ] Check frame rate strings PT outputs to Session Info text file and ensure parser reads them correctly
+- [ ] Add subframes capability
+- [ ] Check frame rate strings PT outputs to Session Info text file and ensure parser reads them correctly
+- [ ] Handle *new-line* and *tab* characters in Markers list name/comment fields (Pro Tools allows them to be inserted or pasted from the clipboard when editing markers)
+- [ ] Add parsing modes specific for "TextEdit 'TEXT'" and "UTF-8 'TEXT'" File Format encodings
+  - [ ] Analyze to see how extended characters are being encoded or (assumed to be) lossily converted to meaningless characters ("É" for "…", "Ñ" for "—", etc.)
+  - [ ] Improve lossy character fix/replacement heuristic
 
 ## Affiliation
 

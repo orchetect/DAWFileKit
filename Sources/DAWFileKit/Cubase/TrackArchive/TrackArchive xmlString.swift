@@ -62,7 +62,10 @@ extension Cubase.TrackArchive {
 												("ID", getNewID().string)])
 		
 		// frame rate
-		if let value = Self.FrameRateTable.first(where: { $0.value == main.frameRate })?.key {
+		if let value = Self.FrameRateTable
+			.first(where: { $0.value == main.frameRate })?
+			.key
+		{
 			setupNode.addChild(XMLElement(name: "int",
 										  attributes: [("name", "FrameType"),
 													   ("value", value.string)]))
@@ -73,7 +76,7 @@ extension Cubase.TrackArchive {
 			let startNode = XMLElement(name: "member",
 									   attributes: [("name","Start")])
 			
-			let value = stc.realTimeValue.seconds.stringValueHighPrecision
+			let value = stc.realTimeValue.stringValueHighPrecision
 			
 			startNode.addChild(XMLElement(name: "float",
 										  attributes: [("name", "Time"),
@@ -89,7 +92,7 @@ extension Cubase.TrackArchive {
 			let startNode = XMLElement(name: "member",
 									   attributes: [("name","Length")])
 			
-			let value = ltc.realTimeValue.seconds.string
+			let value = ltc.realTimeValue.string
 			
 			startNode.addChild(XMLElement(name: "float",
 										  attributes: [("name", "Time"),
@@ -262,13 +265,12 @@ extension Cubase.TrackArchive {
 				newNode.addChild(XMLElement(name: "float",
 											attributes: [("name", "Start"),
 														 ("value", event.startRealTime!
-															.seconds
 															.stringValueHighPrecision)]))
 			} else {
 				newNode.addChild(XMLElement(name: "float",
 											attributes: [("name", "Start"),
 														 ("value", event.startTimecode
-															.realTimeValue.seconds
+															.realTimeValue
 															.stringValueHighPrecision)]))
 			}
 			
@@ -284,13 +286,12 @@ extension Cubase.TrackArchive {
 					newNode.addChild(XMLElement(name: "float",
 												attributes: [("name", "Length"),
 															 ("value", marker.lengthRealTime!
-																.seconds
 																.stringValueHighPrecision)]))
 				} else {
 					newNode.addChild(XMLElement(name: "float",
 												attributes: [("name", "Length"),
 															 ("value", marker.lengthTimecode
-																.realTimeValue.seconds
+																.realTimeValue
 																.stringValueHighPrecision)]))
 				}
 				

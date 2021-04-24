@@ -19,7 +19,7 @@ let package = Package(
 	dependencies: [
 		
 		.package(url: "https://github.com/orchetect/OTCore", from: "1.1.6"),
-		.package(url: "https://github.com/orchetect/TimecodeKit", from: "1.0.10")
+		.package(url: "https://github.com/orchetect/TimecodeKit", from: "1.1.0")
 		
 	],
 	
