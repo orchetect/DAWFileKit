@@ -220,10 +220,15 @@ extension Collection where Element == CubaseTrackArchiveMarker {
 			
 			switch element {
 			case let marker as Cubase.TrackArchive.Marker:
-				outputString += "\(marker.name)".tabbed + marker.startTimecode.stringValue.newLined
+				outputString += "\(marker.name)".tabbed
+					+ marker.startTimecode.stringValue
+					.newLined
 				
 			case let marker as Cubase.TrackArchive.CycleMarker:
-				outputString += "\(marker.name)".tabbed + marker.startTimecode.stringValue.tabbed + marker.lengthTimecode.stringValue.newLined
+				outputString += "\(marker.name)".tabbed
+					+ marker.startTimecode.stringValue.tabbed
+					+ marker.lengthTimecode.stringValue
+					.newLined
 				
 			default:
 				outputString += "\(element)".newLined

@@ -17,7 +17,7 @@ import TimecodeKit
 extension Cubase.TrackArchive {
 	
 	/// Input text file contents exported from Pro Tools and returns `SessionInfo`
-		public init?(fromData: Data) {
+	public init?(fromData: Data) {
 		
 		// load XML tree
 		
@@ -47,16 +47,17 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-		private mutating func _parseSetup(root: XMLElement) {
+	private mutating func _parseSetup(root: XMLElement) {
 		
 		// setup section
 		
 		guard let setup = root.children?
-			.filter(nameAttribute: "Setup")
-			.first
-			else {
-				Log.debug("Could not extract global session information. Setup block could not be located.")
-				return }
+				.filter(nameAttribute: "Setup")
+				.first
+		else {
+			Log.debug("Could not extract global session information. Setup block could not be located.")
+			return
+		}
 		
 		// frame rate
 		if let fRate = setup.children?
@@ -146,20 +147,21 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-		private mutating func _parseTempoTrack(root: XMLElement) {
+	private mutating func _parseTempoTrack(root: XMLElement) {
 		
 		// tempo track
 		
 		// operating under the assumption (as anecdotally observed) that tempo track events are inserted into the first track of the XML file regardless of what that track type was; Cubase does not export the tempo track as a separate track in the XML as you might expect.
 		
 		guard let firstTrack = root.children?
-			.filter(nameAttribute: "track")
-			.first?
-			.children?
-			.first
-			else {
-				Log.debug("Could not extract tempo information. First track could not be located.")
-				return }
+				.filter(nameAttribute: "track")
+				.first?
+				.children?
+				.first
+		else {
+			Log.debug("Could not extract tempo information. First track could not be located.")
+			return
+		}
 		
 		let eventTree = firstTrack.children?
 			.filter(classAttribute: "MListNode")
@@ -209,7 +211,9 @@ extension Cubase.TrackArchive {
 					== 1 ? .ramp : .jump
 				
 				if bpm != nil && ppq != nil {
-					let newTempoEvent = TempoTrack.Event(startTimeAsPPQ: ppq!, tempo: bpm!, type: type)
+					let newTempoEvent = TempoTrack.Event(startTimeAsPPQ: ppq!,
+														 tempo: bpm!,
+														 type: type)
 					tempoTrack.events.append(newTempoEvent)
 				}
 				
@@ -225,16 +229,17 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-		private mutating func _parseTracks(root: XMLElement) {
+	private mutating func _parseTracks(root: XMLElement) {
 		
 		guard let tracks = root.children?
-			.filter(elementName: "list")
-			.filter(nameAttribute: "track")
-			.first?
-			.children
-			else {
-				Log.debug("No tracks found.")
-				return }
+				.filter(elementName: "list")
+				.filter(nameAttribute: "track")
+				.first?
+				.children
+		else {
+			Log.debug("No tracks found.")
+			return
+		}
 		
 		// init property if nil
 		if self.tracks == nil { self.tracks = [] }
@@ -267,7 +272,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
 	
-		private mutating func _parseTracks_MarkerTrack(track: XMLNode) {
+	private mutating func _parseTracks_MarkerTrack(track: XMLNode) {
 		
 		var newTrack = MarkerTrack()
 		
@@ -302,10 +307,10 @@ extension Cubase.TrackArchive {
 		
 		// track events
 		guard let events = eventTree?.children?
-			.filter(nameAttribute: "Events")
-			.first?
-			.children
-			else { return }
+				.filter(nameAttribute: "Events")
+				.first?
+				.children
+		else { return }
 		
 		for event in events {
 			
