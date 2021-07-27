@@ -1,15 +1,12 @@
 //
-//  ProTools/SessionInfo/SessionInfo Characters.swift
-//  DAWFileKit
-//
-//  Created by Steffan Andrews on 2018-11-02.
-//  Copyright © 2018 Steffan Andrews. All rights reserved.
+//  SessionInfo Characters.swift
+//  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //
 
 // MARK: Fix extended characters (Pro Tools ASCII issues)
 
 fileprivate let fixPTExtendedCharacters_Chars = ["É" : "...",
-												 "Ñ" : "--" ]
+                                                 "Ñ" : "--" ]
 
 //extension ProTools.SessionInfo {
 //	
