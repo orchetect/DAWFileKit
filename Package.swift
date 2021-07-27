@@ -6,25 +6,20 @@ let package = Package(
 	
 	name: "DAWFileKit",
 	
-	platforms: [.macOS(.v10_12), .iOS(.v10)],
+    platforms: [.macOS(.v10_12), .iOS(.v10), .tvOS(.v10), .watchOS(.v6)],
 	
 	products: [
-		
 		.library(
 			name: "DAWFileKit",
 			targets: ["DAWFileKit"])
-		
 	],
 	
 	dependencies: [
-		
-		.package(url: "https://github.com/orchetect/OTCore", from: "1.1.6"),
-		.package(url: "https://github.com/orchetect/TimecodeKit", from: "1.1.0")
-		
+		.package(url: "https://github.com/orchetect/OTCore", from: "1.1.8"),
+		.package(url: "https://github.com/orchetect/TimecodeKit", from: "1.1.4")
 	],
 	
 	targets: [
-		
 		.target(
 			name: "DAWFileKit",
 			dependencies: ["OTCore", "TimecodeKit"]),
@@ -33,7 +28,6 @@ let package = Package(
 			name: "DAWFileKitTests",
 			dependencies: ["DAWFileKit"],
 			resources: [.copy("Pro Tools/Resources/PTSessionTextExports")]),
-		
 	]
 	
 )
