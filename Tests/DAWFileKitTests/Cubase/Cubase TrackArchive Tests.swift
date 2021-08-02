@@ -840,7 +840,7 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
         // HmtType - not implemented yet
         
         // HMTDepth
-        XCTAssertEqual(trackArchive.main.HMTDepth, 100)
+        XCTAssertEqual(trackArchive.main.hmtDepth, 100)
         
         // ---- tempo track ----
         
@@ -1005,10 +1005,10 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
         var track1event3 = track1?.events[safe: 2] as? Cubase.TrackArchive.Marker
         var track1event4 = track1?.events[safe: 3] as? Cubase.TrackArchive.Marker
         
-        track1event1?.startTimecode.displaySubFrames = true
-        track1event2?.startTimecode.displaySubFrames = true
-        track1event3?.startTimecode.displaySubFrames = true
-        track1event4?.startTimecode.displaySubFrames = true
+        track1event1?.startTimecode.stringFormat = [.showSubFrames]
+        track1event2?.startTimecode.stringFormat = [.showSubFrames]
+        track1event3?.startTimecode.stringFormat = [.showSubFrames]
+        track1event4?.startTimecode.stringFormat = [.showSubFrames]
         
         XCTAssertEqual(track1event1?.startTimecode.stringValue, "01:00:01:29.00") // as displayed in Cubase
         XCTAssertEqual(track1event2?.startTimecode.stringValue, "01:00:01:29.78") // as displayed in Cubase
@@ -1026,10 +1026,10 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
         var track2event3 = track2?.events[safe: 2] as? Cubase.TrackArchive.Marker
         var track2event4 = track2?.events[safe: 3] as? Cubase.TrackArchive.Marker
         
-        track2event1?.startTimecode.displaySubFrames = true
-        track2event2?.startTimecode.displaySubFrames = true
-        track2event3?.startTimecode.displaySubFrames = true
-        track2event4?.startTimecode.displaySubFrames = true
+        track2event1?.startTimecode.stringFormat = [.showSubFrames]
+        track2event2?.startTimecode.stringFormat = [.showSubFrames]
+        track2event3?.startTimecode.stringFormat = [.showSubFrames]
+        track2event4?.startTimecode.stringFormat = [.showSubFrames]
         
         XCTAssertEqual(track2event1?.startTimecode.stringValue, "01:00:01:29.00") // as displayed in Cubase
         XCTAssertEqual(track2event2?.startTimecode.stringValue, "01:00:01:29.78") // as displayed in Cubase

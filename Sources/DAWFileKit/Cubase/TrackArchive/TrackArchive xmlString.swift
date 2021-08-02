@@ -137,7 +137,7 @@ extension Cubase.TrackArchive {
         // HmtType - not implemented yet
         
         // HMTDepth
-        if let value = main.HMTDepth {
+        if let value = main.hmtDepth {
             setupNode.addChild(XMLElement(name: "int",
                                           attributes: [("name", "HmtDepth"),
                                                        ("value", value.string)]))
@@ -258,10 +258,10 @@ extension Cubase.TrackArchive {
             let newNode = XMLElement(name: "obj")
             
             // add length as real time if present, otherwise convert the timecode object to real time
-            if event.startRealTime != nil {
+            if let eventStartRealTime = event.startRealTime {
                 newNode.addChild(XMLElement(name: "float",
                                             attributes: [("name", "Start"),
-                                                         ("value", event.startRealTime!
+                                                         ("value", eventStartRealTime
                                                             .stringValueHighPrecision)]))
             } else {
                 newNode.addChild(XMLElement(name: "float",
@@ -279,10 +279,10 @@ extension Cubase.TrackArchive {
                 newNode.addAttribute(withName: "class", value: "MRangeMarkerEvent")
                 
                 // add length as real time if present, otherwise convert the timecode object to real time
-                if marker.lengthRealTime != nil {
+                if let markerLengthRealTime = marker.lengthRealTime {
                     newNode.addChild(XMLElement(name: "float",
                                                 attributes: [("name", "Length"),
-                                                             ("value", marker.lengthRealTime!
+                                                             ("value", markerLengthRealTime
                                                                 .stringValueHighPrecision)]))
                 } else {
                     newNode.addChild(XMLElement(name: "float",

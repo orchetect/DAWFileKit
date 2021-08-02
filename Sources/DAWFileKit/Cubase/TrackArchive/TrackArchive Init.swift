@@ -79,7 +79,7 @@ extension Cubase.TrackArchive {
             main.startTimeSeconds = dbl
         }
         
-        main.startTimecode = CalculateStartTimecode(ofRealTimeValue: 0.0)
+        main.startTimecode = calculateStartTimecode(ofRealTimeValue: 0.0)
         
         // length
         if let dbl = setup.children?
@@ -91,7 +91,7 @@ extension Cubase.TrackArchive {
             .attributeStringValue(forName: "value")?
             .double
         {
-            main.lengthTimecode = CalculateLengthTimecode(ofRealTimeValue: dbl)
+            main.lengthTimecode = calculateLengthTimecode(ofRealTimeValue: dbl)
         }
         
         // TimeType - not implemented yet
@@ -130,7 +130,7 @@ extension Cubase.TrackArchive {
         // HmtType - not implemented yet
         
         // HMTDepth
-        main.HMTDepth = setup.children?
+        main.hmtDepth = setup.children?
             .filter(nameAttribute: "HmtDepth")
             .first?
             .attributeStringValue(forName: "value")?
@@ -207,9 +207,9 @@ extension Cubase.TrackArchive {
                     .int
                     == 1 ? .ramp : .jump
                 
-                if bpm != nil && ppq != nil {
-                    let newTempoEvent = TempoTrack.Event(startTimeAsPPQ: ppq!,
-                                                         tempo: bpm!,
+                if let bpm = bpm, let ppq = ppq {
+                    let newTempoEvent = TempoTrack.Event(startTimeAsPPQ: ppq,
+                                                         tempo: bpm,
                                                          type: type)
                     tempoTrack.events.append(newTempoEvent)
                 }
@@ -335,10 +335,10 @@ extension Cubase.TrackArchive {
                     if let toNum = str.double {
                         switch trackDomain {
                         case .musical:
-                            tcStart = CalculateStartTimecode(ofMusicalTimeValue: toNum)
+                            tcStart = calculateStartTimecode(ofMusicalTimeValue: toNum)
                             
                         case .linear:
-                            tcStart = CalculateStartTimecode(ofRealTimeValue: toNum)
+                            tcStart = calculateStartTimecode(ofRealTimeValue: toNum)
                             
                             // add real time value to the marker as well
                             tcStartRealTime = toNum
@@ -349,9 +349,9 @@ extension Cubase.TrackArchive {
                 switch event.attributeStringValue(forName: "class") {
                 case "MMarkerEvent": // single marker
                     
-                    guard tcStart != nil else { continue }
+                    guard let tcStart = tcStart else { continue }
                     newMarker = Marker(name: name ?? "",
-                                       startTimecode: tcStart!,
+                                       startTimecode: tcStart,
                                        startRealTime: tcStartRealTime)
                     
                 case "MRangeMarkerEvent": // cycle marker
@@ -368,10 +368,10 @@ extension Cubase.TrackArchive {
                         if let toNum = str.double {
                             switch trackDomain {
                             case .musical:
-                                tcLength = CalculateLengthTimecode(ofMusicalTimeValue: toNum)
+                                tcLength = calculateLengthTimecode(ofMusicalTimeValue: toNum)
                                 
                             case .linear:
-                                tcLength = CalculateLengthTimecode(ofRealTimeValue: toNum)
+                                tcLength = calculateLengthTimecode(ofRealTimeValue: toNum)
                                 
                                 // add real time value to the marker as well
                                 tcLengthRealTime = toNum
@@ -379,17 +379,20 @@ extension Cubase.TrackArchive {
                         }
                     }
                     
-                    guard tcLength != nil else { continue }
+                    guard let tcStart = tcStart,
+                          let unwrappedTCLength = tcLength
+                    else { continue }
+                    
                     newMarker = CycleMarker(name: name ?? "",
-                                            startTimecode: tcStart!,
+                                            startTimecode: tcStart,
                                             startRealTime: tcStartRealTime,
-                                            lengthTimecode: tcLength!,
+                                            lengthTimecode: unwrappedTCLength,
                                             lengthRealTime: tcLengthRealTime)
                     
                 default: break
                 }
                 
-                if newMarker != nil { newTrack.events.append(newMarker!) }
+                if let newMarker = newMarker { newTrack.events.append(newMarker) }
                 
             default:
                 Log.debug("Unrecognized marker track event in XML")
