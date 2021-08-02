@@ -50,31 +50,31 @@ extension Cubase.TrackArchive {
     /// Contains the global session meta data
     public struct Main {
         
-        public var startTimecode: Timecode?		// Start.Time (float, load as double)
-        public var startTimeSeconds: Double?		// Start.Time (float, load as double)
+        public var startTimecode: Timecode?        // 'Start'.'Time' (float, load as double)
+        public var startTimeSeconds: Double?       // 'Start'.'Time' (float, load as double)
         
-        //		public var startTimeDomain: ?				// Start.Domain.Type & Start.Domain.Period
-        public var lengthTimecode: Timecode?		// Length.Time (float, load as double)
-        //		public var lengthTimeDomain: ?				// Length.Domain.Type & Start.Domain.Period
+        //public var startTimeDomain: ?            // 'Start'.'Domain'.'Type' & 'Start'.'Domain'.'Period'
+        public var lengthTimecode: Timecode?       // 'Length'.'Time' (float, load as double)
+        //public var lengthTimeDomain: ?           // 'Length'.'Domain'.'Type' & 'Start'.'Domain'.'Period'
         
-        public var frameRate: Timecode.FrameRate?	// FrameType
+        public var frameRate: Timecode.FrameRate?  // 'FrameType'
         
-        //		public var timeType: ?						// TimeType
-        public var barOffset: Int?					// BarOffset
+        //public var timeType: ?                   // 'TimeType'
+        public var barOffset: Int?                 // 'BarOffset'
         
-        public var sampleRate: Double?				// SampleRate
-        public var bitDepth: Int?					// SampleSize
+        public var sampleRate: Double?             // 'SampleRate'
+        public var bitDepth: Int?                  // 'SampleSize'
         
         // SampleFormatSize
         
-        // RecordFile
-        // RecordFileType ...
+        // 'RecordFile'
+        // 'RecordFileType' ...
         
-        // PanLaw
-        // VolumeMax
+        // 'PanLaw'
+        // 'VolumeMax'
         
-        // HmtType
-        public var HMTDepth: Int?					// HmtDepth (percentage)
+        // 'HmtType'
+        public var hmtDepth: Int?                   // 'HmtDepth' (percentage)
         
     }
     
@@ -164,8 +164,8 @@ extension Cubase.TrackArchive {
         
         public struct Event {
             
-            public var startTimeAsPPQ: Double
-            public var tempo: Double
+            public var startTimeAsPPQ: Cubase.PPQ
+            public var tempo: Cubase.Tempo
             public var type: TempoEventType
             
             public enum TempoEventType {

@@ -16,28 +16,26 @@ extension Cubase.TrackArchive {
     /// Internal use
     /// Requires main.frameRate to not be nil.
     /// Real Time measured in seconds.
-    internal func CalculateStartTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
+    internal func calculateStartTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
         
-        guard ofRealTimeValue != nil else { return nil }
-        guard main.startTimeSeconds != nil else { return nil }
+        guard let realTimeValue = ofRealTimeValue else { return nil }
+        guard let startTimeSeconds = main.startTimeSeconds else { return nil }
         
-        let diff = main.startTimeSeconds! + ofRealTimeValue!
+        let diff = startTimeSeconds + realTimeValue
         
-        return CalculateLengthTimecode(ofRealTimeValue: diff)
+        return calculateLengthTimecode(ofRealTimeValue: diff)
         
     }
     
     /// Internal use
     /// Requires main.frameRate to not be nil.
     /// Real Time measured in seconds.
-    internal func CalculateLengthTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
+    internal func calculateLengthTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
         
-        guard ofRealTimeValue != nil else { return nil }
-        guard main.frameRate != nil else { return nil }
+        guard let ofRealTimeValue = ofRealTimeValue else { return nil }
+        guard let frameRate = main.frameRate else { return nil }
         
-        var tc = Timecode(at: main.frameRate!)
-        let seconds = ofRealTimeValue!
-        tc.setTimecode(fromRealTimeValue: seconds)
+        let tc = Cubase.kTimecode(realTimeValue: ofRealTimeValue, at: frameRate)
         
         return tc
         
@@ -45,82 +43,89 @@ extension Cubase.TrackArchive {
     
     /// Internal use
     /// Requires main.frameRate to not be nil.
-    internal func CalculateStartTimecode(ofMusicalTimeValue: Double) -> Timecode? {
+    internal func calculateStartTimecode(ofMusicalTimeValue: Double) -> Timecode? {
         
-        let realTimeSeconds = CalculateMusicalTimeToRealTime(ofMusicalTimeValue: ofMusicalTimeValue)
+        let realTimeSeconds = calculateMusicalTimeToRealTime(ofMusicalTimeValue: ofMusicalTimeValue)
         
-        return CalculateStartTimecode(ofRealTimeValue: realTimeSeconds)
+        return calculateStartTimecode(ofRealTimeValue: realTimeSeconds)
         
     }
     
     /// Internal use
     /// Requires main.frameRate to not be nil.
-    internal func CalculateLengthTimecode(ofMusicalTimeValue: Double) -> Timecode? {
+    internal func calculateLengthTimecode(ofMusicalTimeValue: Double) -> Timecode? {
         
-        let realTimeSeconds = CalculateMusicalTimeToRealTime(ofMusicalTimeValue: ofMusicalTimeValue)
+        let realTimeSeconds = calculateMusicalTimeToRealTime(ofMusicalTimeValue: ofMusicalTimeValue)
         
-        return CalculateLengthTimecode(ofRealTimeValue: realTimeSeconds)
+        return calculateLengthTimecode(ofRealTimeValue: realTimeSeconds)
         
     }
     
     /// Internal use
     /// Requires `main.frameRate` to not be nil.
     /// Returns a value in Seconds.
-    /// Will return nil if tempo track has zero events, since at least one originating tempo event is required to do the calculation.
-    internal func CalculateMusicalTimeToRealTime(ofMusicalTimeValue: Double) -> Double? {
+    /// Will return `nil` if tempo track has zero events, since at least one originating tempo event is required to do the calculation.
+    internal func calculateMusicalTimeToRealTime(ofMusicalTimeValue: Double) -> TimeInterval? {
+        
+        enum TempoOperation {
+            case jumpToNext
+            case rampToNext
+            case finalEvent // no tempo events follow
+        }
         
         var realTimeAccumulator = 0.0
         
-        for index in 0..<tempoTrack.events.endIndex {
+        for index in tempoTrack.events.indices {
             
             let currentTempoEvent = tempoTrack.events[index]
-            var nextTempoEvent: TempoTrack.Event? = nil
             
-            if index + 1 < tempoTrack.events.endIndex {
-                nextTempoEvent = tempoTrack.events[index + 1]
-            }
-            
-            // determine calculation type
-            
-            var tempoCalculationType: TempoTrack.Event.TempoEventType = .jump
-            
-            // look ahead: determine the next tempo event type
-            switch nextTempoEvent?.type {
-            case .jump?, nil: tempoCalculationType = .jump
-            case .ramp?: tempoCalculationType = .ramp
-            }
-            
-            // determine if track event is between the two tempo events
-            
+            let tempoCalculationType: TempoOperation
             var isPartialCalculation = false
+            var nextTempoEvent: TempoTrack.Event? = nil
+            let ppqDuration: Double
             
-            if nextTempoEvent == nil { isPartialCalculation = true }
+            let nextIndex = index.advanced(by: 1)
             
-            if !isPartialCalculation
-                && ofMusicalTimeValue < nextTempoEvent?.startTimeAsPPQ ?? 0.0
-            {
-                isPartialCalculation = true
-            }
-            
-            // (nextTempoEvent! is guaranteed safe now)
-            
-            // determine PPQ duration to convert to real time
-            
-            var ppqDuration = 0.0
-            
-            if isPartialCalculation {
-                ppqDuration = ofMusicalTimeValue - currentTempoEvent.startTimeAsPPQ
+            if tempoTrack.events.indices.contains(nextIndex) {
+                
+                let _nextTempoEvent = tempoTrack.events[nextIndex]
+                nextTempoEvent = _nextTempoEvent
+                switch _nextTempoEvent.type {
+                case .jump: tempoCalculationType = .jumpToNext
+                case .ramp: tempoCalculationType = .rampToNext
+                }
+                
+                if ofMusicalTimeValue < _nextTempoEvent.startTimeAsPPQ {
+                    isPartialCalculation = true
+                }
+                
+                // determine PPQ duration to convert to real time
+                if isPartialCalculation {
+                    ppqDuration = ofMusicalTimeValue - currentTempoEvent.startTimeAsPPQ
+                } else {
+                    ppqDuration = _nextTempoEvent.startTimeAsPPQ - currentTempoEvent.startTimeAsPPQ
+                }
+                
             } else {
-                ppqDuration = nextTempoEvent!.startTimeAsPPQ - currentTempoEvent.startTimeAsPPQ
+                
+                // if there are no tempo events to follow this one,
+                // it remains static for the remainder of the project timeline
+                tempoCalculationType = .finalEvent
+                
+                // determine PPQ duration to convert to real time
+                ppqDuration = ofMusicalTimeValue - currentTempoEvent.startTimeAsPPQ
+                
             }
             
             // perform calculation
             
             switch tempoCalculationType {
-            case .jump:
-                realTimeAccumulator += ppqDuration / (Self.xmlPPQ.double / (60.0 / currentTempoEvent.tempo))
+            case .jumpToNext,
+                 .finalEvent:
+                realTimeAccumulator += ppqDuration /
+                    (Self.xmlPPQ.double / (60.0 / currentTempoEvent.tempo))
                 
-            case .ramp:
+            case .rampToNext:
                 #warning("> This calculation is not accurate, it is merely approximate.")
                 // Cubase (and other DAWs like Logic Pro X) have mysterious tempo ramp calculation algorithms
                 // I was not able to precisely reverse engineer the algo Cubase uses
@@ -152,7 +157,6 @@ extension Cubase.TrackArchive {
                 
             }
             
-            
             if isPartialCalculation {
                 // we're done, terminate for-loop iteration
                 break
@@ -164,14 +168,14 @@ extension Cubase.TrackArchive {
         
         // old code - static tempo-based
         
-        //		#warning("Relies on the session having only one (origin) tempo event. Future improvement here will require calculating real time values for musical timebase events considering the entire tempo track and all tempo events it contains")
+        // #warning("Relies on the session having only one (origin) tempo event. Future improvement here will require calculating real time values for musical timebase events considering the entire tempo track and all tempo events it contains")
         // We're forcing compatibility only with sessions that contain an origin tempo event until such time when I can code the math to work out timecodes from a tempo track containing multiple tempo events
         // The onus is on you to deal with Ramp tempo events, which adds complexity
         
-        //		let staticTempo = tempoTrack.events.first?.tempo
-        //			?? TempoTrack.Event(timeAsPPQ: 0, tempo: 120.0, type: .jump).tempo // provide a standard default
+        // let staticTempo = tempoTrack.events.first?.tempo
+        //     ?? TempoTrack.Event(timeAsPPQ: 0, tempo: 120.0, type: .jump).tempo // provide a standard default
         
-        //		return ofMusicalTimeValue / (Self.xmlPPQ.double / (60.0 / staticTempo))
+        // return ofMusicalTimeValue / (Self.xmlPPQ.double / (60.0 / staticTempo))
     }
     
 }

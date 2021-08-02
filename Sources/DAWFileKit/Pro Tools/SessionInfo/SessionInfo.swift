@@ -193,7 +193,7 @@ extension ProTools.SessionInfo {
         mutating func validate(timecodeString: String,
                                at frameRate: Timecode.FrameRate) -> Bool {
             
-            timecode = Timecode(timecodeString, at: frameRate, limit: ._24hours)
+            timecode = ProTools.kTimecode(timecodeString, at: frameRate)
             
             return timecode != nil
             

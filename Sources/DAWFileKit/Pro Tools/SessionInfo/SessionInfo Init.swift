@@ -117,9 +117,9 @@ extension ProTools.SessionInfo {
             Log.debug("Parse: Header block: Found # OF AUDIO FILES info but encountered an error while trying to convert string \"\(getHeader[7])\" to a number.")
         }
         
-        // process timecode with preiously acquired frame rate
+        // process timecode with previously acquired frame rate
         if let fRate = info.main.frameRate {
-            info.main.startTimecode = Timecode(tempStartTimecode, at: fRate, limit: ._24hours)
+            info.main.startTimecode = ProTools.kTimecode(tempStartTimecode, at: fRate)
         }
         
         // MARK: - Parse into major sections
@@ -168,15 +168,18 @@ extension ProTools.SessionInfo {
                 case "P L U G - I N S  L I S T I N G":					lastSectionFound = .plugins
                 case "T R A C K  L I S T I N G":						lastSectionFound = .trackList
                 case "M A R K E R S  L I S T I N G":					lastSectionFound = .markers
-                default:												lastSectionFound = .orphan(name: block) // unrecognized
+                default:
+                    lastSectionFound = .orphan(name: block) // unrecognized
                     Log.debug("Unrecognized section found in text file:", block)
                 }
                 
-                if sections[lastSectionFound!] == nil { sections[lastSectionFound!] = [] }
+                if let lastSectionFound = lastSectionFound {
+                    if sections[lastSectionFound] == nil { sections[lastSectionFound] = [] }
+                }
                 
             case false:
-                if lastSectionFound != nil {
-                    sections[lastSectionFound!]?.append(block)
+                if let lastSectionFound = lastSectionFound {
+                    sections[lastSectionFound]?.append(block)
                 }
                 
             }
@@ -277,25 +280,24 @@ fileprivate extension ProTools.SessionInfo {
             
             let columnData = line.split(separator: "\t").map {String($0)} // split into array by tab character
             
-            let strFilename = columnData[safe: 0]?.trimmed				// nil if not found
-            let strLocation = columnData[safe: 1]?.trimmed				// nil if not found
-            
-            guard strFilename != nil &&
-                    strLocation != nil
+            guard let strFilename = columnData[safe: 0]?.trimmed,
+                  let strLocation = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
                 Log.debug("One or more item elements were nil. Text file may be malformed.")
                 break
             }
             
-            let newItem = File(filename: strFilename!, path: strLocation!, online: true)
+            let newItem = File(filename: strFilename,
+                               path: strLocation,
+                               online: true)
             
-            onlineFiles!.append(newItem)
+            onlineFiles?.append(newItem)
         }
         
         // error check
         
-        let actualItemCount = onlineFiles!.count
+        let actualItemCount = onlineFiles?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
             Log.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
@@ -340,25 +342,24 @@ fileprivate extension ProTools.SessionInfo {
             
             let columnData = line.split(separator: "\t").map {String($0)} // split into array by tab character
             
-            let strFilename = columnData[safe: 0]?.trimmed				// nil if not found
-            let strLocation = columnData[safe: 1]?.trimmed				// nil if not found
-            
-            guard strFilename != nil &&
-                    strLocation != nil
+            guard let strFilename = columnData[safe: 0]?.trimmed,
+                  let strLocation = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
                 Log.debug("One or more item elements were nil. Text file may be malformed.")
                 break
             }
             
-            let newItem = File(filename: strFilename!, path: strLocation!, online: false)
+            let newItem = File(filename: strFilename,
+                               path: strLocation,
+                               online: false)
             
-            offlineFiles!.append(newItem)
+            offlineFiles?.append(newItem)
         }
         
         // error check
         
-        let actualItemCount = offlineFiles!.count
+        let actualItemCount = offlineFiles?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
             Log.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
@@ -403,26 +404,27 @@ fileprivate extension ProTools.SessionInfo {
             
             let columnData = line.split(separator: "\t").map {String($0)} // split into array by tab character
             
-            let name = columnData[safe: 0]?.trimmed						// nil if not found
-            let sourceFile = columnData[safe: 1]?.trimmed				// nil if not found
-            let channel = columnData[safe: 2]?.trimmed					// nil if not found
-            
-            guard name != nil &&
-                    sourceFile != nil
+            guard let name = columnData[safe: 0]?.trimmed,
+                  let sourceFile = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
                 Log.debug("One or more item elements were nil. Text file may be malformed.")
                 break
             }
             
-            let newItem = Clip(name: name!, sourceFile: sourceFile!, channel: channel, online: true)
+            let channel = columnData[safe: 2]?.trimmed                    // nil if not found
             
-            onlineClips!.append(newItem)
+            let newItem = Clip(name: name,
+                               sourceFile: sourceFile,
+                               channel: channel,
+                               online: true)
+            
+            onlineClips?.append(newItem)
         }
         
         // error check
         
-        let actualItemCount = onlineClips!.count
+        let actualItemCount = onlineClips?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
             Log.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
@@ -467,26 +469,27 @@ fileprivate extension ProTools.SessionInfo {
             
             let columnData = line.split(separator: "\t").map {String($0)} // split into array by tab character
             
-            let name = columnData[safe: 0]?.trimmed						// nil if not found
-            let sourceFile = columnData[safe: 1]?.trimmed				// nil if not found
-            let channel = columnData[safe: 2]?.trimmed					// nil if not found
-            
-            guard name != nil &&
-                    sourceFile != nil
+            guard let name = columnData[safe: 0]?.trimmed,
+                  let sourceFile = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
                 Log.debug("One or more item elements were nil. Text file may be malformed.")
                 break
             }
             
-            let newItem = Clip(name: name!, sourceFile: sourceFile!, channel: channel, online: false)
+            let channel = columnData[safe: 2]?.trimmed
             
-            offlineClips!.append(newItem)
+            let newItem = Clip(name: name,
+                               sourceFile: sourceFile,
+                               channel: channel,
+                               online: false)
+            
+            offlineClips?.append(newItem)
         }
         
         // error check
         
-        let actualItemCount = offlineClips!.count
+        let actualItemCount = offlineClips?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
             Log.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
@@ -535,38 +538,31 @@ fileprivate extension ProTools.SessionInfo {
             
             let columnData = line.split(separator: "\t").map {String($0)} // split into array by tab character
             
-            let manufacturer = columnData[safe: 0]?.trimmed				// nil if not found
-            let name = columnData[safe: 1]?.trimmed						// nil if not found
-            let version = columnData[safe: 2]?.trimmed					// nil if not found
-            let format = columnData[safe: 3]?.trimmed					// nil if not found
-            let stems = columnData[safe: 4]?.trimmed					// nil if not found
-            let numberOfInstances = columnData[safe: 5]?.trimmed		// nil if not found
-            
-            guard manufacturer != nil &&
-                    name != nil &&
-                    version != nil &&
-                    format != nil &&
-                    stems != nil &&
-                    numberOfInstances != nil
+            guard let manufacturer = columnData[safe: 0]?.trimmed,
+                  let name = columnData[safe: 1]?.trimmed,
+                  let version = columnData[safe: 2]?.trimmed,
+                  let format = columnData[safe: 3]?.trimmed,
+                  let stems = columnData[safe: 4]?.trimmed,
+                  let numberOfInstances = columnData[safe: 5]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
                 Log.debug("One or more item elements were nil. Text file may be malformed.")
                 break
             }
             
-            let newItem = Plugin(manufacturer: manufacturer!,
-                                 name: name!,
-                                 version: version!,
-                                 format: format!,
-                                 stems: stems!,
-                                 numberOfInstances: numberOfInstances!)
+            let newItem = Plugin(manufacturer: manufacturer,
+                                 name: name,
+                                 version: version,
+                                 format: format,
+                                 stems: stems,
+                                 numberOfInstances: numberOfInstances)
             
-            plugins!.append(newItem)
+            plugins?.append(newItem)
         }
         
         // error check
         
-        let actualItemCount = plugins!.count
+        let actualItemCount = plugins?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
             Log.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
@@ -578,7 +574,7 @@ fileprivate extension ProTools.SessionInfo {
         // PT only lists a manufacturer once if there are multiple plugins in use from that manufacturer
         
         var lastFoundManufacturer = ""
-        for idx in plugins!.startIndex..<plugins!.endIndex {
+        for idx in (plugins?.startIndex ?? 0)..<(plugins?.endIndex ?? 0) {
             let itemManufacturer = plugins![idx].manufacturer
             
             if itemManufacturer != "" {
@@ -698,15 +694,15 @@ fileprivate extension ProTools.SessionInfo {
                     // CLIP NAME
                     newClip.name = columns[2]
                     
-                    if main.frameRate != nil {
+                    if let frameRate = main.frameRate {
                         // START TIME (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.startTimecode = Timecode(columns[3], at: main.frameRate!)
+                        newClip.startTimecode = ProTools.kTimecode(columns[3], at: frameRate)
                         
                         // END TIME (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.endTimecode = Timecode(columns[4], at: main.frameRate!)
+                        newClip.endTimecode = ProTools.kTimecode(columns[4], at: frameRate)
                         
                         // DURATION (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.duration = Timecode(columns[5], at: main.frameRate!)
+                        newClip.duration = ProTools.kTimecode(columns[5], at: frameRate)
                     }
                     
                     // STATE
@@ -782,55 +778,48 @@ fileprivate extension ProTools.SessionInfo {
             
             #warning("> may need to add logic to detect what format the 'Location' value is in - whether it's frames (timecode), samples, etc.")
             
-            let strNumber = columnData[safe: 0]?.trimmed				// nil if not found
-            let strTimecode = columnData[safe: 1]?.trimmed				// nil if not found
-            let strTimeReference = columnData[safe: 2]?.trimmed			// nil if not found
-            let strUnits = columnData[safe: 3]?.trimmed					// nil if not found
-            let strName = columnData[safe: 4]?.trimmed					// nil if not found
-            let strComment = columnData[safe: 5]?.trimmed				// nil if not found
-            
-            guard strTimecode != nil &&
-                    strTimeReference != nil &&
-                    strUnits != nil &&
-                    strName != nil
+            guard let strTimecode = columnData[safe: 1]?.trimmed,
+                  let strTimeReference = columnData[safe: 2]?.trimmed,
+                  let strUnits = columnData[safe: 3]?.trimmed,
+                  let strName = columnData[safe: 4]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
                 Log.debug("One or more item elements were nil. Text file may be malformed.")
                 break
             }
             
-            var number: Int? = nil
-            if strNumber != nil {
-                number = Int(strNumber!)
-            }
+            let strNumber = columnData[safe: 0]?.trimmed
+            let strComment = columnData[safe: 5]?.trimmed
+            
+            let number: Int? = strNumber?.int
             
             let units: Marker.Units
-            switch strUnits! {
+            switch strUnits {
             case "Samples": units = .samples
             case "Ticks": units = .ticks
             default:
                 units = .samples
-                Log.debug("A marker had a Units type that was not recognized : \(strUnits!.quoted). Defaulting to Samples.")
+                Log.debug("A marker had a Units type that was not recognized : \(strUnits.quoted). Defaulting to Samples.")
             }
             
             var newItem = Marker(number: number,
-                                 timeReference: strTimeReference!,
+                                 timeReference: strTimeReference,
                                  units: units,
-                                 name: strName!,
+                                 name: strName,
                                  comment: strComment)
             
-            if main.frameRate != nil &&
-                !newItem.validate(timecodeString: strTimecode!, at: main.frameRate!) {
+            if let mainFrameRate = main.frameRate,
+                !newItem.validate(timecodeString: strTimecode, at: mainFrameRate) {
                 // populate timecode object and verify
-                Log.debug("FYI: Validation for timecode \(strTimecode!) at text file frame rate of \(main.frameRate, ifNil: "nil") failed.")
+                Log.debug("FYI: Validation for timecode \(strTimecode) at text file frame rate of \(mainFrameRate) failed.")
             }
             
-            markers!.append(newItem)
+            markers?.append(newItem)
         }
         
         // error check
         
-        let actualItemCount = markers!.count
+        let actualItemCount = markers?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
             Log.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
