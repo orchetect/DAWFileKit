@@ -124,19 +124,19 @@ extension Cubase.TrackArchive {
                                                        ("value", value.string)]))
         }
         
-        // SampleFormatSize - not implemented yet
+        // 'SampleFormatSize' - not implemented yet
         
-        // RecordFile - not implemented yet
+        // 'RecordFile' - not implemented yet
         
-        // RecordFileType ... - not implemented yet
+        // 'RecordFileType' ... - not implemented yet
         
-        // PanLaw - not implemented yet
+        // 'PanLaw' - not implemented yet
         
-        // VolumeMax - not implemented yet
+        // 'VolumeMax' - not implemented yet
         
-        // HmtType - not implemented yet
+        // 'HmtType' - not implemented yet
         
-        // HMTDepth
+        // 'HmtDepth'
         if let value = main.hmtDepth {
             setupNode.addChild(XMLElement(name: "int",
                                           attributes: [("name", "HmtDepth"),

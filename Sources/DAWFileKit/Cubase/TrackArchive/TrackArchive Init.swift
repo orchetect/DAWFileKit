@@ -117,19 +117,19 @@ extension Cubase.TrackArchive {
             .attributeStringValue(forName: "value")?
             .int
         
-        // SampleFormatSize - not implemented yet
+        // 'SampleFormatSize' - not implemented yet
         
-        // RecordFile - not implemented yet
+        // 'RecordFile' - not implemented yet
         
-        // RecordFileType ... - not implemented yet
+        // 'RecordFileType' ... - not implemented yet
         
-        // PanLaw - not implemented yet
+        // 'PanLaw' - not implemented yet
         
-        // VolumeMax - not implemented yet
+        // 'VolumeMax' - not implemented yet
         
-        // HmtType - not implemented yet
+        // 'HmtType' - not implemented yet
         
-        // HMTDepth
+        // 'HmtDepth'
         main.hmtDepth = setup.children?
             .filter(nameAttribute: "HmtDepth")
             .first?
