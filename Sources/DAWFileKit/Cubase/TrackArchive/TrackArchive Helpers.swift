@@ -168,14 +168,14 @@ extension Cubase.TrackArchive {
         
         // old code - static tempo-based
         
-        //		#warning("Relies on the session having only one (origin) tempo event. Future improvement here will require calculating real time values for musical timebase events considering the entire tempo track and all tempo events it contains")
+        // #warning("Relies on the session having only one (origin) tempo event. Future improvement here will require calculating real time values for musical timebase events considering the entire tempo track and all tempo events it contains")
         // We're forcing compatibility only with sessions that contain an origin tempo event until such time when I can code the math to work out timecodes from a tempo track containing multiple tempo events
         // The onus is on you to deal with Ramp tempo events, which adds complexity
         
-        //		let staticTempo = tempoTrack.events.first?.tempo
-        //			?? TempoTrack.Event(timeAsPPQ: 0, tempo: 120.0, type: .jump).tempo // provide a standard default
+        // let staticTempo = tempoTrack.events.first?.tempo
+        //     ?? TempoTrack.Event(timeAsPPQ: 0, tempo: 120.0, type: .jump).tempo // provide a standard default
         
-        //		return ofMusicalTimeValue / (Self.xmlPPQ.double / (60.0 / staticTempo))
+        // return ofMusicalTimeValue / (Self.xmlPPQ.double / (60.0 / staticTempo))
     }
     
 }
