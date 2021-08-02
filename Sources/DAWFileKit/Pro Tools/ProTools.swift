@@ -24,11 +24,11 @@ public class ProTools {
     public static func kTimecode(_ exactly: Timecode.Components,
                                  at rate: Timecode.FrameRate) -> Timecode? {
         
-        Timecode(exactly,
-                 at: rate,
-                 limit: kTimecodeUpperLimit,
-                 base: kTimecodeSubFramesBase,
-                 format: kTimecodeStringFormat)
+        try? Timecode(exactly,
+                      at: rate,
+                      limit: kTimecodeUpperLimit,
+                      base: kTimecodeSubFramesBase,
+                      format: kTimecodeStringFormat)
         
     }
     
@@ -36,11 +36,11 @@ public class ProTools {
     public static func kTimecode(_ exactly: String,
                                  at rate: Timecode.FrameRate) -> Timecode? {
         
-        Timecode(exactly,
-                 at: rate,
-                 limit: kTimecodeUpperLimit,
-                 base: kTimecodeSubFramesBase,
-                 format: kTimecodeStringFormat)
+        try? Timecode(exactly,
+                      at: rate,
+                      limit: kTimecodeUpperLimit,
+                      base: kTimecodeSubFramesBase,
+                      format: kTimecodeStringFormat)
         
     }
     
@@ -48,11 +48,11 @@ public class ProTools {
     public static func kTimecode(realTimeValue: Double,
                                  at rate: Timecode.FrameRate) -> Timecode? {
         
-        Timecode(realTimeValue: realTimeValue,
-                 at: rate,
-                 limit: kTimecodeUpperLimit,
-                 base: kTimecodeSubFramesBase,
-                 format: kTimecodeStringFormat)
+        try? Timecode(realTimeValue: realTimeValue,
+                      at: rate,
+                      limit: kTimecodeUpperLimit,
+                      base: kTimecodeSubFramesBase,
+                      format: kTimecodeStringFormat)
         
     }
     

@@ -27,11 +27,11 @@ public class Cubase {
     public static func kTimecode(realTimeValue: Double,
                                  at rate: Timecode.FrameRate) -> Timecode? {
         
-        Timecode(realTimeValue: realTimeValue,
-                 at: rate,
-                 limit: kTimecodeUpperLimit,
-                 base: kTimecodeSubFramesBase,
-                 format: kTimecodeStringFormat)
+        try? Timecode(realTimeValue: realTimeValue,
+                      at: rate,
+                      limit: kTimecodeUpperLimit,
+                      base: kTimecodeSubFramesBase,
+                      format: kTimecodeStringFormat)
         
     }
     
