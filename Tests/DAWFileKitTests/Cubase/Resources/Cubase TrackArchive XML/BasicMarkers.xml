@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tracklist2>
+    <list name="track" type="obj">
+        <obj ID="140262019346320" class="MMarkerTrackEvent">
+            <int name="Flags" value="1"/>
+            <float name="Start" value="0"/>
+            <float name="Length" value="370861.849999999976716935634613037109375"/>
+            <obj ID="140262019587472" class="MListNode" name="Node">
+                <string name="Name" value="Cues" wide="true"/>
+                <member name="Domain">
+                    <int name="Type" value="0"/>
+                    <obj ID="140263632495712" class="MTempoTrackEvent" name="Tempo Track">
+                        <list name="TempoEvent" type="obj">
+                            <obj ID="105553189067552" class="MTempoEvent">
+                                <float name="BPM" value="115"/>
+                                <float name="PPQ" value="0"/>
+                            </obj>
+                            <obj ID="105553188929872" class="MTempoEvent">
+                                <float name="BPM" value="120"/>
+                                <float name="PPQ" value="7680"/>
+                            </obj>
+                            <obj ID="105553189848944" class="MTempoEvent">
+                                <float name="BPM" value="155.74200439453125"/>
+                                <float name="PPQ" value="9600"/>
+                            </obj>
+                        </list>
+                        <float name="RehearsalTempo" value="120"/>
+                        <member name="Additional Attributes">
+                            <int name="TTlB" value="80"/>
+                            <int name="TTuB" value="200"/>
+                            <int name="TLID" value="1"/>
+                            <obj ID="105553181054544" class="MTrackVariationCollection" name="TVCi">
+                                <int name="ownership" value="2"/>
+                                <list name="obj" type="obj">
+                                    <obj ID="105553242916736" class="MTrackVariation">
+                                        <string name="name" value="v1" wide="true"/>
+                                        <int name="variationID" value="0"/>
+                                    </obj>
+                                </list>
+                            </obj>
+                            <int name="Lock" value="0"/>
+                            <int name="Eths" value="-260498236"/>
+                        </member>
+                    </obj>
+                    <obj ID="140262021476400" class="MSignatureTrackEvent" name="Signature Track">
+                        <list name="SignatureEvent" type="obj">
+                            <obj ID="105553193214112" class="MTimeSignatureEvent">
+                                <int name="Flags" value="8"/>
+                                <float name="Start" value="0"/>
+                                <float name="Length" value="1"/>
+                                <int name="Bar" value="0"/>
+                                <int name="Numerator" value="4"/>
+                                <int name="Denominator" value="4"/>
+                                <int name="Position" value="0"/>
+                            </obj>
+                        </list>
+                        <member name="Additional Attributes">
+                            <int name="TLID" value="1"/>
+                            <int name="LocS" value="0"/>
+                            <obj ID="105553181140784" class="MTrackVariationCollection" name="TVCi">
+                                <int name="ownership" value="2"/>
+                                <list name="obj" type="obj">
+                                    <obj ID="105553242924032" class="MTrackVariation">
+                                        <string name="name" value="v1" wide="true"/>
+                                        <int name="variationID" value="0"/>
+                                    </obj>
+                                </list>
+                            </obj>
+                            <int name="Eths" value="-260498236"/>
+                        </member>
+                    </obj>
+                </member>
+                <list name="Events" type="obj">
+                    <obj ID="105553185396480" class="MRangeMarkerEvent">
+                        <float name="Start" value="1920"/>
+                        <float name="Length" value="1920"/>
+                        <member name="Additional Attributes">
+                            <member name="tAMA"/>
+                        </member>
+                        <string name="Name" value="Cycle Marker Name 1" wide="true"/>
+                        <int name="ID" value="1"/>
+                    </obj>
+                </list>
+            </obj>
+            <member name="Additional Attributes">
+                <int name="Eths" value="-260498236"/>
+            </member>
+            <obj ID="105553135614736" class="MTrack" name="Track Device">
+                <int name="Connection Type" value="2"/>
+            </obj>
+        </obj>
+        <obj ID="140262019105296" class="MMarkerTrackEvent">
+            <int name="Flags" value="1"/>
+            <float name="Start" value="0"/>
+            <float name="Length" value="370861.849999999976716935634613037109375"/>
+            <obj ID="140262019536720" class="MListNode" name="Node">
+                <string name="Name" value="Stems" wide="true"/>
+                <member name="Domain">
+                    <int name="Type" value="0"/>
+                    <obj ID="140263632495712" name="Tempo Track"/>
+                    <obj ID="140262021476400" name="Signature Track"/>
+                </member>
+                <list name="Events" type="obj">
+                    <obj ID="105553185397632" class="MRangeMarkerEvent">
+                        <float name="Start" value="3840"/>
+                        <float name="Length" value="1920"/>
+                        <member name="Additional Attributes">
+                            <member name="tAMA"/>
+                        </member>
+                        <string name="Name" value="Cycle Marker Name 2" wide="true"/>
+                        <int name="ID" value="1"/>
+                    </obj>
+                </list>
+            </obj>
+            <member name="Additional Attributes">
+                <int name="TLID" value="1"/>
+                <int name="Eths" value="-260498236"/>
+            </member>
+            <obj ID="105553135614496" class="MTrack" name="Track Device">
+                <int name="Connection Type" value="2"/>
+            </obj>
+        </obj>
+        <obj ID="140262021295152" class="MMarkerTrackEvent">
+            <int name="Flags" value="1"/>
+            <float name="Start" value="0"/>
+            <float name="Length" value="300.30000000000001136868377216160297393798828125"/>
+            <obj ID="140263632453152" class="MListNode" name="Node">
+                <string name="Name" value="TC Markers" wide="true"/>
+                <member name="Domain">
+                    <int name="Type" value="1"/>
+                    <float name="Period" value="1"/>
+                </member>
+                <list name="Events" type="obj">
+                    <obj ID="105553185397504" class="MMarkerEvent">
+                        <float name="Start" value="0.573913037776947021484375"/>
+                        <float name="Length" value="0"/>
+                        <member name="Additional Attributes">
+                            <member name="tAMA"/>
+                        </member>
+                        <string name="Name" value="Marker at One Hour" wide="true"/>
+                        <int name="ID" value="1"/>
+                    </obj>
+                </list>
+            </obj>
+            <member name="Additional Attributes">
+                <int name="TLID" value="1"/>
+                <int name="Eths" value="-260498236"/>
+            </member>
+            <obj ID="105553135614256" class="MTrack" name="Track Device">
+                <int name="Connection Type" value="2"/>
+            </obj>
+        </obj>
+    </list>
+    <obj ID="105553242290048" class="ExternalRouting" name="ExternalRouting">
+        <member name="Audio"/>
+    </obj>
+    <obj ID="140263649579728" class="PArrangeSetup" name="Setup">
+        <member name="Start">
+            <float name="Time" value="3603.02608696222296202904544770717620849609375"/>
+            <member name="Domain">
+                <int name="Type" value="1"/>
+                <float name="Period" value="1"/>
+            </member>
+        </member>
+        <member name="Length">
+            <float name="Time" value="300.30000000000001136868377216160297393798828125"/>
+            <member name="Domain">
+                <int name="Type" value="1"/>
+                <float name="Period" value="1"/>
+            </member>
+        </member>
+        <int name="BarOffset" value="0"/>
+        <int name="FrameType" value="12"/>
+        <int name="TimeType" value="0"/>
+        <float name="SampleRate" value="48000"/>
+        <int name="SampleSize" value="24"/>
+        <int name="SampleFormatSize" value="3"/>
+        <int name="PanLaw" value="6"/>
+        <int name="RecordFile" value="1"/>
+        <member name="RecordFileType">
+            <int name="MacType" value="1463899717"/>
+            <string name="DosType" value="wav" wide="true"/>
+            <string name="UnixType" value="wav" wide="true"/>
+            <string name="Name" value="Broadcast Wave File" wide="true"/>
+        </member>
+        <int name="VolumeMax" value="1"/>
+        <int name="HmtType" value="0"/>
+        <int name="HmtDepth" value="100"/>
+    </obj>
+</tracklist2>

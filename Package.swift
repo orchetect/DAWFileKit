@@ -27,7 +27,10 @@ let package = Package(
 		.testTarget(
 			name: "DAWFileKitTests",
 			dependencies: ["DAWFileKit"],
-			resources: [.copy("Pro Tools/Resources/PTSessionTextExports")]),
+			resources: [
+                .copy("Cubase/Resources/Cubase TrackArchive XML"),
+                .copy("Pro Tools/Resources/PT Session Text Exports")
+            ]),
 	]
 	
 )

@@ -20,7 +20,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         let filename = "SessionText_EmptySession_23-976fps_DefaultExportOptions_PT2020.3"
         guard let rawData = loadFileContents(forResource: filename,
                                              withExtension: "txt",
-                                             subdirectory: "PTSessionTextExports")
+                                             subFolder: .ptSessionTextExports)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
         // parse
@@ -79,7 +79,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         let filename = "SessionText_SimpleTest_23-976fps_DefaultExportOptions_PT2020.3"
         guard let rawData = loadFileContents(forResource: filename,
                                              withExtension: "txt",
-                                             subdirectory: "PTSessionTextExports")
+                                             subFolder: .ptSessionTextExports)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
         // parse
@@ -170,7 +170,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         let filename = "SessionText_OneOfEverything_23-976fps_DefaultExportOptions_PT2020.3"
         guard let rawData = loadFileContents(forResource: filename,
                                              withExtension: "txt",
-                                             subdirectory: "PTSessionTextExports")
+                                             subFolder: .ptSessionTextExports)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
         // parse
@@ -474,7 +474,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         let filename = "SessionText_Plugins_23-976fps_DefaultExportOptions_PT2020.3"
         guard let rawData = loadFileContents(forResource: filename,
                                              withExtension: "txt",
-                                             subdirectory: "PTSessionTextExports")
+                                             subFolder: .ptSessionTextExports)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
         // parse
@@ -541,7 +541,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         let filename = "SessionText_FPPFinal_23-976fps_DefaultExportOptions_PT2020.3"
         guard let rawData = loadFileContents(forResource: filename,
                                              withExtension: "txt",
-                                             subdirectory: "PTSessionTextExports")
+                                             subFolder: .ptSessionTextExports)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
         // parse
@@ -611,7 +611,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         let filename = "SessionText_UnrecognizedSection_23-976fps_DefaultExportOptions_PT2020.3"
         guard let rawData = loadFileContents(forResource: filename,
                                              withExtension: "txt",
-                                             subdirectory: "PTSessionTextExports")
+                                             subFolder: .ptSessionTextExports)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
         // parse
@@ -627,25 +627,4 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         XCTAssertEqual(sessionInfo?.orphanData?.first?.content, [])
         
     }
-}
-
-
-// MARK: - Utilities
-
-extension DAWFileKit_ProTools_SessionText_Tests {
-    
-    fileprivate func loadFileContents(forResource: String, withExtension: String, subdirectory: String?) -> Data? {
-        
-        guard let url = Bundle.module.url(forResource: forResource,
-                                          withExtension: withExtension,
-                                          subdirectory: subdirectory)
-        else { XCTFail("Could not form URL, possibly could not find file.") ; return nil }
-        
-        guard let data = try? Data(contentsOf: url)
-        else { XCTFail("Could not read file at URL \(url.absoluteString.quoted).") ; return nil }
-        
-        return data
-        
-    }
-    
 }
