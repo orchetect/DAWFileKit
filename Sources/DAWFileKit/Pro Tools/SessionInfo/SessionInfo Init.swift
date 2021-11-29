@@ -597,7 +597,7 @@ fileprivate extension ProTools.SessionInfo {
         var tracksLines: [[String]] = []
         var hopper: [String] = []
         section.forEach {
-            if $0.starts(withCaseInsensitive: "TRACK NAME:") {
+            if $0.hasPrefix(caseInsensitive: "TRACK NAME:") {
                 if hopper.count > 0 { tracksLines.append(hopper) }
                 hopper.removeAll()
             }

@@ -6,17 +6,19 @@ let package = Package(
 	
 	name: "DAWFileKit",
 	
-    platforms: [.macOS(.v10_12), .iOS(.v10), .tvOS(.v10), .watchOS(.v6)],
-	
-	products: [
+    platforms: [
+        .macOS(.v10_12), .iOS(.v10), .tvOS(.v10), .watchOS(.v6)
+    ],
+    
+    products: [
 		.library(
 			name: "DAWFileKit",
 			targets: ["DAWFileKit"])
 	],
 	
 	dependencies: [
-		.package(url: "https://github.com/orchetect/OTCore", from: "1.1.14"),
-		.package(url: "https://github.com/orchetect/TimecodeKit", from: "1.2.3")
+		.package(url: "https://github.com/orchetect/OTCore", from: "1.1.22"),
+		.package(url: "https://github.com/orchetect/TimecodeKit", from: "1.2.6")
 	],
 	
 	targets: [
@@ -27,7 +29,10 @@ let package = Package(
 		.testTarget(
 			name: "DAWFileKitTests",
 			dependencies: ["DAWFileKit"],
-			resources: [.copy("Pro Tools/Resources/PTSessionTextExports")]),
+			resources: [
+                .copy("Cubase/Resources/Cubase TrackArchive XML"),
+                .copy("Pro Tools/Resources/PT Session Text Exports")
+            ])
 	]
 	
 )
