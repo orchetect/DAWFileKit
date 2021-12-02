@@ -52,7 +52,7 @@ extension Cubase.TrackArchive {
                 .filter(nameAttribute: "Setup")
                 .first
         else {
-            Log.debug("Could not extract global session information. Setup block could not be located.")
+            logger.debug("Could not extract global session information. Setup block could not be located.")
             return
         }
         
@@ -156,7 +156,7 @@ extension Cubase.TrackArchive {
                 .children?
                 .first
         else {
-            Log.debug("Could not extract tempo information. First track could not be located.")
+            logger.debug("Could not extract tempo information. First track could not be located.")
             return
         }
         
@@ -234,7 +234,7 @@ extension Cubase.TrackArchive {
                 .first?
                 .children
         else {
-            Log.debug("No tracks found.")
+            logger.debug("No tracks found.")
             return
         }
         
@@ -395,7 +395,7 @@ extension Cubase.TrackArchive {
                 if let newMarker = newMarker { newTrack.events.append(newMarker) }
                 
             default:
-                Log.debug("Unrecognized marker track event in XML")
+                logger.debug("Unrecognized marker track event in XML")
             }
             
         }

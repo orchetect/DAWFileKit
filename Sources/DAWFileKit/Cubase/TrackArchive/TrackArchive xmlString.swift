@@ -208,7 +208,7 @@ extension Cubase.TrackArchive {
                 __addTrackMarker(using: newTrack, track: typed)
                 
             default:
-                Log.debug("Unhandled track type while building XML file for track named:", (track.name ?? "").quoted)
+                logger.debug("Unhandled track type while building XML file for track named:", (track.name ?? "").quoted)
             }
             
             // Track Device
@@ -293,7 +293,7 @@ extension Cubase.TrackArchive {
                 }
                 
             default:
-                Log.debug("Unhandled marker event type while building XML file.")
+                logger.debug("Unhandled marker event type while building XML file.")
                 continue
             }
             
