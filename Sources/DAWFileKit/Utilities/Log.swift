@@ -5,5 +5,6 @@
 
 @_implementationOnly import OTCore
 
-let logger = OSLogger(enabled: true,
-                      useEmoji: .disabled)
+let logger = OSLogger {
+    $0.defaultTemplate = .withEmoji()
+}
