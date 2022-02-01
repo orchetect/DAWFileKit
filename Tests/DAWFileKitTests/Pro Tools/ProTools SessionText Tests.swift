@@ -25,7 +25,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(fromData: rawData)
+        let sessionInfo = ProTools.SessionInfo(data: rawData)
         
         // main header
         
@@ -84,7 +84,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(fromData: rawData)
+        let sessionInfo = ProTools.SessionInfo(data: rawData)
         
         // main header
         
@@ -175,7 +175,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(fromData: rawData)
+        let sessionInfo = ProTools.SessionInfo(data: rawData)
         
         // main header
         
@@ -479,7 +479,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(fromData: rawData)
+        let sessionInfo = ProTools.SessionInfo(data: rawData)
         
         // plug-ins
         
@@ -546,7 +546,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(fromData: rawData)
+        let sessionInfo = ProTools.SessionInfo(data: rawData)
         
         // main header
         
@@ -616,7 +616,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(fromData: rawData)
+        let sessionInfo = ProTools.SessionInfo(data: rawData)
         
         // orphan data
         // just test for orphan sections (unrecognized - a hypothetical in case new sections get added to Pro Tools in the future)

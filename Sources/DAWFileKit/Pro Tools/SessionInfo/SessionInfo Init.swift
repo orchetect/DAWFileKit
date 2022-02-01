@@ -12,15 +12,15 @@ import TimecodeKit
 extension ProTools.SessionInfo {
     
     /// Input text file contents exported from Pro Tools and returns `SessionInfo`
-    public init?(fromData: Data) {
-        guard let dataToString = String(data: fromData, encoding: .ascii) else {
+    public init?(data: Data) {
+        guard let dataToString = String(data: data, encoding: .ascii) else {
             logger.debug("Error: could not convert document file data to String.")
             return nil
         }
         
         logger.debug("Successfully loaded file. Total byte count:", dataToString.count)
         
-        if let parsed = Self(fromTextBlock: dataToString) {
+        if let parsed = Self(string: dataToString) {
             self = parsed
         } else {
             return nil
@@ -29,10 +29,10 @@ extension ProTools.SessionInfo {
     }
     
     /// Input a text file exported from Pro Tools and returns `SessionInfo`
-    public init?(fromTextBlock: String) {
+    public init?(string: String) {
         // prep variables
         
-        var remainingTextBlock = fromTextBlock
+        var remainingTextBlock = string
         
         var info = Self()
         
