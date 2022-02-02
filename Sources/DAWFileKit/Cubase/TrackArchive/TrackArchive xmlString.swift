@@ -12,10 +12,17 @@ extension Cubase.TrackArchive {
     
     // MARK: xmlString
     
-    /// Compiles the struct's contents and returns a representation as Cubase XML file contents
-    public var xmlString: String? {
+    /// Returns Cubase XML file contents generated from the `TrackArchive` contents as a String.
+    public func xmlString() throws -> (xmlString: String,
+                                       messages: [EncodeMessage]) {
         
-        resetIDcounter()
+        var messages: [EncodeMessage] = []
+        
+        func addEncodeMessage(_ msg: EncodeMessage) {
+            messages.append(msg)
+        }
+        
+        resetIDCounter()
         
         let xmlOptions: XMLNode.Options = [.nodePrettyPrint, .nodeCompactEmptyElement]
         
@@ -28,20 +35,25 @@ extension Cubase.TrackArchive {
         
         // root
         
-        guard let root = xml.rootElement() else { return nil }
+        guard let root = xml.rootElement() else {
+            throw EncodeError.general(
+                "Could not access root XML element."
+            )
+        }
         root.name = "tracklist2"
         
         // track list
         
-        __addTrackListAndTempoEvents(root)
+        _addTrackListAndTempoEvents(root, messages: &messages)
         
         // setup
         
-        __addSetup(root)
+        try _addSetup(root, messages: &messages)
         
         // return data
         
-        return xml.xmlString(options: xmlOptions)
+        return (xmlString: xml.xmlString(options: xmlOptions),
+                messages: messages)
         
     }
     
@@ -49,9 +61,15 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    // MARK: __addSetup
+    // MARK: _addSetup
     
-    fileprivate func __addSetup(_ root: XMLElement) {
+    fileprivate func _addSetup(_ root: XMLElement,
+                               messages: inout [EncodeMessage]
+    ) throws {
+        
+        func addEncodeMessage(_ msg: EncodeMessage) {
+            messages.append(msg)
+        }
         
         let setupNode = XMLElement(name: "obj",
                                    attributes: [("class", "PArrangeSetup"),
@@ -59,7 +77,7 @@ extension Cubase.TrackArchive {
                                                 ("ID", getNewID().string)])
         
         // frame rate
-        if let value = Self.FrameRateTable
+        if let value = Self.frameRateTable
             .first(where: { $0.value == main.frameRate })?
             .key
         {
@@ -79,7 +97,8 @@ extension Cubase.TrackArchive {
                                           attributes: [("name", "Time"),
                                                        ("value", value)]))
             
-            startNode.addChild(try! XMLElement(xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#))
+            // TODO: instead of raw string, use a non-throwing method?
+            startNode.addChild(try XMLElement(xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#))
             
             setupNode.addChild(startNode)
         }
@@ -95,7 +114,8 @@ extension Cubase.TrackArchive {
                                           attributes: [("name", "Time"),
                                                        ("value", value)]))
             
-            startNode.addChild(try! XMLElement(xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#))
+            // TODO: instead of raw string, use a non-throwing method?
+            startNode.addChild(try XMLElement(xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#))
             
             setupNode.addChild(startNode)
         }
@@ -151,9 +171,15 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    // MARK: __addTrackListAndTempoEvents
+    // MARK: _addTrackListAndTempoEvents
     
-    fileprivate func __addTrackListAndTempoEvents(_ root: XMLElement) {
+    fileprivate func _addTrackListAndTempoEvents(_ root: XMLElement,
+                                                 messages: inout [EncodeMessage])
+    {
+        
+        func addEncodeMessage(_ msg: EncodeMessage) {
+            messages.append(msg)
+        }
         
         let listNode = XMLElement(name: "list",
                                   attributes: [("name", "track"),
@@ -205,10 +231,10 @@ extension Cubase.TrackArchive {
             
             switch track {
             case let typed as MarkerTrack:
-                __addTrackMarker(using: newTrack, track: typed)
+                _addTrackMarker(using: newTrack, track: typed, messages: &messages)
                 
             default:
-                logger.debug("Unhandled track type while building XML file for track named:", (track.name ?? "").quoted)
+                addEncodeMessage(.error("Unhandled track type while building XML file for track named: \((track.name ?? "").quoted)"))
             }
             
             // Track Device
@@ -230,10 +256,17 @@ extension Cubase.TrackArchive {
         
     }
     
-    // MARK: __addTrackMarker
+    // MARK: _addTrackMarker
     
     @discardableResult
-    fileprivate func __addTrackMarker(using newTrack: XMLElement, track: MarkerTrack) -> XMLElement {
+    fileprivate func _addTrackMarker(using newTrack: XMLElement,
+                                     track: MarkerTrack,
+                                     messages: inout [EncodeMessage]) -> XMLElement
+    {
+        
+        func addEncodeMessage(_ msg: EncodeMessage) {
+            messages.append(msg)
+        }
         
         var markerIDCounter = 0
         
@@ -293,7 +326,7 @@ extension Cubase.TrackArchive {
                 }
                 
             default:
-                logger.debug("Unhandled marker event type while building XML file.")
+                addEncodeMessage(.error("Unhandled marker event type while building XML file: \(type(of: event))."))
                 continue
             }
             
@@ -323,7 +356,7 @@ extension Cubase.TrackArchive {
 
 fileprivate var IDcounter = 0
 
-fileprivate func resetIDcounter() {
+fileprivate func resetIDCounter() {
     IDcounter = 0
 }
 
