@@ -8,7 +8,7 @@ import TimecodeKit
 
 /// Collection of methods and structures related to Cubase.
 /// Do not instance; use methods within directly.
-public class Cubase {
+public enum Cubase {
     
     public typealias PPQ = Double
     public typealias Tempo = Double
@@ -35,7 +35,5 @@ public class Cubase {
                       format: kTimecodeStringFormat)
         
     }
-    
-    private init() { }
     
 }

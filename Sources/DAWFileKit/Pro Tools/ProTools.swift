@@ -7,8 +7,7 @@ import Foundation
 import TimecodeKit
 
 /// Collection of methods and structures related to Pro Tools.
-/// Do not instance; use methods within directly.
-public class ProTools {
+public enum ProTools {
     
     /// `Timecode` setting for `.subFramesBase`.
     /// Pro Tools uses 100 subframes per frame.
@@ -56,7 +55,5 @@ public class ProTools {
                       format: kTimecodeStringFormat)
         
     }
-    
-    private init() { }
     
 }
