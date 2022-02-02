@@ -59,7 +59,7 @@ extension Cubase.TrackArchive {
                                                 ("ID", getNewID().string)])
         
         // frame rate
-        if let value = Self.FrameRateTable
+        if let value = Self.frameRateTable
             .first(where: { $0.value == main.frameRate })?
             .key
         {

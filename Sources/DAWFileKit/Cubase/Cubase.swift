@@ -3,6 +3,7 @@
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //
 
+import Foundation
 import TimecodeKit
 
 /// Collection of methods and structures related to Cubase.

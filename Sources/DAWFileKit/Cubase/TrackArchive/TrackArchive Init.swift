@@ -63,7 +63,7 @@ extension Cubase.TrackArchive {
             .attributeStringValue(forName: "value")?
             .int
         {
-            if let fr = Self.FrameRateTable[fRate] { main.frameRate = fr }
+            if let fr = Self.frameRateTable[fRate] { main.frameRate = fr }
         }
         
         // start time
