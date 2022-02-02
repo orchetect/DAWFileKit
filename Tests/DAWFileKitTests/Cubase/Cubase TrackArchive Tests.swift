@@ -25,7 +25,7 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
                                              subFolder: .cubaseTrackArchiveXML)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
-        guard let trackArchive = Cubase.TrackArchive(fromData: rawData)
+        guard let trackArchive = Cubase.TrackArchive(data: rawData)
         else { XCTFail() ; return }
         
         // ---- main ----
@@ -147,7 +147,7 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
                                              subFolder: .cubaseTrackArchiveXML)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
-        guard let trackArchive = Cubase.TrackArchive(fromData: rawData)
+        guard let trackArchive = Cubase.TrackArchive(data: rawData)
         else { XCTFail() ; return }
         
         // ---- tracks ----
@@ -222,7 +222,7 @@ class DAWFileKit_Cubase_TrackArchive_Read_Tests: XCTestCase {
                                              subFolder: .cubaseTrackArchiveXML)
         else { XCTFail("Could not form URL, possibly could not find file.") ; return }
         
-        guard let trackArchive = Cubase.TrackArchive(fromData: rawData)
+        guard let trackArchive = Cubase.TrackArchive(data: rawData)
         else { XCTFail() ; return }
                 
         // ---- tracks ----
