@@ -12,30 +12,46 @@ import TimecodeKit
 extension ProTools.SessionInfo {
     
     /// Parse text file contents exported from Pro Tools.
-    public init?(data: Data) {
-        guard let dataToString = String(data: data, encoding: .ascii) else {
-            logger.debug("Error: could not convert document file data to String.")
-            return nil
-        }
+    public init(data: Data) throws {
         
-        logger.debug("Successfully loaded file. Total byte count:", dataToString.count)
-        
-        if let parsed = Self(string: dataToString) {
-            self = parsed
-        } else {
-            return nil
-        }
+        var dummy: [ParseMessage] = []
+        try self.init(data: data, messages: &dummy)
         
     }
     
     /// Parse text file contents exported from Pro Tools.
-    public init?(string: String) {
+    public init(data: Data,
+                messages: inout [ParseMessage]) throws {
         
-        guard let parsed = Self.parse(string: string) else {
-            return nil
+        guard let dataToString = String(data: data, encoding: .ascii) else {
+            throw ParseError.general(
+                "Error: could not convert document file data to String."
+            )
         }
         
-        self = parsed
+        try self.init(string: dataToString, messages: &messages)
+        
+    }
+    
+}
+
+extension ProTools.SessionInfo {
+
+    /// Parse text file contents exported from Pro Tools.
+    public init(string: String) throws {
+        
+        var dummy: [ParseMessage] = []
+        try self.init(string: string, messages: &dummy)
+        
+    }
+    
+    /// Parse text file contents exported from Pro Tools.
+    public init(string: String,
+                messages: inout [ParseMessage]) throws {
+        
+        let parsed = try Self.parse(string: string)
+        self = parsed.sessionInfo
+        messages = parsed.messages
         
     }
     

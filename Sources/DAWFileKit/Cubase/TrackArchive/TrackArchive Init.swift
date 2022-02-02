@@ -14,31 +14,65 @@ import TimecodeKit
 extension Cubase.TrackArchive {
     
     /// Parse Track Archive XML file contents exported from Cubase.
-    public init?(data: Data) {
+    public init(data: Data) throws {
         
-        guard let xmlDocument = try? XMLDocument(data: data) else { return nil }
-        
-        guard let parsed = Self.parse(xml: xmlDocument) else { return nil }
-        
-        self = parsed
+        var dummy: [ParseMessage] = []
+        try self.init(data: data, messages: &dummy)
         
     }
     
     /// Parse Track Archive XML file contents exported from Cubase.
-    public init?(xml: XMLDocument) {
+    public init(data: Data,
+                messages: inout [ParseMessage]) throws {
         
-        guard let parsed = Self.parse(xml: xml) else { return nil }
-        
-        self = parsed
+        let xmlDocument = try XMLDocument(data: data)
+        let parsed = try Self.parse(xml: xmlDocument)
+        self = parsed.trackArchive
+        messages = parsed.messages
         
     }
+    
+}
+
+extension Cubase.TrackArchive {
+    
+    /// Parse Track Archive XML file contents exported from Cubase.
+    public init(xml: XMLDocument) throws {
+        
+        var dummy: [ParseMessage] = []
+        try self.init(xml: xml, messages: &dummy)
+        
+    }
+    
+    /// Parse Track Archive XML file contents exported from Cubase.
+    public init(xml: XMLDocument,
+                messages: inout [ParseMessage]) throws {
+        
+        let parsed = try Self.parse(xml: xml)
+        self = parsed.trackArchive
+        messages = parsed.messages
+        
+    }
+    
+}
+
+extension Cubase.TrackArchive {
     
     /// Parse Track Archive XML file contents exported from Cubase.
     public init(xml root: XMLElement) {
         
-        let parsed = Self.parse(xml: root)
+        var dummy: [ParseMessage] = []
+        self.init(xml: root, messages: &dummy)
         
-        self = parsed
+    }
+    
+    /// Parse Track Archive XML file contents exported from Cubase.
+    public init(xml root: XMLElement,
+                messages: inout [ParseMessage]) {
+        
+        let parsed = Self.parse(xml: root)
+        self = parsed.trackArchive
+        messages = parsed.messages
         
     }
     

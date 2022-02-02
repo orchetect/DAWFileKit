@@ -13,7 +13,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
     override func setUp() { }
     override func tearDown() { }
     
-    func testSessionText_EmptySession() {
+    func testSessionText_EmptySession() throws {
         
         // load file
         
@@ -25,54 +25,62 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(data: rawData)
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if parseMessages.errors.count > 0 {
+            dump(parseMessages.errors)
+        }
         
         // main header
         
-        XCTAssertEqual(sessionInfo?.main.name,              "SessionText_EmptySession")
-        XCTAssertEqual(sessionInfo?.main.sampleRate,        48000.0)
-        XCTAssertEqual(sessionInfo?.main.bitDepth,          "24-bit")
-        XCTAssertEqual(sessionInfo?.main.startTimecode,     ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
-        XCTAssertEqual(sessionInfo?.main.frameRate,         ._23_976)
-        XCTAssertEqual(sessionInfo?.main.audioTrackCount,   0)
-        XCTAssertEqual(sessionInfo?.main.audioClipCount,    0)
-        XCTAssertEqual(sessionInfo?.main.audioFileCount,    0)
+        XCTAssertEqual(sessionInfo.main.name,              "SessionText_EmptySession")
+        XCTAssertEqual(sessionInfo.main.sampleRate,        48000.0)
+        XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
+        XCTAssertEqual(sessionInfo.main.startTimecode,     ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
+        XCTAssertEqual(sessionInfo.main.frameRate,         ._23_976)
+        XCTAssertEqual(sessionInfo.main.audioTrackCount,   0)
+        XCTAssertEqual(sessionInfo.main.audioClipCount,    0)
+        XCTAssertEqual(sessionInfo.main.audioFileCount,    0)
         
         // files - online
         
-        XCTAssertNil(sessionInfo?.onlineFiles)  // empty
+        XCTAssertNil(sessionInfo.onlineFiles)  // empty
         
         // files - offline
         
-        XCTAssertNil(sessionInfo?.offlineFiles) // empty
+        XCTAssertNil(sessionInfo.offlineFiles) // empty
         
         // clips - online
         
-        XCTAssertNil(sessionInfo?.onlineClips)  // empty
+        XCTAssertNil(sessionInfo.onlineClips)  // empty
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo?.offlineClips) // empty
+        XCTAssertNil(sessionInfo.offlineClips) // empty
         
         // plug-ins
         
-        XCTAssertNil(sessionInfo?.plugins)      // empty
+        XCTAssertNil(sessionInfo.plugins)      // empty
         
         // tracks
         
-        XCTAssertNil(sessionInfo?.tracks)       // empty
+        XCTAssertNil(sessionInfo.tracks)       // empty
         
         // markers
         
-        XCTAssertNil(sessionInfo?.markers)      // empty
+        XCTAssertNil(sessionInfo.markers)      // empty
         
         // orphan data
         
-        XCTAssertNil(sessionInfo?.orphanData)   // empty
+        XCTAssertNil(sessionInfo.orphanData)   // empty
         
     }
     
-    func testSessionText_SimpleTest() {
+    func testSessionText_SimpleTest() throws {
         
         // load file
         
@@ -84,35 +92,43 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(data: rawData)
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if parseMessages.errors.count > 0 {
+            dump(parseMessages.errors)
+        }
         
         // main header
         
-        XCTAssertEqual(sessionInfo?.main.name,            "SessionText_SimpleTest")
-        XCTAssertEqual(sessionInfo?.main.sampleRate,      48000.0)
-        XCTAssertEqual(sessionInfo?.main.bitDepth,        "24-bit")
-        XCTAssertEqual(sessionInfo?.main.startTimecode,   ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
-        XCTAssertEqual(sessionInfo?.main.frameRate,       ._23_976)
-        XCTAssertEqual(sessionInfo?.main.audioTrackCount, 1)
-        XCTAssertEqual(sessionInfo?.main.audioClipCount,  1)
-        XCTAssertEqual(sessionInfo?.main.audioFileCount,  1)
+        XCTAssertEqual(sessionInfo.main.name,            "SessionText_SimpleTest")
+        XCTAssertEqual(sessionInfo.main.sampleRate,      48000.0)
+        XCTAssertEqual(sessionInfo.main.bitDepth,        "24-bit")
+        XCTAssertEqual(sessionInfo.main.startTimecode,   ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
+        XCTAssertEqual(sessionInfo.main.frameRate,       ._23_976)
+        XCTAssertEqual(sessionInfo.main.audioTrackCount, 1)
+        XCTAssertEqual(sessionInfo.main.audioClipCount,  1)
+        XCTAssertEqual(sessionInfo.main.audioFileCount,  1)
         
         // files - online
         
-        XCTAssertEqual(sessionInfo?.onlineFiles?.count, 1)
+        XCTAssertEqual(sessionInfo.onlineFiles?.count, 1)
         
-        let file1 = sessionInfo?.onlineFiles?.first
+        let file1 = sessionInfo.onlineFiles?.first
         
         XCTAssertEqual(file1?.filename, "Audio 1_01.wav")
         XCTAssertEqual(file1?.path,     "Macintosh HD:Users:stef:Desktop:SessionText_SimpleTest:Audio Files:")
         
         // files - offline
         
-        XCTAssertNil(sessionInfo?.offlineFiles) // empty
+        XCTAssertNil(sessionInfo.offlineFiles) // empty
         
         // clips - online
         
-        let onlineClips = sessionInfo?.onlineClips
+        let onlineClips = sessionInfo.onlineClips
         
         XCTAssertEqual(onlineClips?.count, 1)
         
@@ -123,15 +139,15 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo?.offlineClips) // empty
+        XCTAssertNil(sessionInfo.offlineClips) // empty
         
         // plug-ins
         
-        XCTAssertNil(sessionInfo?.plugins)      // empty
+        XCTAssertNil(sessionInfo.plugins)      // empty
         
         // tracks
         
-        let tracks = sessionInfo?.tracks
+        let tracks = sessionInfo.tracks
         
         XCTAssertEqual(tracks?.count, 1)
         
@@ -155,15 +171,15 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // markers
         
-        XCTAssertNil(sessionInfo?.markers)              // empty
+        XCTAssertNil(sessionInfo.markers)              // empty
         
         // orphan data
         
-        XCTAssertNil(sessionInfo?.orphanData)   // empty
+        XCTAssertNil(sessionInfo.orphanData)   // empty
         
     }
     
-    func testSessionText_OneOfEverything() {
+    func testSessionText_OneOfEverything() throws {
         
         // load file
         
@@ -175,67 +191,75 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(data: rawData)
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if parseMessages.errors.count > 0 {
+            dump(parseMessages.errors)
+        }
         
         // main header
         
-        XCTAssertEqual(sessionInfo?.main.name,              "SessionText_OneOfEverything")
-        XCTAssertEqual(sessionInfo?.main.sampleRate,        48000.0)
-        XCTAssertEqual(sessionInfo?.main.bitDepth,          "24-bit")
-        XCTAssertEqual(sessionInfo?.main.startTimecode,     ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
-        XCTAssertEqual(sessionInfo?.main.frameRate,         ._23_976)
-        XCTAssertEqual(sessionInfo?.main.audioTrackCount,   5)
-        XCTAssertEqual(sessionInfo?.main.audioClipCount,    11)
-        XCTAssertEqual(sessionInfo?.main.audioFileCount,    7)
+        XCTAssertEqual(sessionInfo.main.name,              "SessionText_OneOfEverything")
+        XCTAssertEqual(sessionInfo.main.sampleRate,        48000.0)
+        XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
+        XCTAssertEqual(sessionInfo.main.startTimecode,     ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
+        XCTAssertEqual(sessionInfo.main.frameRate,         ._23_976)
+        XCTAssertEqual(sessionInfo.main.audioTrackCount,   5)
+        XCTAssertEqual(sessionInfo.main.audioClipCount,    11)
+        XCTAssertEqual(sessionInfo.main.audioFileCount,    7)
         
         // files - online
         
         let onlineAudioFilesPath = "Macintosh HD:Users:stef:Dropbox:coding:XCode Projects:Shared:DAWFileKit:_Materials:SessionText_OneOfEverything:Audio Files:"
         
-        XCTAssertEqual(sessionInfo?.onlineFiles?.count, 6)
+        XCTAssertEqual(sessionInfo.onlineFiles?.count, 6)
         
-        let file1 = sessionInfo?.onlineFiles?[0]
+        let file1 = sessionInfo.onlineFiles?[0]
         
         XCTAssertEqual(file1?.filename,     "Unused Clip.wav")
         XCTAssertEqual(file1?.path,         onlineAudioFilesPath)
         
-        let file2 = sessionInfo?.onlineFiles?[1]
+        let file2 = sessionInfo.onlineFiles?[1]
         
         XCTAssertEqual(file2?.filename,     "Audio 1 Clip1.wav")
         XCTAssertEqual(file2?.path,         onlineAudioFilesPath)
         
-        let file3 = sessionInfo?.onlineFiles?[2]
+        let file3 = sessionInfo.onlineFiles?[2]
         
         XCTAssertEqual(file3?.filename,     "Audio 2 Clip1.wav")
         XCTAssertEqual(file3?.path,         onlineAudioFilesPath)
         
-        let file4 = sessionInfo?.onlineFiles?[3]
+        let file4 = sessionInfo.onlineFiles?[3]
         
         XCTAssertEqual(file4?.filename,     "Audio 3 Clip1.wav")
         XCTAssertEqual(file4?.path,         onlineAudioFilesPath)
         
-        let file5 = sessionInfo?.onlineFiles?[4]
+        let file5 = sessionInfo.onlineFiles?[4]
         
         XCTAssertEqual(file5?.filename,     "Audio 3 Clip2.wav")
         XCTAssertEqual(file5?.path,         onlineAudioFilesPath)
         
-        let file6 = sessionInfo?.onlineFiles?[5]
+        let file6 = sessionInfo.onlineFiles?[5]
         
         XCTAssertEqual(file6?.filename,     "Audio 4 Clip1.wav")
         XCTAssertEqual(file6?.path,         onlineAudioFilesPath)
         
         // files - offline
         
-        XCTAssertEqual(sessionInfo?.offlineFiles?.count, 1)
+        XCTAssertEqual(sessionInfo.offlineFiles?.count, 1)
         
-        let file7 = sessionInfo?.offlineFiles?[0]
+        let file7 = sessionInfo.offlineFiles?[0]
         
         XCTAssertEqual(file7?.filename,     "Audio 5 Offline Clip1.wav")
         XCTAssertEqual(file7?.path,         "Macintosh HD:Users:stef:Desktop:SessionText_PT2020.3:Audio Files:")
         
         // clips - online
         
-        let onlineClips = sessionInfo?.onlineClips
+        let onlineClips = sessionInfo.onlineClips
         
         XCTAssertEqual(onlineClips?.count, 9)
         
@@ -277,7 +301,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // clips - offline
         
-        let offlineClips = sessionInfo?.offlineClips
+        let offlineClips = sessionInfo.offlineClips
         
         XCTAssertEqual(offlineClips?.count, 2)
         
@@ -291,7 +315,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // plug-ins
         
-        let plugins = sessionInfo?.plugins
+        let plugins = sessionInfo.plugins
         
         XCTAssertEqual(plugins?.count, 3)
         
@@ -318,7 +342,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // tracks
         
-        let tracks = sessionInfo?.tracks
+        let tracks = sessionInfo.tracks
         
         XCTAssertEqual(tracks?.count, 5)
         
@@ -441,7 +465,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // markers
         
-        let markers = sessionInfo?.markers
+        let markers = sessionInfo.markers
         
         XCTAssertEqual(markers?.count,              2)
         
@@ -463,11 +487,11 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // orphan data
         
-        XCTAssertNil(sessionInfo?.orphanData)       // empty
+        XCTAssertNil(sessionInfo.orphanData)       // empty
         
     }
     
-    func testSessionText_Plugins() {
+    func testSessionText_Plugins() throws {
         
         // load file
         
@@ -479,11 +503,19 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(data: rawData)
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if parseMessages.errors.count > 0 {
+            dump(parseMessages.errors)
+        }
         
         // plug-ins
         
-        let plugins = sessionInfo?.plugins
+        let plugins = sessionInfo.plugins
         
         XCTAssertEqual(plugins?.count, 15)
         
@@ -534,7 +566,7 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
     }
     
-    func testSessionText_FPPFinal() {
+    func testSessionText_FPPFinal() throws {
         
         // load file
         
@@ -546,52 +578,60 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(data: rawData)
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if parseMessages.errors.count > 0 {
+            dump(parseMessages.errors)
+        }
         
         // main header
         
-        XCTAssertEqual(sessionInfo?.main.name,            "FPP Edit 15 A1.4 A2.2 A3.2 A4.2 A5.2 A6.2 A7.2 A8.2 A9.2 Intl.1")
-        XCTAssertEqual(sessionInfo?.main.sampleRate,      48000.0)
-        XCTAssertEqual(sessionInfo?.main.bitDepth,        "24-bit")
-        XCTAssertEqual(sessionInfo?.main.startTimecode,   ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
-        XCTAssertEqual(sessionInfo?.main.frameRate,       ._23_976)
-        XCTAssertEqual(sessionInfo?.main.audioTrackCount, 51)
-        XCTAssertEqual(sessionInfo?.main.audioClipCount,  765)
-        XCTAssertEqual(sessionInfo?.main.audioFileCount,  142)
+        XCTAssertEqual(sessionInfo.main.name,            "FPP Edit 15 A1.4 A2.2 A3.2 A4.2 A5.2 A6.2 A7.2 A8.2 A9.2 Intl.1")
+        XCTAssertEqual(sessionInfo.main.sampleRate,      48000.0)
+        XCTAssertEqual(sessionInfo.main.bitDepth,        "24-bit")
+        XCTAssertEqual(sessionInfo.main.startTimecode,   ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
+        XCTAssertEqual(sessionInfo.main.frameRate,       ._23_976)
+        XCTAssertEqual(sessionInfo.main.audioTrackCount, 51)
+        XCTAssertEqual(sessionInfo.main.audioClipCount,  765)
+        XCTAssertEqual(sessionInfo.main.audioFileCount,  142)
         
         // files - online
         
-        XCTAssertEqual(sessionInfo?.onlineFiles?.count, 142)
+        XCTAssertEqual(sessionInfo.onlineFiles?.count, 142)
         
         // files - offline
         
-        XCTAssertNil(sessionInfo?.offlineFiles) // empty
+        XCTAssertNil(sessionInfo.offlineFiles) // empty
         
         // clips - online
         
-        XCTAssertEqual(sessionInfo?.onlineClips?.count, 753)
+        XCTAssertEqual(sessionInfo.onlineClips?.count, 753)
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo?.offlineClips) // empty
+        XCTAssertNil(sessionInfo.offlineClips) // empty
         
         // plug-ins
         
-        XCTAssertEqual(sessionInfo?.plugins?.count, 7)
+        XCTAssertEqual(sessionInfo.plugins?.count, 7)
         
         // tracks
         
-        XCTAssertEqual(sessionInfo?.tracks?.first?.name,       "DLG")
-        XCTAssertEqual(sessionInfo?.tracks?.first?.state,      [.muted])
-        XCTAssertEqual(sessionInfo?.tracks?.first?.clips.count, 65)
+        XCTAssertEqual(sessionInfo.tracks?.first?.name,       "DLG")
+        XCTAssertEqual(sessionInfo.tracks?.first?.state,      [.muted])
+        XCTAssertEqual(sessionInfo.tracks?.first?.clips.count, 65)
         
-        XCTAssertEqual(sessionInfo?.tracks?.last?.name,        "Master Bounce (Stereo)")
-        XCTAssertEqual(sessionInfo?.tracks?.last?.state,       [.hidden, .inactive, .soloSafe])
-        XCTAssertEqual(sessionInfo?.tracks?.last?.clips.count, 0)
+        XCTAssertEqual(sessionInfo.tracks?.last?.name,        "Master Bounce (Stereo)")
+        XCTAssertEqual(sessionInfo.tracks?.last?.state,       [.hidden, .inactive, .soloSafe])
+        XCTAssertEqual(sessionInfo.tracks?.last?.clips.count, 0)
         
         // markers
         
-        XCTAssertEqual(sessionInfo?.markers?.count, 294)
+        XCTAssertEqual(sessionInfo.markers?.count, 294)
         
         //print(sessionInfo!.markers!
         //  .map { "\($0.number, ifNil: "nil")\t\($0.timecode, ifNil: "nil")\t\($0.name, ifNil: "nil")\t\($0.comment, ifNil: "nil")" }
@@ -600,11 +640,11 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // orphan data
         
-        XCTAssertNil(sessionInfo?.orphanData)
+        XCTAssertNil(sessionInfo.orphanData)
         
     }
     
-    func testSessionText_OrphanData() {
+    func testSessionText_OrphanData() throws {
         
         // load file
         
@@ -616,15 +656,23 @@ class DAWFileKit_ProTools_SessionText_Tests: XCTestCase {
         
         // parse
         
-        let sessionInfo = ProTools.SessionInfo(data: rawData)
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if parseMessages.errors.count > 0 {
+            dump(parseMessages.errors)
+        }
         
         // orphan data
         // just test for orphan sections (unrecognized - a hypothetical in case new sections get added to Pro Tools in the future)
         
-        XCTAssertEqual(sessionInfo?.orphanData?.count, 1)
+        XCTAssertEqual(sessionInfo.orphanData?.count, 1)
         
-        XCTAssertEqual(sessionInfo?.orphanData?.first?.heading, "U N R E C O G N I Z E D  S E C T I O N")
-        XCTAssertEqual(sessionInfo?.orphanData?.first?.content, [])
+        XCTAssertEqual(sessionInfo.orphanData?.first?.heading, "U N R E C O G N I Z E D  S E C T I O N")
+        XCTAssertEqual(sessionInfo.orphanData?.first?.content, [])
         
     }
 }

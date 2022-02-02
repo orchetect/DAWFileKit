@@ -11,23 +11,36 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     
-    internal static func parse(xml: XMLDocument) -> Self? {
+    internal static func parse(xml: XMLDocument) throws -> (trackArchive: Self,
+                                                            messages: [ParseMessage]) {
         
-        guard let root = xml.rootElement() else { return nil }
+        guard let root = xml.rootElement() else {
+            throw ParseError.general(
+                "Could not read root XML element."
+            )
+        }
         
         return Self.parse(xml: root)
         
     }
     
-    internal static func parse(xml root: XMLElement) -> Self {
+    internal static func parse(xml root: XMLElement) -> (trackArchive: Self,
+                                                         messages: [ParseMessage]) {
+        
+        var messages: [ParseMessage] = []
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         var info = Self.init()
         
-        info._parseSetup(root: root)
-        info._parseTempoTrack(root: root)
-        info._parseTracks(root: root)
+        info._parseSetup(root: root, messages: &messages)
+        info._parseTempoTrack(root: root, messages: &messages)
+        info._parseTracks(root: root, messages: &messages)
         
-        return info
+        return (trackArchive: info,
+                messages: messages)
         
     }
     
@@ -37,7 +50,13 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    private mutating func _parseSetup(root: XMLElement) {
+    private mutating func _parseSetup(root: XMLElement,
+                                      messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         // setup section
         
@@ -45,7 +64,7 @@ extension Cubase.TrackArchive {
             .filter(nameAttribute: "Setup")
             .first
         else {
-            logger.debug("Could not extract global session information. Setup block could not be located.")
+            addParseMessage(.error("Could not extract global session information. Setup block could not be located."))
             return
         }
         
@@ -137,7 +156,13 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    private mutating func _parseTempoTrack(root: XMLElement) {
+    private mutating func _parseTempoTrack(root: XMLElement,
+                                           messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         // tempo track
         
@@ -149,7 +174,7 @@ extension Cubase.TrackArchive {
             .children?
             .first
         else {
-            logger.debug("Could not extract tempo information. First track could not be located.")
+            addParseMessage(.error("Could not extract tempo information. First track could not be located."))
             return
         }
         
@@ -219,7 +244,13 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    private mutating func _parseTracks(root: XMLElement) {
+    private mutating func _parseTracks(root: XMLElement,
+                                       messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         guard let tracks = root.children?
             .filter(elementName: "list")
@@ -227,7 +258,7 @@ extension Cubase.TrackArchive {
             .first?
             .children
         else {
-            logger.debug("No tracks found.")
+            addParseMessage(.info("No tracks found."))
             return
         }
         
@@ -244,7 +275,7 @@ extension Cubase.TrackArchive {
             
             switch trackType {
             case is MarkerTrack.Type:
-                _parseTracks_MarkerTrack(track: track)
+                _parseTracks_MarkerTrack(track: track, messages: &messages)
                 
             default:
                 let newTrack = OrphanTrack(rawXMLContent: track.xmlString(options: .nodePrettyPrint))
@@ -262,7 +293,13 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    private mutating func _parseTracks_MarkerTrack(track: XMLNode) {
+    private mutating func _parseTracks_MarkerTrack(track: XMLNode,
+                                                   messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         var newTrack = MarkerTrack()
         
@@ -388,7 +425,7 @@ extension Cubase.TrackArchive {
                 if let newMarker = newMarker { newTrack.events.append(newMarker) }
                 
             default:
-                logger.debug("Unrecognized marker track event in XML")
+                addParseMessage(.error("Unrecognized marker track event in XML: \(event.xmlString)"))
             }
             
         }

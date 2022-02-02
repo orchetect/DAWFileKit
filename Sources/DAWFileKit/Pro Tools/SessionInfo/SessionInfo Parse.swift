@@ -10,9 +10,17 @@ import TimecodeKit
 extension ProTools.SessionInfo {
     
     /// Internal: Parse raw file content and return a new `SessionInfo` instance.
-    internal static func parse(string: String) -> Self? {
+    internal static func parse(string: String) throws -> (sessionInfo: Self,
+                                                          messages: [ParseMessage])
+    {
         
         // prep variables
+        
+        var messages: [ParseMessage] = []
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         var remainingTextBlock = string
         
@@ -20,7 +28,7 @@ extension ProTools.SessionInfo {
         
         // MARK: - Header block
         
-        let headerRegex = "(?-i)^SESSION NAME:\\t(.*)\\nSAMPLE RATE:\\t(.*)\\nBIT DEPTH:\\t(.*)\\nSESSION START TIMECODE:\\t(.*)\\nTIMECODE FORMAT:\\t(.*)\\n# OF AUDIO TRACKS:\\t(.*)\\n# OF AUDIO CLIPS:\\t(.*)\\n# OF AUDIO FILES:\\t(.*)\\n((?:.*\\n)*$)"
+        let headerRegex = #"(?-i)^SESSION NAME:\t(.*)\nSAMPLE RATE:\t(.*)\nBIT DEPTH:\t(.*)\nSESSION START TIMECODE:\t(.*)\nTIMECODE FORMAT:\t(.*)\n# OF AUDIO TRACKS:\t(.*)\n# OF AUDIO CLIPS:\t(.*)\n# OF AUDIO FILES:\t(.*)\n((?:.*\n)*$)"#
         
         let getHeader = remainingTextBlock
             .regexMatches(captureGroupsFromPattern: headerRegex)
@@ -28,9 +36,9 @@ extension ProTools.SessionInfo {
             .map( { $0 ?? "<<NIL>>" })
         
         guard getHeader.count == 9 else {
-            logger.debug("Parse: Header block: Text does not contain header block, or header block is not formatted as expected.")
-            
-            return nil
+            throw ParseError.general(
+                "Parse: Header block: Text does not contain header block, or header block is not formatted as expected."
+            )
         }
         
         remainingTextBlock = getHeader[8].trimmingCharacters(in: .newlines)
@@ -42,7 +50,7 @@ extension ProTools.SessionInfo {
         if let val = Double(getHeader[1]) {
             info.main.sampleRate = val
         } else {
-            logger.debug("Parse: Header block: Found sample rate info but encountered an error while trying to convert string \"\(getHeader[1])\" to a number.")
+            addParseMessage(.error("Parse: Header block: Found sample rate info but encountered an error while trying to convert string \"\(getHeader[1])\" to a number."))
         }
         
         // BIT DEPTH
@@ -51,52 +59,52 @@ extension ProTools.SessionInfo {
         // SESSION START TIMECODE
         let tempStartTimecode: String = getHeader[3]
         
-#warning("> TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)")
+        #warning("> TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)")
         
         // TIMECODE FORMAT
         switch getHeader[4] {
-        case "23.976 Frame"        : info.main.frameRate = ._23_976
-        case "24 Frame"            : info.main.frameRate = ._24
-        case "25 Frame"            : info.main.frameRate = ._25
-        case "29.97 Frame"        : info.main.frameRate = ._29_97
-        case "29.97 Drop Frame"    : info.main.frameRate = ._29_97_drop
-        case "30 Frame"            : info.main.frameRate = ._30
-        case "30 Drop Frame"    : info.main.frameRate = ._30_drop
-        case "47.952 Frame"        : info.main.frameRate = ._47_952
-        case "48 Frame"            : info.main.frameRate = ._48
-        case "50 Frame"            : info.main.frameRate = ._50
-        case "59.94 Frame"        : info.main.frameRate = ._59_94
-        case "59.94 Drop Frame"    : info.main.frameRate = ._59_94_drop
-        case "60 Frame"            : info.main.frameRate = ._60
-        case "60 Drop Frame"    : info.main.frameRate = ._60_drop
-        case "100 Frame"        : info.main.frameRate = ._100
-        case "119.88 Frame"        : info.main.frameRate = ._119_88
-        case "119.88 Drop Frame": info.main.frameRate = ._119_88_drop
-        case "120 Frame"        : info.main.frameRate = ._120
+        case "23.976 Frame"      : info.main.frameRate = ._23_976
+        case "24 Frame"          : info.main.frameRate = ._24
+        case "25 Frame"          : info.main.frameRate = ._25
+        case "29.97 Frame"       : info.main.frameRate = ._29_97
+        case "29.97 Drop Frame"  : info.main.frameRate = ._29_97_drop
+        case "30 Frame"          : info.main.frameRate = ._30
+        case "30 Drop Frame"     : info.main.frameRate = ._30_drop
+        case "47.952 Frame"      : info.main.frameRate = ._47_952
+        case "48 Frame"          : info.main.frameRate = ._48
+        case "50 Frame"          : info.main.frameRate = ._50
+        case "59.94 Frame"       : info.main.frameRate = ._59_94
+        case "59.94 Drop Frame"  : info.main.frameRate = ._59_94_drop
+        case "60 Frame"          : info.main.frameRate = ._60
+        case "60 Drop Frame"     : info.main.frameRate = ._60_drop
+        case "100 Frame"         : info.main.frameRate = ._100
+        case "119.88 Frame"      : info.main.frameRate = ._119_88
+        case "119.88 Drop Frame" : info.main.frameRate = ._119_88_drop
+        case "120 Frame"         : info.main.frameRate = ._120
         case "120 Drop Frame"    : info.main.frameRate = ._120_drop
         default:
-            logger.debug("Parse: Header block: Found frame rate but not handled/recognized: \(getHeader[4]). Parsing frame rate property as 'undefined'.")
+            addParseMessage(.error("Parse: Header block: Found frame rate but not handled/recognized: \(getHeader[4]). Parsing frame rate property as 'undefined'."))
         }
         
         // # OF AUDIO TRACKS
         if let val = Int(getHeader[5]) {
             info.main.audioTrackCount = val
         } else {
-            logger.debug("Parse: Header block: Found # OF AUDIO TRACKS info but encountered an error while trying to convert string \"\(getHeader[5])\" to a number.")
+            addParseMessage(.error("Parse: Header block: Found # OF AUDIO TRACKS info but encountered an error while trying to convert string \"\(getHeader[5])\" to a number."))
         }
         
         // # OF AUDIO CLIPS
         if let val = Int(getHeader[6]) {
             info.main.audioClipCount = val
         } else {
-            logger.debug("Parse: Header block: Found # OF AUDIO CLIPS info but encountered an error while trying to convert string \"\(getHeader[6])\" to a number.")
+            addParseMessage(.error("Parse: Header block: Found # OF AUDIO CLIPS info but encountered an error while trying to convert string \"\(getHeader[6])\" to a number."))
         }
         
         // # OF AUDIO FILES
         if let val = Int(getHeader[7]) {
             info.main.audioFileCount = val
         } else {
-            logger.debug("Parse: Header block: Found # OF AUDIO FILES info but encountered an error while trying to convert string \"\(getHeader[7])\" to a number.")
+            addParseMessage(.error("Parse: Header block: Found # OF AUDIO FILES info but encountered an error while trying to convert string \"\(getHeader[7])\" to a number."))
         }
         
         // process timecode with previously acquired frame rate
@@ -123,7 +131,7 @@ extension ProTools.SessionInfo {
         }
         
         // regex matching lines such as "S E C T I O N  H E A D E R" or "P L U G - I N S  L I S T I N G"
-        let sectionNameRegEx = "^(([A-Z\\-])(\\s)+){3,}([A-Z\\-])$"
+        let sectionNameRegEx = #"^(([A-Z\-])(\s)+){3,}([A-Z\-])$"#
         
         var sections: [FileSection : [String]] = [:]
         
@@ -143,16 +151,15 @@ extension ProTools.SessionInfo {
             case true:
                 switch block {
                 case "F I L E S  I N  S E S S I O N",    // old file format did not have online/offline
-                    "O N L I N E  F I L E S  I N  S E S S I O N":        lastSectionFound = .onlineFiles
-                case "O F F L I N E  F I L E S  I N  S E S S I O N":    lastSectionFound = .offlineFiles
-                case "O N L I N E  C L I P S  I N  S E S S I O N":        lastSectionFound = .onlineClips
-                case "O F F L I N E  C L I P S  I N  S E S S I O N":    lastSectionFound = .offlineClips
-                case "P L U G - I N S  L I S T I N G":                    lastSectionFound = .plugins
-                case "T R A C K  L I S T I N G":                        lastSectionFound = .trackList
-                case "M A R K E R S  L I S T I N G":                    lastSectionFound = .markers
+                     "O N L I N E  F I L E S  I N  S E S S I O N":   lastSectionFound = .onlineFiles
+                case "O F F L I N E  F I L E S  I N  S E S S I O N": lastSectionFound = .offlineFiles
+                case "O N L I N E  C L I P S  I N  S E S S I O N":   lastSectionFound = .onlineClips
+                case "O F F L I N E  C L I P S  I N  S E S S I O N": lastSectionFound = .offlineClips
+                case "P L U G - I N S  L I S T I N G":               lastSectionFound = .plugins
+                case "T R A C K  L I S T I N G":                     lastSectionFound = .trackList
+                case "M A R K E R S  L I S T I N G":                 lastSectionFound = .markers
                 default:
                     lastSectionFound = .orphan(name: block) // unrecognized
-                    logger.debug("Unrecognized section found in text file:", block)
                 }
                 
                 if let lastSectionFound = lastSectionFound {
@@ -192,16 +199,41 @@ extension ProTools.SessionInfo {
         
         // MARK: - Run section parsers
         
-        if let section = sections[.onlineFiles]  { info._parseOnlineFiles (section: section) }
-        if let section = sections[.offlineFiles] { info._parseOfflineFiles(section: section) }
+        if let section = sections[.onlineFiles] {
+            info._parseOnlineFiles(section: section,
+                                   messages: &messages)
+        }
         
-        if let section = sections[.onlineClips]  { info._parseOnlineClips (section: section) }
-        if let section = sections[.offlineClips] { info._parseOfflineClips(section: section) }
+        if let section = sections[.offlineFiles] {
+            info._parseOfflineFiles(section: section,
+                                    messages: &messages)
+        }
         
-        if let section = sections[.plugins]      { info._parsePlugins     (section: section) }
+        if let section = sections[.onlineClips] {
+            info._parseOnlineClips(section: section,
+                                   messages: &messages)
+        }
         
-        if let section = sections[.trackList]    { info._parseTracks      (section: section) }
-        if let section = sections[.markers]      { info._parseMarkers     (section: section) }
+        if let section = sections[.offlineClips] {
+            info._parseOfflineClips(section: section,
+                                    messages: &messages)
+        }
+        
+        if let section = sections[.plugins] {
+            info._parsePlugins(section: section,
+                               messages: &messages)
+        }
+        
+        if let section = sections[.trackList] {
+            info._parseTracks(section: section,
+                              expectedAudioTrackCount: info.main.audioTrackCount,
+                              messages: &messages)
+        }
+        
+        if let section = sections[.markers] {
+            info._parseMarkers(section: section,
+                               messages: &messages)
+        }
         
         // MARK: - Orphan data
         
@@ -220,7 +252,7 @@ extension ProTools.SessionInfo {
         
         // return
         
-        return info
+        return (sessionInfo: info, messages: messages)
         
     }
     
@@ -230,26 +262,32 @@ fileprivate extension ProTools.SessionInfo {
     
     // MARK: - File Listing block (online)
     
-    mutating func _parseOnlineFiles(section: [String]) {
+    mutating func _parseOnlineFiles(section: [String],
+                                    messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         let debugSectionName = "Online Files"
-        logger.debug("Found \(debugSectionName) listing in text file. (\(section.count) lines)")
+        addParseMessage(.info("Found \(debugSectionName) listing in text file. (\(section.count) lines)"))
         
         guard section.count > 1 else {
-            logger.debug("Text file contains \(debugSectionName) listing but no files were found.")
+            addParseMessage(.info("Text file contains \(debugSectionName) listing but no files were found."))
             return
         }
         
         if !section[0].contains(caseInsensitive: "Filename") ||
             !section[0].contains(caseInsensitive: "Location") {
-            logger.debug("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section.")
+            addParseMessage(.error("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."))
             return
         }
         
         let lines = section.suffix(from: 1) // remove header row
         
         guard lines.count > 0 else {
-            logger.debug("Error: text file contains \(debugSectionName) listing but no entries were found.")
+            addParseMessage(.error("Error: text file contains \(debugSectionName) listing but no entries were found."))
             return
         }
         
@@ -267,7 +305,7 @@ fileprivate extension ProTools.SessionInfo {
                   let strLocation = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
-                logger.debug("One or more item elements were nil. Text file may be malformed.")
+                addParseMessage(.error("One or more \(debugSectionName) item elements were nil. Text file may be malformed."))
                 break
             }
             
@@ -283,35 +321,41 @@ fileprivate extension ProTools.SessionInfo {
         let actualItemCount = onlineFiles?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
-            logger.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
+            addParseMessage(.info("Successfully parsed \(actualItemCount) \(debugSectionName) from text file."))
         } else {
-            logger.debug("Actual \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount).")
+            addParseMessage(.error("Actual parsed \(debugSectionName) item count differs from estimated count. Expected \(estimatedItemCount) items but only successfully parsed \(actualItemCount)."))
         }
         
     }
     
     // MARK: - File Listing block (offline)
     
-    mutating func _parseOfflineFiles(section: [String]) {
+    mutating func _parseOfflineFiles(section: [String],
+                                     messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         let debugSectionName = "Offline Files"
-        logger.debug("Found \(debugSectionName) listing in text file. (\(section.count) lines)")
+        //addParseMessage("Found \(debugSectionName) listing in text file. (\(section.count) lines)")
         
         guard section.count > 1 else {
-            logger.debug("Text file contains \(debugSectionName) listing but no files were found.")
+            addParseMessage(.info("Text file contains \(debugSectionName) listing but no files were found."))
             return
         }
         
         if !section[0].contains(caseInsensitive: "Filename") ||
             !section[0].contains(caseInsensitive: "Location") {
-            logger.debug("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section.")
+            addParseMessage(.error("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."))
             return
         }
         
         let lines = section.suffix(from: 1) // remove header row
         
         guard lines.count > 0 else {
-            logger.debug("Error: text file contains \(debugSectionName) listing but no entries were found.")
+            addParseMessage(.error("Error: text file contains \(debugSectionName) listing but no entries were found."))
             return
         }
         
@@ -329,7 +373,7 @@ fileprivate extension ProTools.SessionInfo {
                   let strLocation = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
-                logger.debug("One or more item elements were nil. Text file may be malformed.")
+                addParseMessage(.error("One or more \(debugSectionName) item elements were nil. Text file may be malformed."))
                 break
             }
             
@@ -345,35 +389,41 @@ fileprivate extension ProTools.SessionInfo {
         let actualItemCount = offlineFiles?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
-            logger.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
+            //addParseMessage("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
         } else {
-            logger.debug("Actual \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount).")
+            addParseMessage(.error("Actual parsed \(debugSectionName) item count differs from estimated count. Expected \(estimatedItemCount) items but only successfully parsed \(actualItemCount)."))
         }
         
     }
     
     // MARK: - Clips Listing block (online)
     
-    mutating func _parseOnlineClips(section: [String]) {
+    mutating func _parseOnlineClips(section: [String],
+                                    messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         let debugSectionName = "Online Clips"
-        logger.debug("Found \(debugSectionName) listing in text file. (\(section.count) lines)")
+        addParseMessage(.info("Found \(debugSectionName) listing in text file. (\(section.count) lines)"))
         
         guard section.count > 1 else {
-            logger.debug("Text file contains \(debugSectionName) listing but no files were found.")
+            addParseMessage(.info("Text file contains \(debugSectionName) listing but no files were found."))
             return
         }
         
         if !section[0].contains(caseInsensitive: "CLIP NAME") ||
             !section[0].contains(caseInsensitive: "Source File") {
-            logger.debug("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section.")
+            addParseMessage(.error("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."))
             return
         }
         
         let lines = section.suffix(from: 1) // remove header row
         
         guard lines.count > 0 else {
-            logger.debug("Error: text file contains \(debugSectionName) listing but no entries were found.")
+            addParseMessage(.error("Error: text file contains \(debugSectionName) listing but no entries were found."))
             return
         }
         
@@ -391,7 +441,7 @@ fileprivate extension ProTools.SessionInfo {
                   let sourceFile = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
-                logger.debug("One or more item elements were nil. Text file may be malformed.")
+                addParseMessage(.error("One or more item elements were nil. Text file may be malformed."))
                 break
             }
             
@@ -410,35 +460,41 @@ fileprivate extension ProTools.SessionInfo {
         let actualItemCount = onlineClips?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
-            logger.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
+            addParseMessage(.info("Successfully parsed \(actualItemCount) \(debugSectionName) from text file."))
         } else {
-            logger.debug("Actual \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount).")
+            addParseMessage(.error("Actual parsed \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount)."))
         }
         
     }
     
     // MARK: - Clips Listing block (offline)
     
-    mutating func _parseOfflineClips(section: [String]) {
+    mutating func _parseOfflineClips(section: [String],
+                                     messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         let debugSectionName = "Offline Clips"
-        logger.debug("Found \(debugSectionName) listing in text file. (\(section.count) lines)")
+        addParseMessage(.info("Found \(debugSectionName) listing in text file. (\(section.count) lines)"))
         
         guard section.count > 1 else {
-            logger.debug("Text file contains \(debugSectionName) listing but no files were found.")
+            addParseMessage(.info("Text file contains \(debugSectionName) listing but no files were found."))
             return
         }
         
         if !section[0].contains(caseInsensitive: "CLIP NAME") ||
             !section[0].contains(caseInsensitive: "Source File") {
-            logger.debug("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section.")
+            addParseMessage(.error("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."))
             return
         }
         
         let lines = section.suffix(from: 1) // remove header row
         
         guard lines.count > 0 else {
-            logger.debug("Error: text file contains \(debugSectionName) listing but no entries were found.")
+            addParseMessage(.error("Error: text file contains \(debugSectionName) listing but no entries were found."))
             return
         }
         
@@ -456,7 +512,7 @@ fileprivate extension ProTools.SessionInfo {
                   let sourceFile = columnData[safe: 1]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
-                logger.debug("One or more item elements were nil. Text file may be malformed.")
+                addParseMessage(.error("One or more item elements were nil. Text file may be malformed."))
                 break
             }
             
@@ -475,22 +531,28 @@ fileprivate extension ProTools.SessionInfo {
         let actualItemCount = offlineClips?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
-            logger.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
+            addParseMessage(.info("Successfully parsed \(actualItemCount) \(debugSectionName) from text file."))
         } else {
-            logger.debug("Actual \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount).")
+            addParseMessage(.error("Actual parsed \(debugSectionName) item count differs from estimated count. Expected \(estimatedItemCount) items but only successfully parsed \(actualItemCount)."))
         }
         
     }
     
     // MARK: - Plug-ins Listing block
     
-    mutating func _parsePlugins(section: [String]) {
+    mutating func _parsePlugins(section: [String],
+                                messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         let debugSectionName = "Plug-Ins"
-        logger.debug("Found \(debugSectionName) listing in text file. (\(section.count) lines)")
+        addParseMessage(.info("Found \(debugSectionName) listing in text file. (\(section.count) lines)"))
         
         guard section.count > 1 else {
-            logger.debug("Text file contains \(debugSectionName) listing but no files were found.")
+            addParseMessage(.info("Text file contains \(debugSectionName) listing but no files were found."))
             return
         }
         
@@ -500,14 +562,14 @@ fileprivate extension ProTools.SessionInfo {
             !section[0].contains(caseInsensitive: "FORMAT") ||
             !section[0].contains(caseInsensitive: "STEMS") ||
             !section[0].contains(caseInsensitive: "NUMBER OF INSTANCES") {
-            logger.debug("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section.")
+            addParseMessage(.error("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."))
             return
         }
         
         let lines = section.suffix(from: 1) // remove header row
         
         guard lines.count > 0 else {
-            logger.debug("Error: text file contains \(debugSectionName) listing but no entries were found.")
+            addParseMessage(.error("Error: text file contains \(debugSectionName) listing but no entries were found."))
             return
         }
         
@@ -529,7 +591,7 @@ fileprivate extension ProTools.SessionInfo {
                   let numberOfInstances = columnData[safe: 5]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
-                logger.debug("One or more item elements were nil. Text file may be malformed.")
+                addParseMessage(.error("One or more item elements were nil. Text file may be malformed."))
                 break
             }
             
@@ -548,9 +610,9 @@ fileprivate extension ProTools.SessionInfo {
         let actualItemCount = plugins?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
-            logger.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
+            addParseMessage(.info("Successfully parsed \(actualItemCount) \(debugSectionName) from text file."))
         } else {
-            logger.debug("Actual \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount).")
+            addParseMessage(.error("Actual parsed \(debugSectionName) item count differs from estimated count. Expected \(estimatedItemCount) items but only successfully parsed \(actualItemCount)."))
         }
         
         // fill in empty manufacturer names
@@ -571,9 +633,17 @@ fileprivate extension ProTools.SessionInfo {
     
     // MARK: - Track Listing block
     
-    mutating func _parseTracks(section: [String]) {
+    mutating func _parseTracks(section: [String],
+                               expectedAudioTrackCount: Int?,
+                               messages: inout [ParseMessage])
+    {
         
-        logger.debug("Found track listing in text file. (\(section.count) lines)")
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
+        
+        let debugSectionName = "Tracks"
+        addParseMessage(.info("Found \(debugSectionName) in text file. (\(section.count) lines)"))
         
         // split into each track
         
@@ -598,13 +668,13 @@ fileprivate extension ProTools.SessionInfo {
             // basic validation
             
             guard trackLines.count >= 6 else { // track header has 6 rows, then regions are listed
-                logger.debug("Error: text file contains a track listing but format is not as expected. Aborting marker parsing.")
+                addParseMessage(.error("Error: text file contains a track listing but format is not as expected. Aborting marker parsing."))
                 return
             }
             
             // check params
             
-            let paramsRegex = "(?-i)^TRACK NAME:\\t(.*)\\nCOMMENTS:\\t(.*(?:(?:\\n*.)*))\\nUSER DELAY:\\t(.*)\\nSTATE:\\s(.*)\\nPLUG-INS:\\s(?:\\t{0,1})(.*)\\n(?:CHANNEL.*STATE)((?:\\n.*)*)"
+            let paramsRegex = #"(?-i)^TRACK NAME:\t(.*)\nCOMMENTS:\t(.*(?:(?:\n*.)*))\nUSER DELAY:\t(.*)\nSTATE:\s(.*)\nPLUG-INS:\s(?:\t{0,1})(.*)\n(?:CHANNEL.*STATE)((?:\n.*)*)"#
             
             let getParams = trackLines
                 .joined(separator: "\n")
@@ -613,7 +683,7 @@ fileprivate extension ProTools.SessionInfo {
                 .map { $0 ?? "<<NIL>>" }
             
             guard getParams.count == 6 else {
-                logger.debug("Parse: Track Listing block: Text does not contain parameter block, or parameter block is not formatted as expected.")
+                addParseMessage(.error("Parse: \(debugSectionName) listing block: Text does not contain parameter block, or parameter block is not formatted as expected."))
                 
                 continue
             }
@@ -641,7 +711,7 @@ fileprivate extension ProTools.SessionInfo {
                 case "Muted":        stateFlags.insert(.muted)
                 case "": break
                 default:
-                    logger.debug("Parse: Track listing for track \"\(track.name)\": Unexpected track STATE value: \"\(str)\". Dev needs to add this to the State enum.")
+                    addParseMessage(.error("Parse: \(debugSectionName) listing for track \"\(track.name)\": Unexpected track STATE value: \"\(str)\". Dev needs to add this to the State enum."))
                 }
             }
             track.state = stateFlags
@@ -663,7 +733,7 @@ fileprivate extension ProTools.SessionInfo {
                     let columns = clip.components(separatedBy: "\t").map { $0.trimmed }
                     
                     guard columns.count == 7 else {
-                        logger.debug("Parse: Track listing for track \"\(track.name)\": Did not find expected number of columns in clip list. Found \(columns.count) columns but expected 7.")
+                        addParseMessage(.error("Parse: \(debugSectionName) listing for track \"\(track.name)\": Did not find expected number of tabular columns. Found \(columns.count) columns but expected 7. This clip cannot be parsed: [\(columns.map { $0.quoted }.joined(separator: ", "))]"))
                         
                         continue
                     }
@@ -694,7 +764,7 @@ fileprivate extension ProTools.SessionInfo {
                     case "Muted": newClip.state = .muted
                     default:
                         newClip.state = .unmuted
-                        logger.debug("Unexpected track listing clip STATE value: \"\(columns[6])\". Defaulting to \"Unmuted\"")
+                        addParseMessage(.error("Unexpected track listing clip STATE value: \"\(columns[6])\". Defaulting to \"Unmuted\""))
                     }
                     
                     // add clip to track
@@ -710,8 +780,15 @@ fileprivate extension ProTools.SessionInfo {
             tracks?.append(track)
         }
         
-        if let tracksCount = tracks?.count {
-            logger.debug("Parsed \(tracksCount) tracks from text file.")
+        let parsedTrackCount = tracks?.count ?? 0
+        if let expectedAudioTrackCount = expectedAudioTrackCount {
+            if expectedAudioTrackCount == parsedTrackCount {
+                addParseMessage(.info("Parsed \(parsedTrackCount) tracks from text file."))
+            } else {
+                addParseMessage(.error("Parsed track count differs from expected count. Expected \(expectedAudioTrackCount) items but only successfully parsed \(parsedTrackCount)."))
+            }
+        } else {
+            addParseMessage(.error("Parsed \(parsedTrackCount) tracks from text file. Expected track count was not readable from the file header however so it is not possible to validate if this is the correct number of tracks."))
         }
         
     }
@@ -721,15 +798,21 @@ fileprivate extension ProTools.SessionInfo {
     // only 'Marker' memory locations (Absolute or Bar|Beat) get exported to the text file
     // 'Selection' memory locations and window-recalls are not listed in the text file
     
-    mutating func _parseMarkers(section: [String]) {
+    mutating func _parseMarkers(section: [String],
+                                messages: inout [ParseMessage])
+    {
+        
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
         
         let debugSectionName = "Markers"
-        logger.debug("Found \(debugSectionName) in text file. (\(section.count) lines)")
+        addParseMessage(.info("Found \(debugSectionName) in text file. (\(section.count) lines)"))
         
         // basic validation
         
         guard section.count > 1 else {
-            logger.debug("Text file contains \(debugSectionName) listing but no markers were found.")
+            addParseMessage(.info("Text file contains \(debugSectionName) listing but no markers were found."))
             return
         }
         
@@ -738,14 +821,14 @@ fileprivate extension ProTools.SessionInfo {
             !section[0].contains(caseInsensitive: "UNITS") ||
             !section[0].contains(caseInsensitive: "NAME") ||
             !section[0].contains(caseInsensitive: "COMMENTS") {
-            logger.debug("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section.")
+            addParseMessage(.error("Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."))
             return
         }
         
         let lines = section.suffix(from: 1) // remove header row
         
         guard lines.count > 0 else {
-            logger.debug("Error: text file contains \(debugSectionName) listing but no entries were found.")
+            addParseMessage(.error("Error: text file contains \(debugSectionName) listing but no entries were found."))
             return
         }
         
@@ -759,7 +842,7 @@ fileprivate extension ProTools.SessionInfo {
             
             let columnData = line.split(separator: "\t").map { String($0) } // split into array by tab character
             
-#warning("> TODO: may need to add logic to detect what format the 'Location' value is in - whether it's frames (timecode), samples, etc.")
+            #warning("> TODO: may need to add logic to detect what format the 'Location' value is in - whether it's frames (timecode), samples, etc.")
             
             guard let strTimecode = columnData[safe: 1]?.trimmed,
                   let strTimeReference = columnData[safe: 2]?.trimmed,
@@ -767,7 +850,7 @@ fileprivate extension ProTools.SessionInfo {
                   let strName = columnData[safe: 4]?.trimmed
             else {
                 // if these are nil, the text file could be malformed
-                logger.debug("One or more item elements were nil. Text file may be malformed.")
+                addParseMessage(.error("One or more \(debugSectionName) item elements were nil. Text file may be malformed."))
                 break
             }
             
@@ -782,7 +865,7 @@ fileprivate extension ProTools.SessionInfo {
             case "Ticks": units = .ticks
             default:
                 units = .samples
-                logger.debug("A marker had a Units type that was not recognized : \(strUnits.quoted). Defaulting to Samples.")
+                addParseMessage(.error("A marker had a Units type that was not recognized : \(strUnits.quoted). Defaulting to Samples."))
             }
             
             var newItem = Marker(number: number,
@@ -794,7 +877,7 @@ fileprivate extension ProTools.SessionInfo {
             if let mainFrameRate = main.frameRate,
                !newItem.validate(timecodeString: strTimecode, at: mainFrameRate) {
                 // populate timecode object and verify
-                logger.debug("FYI: Validation for timecode \(strTimecode) at text file frame rate of \(mainFrameRate) failed.")
+                addParseMessage(.error("FYI: Validation for timecode \(strTimecode) at text file frame rate of \(mainFrameRate) failed."))
             }
             
             markers?.append(newItem)
@@ -805,9 +888,9 @@ fileprivate extension ProTools.SessionInfo {
         let actualItemCount = markers?.count ?? 0
         
         if estimatedItemCount == actualItemCount {
-            logger.debug("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
+            addParseMessage(.info("Successfully parsed \(actualItemCount) \(debugSectionName) from text file."))
         } else {
-            logger.debug("Actual \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount).")
+            addParseMessage(.error("Actual parsed \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount)."))
         }
         
     }
