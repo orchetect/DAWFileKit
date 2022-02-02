@@ -21,7 +21,7 @@ extension Cubase {
         public var main = Main()
         
         /// Tempo track.
-        /// (Essentially, a session can contain only one, but there is not a "tempo track" in the XML file; instead, tempo events are written to the first actual track.)
+        /// (Essentially, a session can contain only one tempo track, but there is not a "tempo track" in the XML file; instead, tempo events are written to the first actual track.)
         public var tempoTrack = TempoTrack()
         
         /// Tracks listing.
@@ -43,7 +43,7 @@ extension Cubase.TrackArchive {
     /// Changing PPQbase in Cubase preferences has no effect on this value.
     internal static let xmlPPQ = 480
     
-    /// Array of file types for use with NSOpenPanel / NSSavePanel
+    /// Array of file types for use with `NSOpenPanel` / `NSSavePanel`.
     public static let fileTypes = ["public.xml" ,"xml"]
     
     /// Frame rates and their numeric identifier as stored in the XML.

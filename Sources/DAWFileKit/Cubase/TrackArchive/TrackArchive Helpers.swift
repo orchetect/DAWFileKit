@@ -13,7 +13,7 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     
-    /// Internal use
+    /// Internal use.
     /// Requires main.frameRate to not be nil.
     /// Real Time measured in seconds.
     internal func calculateStartTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
@@ -27,7 +27,7 @@ extension Cubase.TrackArchive {
         
     }
     
-    /// Internal use
+    /// Internal use.
     /// Requires main.frameRate to not be nil.
     /// Real Time measured in seconds.
     internal func calculateLengthTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
@@ -41,7 +41,7 @@ extension Cubase.TrackArchive {
         
     }
     
-    /// Internal use
+    /// Internal use.
     /// Requires main.frameRate to not be nil.
     internal func calculateStartTimecode(ofMusicalTimeValue: Double) -> Timecode? {
         
@@ -51,7 +51,7 @@ extension Cubase.TrackArchive {
         
     }
     
-    /// Internal use
+    /// Internal use.
     /// Requires main.frameRate to not be nil.
     internal func calculateLengthTimecode(ofMusicalTimeValue: Double) -> Timecode? {
         
@@ -61,7 +61,7 @@ extension Cubase.TrackArchive {
         
     }
     
-    /// Internal use
+    /// Internal use.
     /// Requires `main.frameRate` to not be nil.
     /// Returns a value in Seconds.
     /// Will return `nil` if tempo track has zero events, since at least one originating tempo event is required to do the calculation.
@@ -185,7 +185,7 @@ extension Cubase.TrackArchive {
 
 extension Collection where Element : XMLNode {
     
-    /// DAWFileKit: Filters by the given "name" attribute
+    /// DAWFileKit: Filters by the given "name" attribute.
     internal func filter(nameAttribute: String) -> [XMLNode] {
         
         filter {
@@ -196,7 +196,7 @@ extension Collection where Element : XMLNode {
         
     }
     
-    /// DAWFileKit: Filters by the given "class" attribute
+    /// DAWFileKit: Filters by the given "class" attribute.
     internal func filter(classAttribute: String) -> [XMLNode] {
         
         filter {
@@ -213,7 +213,8 @@ extension Collection where Element : XMLNode {
 
 extension Collection where Element == CubaseTrackArchiveMarker {
     
-    public var cleanDebugString: String {
+    /// Formatted/easy to read "pretty" description useful for debugging or logging.
+    public var prettyDebugString: String {
         
         var outputString = ""
         

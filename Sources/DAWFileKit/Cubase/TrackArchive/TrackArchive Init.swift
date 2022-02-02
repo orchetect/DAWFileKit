@@ -13,7 +13,7 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     
-    /// Input text file contents exported from Pro Tools and returns `SessionInfo`
+    /// Input text file contents exported from Pro Tools and returns `SessionInfo`.
     public init?(fromData: Data) {
         
         // load XML tree
@@ -295,7 +295,6 @@ extension Cubase.TrackArchive {
         default: return
         }
         
-        
         // track name
         newTrack.name = eventTree?.children?
             .filter(nameAttribute: "Name")
@@ -389,7 +388,8 @@ extension Cubase.TrackArchive {
                                             lengthTimecode: unwrappedTCLength,
                                             lengthRealTime: tcLengthRealTime)
                     
-                default: break
+                default:
+                    break
                 }
                 
                 if let newMarker = newMarker { newTrack.events.append(newMarker) }

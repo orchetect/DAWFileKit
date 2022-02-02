@@ -8,6 +8,7 @@
 import Foundation
 import TimecodeKit
 
+/// Protocol that DAWFileKit `Cubase.TrackArchive` markers conform to.
 public protocol CubaseTrackArchiveMarker {
     
     var name: String { get set }

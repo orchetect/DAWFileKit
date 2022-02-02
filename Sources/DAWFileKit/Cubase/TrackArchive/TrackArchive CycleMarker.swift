@@ -10,7 +10,7 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     
-    /// Represents a cycle marker event and its contents
+    /// Represents a cycle marker event and its contents.
     public struct CycleMarker: CubaseTrackArchiveMarker {
         
         public var name: String = ""

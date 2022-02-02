@@ -212,7 +212,8 @@ extension ProTools.SessionInfo {
                 
                 info.orphanData?.append((heading: name, content: item.value))
                 
-            default: break
+            default:
+                break
             }
         }
         

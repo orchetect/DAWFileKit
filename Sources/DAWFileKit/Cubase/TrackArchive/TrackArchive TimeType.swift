@@ -9,6 +9,7 @@ import Foundation
 
 extension Cubase.TrackArchive {
     
+    /// Cubase Track Archive time type.
     public enum TimeType: Int {
         
         case secondsOrBarsAndBeats = 0 // seconds and bars+beats both show up as 0

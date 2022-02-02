@@ -10,7 +10,7 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     
-    /// Contains the global session meta data
+    /// Contains the global session meta-data.
     public struct Main {
         
         public var startTimecode: Timecode?        // 'Start'.'Time' (float, load as double)

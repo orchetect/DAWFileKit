@@ -9,7 +9,7 @@ import Foundation
 
 extension Cubase.TrackArchive {
     
-    /// Represents a cycle marker event and its contents
+    /// Represents a cycle marker event and its contents.
     public struct TempoTrack: CubaseTrackArchiveTrack {
         
         public var name: String?
@@ -21,6 +21,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive.TempoTrack {
     
+    /// A tempo track event.
     public struct Event {
         
         public var startTimeAsPPQ: Cubase.PPQ
@@ -33,6 +34,7 @@ extension Cubase.TrackArchive.TempoTrack {
 
 extension Cubase.TrackArchive.TempoTrack.Event {
     
+    /// A tempo track event type.
     public enum TempoEventType {
         
         case jump

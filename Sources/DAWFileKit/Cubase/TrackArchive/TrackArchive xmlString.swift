@@ -12,7 +12,7 @@ extension Cubase.TrackArchive {
     
     // MARK: xmlString
     
-    /// Compiles the struct's contents and returns a representation as Cubase XML file contents
+    /// Returns Cubase XML file contents generated from the `TrackArchive` contents as a String.
     public var xmlString: String? {
         
         resetIDcounter()
@@ -33,11 +33,11 @@ extension Cubase.TrackArchive {
         
         // track list
         
-        __addTrackListAndTempoEvents(root)
+        _addTrackListAndTempoEvents(root)
         
         // setup
         
-        __addSetup(root)
+        _addSetup(root)
         
         // return data
         
@@ -49,9 +49,9 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    // MARK: __addSetup
+    // MARK: _addSetup
     
-    fileprivate func __addSetup(_ root: XMLElement) {
+    fileprivate func _addSetup(_ root: XMLElement) {
         
         let setupNode = XMLElement(name: "obj",
                                    attributes: [("class", "PArrangeSetup"),
@@ -151,9 +151,9 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     
-    // MARK: __addTrackListAndTempoEvents
+    // MARK: _addTrackListAndTempoEvents
     
-    fileprivate func __addTrackListAndTempoEvents(_ root: XMLElement) {
+    fileprivate func _addTrackListAndTempoEvents(_ root: XMLElement) {
         
         let listNode = XMLElement(name: "list",
                                   attributes: [("name", "track"),
@@ -205,7 +205,7 @@ extension Cubase.TrackArchive {
             
             switch track {
             case let typed as MarkerTrack:
-                __addTrackMarker(using: newTrack, track: typed)
+                _addTrackMarker(using: newTrack, track: typed)
                 
             default:
                 logger.debug("Unhandled track type while building XML file for track named:", (track.name ?? "").quoted)
@@ -230,10 +230,10 @@ extension Cubase.TrackArchive {
         
     }
     
-    // MARK: __addTrackMarker
+    // MARK: _addTrackMarker
     
     @discardableResult
-    fileprivate func __addTrackMarker(using newTrack: XMLElement, track: MarkerTrack) -> XMLElement {
+    fileprivate func _addTrackMarker(using newTrack: XMLElement, track: MarkerTrack) -> XMLElement {
         
         var markerIDCounter = 0
         
