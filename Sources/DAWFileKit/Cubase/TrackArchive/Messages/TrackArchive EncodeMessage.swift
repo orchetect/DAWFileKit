@@ -3,6 +3,8 @@
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import Foundation
 
 extension Cubase.TrackArchive {
@@ -54,3 +56,5 @@ extension Collection where Element == Cubase.TrackArchive.EncodeMessage {
     }
     
 }
+
+#endif
