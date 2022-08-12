@@ -9,10 +9,8 @@ import TimecodeKit
 // MARK: - ProTools.SessionInfo
 
 extension ProTools {
-    
     /// Contains parsed data after reading a Pro Tools Session Info text file.
     public struct SessionInfo {
-        
         /// Meta data contained in the main header of the data file.
         public var main = Main()
         
@@ -43,16 +41,12 @@ extension ProTools {
         // MARK: - Default init
         
         public init() { }
-        
     }
-    
 }
 
 // MARK: - Constants
 
 extension ProTools.SessionInfo {
-    
     /// Array of file types for use with NSOpenPanel / NSSavePanel
     public static let fileTypes = ["public.txt", "txt"]
-    
 }

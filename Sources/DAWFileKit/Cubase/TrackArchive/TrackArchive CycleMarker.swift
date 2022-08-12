@@ -9,10 +9,8 @@ import Foundation
 import TimecodeKit
 
 extension Cubase.TrackArchive {
-    
     /// Represents a cycle marker event and its contents.
     public struct CycleMarker: CubaseTrackArchiveMarker {
-        
         public var name: String = ""
         
         public var startTimecode: Timecode
@@ -21,13 +19,13 @@ extension Cubase.TrackArchive {
         public var lengthTimecode: Timecode
         public var lengthRealTime: TimeInterval?
         
-        public init(name: String,
-                    startTimecode: Timecode,
-                    startRealTime: TimeInterval? = nil,
-                    lengthTimecode: Timecode,
-                    lengthRealTime: TimeInterval? = nil)
-        {
-            
+        public init(
+            name: String,
+            startTimecode: Timecode,
+            startRealTime: TimeInterval? = nil,
+            lengthTimecode: Timecode,
+            lengthRealTime: TimeInterval? = nil
+        ) {
             self.name = name
             
             self.startTimecode = startTimecode
@@ -35,11 +33,8 @@ extension Cubase.TrackArchive {
             
             self.lengthTimecode = lengthTimecode
             self.lengthRealTime = lengthRealTime
-            
         }
-        
     }
-    
 }
 
 #endif

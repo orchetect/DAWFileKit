@@ -8,13 +8,9 @@
 import Foundation
 
 extension Cubase.TrackArchive {
-    
     public enum EncodeError: Error {
-        
         case general(String)
-        
     }
-    
 }
 
 #endif

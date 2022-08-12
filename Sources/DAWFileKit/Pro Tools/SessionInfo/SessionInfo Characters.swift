@@ -5,12 +5,14 @@
 
 // MARK: Fix extended characters (Pro Tools ASCII issues)
 
-fileprivate let fixPTExtendedCharacters_Chars = ["É" : "...",
-                                                 "Ñ" : "--" ]
+private let fixPTExtendedCharacters_Chars = [
+    "É": "...",
+    "Ñ": "--"
+]
 
 // TODO: this is experimental and in progress
 
-//extension ProTools.SessionInfo {
+// extension ProTools.SessionInfo {
 //
 //  /// Workaround for extended unicode characters used in Pro Tools markers or marker comments that get converted to random ASCII characters when exporting session info as a text file.
 //  public static func fixPTExtendedCharacters(_ string: String) -> NSAttributedString {
@@ -30,4 +32,4 @@ fileprivate let fixPTExtendedCharacters_Chars = ["É" : "...",
 //      return text
 //  }
 //
-//}
+// }

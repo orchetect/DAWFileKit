@@ -12,61 +12,53 @@ import TimecodeKit
 // MARK: - Helper methods
 
 extension Cubase.TrackArchive {
-    
     /// Internal use.
     /// Requires main.frameRate to not be nil.
     /// Real Time measured in seconds.
     internal func calculateStartTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
-        
         guard let realTimeValue = ofRealTimeValue else { return nil }
         guard let startTimeSeconds = main.startTimeSeconds else { return nil }
         
         let diff = startTimeSeconds + realTimeValue
         
         return calculateLengthTimecode(ofRealTimeValue: diff)
-        
     }
     
     /// Internal use.
     /// Requires main.frameRate to not be nil.
     /// Real Time measured in seconds.
     internal func calculateLengthTimecode(ofRealTimeValue: TimeInterval?) -> Timecode? {
-        
         guard let ofRealTimeValue = ofRealTimeValue else { return nil }
         guard let frameRate = main.frameRate else { return nil }
         
         let tc = Cubase.kTimecode(realTimeValue: ofRealTimeValue, at: frameRate)
         
         return tc
-        
     }
     
     /// Internal use.
     /// Requires main.frameRate to not be nil.
     internal func calculateStartTimecode(ofMusicalTimeValue: Double) -> Timecode? {
-        
         let realTimeSeconds = calculateMusicalTimeToRealTime(ofMusicalTimeValue: ofMusicalTimeValue)
         
         return calculateStartTimecode(ofRealTimeValue: realTimeSeconds)
-        
     }
     
     /// Internal use.
     /// Requires main.frameRate to not be nil.
     internal func calculateLengthTimecode(ofMusicalTimeValue: Double) -> Timecode? {
-        
         let realTimeSeconds = calculateMusicalTimeToRealTime(ofMusicalTimeValue: ofMusicalTimeValue)
         
         return calculateLengthTimecode(ofRealTimeValue: realTimeSeconds)
-        
     }
     
     /// Internal use.
     /// Requires `main.frameRate` to not be nil.
     /// Returns a value in Seconds.
     /// Will return `nil` if tempo track has zero events, since at least one originating tempo event is required to do the calculation.
-    internal func calculateMusicalTimeToRealTime(ofMusicalTimeValue: Double) -> TimeInterval? {
-        
+    internal func calculateMusicalTimeToRealTime(
+        ofMusicalTimeValue: Double
+    ) -> TimeInterval? {
         enum TempoOperation {
             case jumpToNext
             case rampToNext
@@ -76,18 +68,16 @@ extension Cubase.TrackArchive {
         var realTimeAccumulator = 0.0
         
         for index in tempoTrack.events.indices {
-            
             let currentTempoEvent = tempoTrack.events[index]
             
             let tempoCalculationType: TempoOperation
             var isPartialCalculation = false
-            var nextTempoEvent: TempoTrack.Event? = nil
+            var nextTempoEvent: TempoTrack.Event?
             let ppqDuration: Double
             
             let nextIndex = index.advanced(by: 1)
             
             if tempoTrack.events.indices.contains(nextIndex) {
-                
                 let _nextTempoEvent = tempoTrack.events[nextIndex]
                 nextTempoEvent = _nextTempoEvent
                 switch _nextTempoEvent.type {
@@ -107,14 +97,12 @@ extension Cubase.TrackArchive {
                 }
                 
             } else {
-                
                 // if there are no tempo events to follow this one,
                 // it remains static for the remainder of the project timeline
                 tempoCalculationType = .finalEvent
                 
                 // determine PPQ duration to convert to real time
                 ppqDuration = ofMusicalTimeValue - currentTempoEvent.startTimeAsPPQ
-                
             }
             
             // perform calculation
@@ -135,7 +123,8 @@ extension Cubase.TrackArchive {
                 let endTempo = nextTempoEvent?.tempo ?? 0.0
                 
                 // get PPQ duration between tempo events, and partial PPQ distance if it's a partial calculation
-                let ppqTotalBetweenTempoEvents = (nextTempoEvent?.startTimeAsPPQ ?? 0.0) - currentTempoEvent.startTimeAsPPQ
+                let ppqTotalBetweenTempoEvents = (nextTempoEvent?.startTimeAsPPQ ?? 0.0) -
+                    currentTempoEvent.startTimeAsPPQ
                 let position = ppqDuration / ppqTotalBetweenTempoEvents
                 
                 // find average tempo at position
@@ -154,14 +143,12 @@ extension Cubase.TrackArchive {
                 let jank2 = 1 + (deltaref * 0.00026757)
                 
                 realTimeAccumulator += theoretical * jank1 * jank2
-                
             }
             
             if isPartialCalculation {
                 // we're done, terminate for-loop iteration
                 break
             }
-            
         }
         
         return realTimeAccumulator
@@ -177,49 +164,38 @@ extension Cubase.TrackArchive {
         
         // return ofMusicalTimeValue / (Self.xmlPPQ.double / (60.0 / staticTempo))
     }
-    
 }
-
 
 // MARK: - .filter
 
-extension Collection where Element : XMLNode {
-    
+extension Collection where Element: XMLNode {
     /// DAWFileKit: Filters by the given "name" attribute.
     internal func filter(nameAttribute: String) -> [XMLNode] {
-        
         filter {
             $0.asElement?
                 .attribute(forName: "name")?
                 .stringValue == nameAttribute
         }
-        
     }
     
     /// DAWFileKit: Filters by the given "class" attribute.
     internal func filter(classAttribute: String) -> [XMLNode] {
-        
         filter {
             $0.asElement?
                 .attribute(forName: "class")?
                 .stringValue == classAttribute
         }
-        
     }
-    
 }
 
 // MARK: - Debug Helpers
 
 extension Collection where Element == CubaseTrackArchiveMarker {
-    
     /// Formatted/easy to read "pretty" description useful for debugging or logging.
     public var prettyDebugString: String {
-        
         var outputString = ""
         
         for element in self {
-            
             switch element {
             case let marker as Cubase.TrackArchive.Marker:
                 outputString += "\(marker.name)".tabbed
@@ -235,13 +211,10 @@ extension Collection where Element == CubaseTrackArchiveMarker {
             default:
                 outputString += "\(element)".newLined
             }
-            
         }
         
         return outputString.trimmingCharacters(in: .newlines)
-        
     }
-    
 }
 
 #endif

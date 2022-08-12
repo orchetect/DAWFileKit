@@ -9,7 +9,6 @@ import TimecodeKit
 /// Collection of methods and structures related to Cubase.
 /// Do not instance; use methods within directly.
 public enum Cubase {
-    
     public typealias PPQ = Double
     public typealias Tempo = Double
     
@@ -25,15 +24,16 @@ public enum Cubase {
     public static let kTimecodeStringFormat: Timecode.StringFormat = []
     
     /// `Timecode` struct template.
-    public static func kTimecode(realTimeValue: Double,
-                                 at rate: Timecode.FrameRate) -> Timecode? {
-        
-        try? Timecode(realTimeValue: realTimeValue,
-                      at: rate,
-                      limit: kTimecodeUpperLimit,
-                      base: kTimecodeSubFramesBase,
-                      format: kTimecodeStringFormat)
-        
+    public static func kTimecode(
+        realTimeValue: Double,
+        at rate: Timecode.FrameRate
+    ) -> Timecode? {
+        try? Timecode(
+            realTimeValue: realTimeValue,
+            at: rate,
+            limit: kTimecodeUpperLimit,
+            base: kTimecodeSubFramesBase,
+            format: kTimecodeStringFormat
+        )
     }
-    
 }

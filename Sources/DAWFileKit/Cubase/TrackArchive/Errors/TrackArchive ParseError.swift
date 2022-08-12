@@ -8,14 +8,10 @@
 import Foundation
 
 extension Cubase.TrackArchive {
-    
     /// Cubase track archive XML parsing error.
     public enum ParseError: Error {
-        
         case general(String)
-        
     }
-    
 }
 
 #endif

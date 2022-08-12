@@ -11,17 +11,17 @@ import OTCore
 import TimecodeKit
 
 class DAWFileKit_Cubase_TrackArchive_RoundingTest: XCTestCase {
-    
     override func setUp() { }
     override func tearDown() { }
     
     func testRoundingTest() throws {
-        
         let filename = "RoundingTest"
-        guard let rawData = loadFileContents(forResource: filename,
-                                             withExtension: "xml",
-                                             subFolder: .cubaseTrackArchiveXML)
-        else { XCTFail("Could not form URL, possibly could not find file.") ; return }
+        guard let rawData = loadFileContents(
+            forResource: filename,
+            withExtension: "xml",
+            subFolder: .cubaseTrackArchiveXML
+        )
+        else { XCTFail("Could not form URL, possibly could not find file."); return }
         
         // parse
         
@@ -31,7 +31,7 @@ class DAWFileKit_Cubase_TrackArchive_RoundingTest: XCTestCase {
         // parse messages
         
         XCTAssertEqual(parseMessages.errors.count, 0)
-        if parseMessages.errors.count > 0 {
+        if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
         
@@ -55,10 +55,22 @@ class DAWFileKit_Cubase_TrackArchive_RoundingTest: XCTestCase {
         track1event3?.startTimecode.stringFormat = [.showSubFrames]
         track1event4?.startTimecode.stringFormat = [.showSubFrames]
         
-        XCTAssertEqual(track1event1?.startTimecode.stringValue, "01:00:01:29.00") // as displayed in Cubase
-        XCTAssertEqual(track1event2?.startTimecode.stringValue, "01:00:01:29.78") // as displayed in Cubase
-        XCTAssertEqual(track1event3?.startTimecode.stringValue, "01:00:01:29.79") // as displayed in Cubase
-        XCTAssertEqual(track1event4?.startTimecode.stringValue, "01:00:02:00.00") // as displayed in Cubase
+        XCTAssertEqual(
+            track1event1?.startTimecode.stringValue,
+            "01:00:01:29.00"
+        ) // as displayed in Cubase
+        XCTAssertEqual(
+            track1event2?.startTimecode.stringValue,
+            "01:00:01:29.78"
+        ) // as displayed in Cubase
+        XCTAssertEqual(
+            track1event3?.startTimecode.stringValue,
+            "01:00:01:29.79"
+        ) // as displayed in Cubase
+        XCTAssertEqual(
+            track1event4?.startTimecode.stringValue,
+            "01:00:02:00.00"
+        ) // as displayed in Cubase
         
         // track 2 - linear mode
         
@@ -76,13 +88,23 @@ class DAWFileKit_Cubase_TrackArchive_RoundingTest: XCTestCase {
         track2event3?.startTimecode.stringFormat = [.showSubFrames]
         track2event4?.startTimecode.stringFormat = [.showSubFrames]
         
-        XCTAssertEqual(track2event1?.startTimecode.stringValue, "01:00:01:29.00") // as displayed in Cubase
-        XCTAssertEqual(track2event2?.startTimecode.stringValue, "01:00:01:29.78") // as displayed in Cubase
-        XCTAssertEqual(track2event3?.startTimecode.stringValue, "01:00:01:29.79") // as displayed in Cubase
-        XCTAssertEqual(track2event4?.startTimecode.stringValue, "01:00:02:00.00") // as displayed in Cubase
-        
+        XCTAssertEqual(
+            track2event1?.startTimecode.stringValue,
+            "01:00:01:29.00"
+        ) // as displayed in Cubase
+        XCTAssertEqual(
+            track2event2?.startTimecode.stringValue,
+            "01:00:01:29.78"
+        ) // as displayed in Cubase
+        XCTAssertEqual(
+            track2event3?.startTimecode.stringValue,
+            "01:00:01:29.79"
+        ) // as displayed in Cubase
+        XCTAssertEqual(
+            track2event4?.startTimecode.stringValue,
+            "01:00:02:00.00"
+        ) // as displayed in Cubase
     }
-    
 }
 
 #endif

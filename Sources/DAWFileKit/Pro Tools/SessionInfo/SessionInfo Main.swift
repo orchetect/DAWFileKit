@@ -7,11 +7,9 @@ import Foundation
 import TimecodeKit
 
 extension ProTools.SessionInfo {
-    
     /// Contains the global session meta data
     /// (from the Session Info Text file header)
     public struct Main {
-        
         public var name: String?
         
         public var sampleRate: Double?
@@ -23,7 +21,5 @@ extension ProTools.SessionInfo {
         public var audioTrackCount: Int?
         public var audioClipCount: Int?
         public var audioFileCount: Int?
-        
-        }
-    
+    }
 }

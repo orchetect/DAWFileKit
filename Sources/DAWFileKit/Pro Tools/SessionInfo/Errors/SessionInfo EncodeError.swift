@@ -6,11 +6,8 @@
 import Foundation
 
 extension ProTools.SessionInfo {
-    
+    /// Pro Tools session info text file encoding error.
     public enum EncodeError: Error {
-        
         case general(String)
-        
     }
-    
 }

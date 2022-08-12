@@ -9,13 +9,13 @@ import Foundation
 @_implementationOnly import OTCore
 
 extension Cubase.TrackArchive {
-    
     // MARK: xmlString
     
     /// Returns Cubase XML file contents generated from the `TrackArchive` contents as a String.
-    public func xmlString() throws -> (xmlString: String,
-                                       messages: [EncodeMessage]) {
-        
+    public func xmlString() throws -> (
+        xmlString: String,
+        messages: [EncodeMessage]
+    ) {
         var messages: [EncodeMessage] = []
         
         func addEncodeMessage(_ msg: EncodeMessage) {
@@ -52,96 +52,134 @@ extension Cubase.TrackArchive {
         
         // return data
         
-        return (xmlString: xml.xmlString(options: xmlOptions),
-                messages: messages)
-        
+        return (
+            xmlString: xml.xmlString(options: xmlOptions),
+            messages: messages
+        )
     }
-    
 }
 
 extension Cubase.TrackArchive {
-    
     // MARK: _addSetup
     
-    fileprivate func _addSetup(_ root: XMLElement,
-                               messages: inout [EncodeMessage]
+    fileprivate func _addSetup(
+        _ root: XMLElement,
+        messages: inout [EncodeMessage]
     ) throws {
-        
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
         
-        let setupNode = XMLElement(name: "obj",
-                                   attributes: [("class", "PArrangeSetup"),
-                                                ("name", "Setup"),
-                                                ("ID", getNewID().string)])
+        let setupNode = XMLElement(
+            name: "obj",
+            attributes: [
+                ("class", "PArrangeSetup"),
+                ("name", "Setup"),
+                ("ID", getNewID().string)
+            ]
+        )
         
         // frame rate
         if let value = Self.frameRateTable
             .first(where: { $0.value == main.frameRate })?
             .key
         {
-            setupNode.addChild(XMLElement(name: "int",
-                                          attributes: [("name", "FrameType"),
-                                                       ("value", value.string)]))
+            setupNode.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "FrameType"),
+                    ("value", value.string)
+                ]
+            ))
         }
         
         // start time
         if let stc = main.startTimecode {
-            let startNode = XMLElement(name: "member",
-                                       attributes: [("name","Start")])
+            let startNode = XMLElement(
+                name: "member",
+                attributes: [("name", "Start")]
+            )
             
             let value = stc.realTimeValue.stringValueHighPrecision
             
-            startNode.addChild(XMLElement(name: "float",
-                                          attributes: [("name", "Time"),
-                                                       ("value", value)]))
+            startNode.addChild(XMLElement(
+                name: "float",
+                attributes: [
+                    ("name", "Time"),
+                    ("value", value)
+                ]
+            ))
             
             // TODO: instead of raw string, use a non-throwing method?
-            startNode.addChild(try XMLElement(xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#))
+            startNode.addChild(
+                try XMLElement(
+                    xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#
+                )
+            )
             
             setupNode.addChild(startNode)
         }
         
         // length
         if let ltc = main.lengthTimecode {
-            let startNode = XMLElement(name: "member",
-                                       attributes: [("name","Length")])
+            let startNode = XMLElement(
+                name: "member",
+                attributes: [("name", "Length")]
+            )
             
             let value = ltc.realTimeValue.string
             
-            startNode.addChild(XMLElement(name: "float",
-                                          attributes: [("name", "Time"),
-                                                       ("value", value)]))
+            startNode.addChild(XMLElement(
+                name: "float",
+                attributes: [
+                    ("name", "Time"),
+                    ("value", value)
+                ]
+            ))
             
             // TODO: instead of raw string, use a non-throwing method?
-            startNode.addChild(try XMLElement(xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#))
+            startNode.addChild(
+                try XMLElement(
+                    xmlString: #"<member name="Domain"><int name="Type" value="1"/><float name="Period" value="1"/></member>"#
+                )
+            )
             
             setupNode.addChild(startNode)
         }
-        
         
         // TimeType - not implemented yet
         
         // bar offset
         if let value = main.barOffset {
-            setupNode.addChild(XMLElement(name: "int",
-                                          attributes: [("name", "BarOffset"),
-                                                       ("value", value.string)]))
+            setupNode.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "BarOffset"),
+                    ("value", value.string)
+                ]
+            ))
         }
         
         // sample rate
         if let value = main.sampleRate {
-            setupNode.addChild(XMLElement(name: "float",
-                                          attributes: [("name", "SampleRate"),
-                                                       ("value", value.stringValueHighPrecision)]))
+            setupNode.addChild(XMLElement(
+                name: "float",
+                attributes: [
+                    ("name", "SampleRate"),
+                    ("value", value.stringValueHighPrecision)
+                ]
+            ))
         }
         
         // bit depth
         if let value = main.bitDepth {
-            setupNode.addChild(XMLElement(name: "int",
-                                          attributes: [("name", "SampleSize"),
-                                                       ("value", value.string)]))
+            setupNode.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "SampleSize"),
+                    ("value", value.string)
+                ]
+            ))
         }
         
         // 'SampleFormatSize' - not implemented yet
@@ -158,73 +196,103 @@ extension Cubase.TrackArchive {
         
         // 'HmtDepth'
         if let value = main.hmtDepth {
-            setupNode.addChild(XMLElement(name: "int",
-                                          attributes: [("name", "HmtDepth"),
-                                                       ("value", value.string)]))
+            setupNode.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "HmtDepth"),
+                    ("value", value.string)
+                ]
+            ))
         }
         
         root.addChild(setupNode)
-        
     }
-    
 }
 
 extension Cubase.TrackArchive {
-    
     // MARK: _addTrackListAndTempoEvents
     
-    fileprivate func _addTrackListAndTempoEvents(_ root: XMLElement,
-                                                 messages: inout [EncodeMessage])
-    {
-        
+    fileprivate func _addTrackListAndTempoEvents(
+        _ root: XMLElement,
+        messages: inout [EncodeMessage]
+    ) {
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
         
-        let listNode = XMLElement(name: "list",
-                                  attributes: [("name", "track"),
-                                               ("type", "obj")])
+        let listNode = XMLElement(
+            name: "list",
+            attributes: [
+                ("name", "track"),
+                ("type", "obj")
+            ]
+        )
         
         #warning("> TODO: needs coding - add tracks and tempo events")
         
         for track in tracks ?? [] {
-            
             let newTrack = XMLElement()
             
             // Flags
             // ***** not sure what this value is for, but Cubase will refuse to open the XML if it's absent
-            newTrack.addChild(XMLElement(name: "int",
-                                         attributes: [("name", "Flags"),
-                                                      ("value", "1")]))
+            newTrack.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "Flags"),
+                    ("value", "1")
+                ]
+            ))
             
             // Start
-            newTrack.addChild(XMLElement(name: "float",
-                                         attributes: [("name", "Start"),
-                                                      ("value", "0")]))
+            newTrack.addChild(XMLElement(
+                name: "float",
+                attributes: [
+                    ("name", "Start"),
+                    ("value", "0")
+                ]
+            ))
             
             // Length - needed?
             
             // MListNode
-            let mlistNode = XMLElement(name: "obj",
-                                       attributes: [("class", "MListNode"),
-                                                    ("name","Node"),
-                                                    ("ID", getNewID().string)])
+            let mlistNode = XMLElement(
+                name: "obj",
+                attributes: [
+                    ("class", "MListNode"),
+                    ("name", "Node"),
+                    ("ID", getNewID().string)
+                ]
+            )
             newTrack.addChild(mlistNode)
             
             // Track Name
-            mlistNode.addChild(XMLElement(name: "string",
-                                          attributes: [("name", "Name"),
-                                                       ("value", track.name ?? "")]))
+            mlistNode.addChild(XMLElement(
+                name: "string",
+                attributes: [
+                    ("name", "Name"),
+                    ("value", track.name ?? "")
+                ]
+            ))
             
             // Time domain
-            let Domain = XMLElement(name: "member",
-                                    attributes: [("name", "Domain")])
-            Domain.addChild(XMLElement(name: "int",
-                                       attributes: [("name", "Type"),
-                                                    ("value", "1")]))
-            Domain.addChild(XMLElement(name: "float",
-                                       attributes: [("name", "Period"),
-                                                    ("value", "1")]))
+            let Domain = XMLElement(
+                name: "member",
+                attributes: [("name", "Domain")]
+            )
+            Domain.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "Type"),
+                    ("value", "1")
+                ]
+            ))
+            Domain.addChild(XMLElement(
+                name: "float",
+                attributes: [
+                    ("name", "Period"),
+                    ("value", "1")
+                ]
+            ))
             mlistNode.addChild(Domain)
             
             // track-specific contents
@@ -234,36 +302,46 @@ extension Cubase.TrackArchive {
                 _addTrackMarker(using: newTrack, track: typed, messages: &messages)
                 
             default:
-                addEncodeMessage(.error("Unhandled track type while building XML file for track named: \((track.name ?? "").quoted)"))
+                addEncodeMessage(
+                    .error(
+                        "Unhandled track type while building XML file for track named: \((track.name ?? "").quoted)"
+                    )
+                )
             }
             
             // Track Device
             // ***** not sure what this block is for, but Cubase will refuse to open the XML if it's absent
-            let TrackDevice = XMLElement(name: "obj",
-                                         attributes: [("class", "MTrack"),
-                                                      ("name", "Track Device"),
-                                                      ("ID", getNewID().string)])
-            TrackDevice.addChild(XMLElement(name: "int",
-                                            attributes: [("name", "Connection Type"),
-                                                         ("value", "2")]))
+            let TrackDevice = XMLElement(
+                name: "obj",
+                attributes: [
+                    ("class", "MTrack"),
+                    ("name", "Track Device"),
+                    ("ID", getNewID().string)
+                ]
+            )
+            TrackDevice.addChild(XMLElement(
+                name: "int",
+                attributes: [
+                    ("name", "Connection Type"),
+                    ("value", "2")
+                ]
+            ))
             newTrack.addChild(TrackDevice)
             
             listNode.addChild(newTrack)
-            
         }
         
         root.addChild(listNode)
-        
     }
     
     // MARK: _addTrackMarker
     
     @discardableResult
-    fileprivate func _addTrackMarker(using newTrack: XMLElement,
-                                     track: MarkerTrack,
-                                     messages: inout [EncodeMessage]) -> XMLElement
-    {
-        
+    fileprivate func _addTrackMarker(
+        using newTrack: XMLElement,
+        track: MarkerTrack,
+        messages: inout [EncodeMessage]
+    ) -> XMLElement {
         func addEncodeMessage(_ msg: EncodeMessage) {
             messages.append(msg)
         }
@@ -271,8 +349,10 @@ extension Cubase.TrackArchive {
         var markerIDCounter = 0
         
         newTrack.name = "obj"
-        newTrack.addAttributes([("class", "MMarkerTrackEvent"),
-                                ("ID", getNewID().string)])
+        newTrack.addAttributes([
+            ("class", "MMarkerTrackEvent"),
+            ("ID", getNewID().string)
+        ])
         
         // MListNode
         let mlistNode = newTrack.children?
@@ -282,26 +362,43 @@ extension Cubase.TrackArchive {
             .first as? XMLElement
         
         // MListNode.Events
-        let eventsNode = XMLElement(name: "list",
-                                    attributes: [("name","Events"),
-                                                 ("type", "obj")])
+        let eventsNode = XMLElement(
+            name: "list",
+            attributes: [
+                ("name", "Events"),
+                ("type", "obj")
+            ]
+        )
         
         for event in track.events {
-            
             let newNode = XMLElement(name: "obj")
             
             // add length as real time if present, otherwise convert the timecode object to real time
             if let eventStartRealTime = event.startRealTime {
-                newNode.addChild(XMLElement(name: "float",
-                                            attributes: [("name", "Start"),
-                                                         ("value", eventStartRealTime
-                                                            .stringValueHighPrecision)]))
+                newNode.addChild(XMLElement(
+                    name: "float",
+                    attributes: [
+                        ("name", "Start"),
+                        (
+                            "value",
+                            eventStartRealTime
+                                .stringValueHighPrecision
+                        )
+                    ]
+                ))
             } else {
-                newNode.addChild(XMLElement(name: "float",
-                                            attributes: [("name", "Start"),
-                                                         ("value", event.startTimecode
-                                                            .realTimeValue
-                                                            .stringValueHighPrecision)]))
+                newNode.addChild(XMLElement(
+                    name: "float",
+                    attributes: [
+                        ("name", "Start"),
+                        (
+                            "value",
+                            event.startTimecode
+                                .realTimeValue
+                                .stringValueHighPrecision
+                        )
+                    ]
+                ))
             }
             
             switch event {
@@ -313,44 +410,65 @@ extension Cubase.TrackArchive {
                 
                 // add length as real time if present, otherwise convert the timecode object to real time
                 if let markerLengthRealTime = marker.lengthRealTime {
-                    newNode.addChild(XMLElement(name: "float",
-                                                attributes: [("name", "Length"),
-                                                             ("value", markerLengthRealTime
-                                                                .stringValueHighPrecision)]))
+                    newNode.addChild(XMLElement(
+                        name: "float",
+                        attributes: [
+                            ("name", "Length"),
+                            (
+                                "value",
+                                markerLengthRealTime
+                                    .stringValueHighPrecision
+                            )
+                        ]
+                    ))
                 } else {
-                    newNode.addChild(XMLElement(name: "float",
-                                                attributes: [("name", "Length"),
-                                                             ("value", marker.lengthTimecode
-                                                                .realTimeValue
-                                                                .stringValueHighPrecision)]))
+                    newNode.addChild(XMLElement(
+                        name: "float",
+                        attributes: [
+                            ("name", "Length"),
+                            (
+                                "value",
+                                marker.lengthTimecode
+                                    .realTimeValue
+                                    .stringValueHighPrecision
+                            )
+                        ]
+                    ))
                 }
                 
             default:
-                addEncodeMessage(.error("Unhandled marker event type while building XML file: \(type(of: event))."))
+                addEncodeMessage(
+                    .error(
+                        "Unhandled marker event type while building XML file: \(type(of: event))."
+                    )
+                )
                 continue
             }
             
-            newNode.addChild(XMLElement(name: "string", attributes: [("name", "Name"),
-                                                                     ("value", event.name)]))
+            newNode.addChild(XMLElement(name: "string", attributes: [
+                ("name", "Name"),
+                ("value", event.name)
+            ]))
             
             markerIDCounter += 1
-            newNode.addChild(XMLElement(name: "int", attributes: [("name", "ID"),
-                                                                  ("value", markerIDCounter.string)]))
+            newNode.addChild(XMLElement(name: "int", attributes: [
+                ("name", "ID"),
+                (
+                    "value",
+                    markerIDCounter.string
+                )
+            ]))
             
             newNode.addAttribute(withName: "ID", value: getNewID().string)
             
             eventsNode.addChild(newNode)
-            
         }
         
         mlistNode?.addChild(eventsNode)
         
         return newTrack
-        
     }
-    
 }
-
 
 // MARK: - ID Counter
 
@@ -361,11 +479,9 @@ fileprivate func resetIDCounter() {
 }
 
 fileprivate func getNewID() -> Int {
-    
     IDcounter += 1
     
     return IDcounter
-    
 }
 
 #endif

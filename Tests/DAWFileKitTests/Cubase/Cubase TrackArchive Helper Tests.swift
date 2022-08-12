@@ -11,18 +11,18 @@ import OTCore
 import TimecodeKit
 
 class DAWFileKit_Cubase_Helper_Tests: XCTestCase {
-    
     override func setUp() { }
     override func tearDown() { }
     
     func testCollection_XMLNode_FilterAttribute() throws {
-        
         // prep
         
-        let nodes = [try XMLElement(xmlString: "<obj class='classA' name='name1'/>"),
-                     try XMLElement(xmlString: "<obj class='classA' name='name2'/>"),
-                     try XMLElement(xmlString: "<obj class='classB' name='name3'/>"),
-                     try XMLElement(xmlString: "<obj class='classB' name='name4'/>")]
+        let nodes = [
+            try XMLElement(xmlString: "<obj class='classA' name='name1'/>"),
+            try XMLElement(xmlString: "<obj class='classA' name='name2'/>"),
+            try XMLElement(xmlString: "<obj class='classB' name='name3'/>"),
+            try XMLElement(xmlString: "<obj class='classB' name='name4'/>")
+        ]
         
         // test
         
@@ -31,9 +31,7 @@ class DAWFileKit_Cubase_Helper_Tests: XCTestCase {
         
         filtered = nodes.filter(classAttribute: "classA")
         XCTAssertEqual(filtered, [nodes[0], nodes[1]])
-        
     }
-    
 }
 
 #endif

@@ -9,19 +9,19 @@ import OTCore
 import TimecodeKit
 
 class DAWFileKit_ProTools_SessionText_SimpleTest: XCTestCase {
-    
     override func setUp() { }
     override func tearDown() { }
     
     func testSessionText_SimpleTest() throws {
-        
         // load file
         
         let filename = "SessionText_SimpleTest_23-976fps_DefaultExportOptions_PT2020.3"
-        guard let rawData = loadFileContents(forResource: filename,
-                                             withExtension: "txt",
-                                             subFolder: .ptSessionTextExports)
-        else { XCTFail("Could not form URL, possibly could not find file.") ; return }
+        guard let rawData = loadFileContents(
+            forResource: filename,
+            withExtension: "txt",
+            subFolder: .ptSessionTextExports
+        )
+        else { XCTFail("Could not form URL, possibly could not find file."); return }
         
         // parse
         
@@ -31,7 +31,7 @@ class DAWFileKit_ProTools_SessionText_SimpleTest: XCTestCase {
         // parse messages
         
         XCTAssertEqual(parseMessages.errors.count, 0)
-        if parseMessages.errors.count > 0 {
+        if !parseMessages.errors.isEmpty {
             dump(parseMessages.errors)
         }
         
@@ -40,7 +40,10 @@ class DAWFileKit_ProTools_SessionText_SimpleTest: XCTestCase {
         XCTAssertEqual(sessionInfo.main.name,            "SessionText_SimpleTest")
         XCTAssertEqual(sessionInfo.main.sampleRate,      48000.0)
         XCTAssertEqual(sessionInfo.main.bitDepth,        "24-bit")
-        XCTAssertEqual(sessionInfo.main.startTimecode,   ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976))
+        XCTAssertEqual(
+            sessionInfo.main.startTimecode,
+            ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
+        )
         XCTAssertEqual(sessionInfo.main.frameRate,       ._23_976)
         XCTAssertEqual(sessionInfo.main.audioTrackCount, 1)
         XCTAssertEqual(sessionInfo.main.audioClipCount,  1)
@@ -53,7 +56,10 @@ class DAWFileKit_ProTools_SessionText_SimpleTest: XCTestCase {
         let file1 = sessionInfo.onlineFiles?.first
         
         XCTAssertEqual(file1?.filename, "Audio 1_01.wav")
-        XCTAssertEqual(file1?.path,     "Macintosh HD:Users:stef:Desktop:SessionText_SimpleTest:Audio Files:")
+        XCTAssertEqual(
+            file1?.path,
+            "Macintosh HD:Users:stef:Desktop:SessionText_SimpleTest:Audio Files:"
+        )
         
         // files - offline
         
@@ -97,9 +103,18 @@ class DAWFileKit_ProTools_SessionText_SimpleTest: XCTestCase {
         XCTAssertEqual(track1clip1?.channel,       1)
         XCTAssertEqual(track1clip1?.event,         1)
         XCTAssertEqual(track1clip1?.name,          "Audio 1_01")
-        XCTAssertEqual(track1clip1?.startTimecode, ProTools.kTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976))
-        XCTAssertEqual(track1clip1?.endTimecode,   ProTools.kTimecode(TCC(h: 01, m: 00, s: 05, f: 00), at: ._23_976))
-        XCTAssertEqual(track1clip1?.duration,      ProTools.kTimecode(TCC(h: 00, m: 00, s: 05, f: 00), at: ._23_976))
+        XCTAssertEqual(
+            track1clip1?.startTimecode,
+            ProTools.kTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976)
+        )
+        XCTAssertEqual(
+            track1clip1?.endTimecode,
+            ProTools.kTimecode(TCC(h: 01, m: 00, s: 05, f: 00), at: ._23_976)
+        )
+        XCTAssertEqual(
+            track1clip1?.duration,
+            ProTools.kTimecode(TCC(h: 00, m: 00, s: 05, f: 00), at: ._23_976)
+        )
         XCTAssertEqual(track1clip1?.state,         .unmuted)
         
         // markers
@@ -109,7 +124,5 @@ class DAWFileKit_ProTools_SessionText_SimpleTest: XCTestCase {
         // orphan data
         
         XCTAssertNil(sessionInfo.orphanData)       // empty
-        
     }
-    
 }
