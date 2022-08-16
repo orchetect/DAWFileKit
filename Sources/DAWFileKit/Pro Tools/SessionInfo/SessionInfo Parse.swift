@@ -1,6 +1,7 @@
 //
 //  SessionInfo Parse.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
+//  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
 import Foundation
@@ -832,7 +833,8 @@ extension ProTools.SessionInfo {
             
             // check params
             
-            let paramsRegex = #"(?-i)^TRACK NAME:\t(.*)\nCOMMENTS:\t(.*(?:(?:\n*.)*))\nUSER DELAY:\t(.*)\nSTATE:\s(.*)\nPLUG-INS:\s(?:\t{0,1})(.*)\n(?:CHANNEL.*STATE)((?:\n.*)*)"#
+            let paramsRegex =
+                #"(?-i)^TRACK NAME:\t(.*)\nCOMMENTS:\t(.*(?:(?:\n*.)*))\nUSER DELAY:\t(.*)\nSTATE:\s(.*)\nPLUG-INS:\s(?:\t{0,1})(.*)\n(?:CHANNEL.*STATE)((?:\n.*)*)"#
             
             let getParams = trackLines
                 .joined(separator: "\n")

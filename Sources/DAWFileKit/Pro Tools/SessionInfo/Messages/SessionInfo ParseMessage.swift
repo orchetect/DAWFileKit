@@ -1,6 +1,7 @@
 //
 //  SessionInfo ParseMessage.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
+//  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
 import Foundation
