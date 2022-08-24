@@ -1,6 +1,6 @@
 # DAWFileKit
 
-[![CI Build Status](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml/badge.svg)](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml) [![Platforms - macOS 10.12+ | iOS 10+ | tvOS 10+](https://img.shields.io/badge/platforms-macOS 10.12+ | iOS 10+ | tvOS 10+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.3-5.7](https://img.shields.io/badge/Swift-5.3–5.7-orange.svg?style=flat) [![Xcode 12.0-14](https://img.shields.io/badge/Xcode-12.0–14-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/DAWFileKit/blob/main/LICENSE)
+[![CI Build Status](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml/badge.svg)](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml) [![Platforms - macOS 10.12+ | iOS 10+ | tvOS 10+](https://img.shields.io/badge/platforms-macOS%2010.12+%20|%20iOS%2010+%20|%20tvOS%2010+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.3-5.7](https://img.shields.io/badge/Swift-5.3–5.7-orange.svg?style=flat) [![Xcode 12.0-14](https://img.shields.io/badge/Xcode-12.0–14-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/DAWFileKit/blob/main/LICENSE)
 
 A Swift library for reading and writing common import/export file formats between popular DAW applications.
 
