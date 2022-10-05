@@ -152,18 +152,20 @@ extension ProTools.SessionInfo {
         minSecsString: String
     ) throws -> TimeLocation {
         // first two capture groups are mandatory: HH and SS
-        // the fourth capture group will be milliseconds if present, or empty if not present
-        let regExPattern = #"(\d+):(\d{2})(.){0,1}(\d{3}){0,1}"#
+        // the fifth capture group will be milliseconds if present, or empty if not present
+        let regExPattern = #"^(\d+):(\d{2})((.)(\d{3})){0,1}$"#
         
+        // regexMatches() - the first array element is the entire match,
+        // so capture groups begin at array index 1
         let captures = minSecsString.regexMatches(captureGroupsFromPattern: regExPattern)
         
-        guard captures.count == 4 else {
+        guard captures.count == 6 else {
             throw ParseError.general(
                 "Min:Secs value is malformed."
             )
         }
-        guard let min = captures[0]?.int,
-              let sec = captures[1]?.int
+        guard let min = captures[1]?.uInt?.intExactly, // UInt avoids negative ints
+              let sec = captures[2]?.uInt?.intExactly  // UInt avoids negative ints
         else {
             throw ParseError.general(
                 "Min:Secs value is malformed."
@@ -171,14 +173,16 @@ extension ProTools.SessionInfo {
         }
         
         let ms: Int?
-        if captures[3] == "" {
+        if captures[5] == nil || captures[5] == "" {
             ms = nil
-        } else if let msInt = captures[3]?.int {
-            ms = msInt
         } else {
-            throw ParseError.general(
-                "Min:Secs value is malformed. Milliseconds component was present but was not a valid integer."
-            )
+            if let msInt = captures[5]?.uInt?.int { // UInt avoids negative ints
+                ms = msInt
+            } else {
+                throw ParseError.general(
+                    "Min:Secs value is malformed. Milliseconds component was present but was not a valid integer."
+                )
+            }
         }
         
         return .minSecs(min: min, sec: sec, ms: ms)
@@ -189,7 +193,8 @@ extension ProTools.SessionInfo {
     static func formTimeLocation(
         samplesString: String
     ) throws -> TimeLocation {
-        guard let samples = Int(samplesString) else {
+        guard let samples = samplesString.uInt?.intExactly // UInt avoids negative ints
+        else {
             throw ParseError.general(
                 "Samples value was not an integer."
             )
@@ -205,13 +210,13 @@ extension ProTools.SessionInfo {
         barsAndBeatsString: String
     ) throws -> TimeLocation {
         let slices = barsAndBeatsString
-            .split(separator: "|")
-            .map(\.trimmed)
-            .map { Int($0) }
+            .split(separator: "|", omittingEmptySubsequences: false)
         
         guard (2 ... 3).contains(slices.count),
-              let bar = slices[0],
-              let beat = slices[1]
+              !slices[0].isEmpty,
+              !slices[1].isEmpty,
+              let bar = slices[0].uInt?.intExactly, // UInt avoids negative ints
+              let beat = slices[1].uInt?.intExactly // UInt avoids negative ints
         else {
             throw ParseError.general(
                 "Value was not recognized as either Bar|Beat or Bar|Beat|Ticks format: \(barsAndBeatsString.quoted)."
@@ -222,7 +227,21 @@ extension ProTools.SessionInfo {
         // instead of providing 0, provide nil.
         // the reasons is that if ticks are not present in the text file, it is because
         // are simply omitted by Pro Tools and they may not necessarily be 0 in the actual project
-        let ticks = slices.count > 2 ? slices[2] : nil
+        let ticks: Int?
+        if slices.count > 2 {
+            if slices[2].count == 4,
+               slices[2].trimmed.count == 3,
+               let t = slices[2].trimmed.uInt?.intExactly // UInt avoids negative ints
+            {
+                ticks = t
+            } else {
+                throw ParseError.general(
+                    "Value was not recognized as either Bar|Beat or Bar|Beat|Ticks format: \(barsAndBeatsString.quoted)."
+                )
+            }
+        } else {
+            ticks = nil
+        }
         
         return .barsAndBeats(bar: bar, beat: beat, ticks: ticks)
     }
@@ -234,33 +253,37 @@ extension ProTools.SessionInfo {
         feetAndFramesString: String
     ) throws -> TimeLocation {
         // first two capture groups are mandatory: FT and FR
-        // the fourth capture group will be milliseconds if present, or empty if not present
-        let regExPattern = #"(\d+)+(\d{2})(.){0,1}(\d{2}){0,1}"#
+        // the fifth capture group will be subframes if present, or empty if not present
+        let regExPattern = #"^(\d+)\+(\d{2})((.)(\d{2})){0,1}$"#
         
+        // regexMatches() - the first array element is the entire match,
+        // so capture groups begin at array index 1
         let captures = feetAndFramesString.regexMatches(captureGroupsFromPattern: regExPattern)
         
-        guard captures.count == 4 else {
+        guard captures.count == 6 else {
             throw ParseError.general(
-                "Feet+Frames value is malformed."
+                "Feet+Frames value is malformed: invalid number of value components."
             )
         }
-        guard let feet = captures[0]?.int,
-              let frames = captures[1]?.int
+        guard let feet = captures[1]?.uInt?.int, // UInt avoids negative ints
+              let frames = captures[2]?.uInt?.int // UInt avoids negative ints
         else {
             throw ParseError.general(
-                "Feet+Frames value is malformed."
+                "Feet+Frames value is malformed: not valid integer(s)."
             )
         }
         
         let subFrames: Int?
-        if captures[3] == "" {
+        if captures[5] == nil || captures[5] == "" {
             subFrames = nil
-        } else if let subFramesInt = captures[3]?.int {
-            subFrames = subFramesInt
         } else {
-            throw ParseError.general(
-                "Feet+Frames value is malformed. Subframes component was present but was not a valid integer."
-            )
+            if let subFramesInt = captures[5]?.uInt?.int { // UInt avoids negative ints
+                subFrames = subFramesInt
+            } else {
+                throw ParseError.general(
+                    "Feet+Frames value is malformed. Subframes component was present but was not a valid integer."
+                )
+            }
         }
         
         return .feetAndFrames(feet: feet, frames: frames, subFrames: subFrames)
