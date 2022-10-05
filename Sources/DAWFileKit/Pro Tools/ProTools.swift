@@ -11,54 +11,54 @@ import TimecodeKit
 public enum ProTools {
     /// `Timecode` setting for `.subFramesBase`.
     /// Pro Tools uses 100 subframes per frame.
-    public static let kTimecodeSubFramesBase: Timecode.SubFramesBase = ._100SubFrames
+    public static let timecodeSubFramesBase: Timecode.SubFramesBase = ._100SubFrames
     
     /// `Timecode` setting for `.upperLimit`.
     /// Pro Tools uses a 24-hour SMPTE timecode clock.
-    public static let kTimecodeUpperLimit: Timecode.UpperLimit = ._24hours
+    public static let timecodeUpperLimit: Timecode.UpperLimit = ._24hours
     
     /// `Timecode` setting for `.stringFormat`.
-    public static let kTimecodeStringFormat: Timecode.StringFormat = []
+    public static let timecodeStringFormat: Timecode.StringFormat = []
     
     /// `Timecode` struct template.
-    public static func kTimecode(
+    public static func formTimecode(
         _ exactly: Timecode.Components,
         at rate: Timecode.FrameRate
-    ) -> Timecode? {
-        try? Timecode(
+    ) throws -> Timecode {
+        try Timecode(
             exactly,
             at: rate,
-            limit: kTimecodeUpperLimit,
-            base: kTimecodeSubFramesBase,
-            format: kTimecodeStringFormat
+            limit: timecodeUpperLimit,
+            base: timecodeSubFramesBase,
+            format: timecodeStringFormat
         )
     }
     
     /// `Timecode` struct template.
-    public static func kTimecode(
+    public static func formTimecode(
         _ exactly: String,
         at rate: Timecode.FrameRate
-    ) -> Timecode? {
-        try? Timecode(
+    ) throws -> Timecode {
+        try Timecode(
             exactly,
             at: rate,
-            limit: kTimecodeUpperLimit,
-            base: kTimecodeSubFramesBase,
-            format: kTimecodeStringFormat
+            limit: timecodeUpperLimit,
+            base: timecodeSubFramesBase,
+            format: timecodeStringFormat
         )
     }
     
     /// `Timecode` struct template.
-    public static func kTimecode(
+    public static func formTimecode(
         realTimeValue: Double,
         at rate: Timecode.FrameRate
-    ) -> Timecode? {
-        try? Timecode(
+    ) throws -> Timecode {
+        try Timecode(
             realTimeValue: realTimeValue,
             at: rate,
-            limit: kTimecodeUpperLimit,
-            base: kTimecodeSubFramesBase,
-            format: kTimecodeStringFormat
+            limit: timecodeUpperLimit,
+            base: timecodeSubFramesBase,
+            format: timecodeStringFormat
         )
     }
 }

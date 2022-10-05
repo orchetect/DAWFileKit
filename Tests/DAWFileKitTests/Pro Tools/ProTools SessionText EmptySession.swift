@@ -43,7 +43,7 @@ class DAWFileKit_ProTools_SessionText_EmptySession: XCTestCase {
         XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
         XCTAssertEqual(
             sessionInfo.main.startTimecode,
-            ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
         )
         XCTAssertEqual(sessionInfo.main.frameRate,         ._23_976)
         XCTAssertEqual(sessionInfo.main.audioTrackCount,   0)

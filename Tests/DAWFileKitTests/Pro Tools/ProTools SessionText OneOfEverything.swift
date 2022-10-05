@@ -43,7 +43,7 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(sessionInfo.main.bitDepth,        "24-bit")
         XCTAssertEqual(
             sessionInfo.main.startTimecode,
-            ProTools.kTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
         )
         XCTAssertEqual(sessionInfo.main.frameRate,       ._23_976)
         XCTAssertEqual(sessionInfo.main.audioTrackCount, 5)
@@ -204,15 +204,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track1clip1?.name,           "Audio 1 Clip1")
         XCTAssertEqual(
             track1clip1?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976)
         )
         XCTAssertEqual(
             track1clip1?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 05, f: 00), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 05, f: 00), at: ._23_976)
         )
         XCTAssertEqual(
             track1clip1?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 05, f: 00), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 05, f: 00), at: ._23_976)
         )
         XCTAssertEqual(track1clip1?.state,          .unmuted)
         
@@ -232,15 +232,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track2clip1?.name,           "Audio 2 Clip1")
         XCTAssertEqual(
             track2clip1?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 06, f: 15), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 06, f: 15), at: ._23_976)
         )
         XCTAssertEqual(
             track2clip1?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 10, f: 03), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 10, f: 03), at: ._23_976)
         )
         XCTAssertEqual(
             track2clip1?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 03, f: 12), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 03, f: 12), at: ._23_976)
         )
         XCTAssertEqual(track2clip1?.state,          .unmuted)
         
@@ -260,15 +260,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track3clip1?.name,           "Audio 3 Clip1.L")
         XCTAssertEqual(
             track3clip1?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 12, f: 18), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 12, f: 18), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip1?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 17, f: 08), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 17, f: 08), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip1?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 04, f: 14), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 04, f: 14), at: ._23_976)
         )
         XCTAssertEqual(track3clip1?.state,          .unmuted)
         
@@ -278,15 +278,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track3clip2?.name,           "Audio 3 Clip2.L")
         XCTAssertEqual(
             track3clip2?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 18, f: 17), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 18, f: 17), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip2?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 21, f: 19), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 21, f: 19), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip2?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 03, f: 02), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 03, f: 02), at: ._23_976)
         )
         XCTAssertEqual(track3clip2?.state,          .muted)
         
@@ -296,15 +296,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track3clip3?.name,           "Audio 3 Clip1.R")
         XCTAssertEqual(
             track3clip3?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 12, f: 18), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 12, f: 18), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip3?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 17, f: 08), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 17, f: 08), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip3?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 04, f: 14), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 04, f: 14), at: ._23_976)
         )
         XCTAssertEqual(track3clip3?.state,          .unmuted)
         
@@ -314,15 +314,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track3clip4?.name,           "Audio 3 Clip2.R")
         XCTAssertEqual(
             track3clip4?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 18, f: 17), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 18, f: 17), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip4?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 21, f: 19), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 21, f: 19), at: ._23_976)
         )
         XCTAssertEqual(
             track3clip4?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 03, f: 02), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 03, f: 02), at: ._23_976)
         )
         XCTAssertEqual(track3clip4?.state,          .muted)
         
@@ -347,15 +347,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track5clip1?.name,           "Audio 5 Offline Clip1.L")
         XCTAssertEqual(
             track5clip1?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 05, f: 14), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 05, f: 14), at: ._23_976)
         )
         XCTAssertEqual(
             track5clip1?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 11, f: 10), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 11, f: 10), at: ._23_976)
         )
         XCTAssertEqual(
             track5clip1?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 05, f: 20), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 05, f: 20), at: ._23_976)
         )
         XCTAssertEqual(track5clip1?.state,          .unmuted)
         
@@ -365,15 +365,15 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(track5clip2?.name,           "Audio 5 Offline Clip1.R")
         XCTAssertEqual(
             track5clip2?.startTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 05, f: 14), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 05, f: 14), at: ._23_976)
         )
         XCTAssertEqual(
             track5clip2?.endTimecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 11, f: 10), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 01, m: 00, s: 11, f: 10), at: ._23_976)
         )
         XCTAssertEqual(
             track5clip2?.duration,
-            ProTools.kTimecode(TCC(h: 00, m: 00, s: 05, f: 20), at: ._23_976)
+            try ProTools.formTimecode(TCC(h: 00, m: 00, s: 05, f: 20), at: ._23_976)
         )
         XCTAssertEqual(track5clip2?.state,          .unmuted)
         
@@ -386,22 +386,20 @@ class DAWFileKit_ProTools_SessionText_OneOfEverything: XCTestCase {
         let marker1 = markers?[0]
         XCTAssertEqual(marker1?.number,             1)
         XCTAssertEqual(
-            marker1?.timecode,
-            ProTools.kTimecode(TCC(h: 00, m: 59, s: 58, f: 00), at: ._23_976)
+            marker1?.location,
+            .timecode(try ProTools.formTimecode(TCC(h: 00, m: 59, s: 58, f: 00), at: ._23_976))
         )
-        XCTAssertEqual(marker1?.timeReference,      "144144")
-        XCTAssertEqual(marker1?.units,              .samples)
+        XCTAssertEqual(marker1?.timeReference,      .samples(144144))
         XCTAssertEqual(marker1?.name,               "Marker 1")
         XCTAssertEqual(marker1?.comment,            nil)
         
         let marker2 = markers?[1]
         XCTAssertEqual(marker2?.number,             2)
         XCTAssertEqual(
-            marker2?.timecode,
-            ProTools.kTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976)
+            marker2?.location,
+            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976))
         )
-        XCTAssertEqual(marker2?.timeReference,      "3|3")
-        XCTAssertEqual(marker2?.units,              .ticks)
+        XCTAssertEqual(marker2?.timeReference,      .barsAndBeats(bar: 3, beat: 3, ticks: nil))
         XCTAssertEqual(marker2?.name,               "Marker 2")
         XCTAssertEqual(marker2?.comment,            "This marker has comments.")
         

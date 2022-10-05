@@ -132,8 +132,13 @@ extension ProTools.SessionInfo {
         
         // process timecode with previously acquired frame rate
         if let fRate = info.main.frameRate {
-            info.main.startTimecode = ProTools.kTimecode(tempStartTimecode, at: fRate)
+            info.main.startTimecode = try? ProTools.formTimecode(tempStartTimecode, at: fRate)
         }
+        
+        // MARK: - Location Time Format Heuristic
+        
+        // TODO: employ a heuristic to determine what the main export time format is; for the time being we will just hard-code Timecode as the format since it's the default when exporting text file from Pro Tools and the one that will most commonly be used
+        let timeLocationFormat: TimeLocationFormat = .timecode
         
         // MARK: - Parse into major sections
         
@@ -276,6 +281,7 @@ extension ProTools.SessionInfo {
         if let section = sections[.markers] {
             info._parseMarkers(
                 section: section,
+                timeLocationFormat: timeLocationFormat,
                 messages: &messages
             )
         }
@@ -920,13 +926,13 @@ extension ProTools.SessionInfo {
                     
                     if let frameRate = main.frameRate {
                         // START TIME (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.startTimecode = ProTools.kTimecode(columns[3], at: frameRate)
+                        newClip.startTimecode = try? ProTools.formTimecode(columns[3], at: frameRate)
                         
                         // END TIME (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.endTimecode = ProTools.kTimecode(columns[4], at: frameRate)
+                        newClip.endTimecode = try? ProTools.formTimecode(columns[4], at: frameRate)
                         
                         // DURATION (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.duration = ProTools.kTimecode(columns[5], at: frameRate)
+                        newClip.duration = try? ProTools.formTimecode(columns[5], at: frameRate)
                     }
                     
                     // STATE
@@ -981,6 +987,7 @@ extension ProTools.SessionInfo {
     
     fileprivate mutating func _parseMarkers(
         section: [String],
+        timeLocationFormat: TimeLocationFormat,
         messages: inout [ParseMessage]
     ) {
         func addParseMessage(_ msg: ParseMessage) {
@@ -1033,16 +1040,13 @@ extension ProTools.SessionInfo {
             if line.isEmpty { break }
             
             let columnData = line.split(separator: "\t")
-                .map { String($0) } // split into array by tab character
+                .map { String($0).trimmed } // split into array by tab character
             
-            #warning(
-                "> TODO: may need to add logic to detect what format the 'Location' value is in - whether it's frames (timecode), samples, etc."
-            )
-            
-            guard let strTimecode = columnData[safe: 1]?.trimmed,
-                  let strTimeReference = columnData[safe: 2]?.trimmed,
-                  let strUnits = columnData[safe: 3]?.trimmed,
-                  let strName = columnData[safe: 4]?.trimmed
+            guard let strNumber = columnData[safe: 0],
+                  let strLocation = columnData[safe: 1],
+                  let strTimeReference = columnData[safe: 2],
+                  let strTimeReferenceBase = columnData[safe: 3],
+                  let strName = columnData[safe: 4]
             else {
                 // if these are nil, the text file could be malformed
                 addParseMessage(
@@ -1053,43 +1057,162 @@ extension ProTools.SessionInfo {
                 break
             }
             
-            let strNumber = columnData[safe: 0]?.trimmed
-            let strComment = columnData[safe: 5]?.trimmed
-            
-            let number: Int? = strNumber?.int
-            
-            let units: Marker.Units
-            switch strUnits {
-            case "Samples": units = .samples
-            case "Ticks": units = .ticks
-            default:
-                units = .samples
+            // marker number
+            let number: Int
+            if let numberInt = strNumber.int {
+                number = numberInt
+            } else {
+                number = 0
                 addParseMessage(
                     .error(
-                        "A marker had a Units type that was not recognized : \(strUnits.quoted). Defaulting to Samples."
+                        "Marker at \(strLocation) had a Memory Location number value that could not be converted to an integer: \(strNumber.quoted). Defaulting to 0."
                     )
                 )
             }
             
-            var newItem = Marker(
+            // location
+            var location: TimeLocation?
+            switch timeLocationFormat {
+            case .timecode:
+                // file frame rate should reasonably be non-nil but we should still provide
+                // error handling cases for when it may be nil
+                if let mainFrameRate = main.frameRate {
+                    do {
+                        let timecodeLoc = try Self.formTimeLocation(
+                            timecodeString: strLocation,
+                            at: mainFrameRate
+                        )
+                        location = timecodeLoc
+                    } catch {
+                        location = nil
+                        addParseMessage(
+                            .error(
+                                "FYI: Validation for timecode \(strLocation.quoted) at text file frame rate of \(mainFrameRate) failed with error: \(error)."
+                            )
+                        )
+                    }
+                } else {
+                    // attempt to salvage the data by assuming a default frame rate of 30fps
+                    if let timecode = try? Timecode(rawValues: strLocation, at: ._30) {
+                        location = .timecode(timecode)
+                        addParseMessage(
+                            .error(
+                                "FYI: Could not validate timecode \(strLocation.quoted) because file frame rate could not be determined."
+                            )
+                        )
+                    } else {
+                        location = nil
+                        addParseMessage(
+                            .error(
+                                "Could not validate timecode \(strLocation.quoted) because file frame rate could not be determined and the string is malformed."
+                            )
+                        )
+                    }
+                    
+                }
+                
+            case .minSecs:
+                do {
+                    let minSecsLoc = try Self.formTimeLocation(minSecsString: strLocation)
+                    location = minSecsLoc
+                } catch {
+                    location = nil
+                    addParseMessage(
+                        .error(
+                            "FYI: Validation for Min:Secs value \(strLocation.quoted) failed with error: \(error)."
+                        )
+                    )
+                }
+                
+            case .samples:
+                do {
+                    let samplesLoc = try Self.formTimeLocation(samplesString: strLocation)
+                    location = samplesLoc
+                } catch {
+                    location = nil
+                    addParseMessage(
+                        .error(
+                            "FYI: Validation for Samples value \(strLocation.quoted) failed with error: \(error)."
+                        )
+                    )
+                }
+                
+            case .barsAndBeats:
+                do {
+                    let barsAndBeatsLoc = try Self.formTimeLocation(barsAndBeatsString: strLocation)
+                    location = barsAndBeatsLoc
+                } catch {
+                    location = nil
+                    addParseMessage(
+                        .error(
+                            "FYI: Validation for Bars|Beats value \(strLocation.quoted) failed with error: \(error)."
+                        )
+                    )
+                }
+                
+            case .feetAndFrames:
+                do {
+                    let feetAndFramesLoc = try Self.formTimeLocation(feetAndFramesString: strLocation)
+                    location = feetAndFramesLoc
+                } catch {
+                    location = nil
+                    addParseMessage(
+                        .error(
+                            "FYI: Validation for Feet+Frames value \(strLocation.quoted) failed with error: \(error)."
+                        )
+                    )
+                }
+            }
+            
+            // time reference
+            var timeRef: TimeLocation
+            switch strTimeReferenceBase {
+            case "Samples":
+                do {
+                    let samplesRef = try Self.formTimeLocation(samplesString: strTimeReference)
+                    timeRef = samplesRef
+                } catch {
+                    timeRef = .samples(0)
+                    addParseMessage(
+                        .error(
+                            "Marker at \(strLocation) had a Time Reference type of Samples but an error occurred: \(error) Value: \(strTimeReference.quoted). Defaulting to Samples value of 0."
+                        )
+                    )
+                }
+                
+            case "Ticks":
+                do {
+                    let barsAndBeatsRef = try Self.formTimeLocation(barsAndBeatsString: strTimeReference)
+                    timeRef = barsAndBeatsRef
+                } catch {
+                    timeRef = .samples(0)
+                    addParseMessage(
+                        .error(
+                            "Marker at \(strLocation) had a Time Reference type of Ticks but an error occurred: \(error) Value: \(strTimeReference.quoted). Defaulting to 0|0."
+                        )
+                    )
+                }
+                
+            default:
+                timeRef = .samples(0)
+                addParseMessage(
+                    .error(
+                        "Marker at \(strLocation) had a Time Reference type that was not recognized: \(strTimeReferenceBase.quoted). Defaulting to Samples value of 0."
+                    )
+                )
+            }
+            
+            // marker comment
+            let strComment = columnData[safe: 5]
+            
+            // add new marker
+            let newItem = Marker(
                 number: number,
-                timeReference: strTimeReference,
-                units: units,
+                location: location,
+                timeReference: timeRef,
                 name: strName,
                 comment: strComment
             )
-            
-            if let mainFrameRate = main.frameRate,
-               !newItem.validate(timecodeString: strTimecode, at: mainFrameRate)
-            {
-                // populate timecode object and verify
-                addParseMessage(
-                    .error(
-                        "FYI: Validation for timecode \(strTimecode) at text file frame rate of \(mainFrameRate) failed."
-                    )
-                )
-            }
-            
             markers?.append(newItem)
         }
         
