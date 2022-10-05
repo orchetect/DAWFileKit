@@ -65,6 +65,74 @@ extension ProTools.SessionInfo {
 
 // MARK: - Internal Methods
 
+extension ProTools.SessionInfo.TimeLocationFormat {
+    /// Employs a format detection heuristic to attempt to determine the time format of the given time string.
+    /// This does not perform exhaustive validation on the values themselves, but matches against expected formatting.
+    /// Returns `nil` if no matches can be ascertained.
+    init?(heuristic source: String) {
+        // as a performance optimization, the formats here
+        // are ordered from most common to least common
+        
+        if Self.isTimecode(source) {
+            self = .timecode
+            return
+        }
+        if Self.isMinSecs(source) {
+            self = .minSecs
+            return
+        }
+        if Self.isBarsAndBeats(source) {
+            self = .barsAndBeats
+            return
+        }
+        if Self.isSamples(source) {
+            self = .samples
+            return
+        }
+        if Self.isFeetAndFrames(source) {
+            self = .feetAndFrames
+            return
+        }
+        
+        return nil
+    }
+    
+    private static func isTimecode(
+        _ source: String
+    ) -> Bool {
+        let regExPattern = #"^\d{2}:\d{2}:\d{2}[:|;]\d{2}(.\d{2}){0,1}$"#
+        return source.regexMatches(pattern: regExPattern).count == 1
+    }
+    
+    private static func isMinSecs(
+        _ source: String
+    ) -> Bool {
+        let regExPattern = #"^(\d+):(\d{2})(.\d{3}){0,1}$"#
+        return source.regexMatches(pattern: regExPattern).count == 1
+    }
+    
+    private static func isSamples(
+        _ source: String
+    ) -> Bool {
+        let regExPattern = #"^\d+$"#
+        return source.regexMatches(pattern: regExPattern).count == 1
+    }
+    
+    private static func isBarsAndBeats(
+        _ source: String
+    ) -> Bool {
+        let regExPattern = #"^\d+\|\d+(\|[\s\d]{1}\d{3}){0,1}$"#
+        return source.regexMatches(pattern: regExPattern).count == 1
+    }
+    
+    private static func isFeetAndFrames(
+        _ source: String
+    ) -> Bool {
+        let regExPattern = #"^(\d+)\+(\d{2})(.\d{2}){0,1}$"#
+        return source.regexMatches(pattern: regExPattern).count == 1
+    }
+}
+
 extension ProTools.SessionInfo {
     /// Form a ``TimeLocation/timecode(_:)`` instance from timecode string.
     /// Timecode is validated at the given frame rate and an error is thrown if invalid.
