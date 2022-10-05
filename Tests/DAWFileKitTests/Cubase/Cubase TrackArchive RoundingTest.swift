@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-class DAWFileKit_Cubase_TrackArchive_RoundingTest: XCTestCase {
+class Cubase_TrackArchive_RoundingTest: XCTestCase {
     override func setUp() { }
     override func tearDown() { }
     

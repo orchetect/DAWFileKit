@@ -9,7 +9,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-class DAWFileKit_ProTools_SessionText_EmptySession: XCTestCase {
+class ProTools_SessionText_EmptySession: XCTestCase {
     override func setUp() { }
     override func tearDown() { }
     

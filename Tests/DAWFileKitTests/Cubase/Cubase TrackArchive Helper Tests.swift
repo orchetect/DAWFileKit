@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-class DAWFileKit_Cubase_Helper_Tests: XCTestCase {
+class Cubase_Helper_Tests: XCTestCase {
     override func setUp() { }
     override func tearDown() { }
     
