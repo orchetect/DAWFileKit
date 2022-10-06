@@ -12,13 +12,9 @@ extension ProTools.SessionInfo {
     public struct Track: Equatable, Hashable {
         public var name: String = ""
         public var comments: String = ""
-        
         public var userDelay: Int = 0
-        
         public var state: Set<State> = []
-        
         public var plugins: [String] = []
-        
         public var clips: [Clip] = []
     }
 }

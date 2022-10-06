@@ -33,9 +33,20 @@ extension ProTools.SessionInfo {
         ///
         /// SubFrames is only present when the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
         case feetAndFrames(feet: Int, frames: Int, subFrames: Int?)
+        
+        /// Returns the corresponding ``TimeValueFormat`` case for the time value.
+        public var format: TimeValueFormat {
+            switch self {
+            case .timecode: return .timecode
+            case .minSecs: return .minSecs
+            case .samples: return .samples
+            case .barsAndBeats: return .barsAndBeats
+            case .feetAndFrames: return .feetAndFrames
+            }
+        }
     }
     
-    public enum TimeValueFormat: Equatable, Hashable, CaseIterable {
+    public enum TimeValueFormat: Equatable, Hashable, CaseIterable, CustomStringConvertible {
         /// Timecode at the project frame rate.
         ///
         /// Pro Tools always uses a subframe base of 100 subframes per frame.
@@ -60,6 +71,21 @@ extension ProTools.SessionInfo {
         ///
         /// SubFrames is only present when the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
         case feetAndFrames
+        
+        /// Returns human-readable name of the time value format type suitable for UI or debugging.
+        public var name: String {
+            switch self {
+            case .timecode: return "Timecode"
+            case .minSecs: return "Min:Secs"
+            case .samples: return "Samples"
+            case .barsAndBeats: return "Bars|Beats"
+            case .feetAndFrames: return "Feet+Frames"
+            }
+        }
+        
+        public var description: String {
+            name
+        }
     }
 }
 

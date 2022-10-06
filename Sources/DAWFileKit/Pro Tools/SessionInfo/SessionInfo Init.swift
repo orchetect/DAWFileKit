@@ -12,14 +12,31 @@ import TimecodeKit
 
 extension ProTools.SessionInfo {
     /// Parse text file contents exported from Pro Tools.
-    public init(fileContent data: Data) throws {
+    ///
+    /// - Parameters:
+    ///   - data: Raw file content.
+    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    public init(
+        fileContent data: Data,
+        timeValueFormat: TimeValueFormat? = nil
+    ) throws {
         var dummy: [ParseMessage] = []
-        try self.init(data: data, messages: &dummy)
+        try self.init(
+            data: data,
+            timeValueFormat: timeValueFormat,
+            messages: &dummy
+        )
     }
     
     /// Parse text file contents exported from Pro Tools.
+    ///
+    /// - Parameters:
+    ///   - data: Raw file content.
+    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    ///   - messages: An array of messages to update with information and errors during the parsing process.
     public init(
         data: Data,
+        timeValueFormat: TimeValueFormat? = nil,
         messages: inout [ParseMessage]
     ) throws {
         guard let dataToString = String(data: data, encoding: .ascii) else {
@@ -28,23 +45,47 @@ extension ProTools.SessionInfo {
             )
         }
         
-        try self.init(fileContent: dataToString, messages: &messages)
+        try self.init(
+            fileContent: dataToString,
+            timeValueFormat: timeValueFormat,
+            messages: &messages
+        )
     }
 }
 
 extension ProTools.SessionInfo {
     /// Parse text file contents exported from Pro Tools.
-    public init(fileContent: String) throws {
+    ///
+    /// - Parameters:
+    ///   - fileContent: Raw file content.
+    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    public init(
+        fileContent: String,
+        timeValueFormat: TimeValueFormat? = nil
+    ) throws {
         var dummy: [ParseMessage] = []
-        try self.init(fileContent: fileContent, messages: &dummy)
+        try self.init(
+            fileContent: fileContent,
+            timeValueFormat: timeValueFormat,
+            messages: &dummy
+        )
     }
     
     /// Parse text file contents exported from Pro Tools.
+    ///
+    /// - Parameters:
+    ///   - fileContent: Raw file content.
+    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    ///   - messages: An array of messages to update with information and errors during the parsing process.
     public init(
         fileContent: String,
+        timeValueFormat: TimeValueFormat? = nil,
         messages: inout [ParseMessage]
     ) throws {
-        let parsed = try Self.parse(fileContent: fileContent)
+        let parsed = try Self.parse(
+            fileContent: fileContent,
+            timeValueFormat: timeValueFormat
+        )
         self = parsed.sessionInfo
         messages = parsed.messages
     }
