@@ -2,16 +2,17 @@
 
 [![CI Build Status](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml/badge.svg)](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml) [![Platforms - macOS 10.12+ | iOS 10+ | tvOS 10+](https://img.shields.io/badge/platforms-macOS%2010.12+%20|%20iOS%2010+%20|%20tvOS%2010+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.3-5.7](https://img.shields.io/badge/Swift-5.3–5.7-orange.svg?style=flat) [![Xcode 12.0-14](https://img.shields.io/badge/Xcode-12.0–14-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/DAWFileKit/blob/main/LICENSE)
 
-A Swift library for reading and writing common import/export file formats between popular DAW applications.
+A Swift library for reading and writing common import/export file formats between popular DAW applications and converting between formats.
 
 ## Supported File Formats
 
 |                  Format                  |  Read   |  Write  |
 | :--------------------------------------: | :-----: | :-----: |
 |        Cubase: Track Archive XML         |  yes†   |  yes†   |
-|    Pro Tools: Session Info Text file     |   yes   |   n/a   |
+|    Pro Tools: Session Info text file     |   yes   |   n/a   |
 |               Logic Pro X‡               | future? | future? |
-|            Digital Performer‡            | future? | future? |
+|            Standard MIDI File            | planned | planned |
+|            Final Cut Pro XML             | future? | future? |
 | (more platforms may be added in future)‡ |         |         |
 
 *† Full read/write support for Cubase Track Archive XML files is implemented for tracks with absolute timebase, as well as tracks with musical timebase where the tempo track uses only 'Jump' tempo events and there are no 'Ramp' tempo events*
@@ -39,18 +40,14 @@ Core unit tests implemented. More exhaustive tests can be added in future.
 
 ### Pro Tools: Session Info Text file
 
-- Currently, the parser relies on certain export options to be selected when exporting a Session Text file from Pro Tools so that the parser can read it correctly. Additional routines/heuristics need to be added to add ruggedness to the parser so that it can detect all of the various export options based on the text file contents, and successfully parse the file regardless and/or output meaningful error conditions that describe why the file may not be in a parsable format.
-
-- [ ] Add subframes capability
-- [ ] Check frame rate strings PT outputs to Session Info text file and ensure parser reads them correctly
 - [ ] Handle *new-line* and *tab* characters in Markers list name/comment fields (Pro Tools allows them to be inserted or pasted from the clipboard when editing markers)
 - [ ] Add parsing modes specific for "TextEdit 'TEXT'" and "UTF-8 'TEXT'" File Format encodings
-  - [ ] Analyze to see how extended characters are being encoded or (assumed to be) lossily converted to meaningless characters ("É" for "…", "Ñ" for "—", etc.)
-  - [ ] Improve lossy character fix/replacement heuristic
+- [ ] Analyze to see how extended characters are being encoded or (assumed to be) lossily converted to meaningless characters ("É" for "…", "Ñ" for "—", etc.)
+- [ ] Improve lossy character fix/replacement heuristic
 
 ## Affiliation
 
-The author(s) have no affiliation with Avid, Steinberg, or any other company relating to the software packages that are mentioned in this library. This library is built based on easily discernable open file data formats and at no time has reverse-engineering been employed to intuit their format or implementation. The goal of this library is to promote easier interoperability for developers with these common and useful data file formats.
+The author(s) have no affiliation with Apple, Avid, Steinberg, or any other company relating to the software packages that are mentioned in this library. This library is built based on open file data format such as text, XML and MIDI. No reverse-engineering of software was involved in implementation of this library. The goal is to promote easier interoperability for developers with these common and useful data file formats.
 
 The library is provided as-is with no warranties. See the [LICENSE](https://github.com/orchetect/DAWFileKit/blob/master/LICENSE) for more details.
 
