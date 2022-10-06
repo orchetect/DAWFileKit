@@ -8,7 +8,7 @@ import Foundation
 
 extension ProTools.SessionInfo {
     /// Represents a file used in the session
-    public struct File {
+    public struct File: Equatable, Hashable {
         var filename: String = ""
         var path: String = ""
         

@@ -59,7 +59,7 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         
         // files - offline
         
-        XCTAssertNil(sessionInfo.offlineFiles) // empty
+        XCTAssertEqual(sessionInfo.offlineFiles, [])
         
         // clips - online
         
@@ -67,7 +67,7 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo.offlineClips) // empty
+        XCTAssertNil(sessionInfo.offlineClips) // missing section
         
         // plug-ins
         
@@ -75,13 +75,15 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         
         // tracks
         
-        XCTAssertEqual(sessionInfo.tracks?.first?.name,       "DLG")
-        XCTAssertEqual(sessionInfo.tracks?.first?.state,      [.muted])
-        XCTAssertEqual(sessionInfo.tracks?.first?.clips.count, 65)
-        
-        XCTAssertEqual(sessionInfo.tracks?.last?.name,        "Master Bounce (Stereo)")
-        XCTAssertEqual(sessionInfo.tracks?.last?.state,       [.hidden, .inactive, .soloSafe])
-        XCTAssertEqual(sessionInfo.tracks?.last?.clips.count, 0)
+        let tracks = try XCTUnwrap(sessionInfo.tracks)
+        let firstTrack = try XCTUnwrap(tracks.first)
+        XCTAssertEqual(firstTrack.name,       "DLG")
+        XCTAssertEqual(firstTrack.state,      [.muted])
+        XCTAssertEqual(firstTrack.clips.count, 65)
+        let lastTrack = try XCTUnwrap(tracks.last)
+        XCTAssertEqual(lastTrack.name,        "Master Bounce (Stereo)")
+        XCTAssertEqual(lastTrack.state,       [.hidden, .inactive, .soloSafe])
+        XCTAssertEqual(lastTrack.clips.count, 0)
         
         // markers
         
@@ -94,6 +96,6 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         
         // orphan data
         
-        XCTAssertNil(sessionInfo.orphanData)
+        XCTAssertNil(sessionInfo.orphanData) // none
     }
 }

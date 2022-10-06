@@ -52,11 +52,11 @@ class ProTools_SessionText_TimeFormats_BarsBeats: XCTestCase {
         
         // files - online
         
-        XCTAssertNil(sessionInfo.onlineFiles)  // empty
+        XCTAssertEqual(sessionInfo.onlineFiles, [])
         
         // files - offline
         
-        XCTAssertNil(sessionInfo.offlineFiles) // empty
+        XCTAssertEqual(sessionInfo.offlineFiles, [])
         
         // clips - online
         

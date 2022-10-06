@@ -8,7 +8,7 @@ import Foundation
 
 extension ProTools.SessionInfo {
     /// Represents a clip used in the session.
-    public struct Clip {
+    public struct Clip: Equatable, Hashable {
         var name: String = ""
         var sourceFile: String = ""
         var channel: String?

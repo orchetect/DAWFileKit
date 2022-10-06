@@ -10,7 +10,7 @@ import TimecodeKit
 extension ProTools.SessionInfo {
     /// Contains the global session meta data
     /// (from the Session Info Text file header)
-    public struct Main {
+    public struct Main: Equatable, Hashable {
         public var name: String?
         
         public var sampleRate: Double?

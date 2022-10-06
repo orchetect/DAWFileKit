@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension ProTools {
     /// Contains parsed data after reading a Pro Tools Session Info text file.
-    public struct SessionInfo {
+    public struct SessionInfo: Equatable, Hashable {
         /// Meta data contained in the main header of the data file.
         public var main = Main()
         
@@ -37,7 +37,7 @@ extension ProTools {
         public var markers: [Marker]?
         
         /// Holds any extraneous sections or data that was not recognized while parsing the file.
-        public var orphanData: [(heading: String, content: [String])]?
+        public var orphanData: [OrphanData]?
         
         // MARK: - Default init
         

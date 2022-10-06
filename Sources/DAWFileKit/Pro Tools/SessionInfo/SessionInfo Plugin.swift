@@ -8,7 +8,7 @@ import Foundation
 
 extension ProTools.SessionInfo {
     /// Represents a plug-in used in the session
-    public struct Plugin {
+    public struct Plugin: Equatable, Hashable {
         var manufacturer: String = ""
         var name: String = ""
         var version: String = ""

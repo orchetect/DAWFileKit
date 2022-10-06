@@ -27,7 +27,7 @@ extension ProTools.SessionInfo {
     /// - For **Bar | Beat** Markers, the bar and beat number are included.
     ///
     ///   Beat divisions (ticks) are omitted unless the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
-    public struct Marker {
+    public struct Marker: Equatable, Hashable {
         /// Marker number.
         /// This is the Memory Location number assigned to the Marker in the Pro Tools project.
         public let number: Int

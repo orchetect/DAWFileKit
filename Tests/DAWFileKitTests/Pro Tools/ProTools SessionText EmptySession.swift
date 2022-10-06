@@ -52,34 +52,34 @@ class ProTools_SessionText_EmptySession: XCTestCase {
         
         // files - online
         
-        XCTAssertNil(sessionInfo.onlineFiles)  // empty
+        XCTAssertEqual(sessionInfo.onlineFiles, [])
         
         // files - offline
         
-        XCTAssertNil(sessionInfo.offlineFiles) // empty
+        XCTAssertEqual(sessionInfo.offlineFiles, [])
         
         // clips - online
         
-        XCTAssertNil(sessionInfo.onlineClips)  // empty
+        XCTAssertNil(sessionInfo.onlineClips) // missing section
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo.offlineClips) // empty
+        XCTAssertNil(sessionInfo.offlineClips) // missing section
         
         // plug-ins
         
-        XCTAssertNil(sessionInfo.plugins)      // empty
+        XCTAssertNil(sessionInfo.plugins) // empty
         
         // tracks
         
-        XCTAssertNil(sessionInfo.tracks)       // empty
+        XCTAssertEqual(sessionInfo.tracks, [])
         
         // markers
         
-        XCTAssertNil(sessionInfo.markers)      // empty
+        XCTAssertEqual(sessionInfo.markers, [])
         
         // orphan data
         
-        XCTAssertNil(sessionInfo.orphanData)   // empty
+        XCTAssertNil(sessionInfo.orphanData) // none
     }
 }

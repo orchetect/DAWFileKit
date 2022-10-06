@@ -64,66 +64,64 @@ class ProTools_SessionText_SimpleTest: XCTestCase {
         
         // files - offline
         
-        XCTAssertNil(sessionInfo.offlineFiles)     // empty
+        XCTAssertEqual(sessionInfo.offlineFiles, [])
         
         // clips - online
         
-        let onlineClips = sessionInfo.onlineClips
+        let onlineClips = try XCTUnwrap(sessionInfo.onlineClips)
+        XCTAssertEqual(onlineClips.count, 1)
         
-        XCTAssertEqual(onlineClips?.count, 1)
-        
-        let clip1 = onlineClips?.first
-        XCTAssertEqual(clip1?.name,       "Audio 1_01")
-        XCTAssertEqual(clip1?.sourceFile, "Audio 1_01.wav")
-        XCTAssertEqual(clip1?.channel,    nil)
+        let clip1 = try XCTUnwrap(onlineClips.first)
+        XCTAssertEqual(clip1.name,       "Audio 1_01")
+        XCTAssertEqual(clip1.sourceFile, "Audio 1_01.wav")
+        XCTAssertEqual(clip1.channel,    nil)
         
         // clips - offline
         
-        XCTAssertNil(sessionInfo.offlineClips)     // empty
+        XCTAssertNil(sessionInfo.offlineClips)     // missing section
         
         // plug-ins
         
-        XCTAssertNil(sessionInfo.plugins)          // empty
+        XCTAssertEqual(sessionInfo.plugins, [])
         
         // tracks
         
-        let tracks = sessionInfo.tracks
+        let tracks = try XCTUnwrap(sessionInfo.tracks)
+        XCTAssertEqual(tracks.count, 1)
         
-        XCTAssertEqual(tracks?.count, 1)
+        let track1 = try XCTUnwrap(tracks.first)
+        XCTAssertEqual(track1.name,               "Audio 1")
+        XCTAssertEqual(track1.comments,           "")
+        XCTAssertEqual(track1.userDelay,          0)
+        XCTAssertEqual(track1.state,              [])
+        XCTAssertEqual(track1.plugins,            [])
         
-        let track1 = tracks?.first
-        XCTAssertEqual(track1?.name,               "Audio 1")
-        XCTAssertEqual(track1?.comments,           "")
-        XCTAssertEqual(track1?.userDelay,          0)
-        XCTAssertEqual(track1?.state,              [])
-        XCTAssertEqual(track1?.plugins,            [])
+        XCTAssertEqual(track1.clips.count,        1)
         
-        XCTAssertEqual(track1?.clips.count,        1)
-        
-        let track1clip1 = track1?.clips.first
-        XCTAssertEqual(track1clip1?.channel,       1)
-        XCTAssertEqual(track1clip1?.event,         1)
-        XCTAssertEqual(track1clip1?.name,          "Audio 1_01")
+        let track1clip1 = try XCTUnwrap(track1.clips.first)
+        XCTAssertEqual(track1clip1.channel,       1)
+        XCTAssertEqual(track1clip1.event,         1)
+        XCTAssertEqual(track1clip1.name,          "Audio 1_01")
         XCTAssertEqual(
-            track1clip1?.startTime,
+            track1clip1.startTime,
             .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976))
         )
         XCTAssertEqual(
-            track1clip1?.endTime,
+            track1clip1.endTime,
             .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 05, f: 00), at: ._23_976))
         )
         XCTAssertEqual(
-            track1clip1?.duration,
+            track1clip1.duration,
             .timecode(try ProTools.formTimecode(TCC(h: 00, m: 00, s: 05, f: 00), at: ._23_976))
         )
-        XCTAssertEqual(track1clip1?.state,         .unmuted)
+        XCTAssertEqual(track1clip1.state,         .unmuted)
         
         // markers
         
-        XCTAssertNil(sessionInfo.markers)          // empty
+        XCTAssertEqual(sessionInfo.markers, [])
         
         // orphan data
         
-        XCTAssertNil(sessionInfo.orphanData)       // empty
+        XCTAssertNil(sessionInfo.orphanData)       // none
     }
 }
