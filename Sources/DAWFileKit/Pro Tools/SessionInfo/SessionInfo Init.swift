@@ -12,7 +12,7 @@ import TimecodeKit
 
 extension ProTools.SessionInfo {
     /// Parse text file contents exported from Pro Tools.
-    public init(data: Data) throws {
+    public init(fileContent data: Data) throws {
         var dummy: [ParseMessage] = []
         try self.init(data: data, messages: &dummy)
     }
@@ -28,23 +28,23 @@ extension ProTools.SessionInfo {
             )
         }
         
-        try self.init(string: dataToString, messages: &messages)
+        try self.init(fileContent: dataToString, messages: &messages)
     }
 }
 
 extension ProTools.SessionInfo {
     /// Parse text file contents exported from Pro Tools.
-    public init(string: String) throws {
+    public init(fileContent: String) throws {
         var dummy: [ParseMessage] = []
-        try self.init(string: string, messages: &dummy)
+        try self.init(fileContent: fileContent, messages: &dummy)
     }
     
     /// Parse text file contents exported from Pro Tools.
     public init(
-        string: String,
+        fileContent: String,
         messages: inout [ParseMessage]
     ) throws {
-        let parsed = try Self.parse(string: string)
+        let parsed = try Self.parse(fileContent: fileContent)
         self = parsed.sessionInfo
         messages = parsed.messages
     }

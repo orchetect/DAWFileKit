@@ -10,7 +10,7 @@ import TimecodeKit
 
 extension ProTools.SessionInfo {
     /// Internal: Parse raw file content and return a new `SessionInfo` instance.
-    internal static func parse(string: String) throws -> (
+    internal static func parse(fileContent: String) throws -> (
         sessionInfo: Self,
         messages: [ParseMessage]
     ) {
@@ -22,7 +22,7 @@ extension ProTools.SessionInfo {
             messages.append(msg)
         }
         
-        var remainingTextBlock = string
+        var remainingTextBlock = fileContent
         
         var info = Self()
         
@@ -44,105 +44,13 @@ extension ProTools.SessionInfo {
         
         remainingTextBlock = getHeader[8].trimmingCharacters(in: .newlines)
         
-        // SESSION NAME
-        info.main.name = getHeader[0]
-        
-        // SAMPLE RATE
-        if let val = Double(getHeader[1]) {
-            info.main.sampleRate = val
-        } else {
-            addParseMessage(
-                .error(
-                    "Parse: Header block: Found sample rate info but encountered an error while trying to convert string \"\(getHeader[1])\" to a number."
-                )
-            )
-        }
-        
-        // BIT DEPTH
-        info.main.bitDepth = getHeader[2]
-        
-        // SESSION START TIMECODE
-        let tempStartTimecode: String = getHeader[3]
-        
-        #warning(
-            "> TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)"
-        )
-        
-        // TIMECODE FORMAT
-        switch getHeader[4] {
-        case "23.976 Frame":      info.main.frameRate = ._23_976
-        case "24 Frame":          info.main.frameRate = ._24
-        case "25 Frame":          info.main.frameRate = ._25
-        case "29.97 Frame":       info.main.frameRate = ._29_97
-        case "29.97 Drop Frame":  info.main.frameRate = ._29_97_drop
-        case "30 Frame":          info.main.frameRate = ._30
-        case "30 Drop Frame":     info.main.frameRate = ._30_drop
-        case "47.952 Frame":      info.main.frameRate = ._47_952
-        case "48 Frame":          info.main.frameRate = ._48
-        case "50 Frame":          info.main.frameRate = ._50
-        case "59.94 Frame":       info.main.frameRate = ._59_94
-        case "59.94 Drop Frame":  info.main.frameRate = ._59_94_drop
-        case "60 Frame":          info.main.frameRate = ._60
-        case "60 Drop Frame":     info.main.frameRate = ._60_drop
-        case "100 Frame":         info.main.frameRate = ._100
-        case "119.88 Frame":      info.main.frameRate = ._119_88
-        case "119.88 Drop Frame": info.main.frameRate = ._119_88_drop
-        case "120 Frame":         info.main.frameRate = ._120
-        case "120 Drop Frame":    info.main.frameRate = ._120_drop
-        default:
-            addParseMessage(
-                .error(
-                    "Parse: Header block: Found frame rate but not handled/recognized: \(getHeader[4]). Parsing frame rate property as 'undefined'."
-                )
-            )
-        }
-        
-        // # OF AUDIO TRACKS
-        if let val = Int(getHeader[5]) {
-            info.main.audioTrackCount = val
-        } else {
-            addParseMessage(
-                .error(
-                    "Parse: Header block: Found # OF AUDIO TRACKS info but encountered an error while trying to convert string \"\(getHeader[5])\" to a number."
-                )
-            )
-        }
-        
-        // # OF AUDIO CLIPS
-        if let val = Int(getHeader[6]) {
-            info.main.audioClipCount = val
-        } else {
-            addParseMessage(
-                .error(
-                    "Parse: Header block: Found # OF AUDIO CLIPS info but encountered an error while trying to convert string \"\(getHeader[6])\" to a number."
-                )
-            )
-        }
-        
-        // # OF AUDIO FILES
-        if let val = Int(getHeader[7]) {
-            info.main.audioFileCount = val
-        } else {
-            addParseMessage(
-                .error(
-                    "Parse: Header block: Found # OF AUDIO FILES info but encountered an error while trying to convert string \"\(getHeader[7])\" to a number."
-                )
-            )
-        }
-        
-        // process timecode with previously acquired frame rate
-        if let fRate = info.main.frameRate {
-            info.main.startTimecode = try? ProTools.formTimecode(tempStartTimecode, at: fRate)
-        }
-        
-        // MARK: - Location Time Format Heuristic
-        
-        // TODO: employ a heuristic to determine what the main export time format is; for the time being we will just hard-code Timecode as the format since it's the default when exporting text file from Pro Tools and the one that will most commonly be used
-        let timeLocationFormat: TimeValueFormat = .timecode
+        info.main = try info._parseHeader(section: getHeader, messages: &messages)
         
         // MARK: - Parse into major sections
         
         enum FileSection: Hashable {
+            case header
+            
             case onlineFiles
             case offlineFiles
             
@@ -233,6 +141,11 @@ extension ProTools.SessionInfo {
             sections[section.key] = lines
         }
         
+        // MARK: - Location Time Format Heuristic
+        
+        // TODO: employ a heuristic to determine what the main export time format is; for the time being we will just hard-code Timecode as the format since it's the default when exporting text file from Pro Tools and the one that will most commonly be used
+        let timeLocationFormat: TimeValueFormat = .timecode
+        
         // MARK: - Run section parsers
         
         if let section = sections[.onlineFiles] {
@@ -308,6 +221,112 @@ extension ProTools.SessionInfo {
 }
 
 extension ProTools.SessionInfo {
+    // MARK: - Header
+    
+    fileprivate func _parseHeader(
+        section: [String],
+        messages: inout [ParseMessage]
+    ) throws -> Main {
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
+        
+        var main = Main()
+        
+        // SESSION NAME
+        main.name = section[0]
+        
+        // SAMPLE RATE
+        if let val = Double(section[1]) {
+            main.sampleRate = val
+        } else {
+            addParseMessage(
+                .error(
+                    "Parse: Header block: Found sample rate info but encountered an error while trying to convert string \"\(section[1])\" to a number."
+                )
+            )
+        }
+        
+        // BIT DEPTH
+        main.bitDepth = section[2]
+        
+        // SESSION START TIMECODE
+        let tempStartTimecode: String = section[3]
+        
+        #warning(
+            "> TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)"
+        )
+        
+        // TIMECODE FORMAT
+        switch section[4] {
+        case "23.976 Frame":      main.frameRate = ._23_976
+        case "24 Frame":          main.frameRate = ._24
+        case "25 Frame":          main.frameRate = ._25
+        case "29.97 Frame":       main.frameRate = ._29_97
+        case "29.97 Drop Frame":  main.frameRate = ._29_97_drop
+        case "30 Frame":          main.frameRate = ._30
+        case "30 Drop Frame":     main.frameRate = ._30_drop
+        case "47.952 Frame":      main.frameRate = ._47_952
+        case "48 Frame":          main.frameRate = ._48
+        case "50 Frame":          main.frameRate = ._50
+        case "59.94 Frame":       main.frameRate = ._59_94
+        case "59.94 Drop Frame":  main.frameRate = ._59_94_drop
+        case "60 Frame":          main.frameRate = ._60
+        case "60 Drop Frame":     main.frameRate = ._60_drop
+        case "100 Frame":         main.frameRate = ._100
+        case "119.88 Frame":      main.frameRate = ._119_88
+        case "119.88 Drop Frame": main.frameRate = ._119_88_drop
+        case "120 Frame":         main.frameRate = ._120
+        case "120 Drop Frame":    main.frameRate = ._120_drop
+        default:
+            addParseMessage(
+                .error(
+                    "Parse: Header block: Found frame rate but not handled/recognized: \(section[4]). Parsing frame rate property as 'undefined'."
+                )
+            )
+        }
+        
+        // # OF AUDIO TRACKS
+        if let val = Int(section[5]) {
+            main.audioTrackCount = val
+        } else {
+            addParseMessage(
+                .error(
+                    "Parse: Header block: Found # OF AUDIO TRACKS info but encountered an error while trying to convert string \"\(section[5])\" to a number."
+                )
+            )
+        }
+        
+        // # OF AUDIO CLIPS
+        if let val = Int(section[6]) {
+            main.audioClipCount = val
+        } else {
+            addParseMessage(
+                .error(
+                    "Parse: Header block: Found # OF AUDIO CLIPS info but encountered an error while trying to convert string \"\(section[6])\" to a number."
+                )
+            )
+        }
+        
+        // # OF AUDIO FILES
+        if let val = Int(section[7]) {
+            main.audioFileCount = val
+        } else {
+            addParseMessage(
+                .error(
+                    "Parse: Header block: Found # OF AUDIO FILES info but encountered an error while trying to convert string \"\(section[7])\" to a number."
+                )
+            )
+        }
+        
+        // process timecode with previously acquired frame rate
+        if let fRate = main.frameRate {
+            main.startTimecode = try? ProTools.formTimecode(tempStartTimecode, at: fRate)
+        }
+        
+        return main
+    }
+    
     // MARK: - File Listing block (online)
     
     fileprivate mutating func _parseOnlineFiles(
@@ -894,8 +913,8 @@ extension ProTools.SessionInfo {
             
             // PLUG-INS
             track.plugins = getParams[4]
-                .components(separatedBy: "\t")                    // split by tab character
-                .compactMap { $0.trimmed.isEmpty ? nil : $0 }    // remove empty strings
+                .components(separatedBy: "\t")                // split by tab character
+                .compactMap { $0.trimmed.isEmpty ? nil : $0 } // remove empty strings
             
             // clip list
             
@@ -1244,5 +1263,23 @@ extension ProTools.SessionInfo {
                 )
             )
         }
+    }
+}
+
+// MARK: - Time Format Heuristic
+
+extension ProTools.SessionInfo {
+    /// Analyze the text file content using a heuristic to determine the primary time format being used.
+    ///
+    /// Pro Tools does not explicitly include the file's time format type in the file header so we need
+    /// to detect it manually by analyzing the file's content.
+    /// - Parameters:
+    ///   - string: Full text file contents. The contents will not be mutated, only read.
+    /// - Returns: Detected primary time value format.
+    internal static func analyzeTimeFormat(
+        fileContent: inout String
+    ) throws -> TimeValueFormat {
+        #warning("> finish this")
+        fatalError("Not yet implemented.")
     }
 }
