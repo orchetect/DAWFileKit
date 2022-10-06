@@ -1,5 +1,5 @@
 //
-//  SessionInfo TimeLocation.swift
+//  SessionInfo TimeValue.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -8,7 +8,7 @@ import Foundation
 import TimecodeKit
 
 extension ProTools.SessionInfo {
-    public enum TimeLocation: Equatable, Hashable {
+    public enum TimeValue: Equatable, Hashable {
         /// Timecode at the project frame rate.
         ///
         /// Pro Tools always uses a subframe base of 100 subframes per frame.
@@ -35,7 +35,7 @@ extension ProTools.SessionInfo {
         case feetAndFrames(feet: Int, frames: Int, subFrames: Int?)
     }
     
-    public enum TimeLocationFormat: Equatable, Hashable, CaseIterable {
+    public enum TimeValueFormat: Equatable, Hashable, CaseIterable {
         /// Timecode at the project frame rate.
         ///
         /// Pro Tools always uses a subframe base of 100 subframes per frame.
@@ -65,11 +65,11 @@ extension ProTools.SessionInfo {
 
 // MARK: - Internal Methods
 
-extension ProTools.SessionInfo.TimeLocationFormat {
+extension ProTools.SessionInfo.TimeValueFormat {
     /// Employs a format detection heuristic to attempt to determine the time format of the given time string.
     /// This does not perform exhaustive validation on the values themselves, but matches against expected formatting.
     /// Returns `nil` if no matches can be ascertained.
-    init?(heuristic source: String) {
+    init(heuristic source: String) throws {
         // as a performance optimization, the formats here
         // are ordered from most common to least common
         
@@ -94,7 +94,9 @@ extension ProTools.SessionInfo.TimeLocationFormat {
             return
         }
         
-        return nil
+        throw ProTools.SessionInfo.ParseError.general(
+            "Not a valid time value."
+        )
     }
     
     private static func isTimecode(
@@ -134,23 +136,65 @@ extension ProTools.SessionInfo.TimeLocationFormat {
 }
 
 extension ProTools.SessionInfo {
-    /// Form a ``TimeLocation/timecode(_:)`` instance from timecode string.
+    // MARK: - Umbrella Methods
+    
+    /// Form a ``TimeValue`` instance from a time string with unknown format.
+    /// Employs a format detection heuristic to attempt to determine the time format of the given time string.
+    static func formTimeValue(
+        heuristic source: String,
+        at frameRate: Timecode.FrameRate?
+    ) throws -> TimeValue {
+        let detectedFormat = try TimeValueFormat(heuristic: source)
+        return try formTimeValue(
+            source: source,
+            at: frameRate,
+            format: detectedFormat
+        )
+    }
+    
+    /// Form a ``TimeValue`` instance from a time string with a known format.
+    /// This is simply a proxy method that calls the specific time format method.
+    static func formTimeValue(
+        source: String,
+        at frameRate: Timecode.FrameRate?,
+        format: TimeValueFormat
+    ) throws -> TimeValue {
+        switch format {
+        case .timecode:
+            guard let frameRate = frameRate else {
+                throw ParseError.general("Frame rate is required to form timecode.")
+            }
+            return try formTimeValue(timecodeString: source, at: frameRate)
+        case .minSecs:
+            return try formTimeValue(minSecsString: source)
+        case .barsAndBeats:
+            return try formTimeValue(barsAndBeatsString: source)
+        case .samples:
+            return try formTimeValue(samplesString: source)
+        case .feetAndFrames:
+            return try formTimeValue(feetAndFramesString: source)
+        }
+    }
+    
+    // MARK: - Format-Specific Methods
+    
+    /// Form a ``TimeValue/timecode(_:)`` instance from timecode string.
     /// Timecode is validated at the given frame rate and an error is thrown if invalid.
     /// Ancillary timecode metadata is automatically derived from ``ProTools`` constants.
-    static func formTimeLocation(
+    static func formTimeValue(
         timecodeString: String,
         at frameRate: Timecode.FrameRate
-    ) throws -> TimeLocation {
+    ) throws -> TimeValue {
         let timecode = try ProTools.formTimecode(timecodeString, at: frameRate)
         return .timecode(timecode)
     }
     
-    /// Form a ``TimeLocation/minSecs(min:sec:)`` instance from timecode string.
+    /// Form a ``TimeValue/minSecs(min:sec:)`` instance from timecode string.
     /// This can either be `MM:SS` or `MM:SS.sss` (where `sss` is milliseconds).
     /// An error is thrown if the string is malformed.
-    static func formTimeLocation(
+    static func formTimeValue(
         minSecsString: String
-    ) throws -> TimeLocation {
+    ) throws -> TimeValue {
         // first two capture groups are mandatory: HH and SS
         // the fifth capture group will be milliseconds if present, or empty if not present
         let regExPattern = #"^(\d+):(\d{2})((.)(\d{3})){0,1}$"#
@@ -188,11 +232,11 @@ extension ProTools.SessionInfo {
         return .minSecs(min: min, sec: sec, ms: ms)
     }
     
-    /// Form a ``TimeLocation/samples(_:)`` instance from a samples number string.
+    /// Form a ``TimeValue/samples(_:)`` instance from a samples number string.
     /// An error is thrown if the string is not a valid integer.
-    static func formTimeLocation(
+    static func formTimeValue(
         samplesString: String
-    ) throws -> TimeLocation {
+    ) throws -> TimeValue {
         guard let samples = samplesString.uInt?.intExactly // UInt avoids negative ints
         else {
             throw ParseError.general(
@@ -202,13 +246,13 @@ extension ProTools.SessionInfo {
         return .samples(samples)
     }
     
-    /// Form a ``TimeLocation/barsAndBeats(bar:beat:ticks:)`` instance from a bars and beats string.
+    /// Form a ``TimeValue/barsAndBeats(bar:beat:ticks:)`` instance from a bars and beats string.
     /// Expected formats: "Bar|Beat" or "Bar|Beat|Ticks".
     /// (ie: "5|3" or "17|2|685" or "17|2| 24")
     /// An error is thrown if the string is malformed.
-    static func formTimeLocation(
+    static func formTimeValue(
         barsAndBeatsString: String
-    ) throws -> TimeLocation {
+    ) throws -> TimeValue {
         let slices = barsAndBeatsString
             .split(separator: "|", omittingEmptySubsequences: false)
         
@@ -246,12 +290,12 @@ extension ProTools.SessionInfo {
         return .barsAndBeats(bar: bar, beat: beat, ticks: ticks)
     }
     
-    /// Form a ``TimeLocation/feetAndFrames(feet:frames:subFrames:)`` instance from raw string.
+    /// Form a ``TimeValue/feetAndFrames(feet:frames:subFrames:)`` instance from raw string.
     /// This can either be `FT+FR` or `FT+FR.sf` (where `sf` is subframes).
     /// An error is thrown if the string is malformed.
-    static func formTimeLocation(
+    static func formTimeValue(
         feetAndFramesString: String
-    ) throws -> TimeLocation {
+    ) throws -> TimeValue {
         // first two capture groups are mandatory: FT and FR
         // the fifth capture group will be subframes if present, or empty if not present
         let regExPattern = #"^(\d+)\+(\d{2})((.)(\d{2})){0,1}$"#

@@ -138,7 +138,7 @@ extension ProTools.SessionInfo {
         // MARK: - Location Time Format Heuristic
         
         // TODO: employ a heuristic to determine what the main export time format is; for the time being we will just hard-code Timecode as the format since it's the default when exporting text file from Pro Tools and the one that will most commonly be used
-        let timeLocationFormat: TimeLocationFormat = .timecode
+        let timeLocationFormat: TimeValueFormat = .timecode
         
         // MARK: - Parse into major sections
         
@@ -1071,14 +1071,14 @@ extension ProTools.SessionInfo {
             }
             
             // location
-            var location: TimeLocation?
+            var location: TimeValue?
             switch timeLocationFormat {
             case .timecode:
                 // file frame rate should reasonably be non-nil but we should still provide
                 // error handling cases for when it may be nil
                 if let mainFrameRate = main.frameRate {
                     do {
-                        let timecodeLoc = try Self.formTimeLocation(
+                        let timecodeLoc = try Self.formTimeValue(
                             timecodeString: strLocation,
                             at: mainFrameRate
                         )
@@ -1113,7 +1113,7 @@ extension ProTools.SessionInfo {
                 
             case .minSecs:
                 do {
-                    let minSecsLoc = try Self.formTimeLocation(minSecsString: strLocation)
+                    let minSecsLoc = try Self.formTimeValue(minSecsString: strLocation)
                     location = minSecsLoc
                 } catch {
                     location = nil
@@ -1126,7 +1126,7 @@ extension ProTools.SessionInfo {
                 
             case .samples:
                 do {
-                    let samplesLoc = try Self.formTimeLocation(samplesString: strLocation)
+                    let samplesLoc = try Self.formTimeValue(samplesString: strLocation)
                     location = samplesLoc
                 } catch {
                     location = nil
@@ -1139,7 +1139,7 @@ extension ProTools.SessionInfo {
                 
             case .barsAndBeats:
                 do {
-                    let barsAndBeatsLoc = try Self.formTimeLocation(barsAndBeatsString: strLocation)
+                    let barsAndBeatsLoc = try Self.formTimeValue(barsAndBeatsString: strLocation)
                     location = barsAndBeatsLoc
                 } catch {
                     location = nil
@@ -1152,7 +1152,7 @@ extension ProTools.SessionInfo {
                 
             case .feetAndFrames:
                 do {
-                    let feetAndFramesLoc = try Self.formTimeLocation(feetAndFramesString: strLocation)
+                    let feetAndFramesLoc = try Self.formTimeValue(feetAndFramesString: strLocation)
                     location = feetAndFramesLoc
                 } catch {
                     location = nil
@@ -1165,11 +1165,11 @@ extension ProTools.SessionInfo {
             }
             
             // time reference
-            var timeRef: TimeLocation
+            var timeRef: TimeValue
             switch strTimeReferenceBase {
             case "Samples":
                 do {
-                    let samplesRef = try Self.formTimeLocation(samplesString: strTimeReference)
+                    let samplesRef = try Self.formTimeValue(samplesString: strTimeReference)
                     timeRef = samplesRef
                 } catch {
                     timeRef = .samples(0)
@@ -1182,7 +1182,7 @@ extension ProTools.SessionInfo {
                 
             case "Ticks":
                 do {
-                    let barsAndBeatsRef = try Self.formTimeLocation(barsAndBeatsString: strTimeReference)
+                    let barsAndBeatsRef = try Self.formTimeValue(barsAndBeatsString: strTimeReference)
                     timeRef = barsAndBeatsRef
                 } catch {
                     timeRef = .samples(0)

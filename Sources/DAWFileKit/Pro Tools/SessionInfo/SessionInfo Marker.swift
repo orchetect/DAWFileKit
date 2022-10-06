@@ -33,7 +33,7 @@ extension ProTools.SessionInfo {
         public let number: Int
         
         /// Location.
-        public let location: TimeLocation?
+        public let location: TimeValue?
         
         /// Time Reference (secondary location information based on the Marker type).
         ///
@@ -44,7 +44,7 @@ extension ProTools.SessionInfo {
         /// - For **Bar | Beat** Markers, the bar and beat number are included.
         ///
         ///   Beat divisions (ticks) are omitted unless the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
-        public let timeReference: TimeLocation
+        public let timeReference: TimeValue
         
         /// Marker name.
         public let name: String
@@ -56,8 +56,8 @@ extension ProTools.SessionInfo {
         
         public init(
             number: Int,
-            location: TimeLocation?,
-            timeReference: TimeLocation,
+            location: TimeValue?,
+            timeReference: TimeValue,
             name: String,
             comment: String? = nil
         ) {
