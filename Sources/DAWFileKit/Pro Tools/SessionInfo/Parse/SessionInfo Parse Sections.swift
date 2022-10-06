@@ -301,3 +301,193 @@ extension ProTools.SessionInfo {
         }
     }
 }
+
+extension ProTools.SessionInfo {
+    struct ParsedTracks {
+        let debugSectionName: String = "Tracks"
+        
+        private(set) var messages: [ParseMessage] = []
+        
+        private mutating func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
+        
+        private(set) var tracks: [Track] = []
+        
+        init(
+            lines section: [String],
+            timeValueFormat: TimeValueFormat,
+            mainFrameRate: Timecode.FrameRate?,
+            expectedAudioTrackCount: Int?
+        ) {
+            addParseMessage(.info(
+                "Found \(debugSectionName) in text file. (\(section.count) lines)"
+            ))
+            
+            // split into each track
+            
+            var tracksLines: [[String]] = []
+            var hopper: [String] = []
+            section.forEach {
+                if $0.hasPrefix(caseInsensitive: "TRACK NAME:") {
+                    if !hopper.isEmpty { tracksLines.append(hopper) }
+                    hopper.removeAll()
+                }
+                let lineToAdd = $0.trimmingCharacters(in: .newlines)
+                if !$0.isEmpty { hopper.append(lineToAdd) }
+            }
+            if !hopper.isEmpty { tracksLines.append(hopper) }
+            
+            // parse each track's contents
+            
+            for trackLines in tracksLines {
+                var track = Track()
+                
+                // basic validation
+                
+                guard trackLines.count >= 6 else { // track header has 6 rows, then regions are listed
+                    addParseMessage(.error(
+                        "Error: text file contains a track listing but format is not as expected. Aborting marker parsing."
+                    ))
+                    return
+                }
+                
+                // check params
+                
+                let paramsRegex =
+                #"(?-i)^TRACK NAME:\t(.*)\nCOMMENTS:\t(.*(?:(?:\n*.)*))\nUSER DELAY:\t(.*)\nSTATE:\s(.*)\nPLUG-INS:\s(?:\t{0,1})(.*)\n(?:CHANNEL.*STATE)((?:\n.*)*)"#
+                
+                let getParams = trackLines
+                    .joined(separator: "\n")
+                    .regexMatches(captureGroupsFromPattern: paramsRegex)
+                    .dropFirst()
+                    .map { $0 ?? "<<NIL>>" }
+                
+                guard getParams.count == 6 else {
+                    addParseMessage(.error(
+                        "Parse: \(debugSectionName) listing block: Text does not contain parameter block, or parameter block is not formatted as expected."
+                    ))
+                    
+                    continue
+                }
+                
+                // populate params
+                
+                // TRACK NAME
+                track.name = getParams[0]
+                
+                // COMMENTS (note: may contain new-line characters)
+                track.comments = getParams[1]
+                
+                // USER DELAY
+                track.userDelay = Int(getParams[2].components(separatedBy: " ").first ?? "0") ?? 0
+                
+                // STATE (flags)
+                let stateFlagsStrings = getParams[3].trimmed.components(separatedBy: " ")
+                var stateFlags: Set<Track.State> = []
+                for str in stateFlagsStrings {
+                    switch str {
+                    case "Inactive": stateFlags.insert(.inactive)
+                    case "Hidden":   stateFlags.insert(.hidden)
+                    case "Solo":     stateFlags.insert(.solo)
+                    case "SoloSafe": stateFlags.insert(.soloSafe)
+                    case "Muted":    stateFlags.insert(.muted)
+                    case "": break
+                    default:
+                        addParseMessage(.error(
+                            "Parse: \(debugSectionName) listing for track \"\(track.name)\": Unexpected track STATE value: \"\(str)\". Dev needs to add this to the State enum."
+                        ))
+                    }
+                }
+                track.state = stateFlags
+                
+                // PLUG-INS
+                track.plugins = getParams[4]
+                    .components(separatedBy: "\t")                // split by tab character
+                    .compactMap { $0.trimmed.isEmpty ? nil : $0 } // remove empty strings
+                
+                // clip list
+                
+                let clipList = getParams[5].trimmingCharacters(in: .newlines)
+                
+                if !clipList.isEmpty { // skip if no clips are listed
+                    for clip in clipList.components(separatedBy: .newlines) {
+                        var newClip = Track.Clip()
+                        
+                        let columns = clip.components(separatedBy: "\t").map { $0.trimmed }
+                        
+                        guard columns.count == 7 else {
+                            addParseMessage(.error(
+                                "Parse: \(debugSectionName) listing for track \"\(track.name)\": Did not find expected number of tabular columns. Found \(columns.count) columns but expected 7. This clip cannot be parsed: [\(columns.map { $0.quoted }.joined(separator: ", "))]"
+                            ))
+                            
+                            continue
+                        }
+                        
+                        // CHANNEL
+                        newClip.channel = Int(columns[0]) ?? 1
+                        
+                        // EVENT
+                        newClip.event = Int(columns[1]) ?? 1
+                        
+                        // CLIP NAME
+                        newClip.name = columns[2]
+                        
+                        // START TIME
+                        newClip.startTime = try? ProTools.SessionInfo.formTimeValue(
+                            source: columns[3],
+                            at: mainFrameRate,
+                            format: timeValueFormat
+                        )
+                        
+                        // END TIME
+                        newClip.endTime = try? ProTools.SessionInfo.formTimeValue(
+                            source: columns[4],
+                            at: mainFrameRate,
+                            format: timeValueFormat
+                        )
+                        
+                        // DURATION
+                        newClip.duration = try? ProTools.SessionInfo.formTimeValue(
+                            source: columns[5],
+                            at: mainFrameRate,
+                            format: timeValueFormat
+                        )
+                        
+                        // STATE
+                        switch columns[6].trimmed {
+                        case "Unmuted": newClip.state = .unmuted
+                        case "Muted": newClip.state = .muted
+                        default:
+                            newClip.state = .unmuted
+                            addParseMessage(.error(
+                                "Unexpected track listing clip STATE value: \"\(columns[6])\". Defaulting to \"Unmuted\""
+                            ))
+                        }
+                        
+                        track.clips.append(newClip)
+                    }
+                }
+                
+                tracks.append(track)
+            }
+            
+            let parsedTrackCount = tracks.count
+            if let expectedAudioTrackCount = expectedAudioTrackCount {
+                if expectedAudioTrackCount == parsedTrackCount {
+                    addParseMessage(.info(
+                        "Parsed \(parsedTrackCount) tracks from text file."
+                    ))
+                } else {
+                    addParseMessage(.error(
+                        "Parsed track count differs from expected count. Expected \(expectedAudioTrackCount) items but only successfully parsed \(parsedTrackCount)."
+                    ))
+                }
+            } else {
+                addParseMessage(.error(
+                    "Parsed \(parsedTrackCount) tracks from text file. Expected track count was not readable from the file header however so it is not possible to validate if this is the correct number of tracks."
+                ))
+            }
+        }
+    }
+}
