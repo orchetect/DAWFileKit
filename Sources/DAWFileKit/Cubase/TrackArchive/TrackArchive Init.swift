@@ -14,7 +14,7 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     /// Parse Track Archive XML file contents exported from Cubase.
-    public init(data: Data) throws {
+    public init(fileContent data: Data) throws {
         var dummy: [ParseMessage] = []
         try self.init(data: data, messages: &dummy)
     }
@@ -25,7 +25,7 @@ extension Cubase.TrackArchive {
         messages: inout [ParseMessage]
     ) throws {
         let xmlDocument = try XMLDocument(data: data)
-        let parsed = try Self.parse(xml: xmlDocument)
+        let parsed = try Self.parse(fileContent: xmlDocument)
         self = parsed.trackArchive
         messages = parsed.messages
     }
@@ -33,7 +33,7 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     /// Parse Track Archive XML file contents exported from Cubase.
-    public init(xml: XMLDocument) throws {
+    public init(fileContent xml: XMLDocument) throws {
         var dummy: [ParseMessage] = []
         try self.init(xml: xml, messages: &dummy)
     }
@@ -43,7 +43,7 @@ extension Cubase.TrackArchive {
         xml: XMLDocument,
         messages: inout [ParseMessage]
     ) throws {
-        let parsed = try Self.parse(xml: xml)
+        let parsed = try Self.parse(fileContent: xml)
         self = parsed.trackArchive
         messages = parsed.messages
     }
@@ -51,9 +51,9 @@ extension Cubase.TrackArchive {
 
 extension Cubase.TrackArchive {
     /// Parse Track Archive XML file contents exported from Cubase.
-    public init(xml root: XMLElement) {
+    public init(fileContent xmlRoot: XMLElement) {
         var dummy: [ParseMessage] = []
-        self.init(xml: root, messages: &dummy)
+        self.init(xml: xmlRoot, messages: &dummy)
     }
     
     /// Parse Track Archive XML file contents exported from Cubase.
@@ -61,7 +61,7 @@ extension Cubase.TrackArchive {
         xml root: XMLElement,
         messages: inout [ParseMessage]
     ) {
-        let parsed = Self.parse(xml: root)
+        let parsed = Self.parse(fileContent: root)
         self = parsed.trackArchive
         messages = parsed.messages
     }

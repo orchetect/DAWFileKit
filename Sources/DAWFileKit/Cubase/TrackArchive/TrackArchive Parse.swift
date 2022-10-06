@@ -11,7 +11,7 @@ import Foundation
 import TimecodeKit
 
 extension Cubase.TrackArchive {
-    internal static func parse(xml: XMLDocument) throws -> (
+    internal static func parse(fileContent xml: XMLDocument) throws -> (
         trackArchive: Self,
         messages: [ParseMessage]
     ) {
@@ -21,10 +21,10 @@ extension Cubase.TrackArchive {
             )
         }
         
-        return Self.parse(xml: root)
+        return Self.parse(fileContent: root)
     }
     
-    internal static func parse(xml root: XMLElement) -> (
+    internal static func parse(fileContent xmlRoot: XMLElement) -> (
         trackArchive: Self,
         messages: [ParseMessage]
     ) {
@@ -36,9 +36,9 @@ extension Cubase.TrackArchive {
         
         var info = Self()
         
-        info._parseSetup(root: root, messages: &messages)
-        info._parseTempoTrack(root: root, messages: &messages)
-        info._parseTracks(root: root, messages: &messages)
+        info._parseSetup(root: xmlRoot, messages: &messages)
+        info._parseTempoTrack(root: xmlRoot, messages: &messages)
+        info._parseTracks(root: xmlRoot, messages: &messages)
         
         return (
             trackArchive: info,
