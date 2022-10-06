@@ -189,15 +189,16 @@ extension ProTools.SessionInfo {
                 messages.append(contentsOf: parsed.messages)
                 
             case .markers:
-                info._parseMarkers(
-                    section: lines,
-                    timeLocationFormat: timeValueFormat,
-                    messages: &messages
+                let parsed = ParsedMarkers(
+                    lines: lines,
+                    timeValueFormat: timeValueFormat,
+                    mainFrameRate: info.main.frameRate
                 )
+                info.markers = parsed.markers
+                messages.append(contentsOf: parsed.messages)
                 
             case let .orphan(name: name):
                 if info.orphanData == nil { info.orphanData = [] }
-                
                 info.orphanData?.append(OrphanData(heading: name, content: lines))
             }
         }
@@ -318,214 +319,214 @@ extension ProTools.SessionInfo {
         }
         
         let debugSectionName = "Markers"
-        addParseMessage(.info(
-            "Found \(debugSectionName) in text file. (\(section.count) lines)"
-        ))
-        
-        // basic validation
-        
-        guard section.count > 1 else {
-            addParseMessage(.info(
-                "Text file contains \(debugSectionName) listing but no markers were found."
-            ))
-            return
-        }
-        
-        if !section[0].contains(caseInsensitive: "LOCATION") ||
-            !section[0].contains(caseInsensitive: "TIME REFERENCE") ||
-            !section[0].contains(caseInsensitive: "UNITS") ||
-            !section[0].contains(caseInsensitive: "NAME") ||
-            !section[0].contains(caseInsensitive: "COMMENTS")
-        {
-            addParseMessage(.error(
-                "Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."
-            ))
-            return
-        }
-        
-        let lines = section.suffix(from: 1) // remove header row
-        
-        guard !lines.isEmpty else {
-            addParseMessage(.error(
-                "Error: text file contains \(debugSectionName) listing but no entries were found."
-            ))
-            return
-        }
-        
-        let estimatedItemCount = lines.count
-        
-        // init array so we can append to it
-        markers = []
-        
-        for line in lines {
-            if line.isEmpty { break }
-            
-            let columnData = line.split(separator: "\t")
-                .map { String($0).trimmed } // split into array by tab character
-            
-            guard let strNumber = columnData[safe: 0],
-                  let strLocation = columnData[safe: 1],
-                  let strTimeReference = columnData[safe: 2],
-                  let strTimeReferenceBase = columnData[safe: 3],
-                  let strName = columnData[safe: 4]
-            else {
-                // if these are nil, the text file could be malformed
-                addParseMessage(.error(
-                    "One or more \(debugSectionName) item elements were nil. Text file may be malformed."
-                ))
-                break
-            }
-            
-            // marker number
-            let number: Int
-            if let numberInt = strNumber.int {
-                number = numberInt
-            } else {
-                number = 0
-                addParseMessage(.error(
-                    "Marker at \(strLocation) had a Memory Location number value that could not be converted to an integer: \(strNumber.quoted). Defaulting to 0."
-                ))
-            }
-            
-            // location
-            var location: TimeValue?
-            switch timeLocationFormat {
-            case .timecode:
-                // file frame rate should reasonably be non-nil but we should still provide
-                // error handling cases for when it may be nil
-                if let mainFrameRate = main.frameRate {
-                    do {
-                        let timecodeLoc = try Self.formTimeValue(
-                            timecodeString: strLocation,
-                            at: mainFrameRate
-                        )
-                        location = timecodeLoc
-                    } catch {
-                        location = nil
-                        addParseMessage(.error(
-                            "FYI: Validation for timecode \(strLocation.quoted) at text file frame rate of \(mainFrameRate) failed with error: \(error)."
-                        ))
-                    }
-                } else {
-                    // attempt to salvage the data by assuming a default frame rate of 30fps
-                    if let timecode = try? Timecode(rawValues: strLocation, at: ._30) {
-                        location = .timecode(timecode)
-                        addParseMessage(.error(
-                            "FYI: Could not validate timecode \(strLocation.quoted) because file frame rate could not be determined."
-                        ))
-                    } else {
-                        location = nil
-                        addParseMessage(.error(
-                            "Could not validate timecode \(strLocation.quoted) because file frame rate could not be determined and the string is malformed."
-                        ))
-                    }
-                    
-                }
-                
-            case .minSecs:
-                do {
-                    let minSecsLoc = try Self.formTimeValue(minSecsString: strLocation)
-                    location = minSecsLoc
-                } catch {
-                    location = nil
-                    addParseMessage(.error(
-                        "FYI: Validation for Min:Secs value \(strLocation.quoted) failed with error: \(error)."
-                    ))
-                }
-                
-            case .samples:
-                do {
-                    let samplesLoc = try Self.formTimeValue(samplesString: strLocation)
-                    location = samplesLoc
-                } catch {
-                    location = nil
-                    addParseMessage(.error(
-                        "FYI: Validation for Samples value \(strLocation.quoted) failed with error: \(error)."
-                    ))
-                }
-                
-            case .barsAndBeats:
-                do {
-                    let barsAndBeatsLoc = try Self.formTimeValue(barsAndBeatsString: strLocation)
-                    location = barsAndBeatsLoc
-                } catch {
-                    location = nil
-                    addParseMessage(.error(
-                        "FYI: Validation for Bars|Beats value \(strLocation.quoted) failed with error: \(error)."
-                    ))
-                }
-                
-            case .feetAndFrames:
-                do {
-                    let feetAndFramesLoc = try Self.formTimeValue(feetAndFramesString: strLocation)
-                    location = feetAndFramesLoc
-                } catch {
-                    location = nil
-                    addParseMessage(.error(
-                        "FYI: Validation for Feet+Frames value \(strLocation.quoted) failed with error: \(error)."
-                    ))
-                }
-            }
-            
-            // time reference
-            var timeRef: TimeValue
-            switch strTimeReferenceBase {
-            case "Samples":
-                do {
-                    let samplesRef = try Self.formTimeValue(samplesString: strTimeReference)
-                    timeRef = samplesRef
-                } catch {
-                    timeRef = .samples(0)
-                    addParseMessage(.error(
-                        "Marker at \(strLocation) had a Time Reference type of Samples but an error occurred: \(error) Value: \(strTimeReference.quoted). Defaulting to Samples value of 0."
-                    ))
-                }
-                
-            case "Ticks":
-                do {
-                    let barsAndBeatsRef = try Self.formTimeValue(barsAndBeatsString: strTimeReference)
-                    timeRef = barsAndBeatsRef
-                } catch {
-                    timeRef = .samples(0)
-                    addParseMessage(.error(
-                        "Marker at \(strLocation) had a Time Reference type of Ticks but an error occurred: \(error) Value: \(strTimeReference.quoted). Defaulting to 0|0."
-                    ))
-                }
-                
-            default:
-                timeRef = .samples(0)
-                addParseMessage(.error(
-                    "Marker at \(strLocation) had a Time Reference type that was not recognized: \(strTimeReferenceBase.quoted). Defaulting to Samples value of 0."
-                ))
-            }
-            
-            // marker comment
-            let strComment = columnData[safe: 5]
-            
-            // add new marker
-            let newItem = Marker(
-                number: number,
-                location: location,
-                timeReference: timeRef,
-                name: strName,
-                comment: strComment
-            )
-            markers?.append(newItem)
-        }
-        
-        // error check
-        
-        let actualItemCount = markers?.count ?? 0
-        
-        if estimatedItemCount == actualItemCount {
-            addParseMessage(.info(
-                "Successfully parsed \(actualItemCount) \(debugSectionName) from text file."
-            ))
-        } else {
-            addParseMessage(.error(
-                "Actual parsed \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount)."
-            ))
-        }
+//        addParseMessage(.info(
+//            "Found \(debugSectionName) in text file. (\(section.count) lines)"
+//        ))
+//
+//        // basic validation
+//
+//        guard section.count > 1 else {
+//            addParseMessage(.info(
+//                "Text file contains \(debugSectionName) listing but no markers were found."
+//            ))
+//            return
+//        }
+//
+//        if !section[0].contains(caseInsensitive: "LOCATION") ||
+//            !section[0].contains(caseInsensitive: "TIME REFERENCE") ||
+//            !section[0].contains(caseInsensitive: "UNITS") ||
+//            !section[0].contains(caseInsensitive: "NAME") ||
+//            !section[0].contains(caseInsensitive: "COMMENTS")
+//        {
+//            addParseMessage(.error(
+//                "Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."
+//            ))
+//            return
+//        }
+//
+//        let lines = section.suffix(from: 1) // remove header row
+//
+//        guard !lines.isEmpty else {
+//            addParseMessage(.error(
+//                "Error: text file contains \(debugSectionName) listing but no entries were found."
+//            ))
+//            return
+//        }
+//
+//        let estimatedItemCount = lines.count
+//
+//        // init array so we can append to it
+//        markers = []
+//
+//        for line in lines {
+//            if line.isEmpty { break }
+//
+//            let columnData = line.split(separator: "\t")
+//                .map { String($0).trimmed } // split into array by tab character
+//
+//            guard let strNumber = columnData[safe: 0],
+//                  let strLocation = columnData[safe: 1],
+//                  let strTimeReference = columnData[safe: 2],
+//                  let strTimeReferenceBase = columnData[safe: 3],
+//                  let strName = columnData[safe: 4]
+//            else {
+//                // if these are nil, the text file could be malformed
+//                addParseMessage(.error(
+//                    "One or more \(debugSectionName) item elements were nil. Text file may be malformed."
+//                ))
+//                break
+//            }
+//
+//            // marker number
+//            let number: Int
+//            if let numberInt = strNumber.int {
+//                number = numberInt
+//            } else {
+//                number = 0
+//                addParseMessage(.error(
+//                    "Marker at \(strLocation) had a Memory Location number value that could not be converted to an integer: \(strNumber.quoted). Defaulting to 0."
+//                ))
+//            }
+//
+//            // location
+//            var location: TimeValue?
+//            switch timeLocationFormat {
+//            case .timecode:
+//                // file frame rate should reasonably be non-nil but we should still provide
+//                // error handling cases for when it may be nil
+//                if let mainFrameRate = main.frameRate {
+//                    do {
+//                        let timecodeLoc = try Self.formTimeValue(
+//                            timecodeString: strLocation,
+//                            at: mainFrameRate
+//                        )
+//                        location = timecodeLoc
+//                    } catch {
+//                        location = nil
+//                        addParseMessage(.error(
+//                            "FYI: Validation for timecode \(strLocation.quoted) at text file frame rate of \(mainFrameRate) failed with error: \(error)."
+//                        ))
+//                    }
+//                } else {
+//                    // attempt to salvage the data by assuming a default frame rate of 30fps
+//                    if let timecode = try? Timecode(rawValues: strLocation, at: ._30) {
+//                        location = .timecode(timecode)
+//                        addParseMessage(.error(
+//                            "FYI: Could not validate timecode \(strLocation.quoted) because file frame rate could not be determined."
+//                        ))
+//                    } else {
+//                        location = nil
+//                        addParseMessage(.error(
+//                            "Could not validate timecode \(strLocation.quoted) because file frame rate could not be determined and the string is malformed."
+//                        ))
+//                    }
+//
+//                }
+//
+//            case .minSecs:
+//                do {
+//                    let minSecsLoc = try Self.formTimeValue(minSecsString: strLocation)
+//                    location = minSecsLoc
+//                } catch {
+//                    location = nil
+//                    addParseMessage(.error(
+//                        "FYI: Validation for Min:Secs value \(strLocation.quoted) failed with error: \(error)."
+//                    ))
+//                }
+//
+//            case .samples:
+//                do {
+//                    let samplesLoc = try Self.formTimeValue(samplesString: strLocation)
+//                    location = samplesLoc
+//                } catch {
+//                    location = nil
+//                    addParseMessage(.error(
+//                        "FYI: Validation for Samples value \(strLocation.quoted) failed with error: \(error)."
+//                    ))
+//                }
+//
+//            case .barsAndBeats:
+//                do {
+//                    let barsAndBeatsLoc = try Self.formTimeValue(barsAndBeatsString: strLocation)
+//                    location = barsAndBeatsLoc
+//                } catch {
+//                    location = nil
+//                    addParseMessage(.error(
+//                        "FYI: Validation for Bars|Beats value \(strLocation.quoted) failed with error: \(error)."
+//                    ))
+//                }
+//
+//            case .feetAndFrames:
+//                do {
+//                    let feetAndFramesLoc = try Self.formTimeValue(feetAndFramesString: strLocation)
+//                    location = feetAndFramesLoc
+//                } catch {
+//                    location = nil
+//                    addParseMessage(.error(
+//                        "FYI: Validation for Feet+Frames value \(strLocation.quoted) failed with error: \(error)."
+//                    ))
+//                }
+//            }
+//
+//            // time reference
+//            var timeRef: TimeValue
+//            switch strTimeReferenceBase {
+//            case "Samples":
+//                do {
+//                    let samplesRef = try Self.formTimeValue(samplesString: strTimeReference)
+//                    timeRef = samplesRef
+//                } catch {
+//                    timeRef = .samples(0)
+//                    addParseMessage(.error(
+//                        "Marker at \(strLocation) had a Time Reference type of Samples but an error occurred: \(error) Value: \(strTimeReference.quoted). Defaulting to Samples value of 0."
+//                    ))
+//                }
+//
+//            case "Ticks":
+//                do {
+//                    let barsAndBeatsRef = try Self.formTimeValue(barsAndBeatsString: strTimeReference)
+//                    timeRef = barsAndBeatsRef
+//                } catch {
+//                    timeRef = .samples(0)
+//                    addParseMessage(.error(
+//                        "Marker at \(strLocation) had a Time Reference type of Ticks but an error occurred: \(error) Value: \(strTimeReference.quoted). Defaulting to 0|0."
+//                    ))
+//                }
+//
+//            default:
+//                timeRef = .samples(0)
+//                addParseMessage(.error(
+//                    "Marker at \(strLocation) had a Time Reference type that was not recognized: \(strTimeReferenceBase.quoted). Defaulting to Samples value of 0."
+//                ))
+//            }
+//
+//            // marker comment
+//            let strComment = columnData[safe: 5]
+//
+//            // add new marker
+//            let newItem = Marker(
+//                number: number,
+//                location: location,
+//                timeReference: timeRef,
+//                name: strName,
+//                comment: strComment
+//            )
+//            markers?.append(newItem)
+//        }
+//
+//        // error check
+//
+//        let actualItemCount = markers?.count ?? 0
+//
+//        if estimatedItemCount == actualItemCount {
+//            addParseMessage(.info(
+//                "Successfully parsed \(actualItemCount) \(debugSectionName) from text file."
+//            ))
+//        } else {
+//            addParseMessage(.error(
+//                "Actual parsed \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount)."
+//            ))
+//        }
     }
 }
 
