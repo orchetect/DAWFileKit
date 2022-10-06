@@ -274,6 +274,7 @@ extension ProTools.SessionInfo {
             info._parseTracks(
                 section: section,
                 expectedAudioTrackCount: info.main.audioTrackCount,
+                timeLocationFormat: timeLocationFormat,
                 messages: &messages
             )
         }
@@ -798,6 +799,7 @@ extension ProTools.SessionInfo {
     fileprivate mutating func _parseTracks(
         section: [String],
         expectedAudioTrackCount: Int?,
+        timeLocationFormat: TimeValueFormat,
         messages: inout [ParseMessage]
     ) {
         func addParseMessage(_ msg: ParseMessage) {
@@ -924,16 +926,27 @@ extension ProTools.SessionInfo {
                     // CLIP NAME
                     newClip.name = columns[2]
                     
-                    if let frameRate = main.frameRate {
-                        // START TIME (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.startTimecode = try? ProTools.formTimecode(columns[3], at: frameRate)
-                        
-                        // END TIME (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.endTimecode = try? ProTools.formTimecode(columns[4], at: frameRate)
-                        
-                        // DURATION (assuming text file was exported from Pro Tools with Timecode time type)
-                        newClip.duration = try? ProTools.formTimecode(columns[5], at: frameRate)
-                    }
+                    // START TIME
+                    newClip.startTime = try? Self.formTimeValue(
+                        source: columns[3],
+                        at: main.frameRate,
+                        format: timeLocationFormat
+                    )
+                    
+                    // END TIME
+                    newClip.endTime = try? Self.formTimeValue(
+                        source: columns[4],
+                        at: main.frameRate,
+                        format: timeLocationFormat
+                    )
+                    
+                    // DURATION
+                    newClip.duration = try? Self.formTimeValue(
+                        source: columns[5],
+                        at: main.frameRate,
+                        format: timeLocationFormat
+                    )
+                    
                     
                     // STATE
                     switch columns[6].trimmed {
@@ -987,7 +1000,7 @@ extension ProTools.SessionInfo {
     
     fileprivate mutating func _parseMarkers(
         section: [String],
-        timeLocationFormat: TimeLocationFormat,
+        timeLocationFormat: TimeValueFormat,
         messages: inout [ParseMessage]
     ) {
         func addParseMessage(_ msg: ParseMessage) {

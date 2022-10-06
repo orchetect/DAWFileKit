@@ -9,7 +9,7 @@ import TimecodeKit
 
 extension ProTools.SessionInfo {
     /// Represents a track and its contents.
-    public struct Track {
+    public struct Track: Equatable, Hashable {
         public var name: String = ""
         public var comments: String = ""
         
@@ -36,13 +36,13 @@ extension ProTools.SessionInfo.Track {
 
 extension ProTools.SessionInfo.Track {
     /// Represents a clip contained on a track.
-    public struct Clip {
+    public struct Clip: Equatable, Hashable {
         public var channel: Int = 0
         public var event: Int = 0
         public var name: String = ""
-        public var startTimecode: Timecode?
-        public var endTimecode: Timecode?
-        public var duration: Timecode?
+        public var startTime: ProTools.SessionInfo.TimeValue?
+        public var endTime: ProTools.SessionInfo.TimeValue?
+        public var duration: ProTools.SessionInfo.TimeValue?
         public var state: State = .unmuted
         
         /// A clip's state (such as 'Muted', 'Unmuted')
