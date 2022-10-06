@@ -68,7 +68,7 @@ class ProTools_SessionText_EmptySession: XCTestCase {
         
         // plug-ins
         
-        XCTAssertNil(sessionInfo.plugins) // empty
+        XCTAssertEqual(sessionInfo.plugins, [])
         
         // tracks
         

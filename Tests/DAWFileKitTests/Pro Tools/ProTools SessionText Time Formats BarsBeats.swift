@@ -68,7 +68,7 @@ class ProTools_SessionText_TimeFormats_BarsBeats: XCTestCase {
         
         // plug-ins
         
-        XCTAssertNil(sessionInfo.plugins)      // empty
+        XCTAssertEqual(sessionInfo.plugins, [])
         
         // tracks
         
