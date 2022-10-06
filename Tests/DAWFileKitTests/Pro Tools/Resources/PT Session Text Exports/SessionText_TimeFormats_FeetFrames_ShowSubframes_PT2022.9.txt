@@ -41,5 +41,5 @@ CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	D
 
 M A R K E R S  L I S T I N G
 #   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
-28  	84+03.58     	2695168           	Samples  	Marker Absolute                  	Comment
+1   	84+03.58     	2695168           	Samples  	Marker Absolute                  	Comment
 2   	173+13.18    	58|4| 735         	Ticks    	Marker Bars-Beats                	Comment
