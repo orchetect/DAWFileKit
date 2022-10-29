@@ -23,7 +23,7 @@ extension Cubase.TrackArchive {
             messages.append(msg)
         }
         
-        resetIDCounter()
+        var idCounter = IDCounter()
         
         let xmlOptions: XMLNode.Options = [.nodePrettyPrint, .nodeCompactEmptyElement]
         
@@ -45,11 +45,11 @@ extension Cubase.TrackArchive {
         
         // track list
         
-        _addTrackListAndTempoEvents(root, messages: &messages)
+        _addTrackListAndTempoEvents(root, idCounter: &idCounter, messages: &messages)
         
         // setup
         
-        try _addSetup(root, messages: &messages)
+        try _addSetup(root, idCounter: &idCounter, messages: &messages)
         
         // return data
         
@@ -65,6 +65,7 @@ extension Cubase.TrackArchive {
     
     fileprivate func _addSetup(
         _ root: XMLElement,
+        idCounter: inout IDCounter,
         messages: inout [EncodeMessage]
     ) throws {
         func addEncodeMessage(_ msg: EncodeMessage) {
@@ -76,7 +77,7 @@ extension Cubase.TrackArchive {
             attributes: [
                 ("class", "PArrangeSetup"),
                 ("name", "Setup"),
-                ("ID", getNewID().string)
+                ("ID", idCounter.getNewID().string)
             ]
         )
         
@@ -215,6 +216,7 @@ extension Cubase.TrackArchive {
     
     fileprivate func _addTrackListAndTempoEvents(
         _ root: XMLElement,
+        idCounter: inout IDCounter,
         messages: inout [EncodeMessage]
     ) {
         func addEncodeMessage(_ msg: EncodeMessage) {
@@ -261,7 +263,7 @@ extension Cubase.TrackArchive {
                 attributes: [
                     ("class", "MListNode"),
                     ("name", "Node"),
-                    ("ID", getNewID().string)
+                    ("ID", idCounter.getNewID().string)
                 ]
             )
             newTrack.addChild(mlistNode)
@@ -300,7 +302,7 @@ extension Cubase.TrackArchive {
             
             switch track {
             case let typed as MarkerTrack:
-                _addTrackMarker(using: newTrack, track: typed, messages: &messages)
+                _addTrackMarker(using: newTrack, track: typed, idCounter: &idCounter, messages: &messages)
                 
             default:
                 addEncodeMessage(
@@ -317,7 +319,7 @@ extension Cubase.TrackArchive {
                 attributes: [
                     ("class", "MTrack"),
                     ("name", "Track Device"),
-                    ("ID", getNewID().string)
+                    ("ID", idCounter.getNewID().string)
                 ]
             )
             TrackDevice.addChild(XMLElement(
@@ -341,6 +343,7 @@ extension Cubase.TrackArchive {
     fileprivate func _addTrackMarker(
         using newTrack: XMLElement,
         track: MarkerTrack,
+        idCounter: inout IDCounter,
         messages: inout [EncodeMessage]
     ) -> XMLElement {
         func addEncodeMessage(_ msg: EncodeMessage) {
@@ -352,7 +355,7 @@ extension Cubase.TrackArchive {
         newTrack.name = "obj"
         newTrack.addAttributes([
             ("class", "MMarkerTrackEvent"),
-            ("ID", getNewID().string)
+            ("ID", idCounter.getNewID().string)
         ])
         
         // MListNode
@@ -460,7 +463,7 @@ extension Cubase.TrackArchive {
                 )
             ]))
             
-            newNode.addAttribute(withName: "ID", value: getNewID().string)
+            newNode.addAttribute(withName: "ID", value: idCounter.getNewID().string)
             
             eventsNode.addChild(newNode)
         }
@@ -473,16 +476,14 @@ extension Cubase.TrackArchive {
 
 // MARK: - ID Counter
 
-fileprivate var IDcounter = 0
-
-fileprivate func resetIDCounter() {
-    IDcounter = 0
+extension Cubase.TrackArchive {
+    fileprivate struct IDCounter {
+        var id = 0
+        
+        mutating func getNewID() -> Int {
+            id += 1
+            return id
+        }
+    }
 }
-
-fileprivate func getNewID() -> Int {
-    IDcounter += 1
-    
-    return IDcounter
-}
-
 #endif
