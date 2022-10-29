@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct DAWMarker {
+public struct DAWMarker: Codable {
     // MARK: Contents
     
     /// The core time value storage.
