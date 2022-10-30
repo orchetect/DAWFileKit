@@ -1,6 +1,6 @@
 # DAWFileKit
 
-[![CI Build Status](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml/badge.svg)](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml) [![Platforms - macOS 10.12+ | iOS 10+ | tvOS 10+](https://img.shields.io/badge/platforms-macOS%2010.12+%20|%20iOS%2010+%20|%20tvOS%2010+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.3-5.7](https://img.shields.io/badge/Swift-5.3–5.7-orange.svg?style=flat) [![Xcode 12.0-14](https://img.shields.io/badge/Xcode-12.0–14-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/DAWFileKit/blob/main/LICENSE)
+[![CI Build Status](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml/badge.svg)](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml) [![Platforms - macOS 10.12+ | iOS 10+ | tvOS 10+](https://img.shields.io/badge/platforms-macOS%2010.12+%20|%20iOS%2010+%20|%20tvOS%2010+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.5-5.7](https://img.shields.io/badge/Swift-5.5–5.7-orange.svg?style=flat) [![Xcode 13-14](https://img.shields.io/badge/Xcode-13–14-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/DAWFileKit/blob/main/LICENSE)
 
 A Swift library for reading and writing common import/export file formats between popular DAW applications and converting between formats.
 
@@ -10,10 +10,9 @@ A Swift library for reading and writing common import/export file formats betwee
 | :--------------------------------------: | :-----: | :-----: |
 |        Cubase: Track Archive XML         |  yes†   |  yes†   |
 |    Pro Tools: Session Info text file     |   yes   |   n/a   |
+|            Standard MIDI File            | planned |   yes   |
 |               Logic Pro X‡               | future? | future? |
-|            Standard MIDI File            | planned | planned |
 |            Final Cut Pro XML             | future? | future? |
-| (more platforms may be added in future)‡ |         |         |
 
 *† Full read/write support for Cubase Track Archive XML files is implemented for tracks with absolute timebase, as well as tracks with musical timebase where the tempo track uses only 'Jump' tempo events and there are no 'Ramp' tempo events*
 
@@ -21,7 +20,8 @@ A Swift library for reading and writing common import/export file formats betwee
 
 ## Dependencies
 
-The library implicitly makes use of [TimecodeKit](https://github.com/orchetect/TimecodeKit) as the format to represent timecode values read/written from the files.
+- [TimecodeKit](https://github.com/orchetect/TimecodeKit) to represent timecode values
+- [MIDIKit](https://github.com/orchetect/MIDIKit) to read/write Standard MIDI Files
 
 ## Documentation
 
