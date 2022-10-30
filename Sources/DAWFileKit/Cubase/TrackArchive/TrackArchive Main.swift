@@ -13,7 +13,7 @@ extension Cubase.TrackArchive {
     /// Contains the global session meta-data.
     public struct Main {
         public var startTimecode: Timecode?        // 'Start'.'Time' (float, load as double)
-        public var startTimeSeconds: Double?       // 'Start'.'Time' (float, load as double)
+        public var startTimeSeconds: TimeInterval? // 'Start'.'Time' (float, load as double)
         
         // public var startTimeDomain: ?           // 'Start'.'Domain'.'Type' &
                                                    // 'Start'.'Domain'.'Period'
