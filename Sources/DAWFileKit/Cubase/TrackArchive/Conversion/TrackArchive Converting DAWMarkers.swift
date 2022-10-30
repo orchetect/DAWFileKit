@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import Foundation
 @_implementationOnly import OTCore
 import TimecodeKit
@@ -132,3 +134,5 @@ extension Array where Element == DAWMarker {
         }
     }
 }
+
+#endif
