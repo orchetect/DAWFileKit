@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     /// Parses the contents and extracts marker events from marker tracks.
-    public func extractMarkers() throws -> [[DAWMarker]] {
+    public func extractDAWMarkers() throws -> [[DAWMarker]] {
         guard let frameRate = main.frameRate else {
             throw ParseError.general(
                 "Could not determine frame rate."
@@ -58,7 +58,7 @@ extension Cubase.TrackArchive {
 // MARK: - Helpers
 
 extension Array where Element == CubaseTrackArchiveMarker {
-    /// Converts `[CubaseTrackArchiveMarker]` to `[DAWMarker]`
+    /// Converts `[CubaseTrackArchiveMarker]` to `[DAWMarker]`.
     public func convertToDAWMarkers(
         originalFrameRate: Timecode.FrameRate
     ) -> [DAWMarker] {
