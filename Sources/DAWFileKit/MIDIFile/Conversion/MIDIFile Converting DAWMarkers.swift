@@ -10,7 +10,24 @@ import MIDIKitSMF
 import TimecodeKit
 
 extension MIDIFile {
-    /// Constructs a MIDI file based on a marker list
+    /// Constructs a MIDI file based on a marker list.
+    public init(
+        converting markers: [DAWMarker],
+        tempo inputTempo: Double,
+        startTimecode: Timecode,
+        includeComments: Bool
+    ) throws {
+        var buildMessages: [String] = []
+        try self.init(
+            converting: markers,
+            tempo: inputTempo,
+            startTimecode: startTimecode,
+            includeComments: includeComments,
+            buildMessages: &buildMessages
+        )
+    }
+    
+    /// Constructs a MIDI file based on a marker list.
     public init(
         converting markers: [DAWMarker],
         tempo inputTempo: Double,
