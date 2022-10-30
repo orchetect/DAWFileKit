@@ -12,7 +12,7 @@ import TimecodeKit
 extension MIDIFile {
     /// Constructs a MIDI file based on a marker list
     public init(
-        from markers: [DAWMarker],
+        converting markers: [DAWMarker],
         tempo inputTempo: Double,
         startTimecode: Timecode,
         includeComments: Bool,
