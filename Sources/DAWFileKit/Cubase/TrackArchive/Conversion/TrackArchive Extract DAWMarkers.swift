@@ -44,12 +44,10 @@ extension Cubase.TrackArchive {
         }
         
         // translate to native Marker objects
-        // Cubase uses 80 subframes
         
         let markers = markerTracks.map {
             $0.events.convertToDAWMarkers(
-                originalFrameRate: frameRate,
-                originalSubFramesBase: ._80SubFrames
+                originalFrameRate: frameRate
             )
         }
         
@@ -62,9 +60,11 @@ extension Cubase.TrackArchive {
 extension Array where Element == CubaseTrackArchiveMarker {
     /// Converts `[CubaseTrackArchiveMarker]` to `[DAWMarker]`
     public func convertToDAWMarkers(
-        originalFrameRate: Timecode.FrameRate,
-        originalSubFramesBase: Timecode.SubFramesBase
+        originalFrameRate: Timecode.FrameRate
     ) -> [DAWMarker] {
+        // Cubase uses 80 subframes
+        let subFramesBase: Timecode.SubFramesBase = ._80SubFrames
+        
         // init array so we can append to it
         var markers: [DAWMarker] = []
         
@@ -76,7 +76,7 @@ extension Array where Element == CubaseTrackArchiveMarker {
                 let storage = DAWMarker.Storage(
                     value: .realTime(marker.startRealTime!),
                     frameRate: originalFrameRate,
-                    base: originalSubFramesBase
+                    base: subFramesBase
                 )
                 
                 let newMarker = DAWMarker(
@@ -89,7 +89,7 @@ extension Array where Element == CubaseTrackArchiveMarker {
                 let storage = DAWMarker.Storage(
                     value: .timecodeString(tc.stringValue),
                     frameRate: originalFrameRate,
-                    base: originalSubFramesBase
+                    base: subFramesBase
                 )
                 
                 let newMarker = DAWMarker(
