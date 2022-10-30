@@ -15,7 +15,8 @@ extension ProTools.SessionInfo {
     ///
     /// - Parameters:
     ///   - data: Raw file content.
-    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    ///   - timeValueFormat: If the time format is known, supply it.
+    ///     Otherwise pass `nil` to automatically detect the format.
     public init(
         fileContent data: Data,
         timeValueFormat: TimeValueFormat? = nil
@@ -32,8 +33,10 @@ extension ProTools.SessionInfo {
     ///
     /// - Parameters:
     ///   - data: Raw file content.
-    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
-    ///   - messages: An array of messages to update with information and errors during the parsing process.
+    ///   - timeValueFormat: If the time format is known, supply it.
+    ///     Otherwise pass `nil` to automatically detect the format.
+    ///   - messages: An array of messages to update with information and errors during the parsing
+    ///     process.
     public init(
         data: Data,
         timeValueFormat: TimeValueFormat? = nil,
@@ -58,7 +61,8 @@ extension ProTools.SessionInfo {
     ///
     /// - Parameters:
     ///   - fileContent: Raw file content.
-    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    ///   - timeValueFormat: If the time format is known, supply it.
+    ///     Otherwise pass `nil` to automatically detect the format.
     public init(
         fileContent: String,
         timeValueFormat: TimeValueFormat? = nil
@@ -75,8 +79,10 @@ extension ProTools.SessionInfo {
     ///
     /// - Parameters:
     ///   - fileContent: Raw file content.
-    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
-    ///   - messages: An array of messages to update with information and errors during the parsing process.
+    ///   - timeValueFormat: If the time format is known, supply it.
+    ///     Otherwise pass `nil` to automatically detect the format.
+    ///   - messages: An array of messages to update with information and errors during the parsing
+    ///     process.
     public init(
         fileContent: String,
         timeValueFormat: TimeValueFormat? = nil,

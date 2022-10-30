@@ -8,7 +8,8 @@ import TimecodeKit
 
 extension DAWMarker {
     /// Computed property, not cached.
-    /// Produces a timecode object from the marker's time data storage, after calculating the effective timecode by converting frame rates if necessary.
+    /// Produces a timecode object from the marker's time data storage, after calculating the
+    /// effective timecode by converting frame rates if necessary.
     public func resolvedTimecode(
         at newFrameRate: Timecode.FrameRate,
         limit: Timecode.UpperLimit,

@@ -20,18 +20,23 @@ extension ProTools.SessionInfo {
         
         /// Elapsed audio samples since the project start.
         ///
-        /// Refer to ``ProTools/SessionInfo/main-swift.property``.``ProTools/SessionInfo/Main-swift.struct/sampleRate`` for project sample rate.
+        /// Refer to ``ProTools/SessionInfo/main-swift.property``.``ProTools/SessionInfo/Main-swift.struct/sampleRate``
+        /// for project sample rate.
         case samples(Int)
         
         /// Bars and Beats (musical).
-        /// Ticks (quarter note division) is only present when the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
+        /// Ticks (quarter note division) is only present when the _Show Subframes_ option is
+        /// enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ
+        /// base of 960 ticks per quarter.
         case barsAndBeats(bar: Int, beat: Int, ticks: Int?)
         
         /// Feet and Frames.
         ///
         /// This can either be `FT:FR` or `FT:FR.sf` (where `sf` is subframes).
         ///
-        /// SubFrames is only present when the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
+        /// SubFrames is only present when the _Show Subframes_ option is enabled in Pro Tools'
+        /// Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per
+        /// quarter.
         case feetAndFrames(feet: Int, frames: Int, subFrames: Int?)
         
         /// Returns the corresponding ``TimeValueFormat`` case for the time value.
@@ -58,18 +63,23 @@ extension ProTools.SessionInfo {
         
         /// Elapsed audio samples since the project start.
         ///
-        /// Refer to ``ProTools/SessionInfo/main-swift.property``.``ProTools/SessionInfo/Main-swift.struct/sampleRate`` for project sample rate.
+        /// Refer to ``ProTools/SessionInfo/main-swift.property``.``ProTools/SessionInfo/Main-swift.struct/sampleRate``
+        /// for project sample rate.
         case samples
         
         /// Bars and Beats (musical).
-        /// Ticks (quarter note division) is only present when the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
+        /// Ticks (quarter note division) is only present when the _Show Subframes_ option is
+        /// enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ
+        /// base of 960 ticks per quarter.
         case barsAndBeats
         
         /// Feet and Frames.
         ///
         /// This can either be `FT:FR` or `FT:FR.sf` (where `sf` is subframes).
         ///
-        /// SubFrames is only present when the _Show Subframes_ option is enabled in Pro Tools' Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per quarter.
+        /// SubFrames is only present when the _Show Subframes_ option is enabled in Pro Tools'
+        /// Export Session Text window while exporting. Pro Tools uses a PPQ base of 960 ticks per
+        /// quarter.
         case feetAndFrames
         
         /// Returns human-readable name of the time value format type suitable for UI or debugging.
@@ -92,8 +102,10 @@ extension ProTools.SessionInfo {
 // MARK: - Internal Methods
 
 extension ProTools.SessionInfo.TimeValueFormat {
-    /// Employs a format detection heuristic to attempt to determine the time format of the given time string.
-    /// This does not perform exhaustive validation on the values themselves, but matches against expected formatting.
+    /// Employs a format detection heuristic to attempt to determine the time format of the given
+    /// time string.
+    /// This does not perform exhaustive validation on the values themselves, but matches against
+    /// expected formatting.
     /// Returns `nil` if no matches can be ascertained.
     init(heuristic source: String) throws {
         // as a performance optimization, the formats here
@@ -165,7 +177,8 @@ extension ProTools.SessionInfo {
     // MARK: - Umbrella Methods
     
     /// Form a ``TimeValue`` instance from a time string with unknown format.
-    /// Employs a format detection heuristic to attempt to determine the time format of the given time string.
+    /// Employs a format detection heuristic to attempt to determine the time format of the given
+    /// time string.
     static func formTimeValue(
         heuristic source: String,
         at frameRate: Timecode.FrameRate?

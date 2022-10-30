@@ -89,11 +89,6 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         
         XCTAssertEqual(sessionInfo.markers?.count, 294)
         
-        // print(sessionInfo!.markers!
-        //  .map { "\($0.number, ifNil: "nil")\t\($0.timecode, ifNil: "nil")\t\($0.name, ifNil: "nil")\t\($0.comment, ifNil: "nil")" }
-        //  .joined(separator: "\n")
-        // )
-        
         // orphan data
         
         XCTAssertNil(sessionInfo.orphanData) // none

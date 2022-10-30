@@ -37,7 +37,8 @@ class ProTools_SessionText_OrphanData: XCTestCase {
         }
         
         // orphan data
-        // just test for orphan sections (unrecognized - a hypothetical in case new sections get added to Pro Tools in the future)
+        // just test for orphan sections (unrecognized - a hypothetical in case new sections get
+        // added to Pro Tools in the future)
         
         XCTAssertEqual(sessionInfo.orphanData?.count, 1)
         

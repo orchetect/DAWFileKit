@@ -20,7 +20,8 @@ extension Cubase {
         public var main = Main()
         
         /// Tempo track.
-        /// (Essentially, a session can contain only one tempo track, but there is not a "tempo track" in the XML file; instead, tempo events are written to the first actual track.)
+        /// (Essentially, a session can contain only one tempo track, but there is not a "tempo
+        /// track" in the XML file; instead, tempo events are written to the first actual track.)
         public var tempoTrack = TempoTrack()
         
         /// Tracks listing.

@@ -167,7 +167,10 @@ extension Cubase.TrackArchive {
         
         // tempo track
         
-        // operating under the assumption (as anecdotally observed) that tempo track events are inserted into the first track of the XML file regardless of what that track type was; Cubase does not export the tempo track as a separate track in the XML as you might expect.
+        // operating under the assumption (as anecdotally observed) that tempo track events are
+        // inserted into the first track of the XML file regardless of what that track type was;
+        // Cubase does not export the tempo track as a separate track in the XML as you might
+        // expect.
         
         guard let firstTrack = root.children?
             .filter(nameAttribute: "track")

@@ -15,13 +15,15 @@ extension Cubase.TrackArchive {
         public var startTimecode: Timecode?        // 'Start'.'Time' (float, load as double)
         public var startTimeSeconds: Double?       // 'Start'.'Time' (float, load as double)
         
-        // public var startTimeDomain: ?            // 'Start'.'Domain'.'Type' & 'Start'.'Domain'.'Period'
+        // public var startTimeDomain: ?           // 'Start'.'Domain'.'Type' &
+                                                   // 'Start'.'Domain'.'Period'
         public var lengthTimecode: Timecode?       // 'Length'.'Time' (float, load as double)
-        // public var lengthTimeDomain: ?           // 'Length'.'Domain'.'Type' & 'Start'.'Domain'.'Period'
+        // public var lengthTimeDomain: ?          // 'Length'.'Domain'.'Type' &
+                                                   // 'Start'.'Domain'.'Period'
         
         public var frameRate: Timecode.FrameRate?  // 'FrameType'
         
-        // public var timeType: ?                   // 'TimeType'
+        // public var timeType: ?                  // 'TimeType'
         public var barOffset: Int?                 // 'BarOffset'
         
         public var sampleRate: Double?             // 'SampleRate'
@@ -36,7 +38,7 @@ extension Cubase.TrackArchive {
         // 'VolumeMax'
         
         // 'HmtType'
-        public var hmtDepth: Int?                   // 'HmtDepth' (percentage)
+        public var hmtDepth: Int?                  // 'HmtDepth' (percentage)
     }
 }
 

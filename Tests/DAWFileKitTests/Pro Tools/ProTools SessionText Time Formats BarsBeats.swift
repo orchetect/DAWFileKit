@@ -26,7 +26,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track2ClipDuration:  .barsAndBeats(bar: 6, beat: 2, ticks: 720),
             
             marker1Location:     .barsAndBeats(bar: 29, beat: 1, ticks: nil),
-            marker1TimeRef:      .samples(2695168),
+            marker1TimeRef:      .samples(2_695_168),
             
             marker2Location:     .barsAndBeats(bar: 58, beat: 4, ticks: nil),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: nil)
@@ -40,13 +40,13 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track1ClipStartTime: .barsAndBeats(bar: 13, beat: 3, ticks: 48),
             track1ClipEndTime:   .barsAndBeats(bar: 20, beat: 1, ticks: 768),
             track1ClipDuration:  .barsAndBeats(bar: 6, beat: 2, ticks: 720),
-             
+            
             track2ClipStartTime: .barsAndBeats(bar: 5, beat: 1, ticks: 696),
             track2ClipEndTime:   .barsAndBeats(bar: 11, beat: 4, ticks: 456),
             track2ClipDuration:  .barsAndBeats(bar: 6, beat: 2, ticks: 720),
             
             marker1Location:     .barsAndBeats(bar: 29, beat: 1, ticks: 287),
-            marker1TimeRef:      .samples(2695168),
+            marker1TimeRef:      .samples(2_695_168),
             
             marker2Location:     .barsAndBeats(bar: 58, beat: 4, ticks: 735),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: 735)
@@ -66,7 +66,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track2ClipDuration:  .feetAndFrames(feet: 20, frames: 1, subFrames: nil),
             
             marker1Location:     .feetAndFrames(feet: 84, frames: 3, subFrames: nil),
-            marker1TimeRef:      .samples(2695168),
+            marker1TimeRef:      .samples(2_695_168),
             
             marker2Location:     .feetAndFrames(feet: 173, frames: 13, subFrames: nil),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: nil)
@@ -86,8 +86,8 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track2ClipDuration:  .feetAndFrames(feet: 20, frames: 1, subFrames: 00),
             
             marker1Location:     .feetAndFrames(feet: 84, frames: 3, subFrames: 58),
-            marker1TimeRef:      .samples(2695168),
-             
+            marker1TimeRef:      .samples(2_695_168),
+            
             marker2Location:     .feetAndFrames(feet: 173, frames: 13, subFrames: 18),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: 735)
         )
@@ -106,7 +106,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track2ClipDuration:  .minSecs(min: 0, sec: 13, ms: nil),
             
             marker1Location:     .minSecs(min: 0, sec: 56, ms: nil),
-            marker1TimeRef:      .samples(2695168),
+            marker1TimeRef:      .samples(2_695_168),
             
             marker2Location:     .minSecs(min: 1, sec: 55, ms: nil),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: nil)
@@ -137,18 +137,18 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         try runSessionText(
             filename: "SessionText_TimeFormats_Samples_PT2022.9",
             
-            track1ClipStartTime: .samples(1201200),
-            track1ClipEndTime:   .samples(1843200),
-            track1ClipDuration:  .samples(642000),
+            track1ClipStartTime: .samples(1_201_200),
+            track1ClipEndTime:   .samples(1_843_200),
+            track1ClipDuration:  .samples(642_000),
             
-            track2ClipStartTime: .samples(401408),
-            track2ClipEndTime:   .samples(1043408),
-            track2ClipDuration:  .samples(642000),
+            track2ClipStartTime: .samples(401_408),
+            track2ClipEndTime:   .samples(1_043_408),
+            track2ClipDuration:  .samples(642_000),
             
-            marker1Location:     .samples(2695168),
-            marker1TimeRef:      .samples(2695168),
+            marker1Location:     .samples(2_695_168),
+            marker1TimeRef:      .samples(2_695_168),
             
-            marker2Location:     .samples(5562368),
+            marker2Location:     .samples(5_562_368),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: nil)
         )
     }
@@ -157,18 +157,18 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         try runSessionText(
             filename: "SessionText_TimeFormats_Samples_ShowSubframes_PT2022.9",
             
-            track1ClipStartTime: .samples(1201200),
-            track1ClipEndTime:   .samples(1843200),
-            track1ClipDuration:  .samples(642000),
+            track1ClipStartTime: .samples(1_201_200),
+            track1ClipEndTime:   .samples(1_843_200),
+            track1ClipDuration:  .samples(642_000),
             
-            track2ClipStartTime: .samples(401408),
-            track2ClipEndTime:   .samples(1043408),
-            track2ClipDuration:  .samples(642000),
+            track2ClipStartTime: .samples(401_408),
+            track2ClipEndTime:   .samples(1_043_408),
+            track2ClipDuration:  .samples(642_000),
             
-            marker1Location:     .samples(2695168),
-            marker1TimeRef:      .samples(2695168),
+            marker1Location:     .samples(2_695_168),
+            marker1TimeRef:      .samples(2_695_168),
             
-            marker2Location:     .samples(5562368),
+            marker2Location:     .samples(5_562_368),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: 735)
         )
     }
@@ -189,7 +189,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track2ClipDuration:  .timecode(TC(TCC(h: 00, m: 00, s: 13, f: 08))),
             
             marker1Location:     .timecode(TC(TCC(h: 23, m: 57, s: 56, f: 02))),
-            marker1TimeRef:      .samples(2695168),
+            marker1TimeRef:      .samples(2_695_168),
             
             marker2Location:     .timecode(TC(TCC(h: 23, m: 58, s: 55, f: 18))),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: nil)
@@ -212,7 +212,7 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
             track2ClipDuration:  .timecode(TC(TCC(h: 00, m: 00, s: 13, f: 08, sf: 68))),
             
             marker1Location:     .timecode(TC(TCC(h: 23, m: 57, s: 56, f: 02, sf: 24))),
-            marker1TimeRef:      .samples(2695168),
+            marker1TimeRef:      .samples(2_695_168),
             
             marker2Location:     .timecode(TC(TCC(h: 23, m: 58, s: 55, f: 18, sf: 41))),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: 735)

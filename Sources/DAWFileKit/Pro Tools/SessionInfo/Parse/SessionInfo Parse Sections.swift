@@ -106,7 +106,8 @@ extension ProTools.SessionInfo {
     
     /// Analyze raw string data to attempt to detect the primary time format in the text file.
     /// Only Tracks and Markers contain time values that can be examined.
-    /// If a text file has no clips on tracks and no markers, it is not possible to determine the time format.
+    /// If a text file has no clips on tracks and no markers, it is not possible to determine the
+    /// time format.
     ///
     /// - Parameters:
     ///   - sections: Raw sections text lines. Will not be mutated, only read from.
@@ -156,7 +157,8 @@ extension ProTools.SessionInfo {
         if let mostCommonFormat = counts
             .sorted(by: { $0.value > $1.value })
             .map({ $0.key })
-            .first {
+            .first
+        {
             return (format: mostCommonFormat, hasMixedFormats: hasMixedFormats)
         }
         
@@ -432,9 +434,9 @@ extension ProTools.SessionInfo {
             let actualItemCount = plugins.count
             
             if estimatedItemCount == actualItemCount {
-                addParseMessage(
-                    .info("Successfully parsed \(actualItemCount) \(debugSectionName) from text file.")
-                )
+                addParseMessage(.info(
+                    "Successfully parsed \(actualItemCount) \(debugSectionName) from text file."
+                ))
             } else {
                 addParseMessage(.error(
                     "Actual parsed \(debugSectionName) item count differs from estimated count. Expected \(estimatedItemCount) items but only successfully parsed \(actualItemCount)."
@@ -442,7 +444,8 @@ extension ProTools.SessionInfo {
             }
             
             // fill in empty manufacturer names
-            // PT only lists a manufacturer once if there are multiple plugins in use from that manufacturer
+            // PT only lists a manufacturer once if there are multiple plugins in use from that
+            // manufacturer
             
             var lastFoundManufacturer = ""
             for idx in plugins.indices {
@@ -543,7 +546,8 @@ extension ProTools.SessionInfo {
             return (tracksLines: tracksLines, messages: messages)
         }
         
-        /// Takes raw lines of each track and produces abstracted component types containing atomic string values.
+        /// Takes raw lines of each track and produces abstracted component types containing atomic
+        /// string values.
         static func tracksComponents(
             tracksLines: [[String]]
         ) -> (components: [TrackComponents], messages: [ParseMessage]) {
@@ -556,7 +560,8 @@ extension ProTools.SessionInfo {
             return (components: components, messages: messages)
         }
         
-        /// Takes raw lines of a single track and produces abstracted component types containing atomic string values.
+        /// Takes raw lines of a single track and produces abstracted component types containing
+        /// atomic string values.
         static func trackComponents(
             trackLines: [String]
         ) -> (components: TrackComponents?, messages: [ParseMessage]) {
@@ -958,7 +963,6 @@ extension ProTools.SessionInfo {
                                     "Could not validate timecode \(line.location.quoted) because file frame rate could not be determined and the string is malformed."
                                 ))
                             }
-                            
                         }
                         
                     default:

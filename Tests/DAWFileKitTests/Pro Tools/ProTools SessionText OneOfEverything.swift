@@ -331,7 +331,7 @@ class ProTools_SessionText_OneOfEverything: XCTestCase {
         let track4 = tracks[3]
         
         _ = track4
-        // ***** track 4 contains fades on a clip - may want to abstract that in a certain way in the future
+        // TODO: track 4 contains fades on a clip - may abstract in a certain way in the future
         
         let track5 = tracks[4]
         
@@ -391,7 +391,7 @@ class ProTools_SessionText_OneOfEverything: XCTestCase {
             marker1.location,
             .timecode(try ProTools.formTimecode(TCC(h: 00, m: 59, s: 58, f: 00), at: ._23_976))
         )
-        XCTAssertEqual(marker1.timeReference,      .samples(144144))
+        XCTAssertEqual(marker1.timeReference,      .samples(144_144))
         XCTAssertEqual(marker1.name,               "Marker 1")
         XCTAssertEqual(marker1.comment,            nil)
         

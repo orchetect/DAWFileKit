@@ -87,25 +87,31 @@ class ProTools_TimeValueTests: XCTestCase {
         XCTAssertThrowsError(try PTSI.formTimeValue(minSecsString: " "))
         
         // -- subframes not enabled -- (no milliseconds)
-        XCTAssertEqual(try PTSI.formTimeValue(minSecsString: "0:00"),
-                       .minSecs(min: 0, sec: 0, ms: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(minSecsString: "0:00"),
+            .minSecs(min: 0, sec: 0, ms: nil)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(minSecsString: "1:23"),
-                       .minSecs(min: 1, sec: 23, ms: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(minSecsString: "1:23"),
+            .minSecs(min: 1, sec: 23, ms: nil)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(minSecsString: "123:23"),
-                       .minSecs(min: 123, sec: 23, ms: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(minSecsString: "123:23"),
+            .minSecs(min: 123, sec: 23, ms: nil)
         )
         
         // -- subframes enabled -- (includes milliseconds)
-        XCTAssertEqual(try PTSI.formTimeValue(minSecsString: "0:00.000"),
-                       .minSecs(min: 0, sec: 0, ms: 0)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(minSecsString: "0:00.000"),
+            .minSecs(min: 0, sec: 0, ms: 0)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(minSecsString: "1:23.456"),
-                       .minSecs(min: 1, sec: 23, ms: 456)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(minSecsString: "1:23.456"),
+            .minSecs(min: 1, sec: 23, ms: 456)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(minSecsString: "123:23.456"),
-                       .minSecs(min: 123, sec: 23, ms: 456)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(minSecsString: "123:23.456"),
+            .minSecs(min: 123, sec: 23, ms: 456)
         )
         
         // malformed
@@ -132,17 +138,21 @@ class ProTools_TimeValueTests: XCTestCase {
         XCTAssertThrowsError(try PTSI.formTimeValue(samplesString: ""))
         XCTAssertThrowsError(try PTSI.formTimeValue(samplesString: " "))
         
-        XCTAssertEqual(try PTSI.formTimeValue(samplesString: "0"),
-                       .samples(0)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(samplesString: "0"),
+            .samples(0)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(samplesString: "1"),
-                       .samples(1)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(samplesString: "1"),
+            .samples(1)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(samplesString: "123"),
-                       .samples(123)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(samplesString: "123"),
+            .samples(123)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(samplesString: "123456789"),
-                       .samples(123456789)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(samplesString: "123456789"),
+            .samples(123_456_789)
         )
         
         // malformed
@@ -161,25 +171,31 @@ class ProTools_TimeValueTests: XCTestCase {
         XCTAssertThrowsError(try PTSI.formTimeValue(barsAndBeatsString: " "))
         
         // -- subframes not enabled -- (no ticks)
-        XCTAssertEqual(try PTSI.formTimeValue(barsAndBeatsString: "0|0"),
-                       .barsAndBeats(bar: 0, beat: 0, ticks: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(barsAndBeatsString: "0|0"),
+            .barsAndBeats(bar: 0, beat: 0, ticks: nil)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(barsAndBeatsString: "1|3"),
-                       .barsAndBeats(bar: 1, beat: 3, ticks: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(barsAndBeatsString: "1|3"),
+            .barsAndBeats(bar: 1, beat: 3, ticks: nil)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(barsAndBeatsString: "105|12"),
-                       .barsAndBeats(bar: 105, beat: 12, ticks: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(barsAndBeatsString: "105|12"),
+            .barsAndBeats(bar: 105, beat: 12, ticks: nil)
         )
         
         // -- subframes enabled -- (includes ticks)
-        XCTAssertEqual(try PTSI.formTimeValue(barsAndBeatsString: "0|0| 000"),
-                       .barsAndBeats(bar: 0, beat: 0, ticks: 0)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(barsAndBeatsString: "0|0| 000"),
+            .barsAndBeats(bar: 0, beat: 0, ticks: 0)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(barsAndBeatsString: "1|3| 123"),
-                       .barsAndBeats(bar: 1, beat: 3, ticks: 123)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(barsAndBeatsString: "1|3| 123"),
+            .barsAndBeats(bar: 1, beat: 3, ticks: 123)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(barsAndBeatsString: "105|12| 123"),
-                       .barsAndBeats(bar: 105, beat: 12, ticks: 123)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(barsAndBeatsString: "105|12| 123"),
+            .barsAndBeats(bar: 105, beat: 12, ticks: 123)
         )
         
         // malformed
@@ -205,25 +221,31 @@ class ProTools_TimeValueTests: XCTestCase {
         XCTAssertThrowsError(try PTSI.formTimeValue(feetAndFramesString: " "))
         
         // -- subframes not enabled --
-        XCTAssertEqual(try PTSI.formTimeValue(feetAndFramesString: "0+00"),
-                       .feetAndFrames(feet: 0, frames: 0, subFrames: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(feetAndFramesString: "0+00"),
+            .feetAndFrames(feet: 0, frames: 0, subFrames: nil)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(feetAndFramesString: "1+00"),
-                       .feetAndFrames(feet: 1, frames: 0, subFrames: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(feetAndFramesString: "1+00"),
+            .feetAndFrames(feet: 1, frames: 0, subFrames: nil)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(feetAndFramesString: "10+09"),
-                       .feetAndFrames(feet: 10, frames: 9, subFrames: nil)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(feetAndFramesString: "10+09"),
+            .feetAndFrames(feet: 10, frames: 9, subFrames: nil)
         )
         
         // -- subframes enabled --
-        XCTAssertEqual(try PTSI.formTimeValue(feetAndFramesString: "0+00.00"),
-                       .feetAndFrames(feet: 0, frames: 0, subFrames: 0)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(feetAndFramesString: "0+00.00"),
+            .feetAndFrames(feet: 0, frames: 0, subFrames: 0)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(feetAndFramesString: "1+00.23"),
-                       .feetAndFrames(feet: 1, frames: 0, subFrames: 23)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(feetAndFramesString: "1+00.23"),
+            .feetAndFrames(feet: 1, frames: 0, subFrames: 23)
         )
-        XCTAssertEqual(try PTSI.formTimeValue(feetAndFramesString: "10+09.23"),
-                       .feetAndFrames(feet: 10, frames: 9, subFrames: 23)
+        XCTAssertEqual(
+            try PTSI.formTimeValue(feetAndFramesString: "10+09.23"),
+            .feetAndFrames(feet: 10, frames: 9, subFrames: 23)
         )
         
         // malformed

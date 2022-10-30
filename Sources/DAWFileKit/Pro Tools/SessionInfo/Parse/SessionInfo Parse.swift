@@ -13,7 +13,8 @@ extension ProTools.SessionInfo {
     ///
     /// - Parameters:
     ///   - fileContent: Raw text file content.
-    ///   - timeValueFormat: If the time format is known, supply it. Otherwise pass `nil` to automatically detect the format.
+    ///   - timeValueFormat: If the time format is known, supply it.
+    ///     Otherwise pass `nil` to automatically detect the format.
     /// - Returns: Parsed session info.
     internal static func parse(
         fileContent: String,
@@ -219,7 +220,7 @@ extension ProTools.SessionInfo {
 
 extension ProTools.SessionInfo {
     enum FileSection: Hashable {
-        //case header
+        // case header
         
         case onlineFiles
         case offlineFiles

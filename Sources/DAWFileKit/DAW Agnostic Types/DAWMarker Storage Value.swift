@@ -1,9 +1,7 @@
 //
 //  DAWMarker Storage Value.swift
-//  MarkerToolShared
-//
-//  Created by Steffan Andrews on 2020-07-30.
-//  Copyright © 2020 Steffan Andrews. All rights reserved.
+//  DAWFileKit • https://github.com/orchetect/DAWFileKit
+//  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
 import Foundation
@@ -14,7 +12,8 @@ extension DAWMarker.Storage {
         case realTime(TimeInterval)
         case timecodeString(String)
         
-        /// Returns the backing storage formatted as a string, for use in writing to the document file.
+        /// Returns the backing storage formatted as a string, for use in writing to the document
+        /// file.
         public var stringValue: String {
             switch self {
             case let .realTime(time):
@@ -25,7 +24,8 @@ extension DAWMarker.Storage {
             }
         }
         
-        /// Returns whether persistent storage of the marker's associated original frame rate is required
+        /// Returns whether persistent storage of the marker's associated original frame rate is
+        /// required
         public var requiresOriginalFrameRate: Bool {
             switch self {
             case .realTime: return false

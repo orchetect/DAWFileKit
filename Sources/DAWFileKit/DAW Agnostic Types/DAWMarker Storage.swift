@@ -1,9 +1,7 @@
 //
 //  DAWMarker Storage.swift
-//  MarkerToolShared
-//
-//  Created by Steffan Andrews on 2020-07-30.
-//  Copyright © 2020 Steffan Andrews. All rights reserved.
+//  DAWFileKit • https://github.com/orchetect/DAWFileKit
+//  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
 import TimecodeKit

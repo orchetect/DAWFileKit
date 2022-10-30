@@ -18,7 +18,8 @@ extension MIDIFile {
         includeComments: Bool,
         buildMessages messages: inout [String]
     ) throws {
-        // ascertain frame rate - let's just grab it from the start timecode object (reasonably assuming all timecode objects have the same framerate)
+        // ascertain frame rate - let's just grab it from the start timecode object (reasonably
+        // assuming all timecode objects have the same framerate)
         
         let frameRate = startTimecode.frameRate
         let upperLimit = startTimecode.upperLimit
@@ -38,10 +39,11 @@ extension MIDIFile {
             )
         }
         
-        // because tempo resolution is lossy in a MIDI file,
-        // we need to get the tempo value converted to the format that is stored in the midi file, then convert it back to a double
-        // which may be slightly off from our actual input tempo (ie: 152.5 bpm -> midi file -> 152.503 bpm read by a DAW importing the midi file
-        // this will ensure optimal accuracy when calculating marker event positions in the midi file
+        // because tempo resolution is lossy in a MIDI file, we need to get the tempo value
+        // converted to the format that is stored in the midi file, then convert it back to a double
+        // which may be slightly off from our actual input tempo (ie: 152.5 bpm -> midi file ->
+        // 152.503 bpm read by a DAW importing the midi file). this will ensure optimal accuracy
+        // when calculating marker event positions in the midi file
         
         let tempoEvent = MIDIFileEvent.Tempo(bpm: inputTempo)
         let tempo = tempoEvent.bpmEncoded    // get our new adjusted tempo for calculation
@@ -56,12 +58,14 @@ extension MIDIFile {
         
         // ticks per quarter-note resolution
         // calculate a multiple of the tempo for increased resolution/accuracy
-        // 4_000 is a soft ceiling -- according to my tests, it's a safe maximum that can address at least 24 hours up to 300 bpm and all frame rates
+        // 4_000 is a soft ceiling -- according to my tests, it's a safe maximum that can address at
+        // least 24 hours up to 300 bpm and all frame rates
         
         // Pro Tools uses 9600
         // Cubase uses 480 by default but can be changed
         
-        // this code DOES WORK but may not be necessary - in my tests, using 4_000 vs. calculated ppq based on tempo made no practical difference
+        // this code DOES WORK but may not be necessary - in my tests, using 4_000 vs. calculated
+        // ppq based on tempo made no practical difference
         //    var ppqCalculation = tempo
         //    repeat {
         //        // calculate highest power of 2
@@ -115,8 +119,10 @@ extension MIDIFile {
         var framePosition = startTimecode
         
         // origin time offset in ms
-        // start with slight offset so markers fall at the start of a frame and not just prior to it, with tolerance for the deltaTicks round() up or down that happens
-        // based on our calculation method, some frame rates need a larger offest to overcome potential +/- variances
+        // start with slight offset so markers fall at the start of a frame and not just prior to
+        // it, with tolerance for the deltaTicks round() up or down that happens
+        // based on our calculation method, some frame rates need a larger offest to overcome
+        // potential +/- variances
         var currentRealTimeOffset: Double
         var originRealTimeOffset: Double
         
@@ -134,7 +140,7 @@ extension MIDIFile {
         
         for marker in markers {
             #warning(
-            "> TODO: this may need to factor in marker's original session start timecode against the 'startTimecode' parameter passed into this function. should be an abstracted method that can convert/flatten a marker to a resolved timecode at a certain framerate and start time"
+                "> TODO: this may need to factor in marker's original session start timecode against the 'startTimecode' parameter passed into this function. should be an abstracted method that can convert/flatten a marker to a resolved timecode at a certain framerate and start time"
             )
             
             // get marker's timecode object
@@ -151,29 +157,30 @@ extension MIDIFile {
             // calculate amount of time to advance
             let deltaAdvanceFrames = (markerTimecode - framePosition)
             let deltaAdvanceRealTime = currentRealTimeOffset
-            + ((markerTimecode - startTimecode).realTimeValue * 1000.0) // ms
-            - ((framePosition - startTimecode).realTimeValue * 1000.0) // ms
+                + ((markerTimecode - startTimecode).realTimeValue * 1000.0) // ms
+                - ((framePosition - startTimecode).realTimeValue * 1000.0) // ms
             if currentRealTimeOffset !=
                 0.0 { currentRealTimeOffset = 0.0 } // only use offset the for the first marker
             let deltaTicks = UInt32(round((deltaAdvanceRealTime * ticksPerSecond) / 1000.0))
             let deltaTime = MIDIFileEvent.DeltaTime.ticks(deltaTicks)
             
-            // do some self-validation to see if the event converts back into the same timecode as the marker's input timecode
+            // do some self-validation to see if the event converts back into the same timecode as
+            // the marker's input timecode
             let debugMarkerRealTime = originRealTimeOffset + (startTimecode.realTimeValue * 1000) +
-            realTimePosition + deltaAdvanceRealTime
+                realTimePosition + deltaAdvanceRealTime
             
             if let debugRountTripTC = try? Timecode(
                 realTimeValue: debugMarkerRealTime / 1000.0,
                 at: frameRate,
                 limit: ._24hours
             ),
-               markerTimecode.stringValue != debugRountTripTC.stringValue
+                markerTimecode.stringValue != debugRountTripTC.stringValue
             {
                 let errorString = "Warning: Marker origin "
-                + markerTimecode.stringValue
-                + " -> "
-                + debugRountTripTC.stringValue
-                + " read back from real time position."
+                    + markerTimecode.stringValue
+                    + " -> "
+                    + debugRountTripTC.stringValue
+                    + " read back from real time position."
                 messages.append(errorString)
             }
             

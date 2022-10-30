@@ -15,10 +15,10 @@ extension DAWMarker: Comparable {
             limit: ._100days,
             base: lhsSFD
         ),
-           let rhsTC = rhs.originalTimecode(
-            limit: ._100days,
-            base: rhsSFD
-           )
+            let rhsTC = rhs.originalTimecode(
+                limit: ._100days,
+                base: rhsSFD
+            )
         {
             return lhsTC < rhsTC
             
@@ -37,10 +37,10 @@ extension DAWMarker: Equatable {
             limit: ._100days,
             base: lhsSFD
         ),
-           let rhsTC = rhs.originalTimecode(
-            limit: ._100days,
-            base: rhsSFD
-           )
+            let rhsTC = rhs.originalTimecode(
+                limit: ._100days,
+                base: rhsSFD
+            )
         {
             return lhsTC == rhsTC
             

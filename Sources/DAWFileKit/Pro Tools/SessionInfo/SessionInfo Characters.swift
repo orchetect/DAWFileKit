@@ -15,12 +15,14 @@ private let fixPTExtendedCharacters_Chars = [
 
 // extension ProTools.SessionInfo {
 //
-//  /// Workaround for extended unicode characters used in Pro Tools markers or marker comments that get converted to random ASCII characters when exporting session info as a text file.
+//  /// Workaround for extended unicode characters used in Pro Tools markers or marker comments that
+//  /// get converted to random ASCII characters when exporting session info as a text file.
 //  public static func fixPTExtendedCharacters(_ string: String) -> NSAttributedString {
 //      let text = NSMutableAttributedString(string: string)
 //
 //      for findChar in fixPTExtendedCharacters_Chars {
-//          // (This is the best way to do this, since we can't access .replacingOccurances(...) on an attributed string)
+//          // (This is the best way to do this, since we can't access .replacingOccurances(...)
+//          // on an attributed string)
 //
 //          // Get range of text to replace
 //          guard let range = text.string.range(of: findChar.key) else { continue }

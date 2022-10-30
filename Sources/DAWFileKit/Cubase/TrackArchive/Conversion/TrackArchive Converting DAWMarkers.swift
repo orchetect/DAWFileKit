@@ -95,15 +95,14 @@ extension DAWMarker {
         let upperLimit = startTimecode.upperLimit
         let subFramesBase = startTimecode.subFramesBase
         
-        guard let startTC = try? self
-            .resolvedTimecode(
-                at: frameRate,
-                limit: upperLimit,
-                base: subFramesBase
-            )?
+        guard let startTC = try? resolvedTimecode(
+            at: frameRate,
+            limit: upperLimit,
+            base: subFramesBase
+        )?
             .subtracting(startTimecode.components)
         else {
-            //logger.error("Could not resolve timecode.")
+            // logger.error("Could not resolve timecode.")
             return nil
         }
         

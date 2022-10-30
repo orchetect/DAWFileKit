@@ -56,7 +56,8 @@ extension Cubase.TrackArchive {
     /// Internal use.
     /// Requires `main.frameRate` to not be nil.
     /// Returns a value in Seconds.
-    /// Will return `nil` if tempo track has zero events, since at least one originating tempo event is required to do the calculation.
+    /// Will return `nil` if tempo track has zero events, since at least one originating tempo event
+    /// is required to do the calculation.
     internal func calculateMusicalTimeToRealTime(
         ofMusicalTimeValue: Double
     ) -> TimeInterval? {
@@ -116,14 +117,16 @@ extension Cubase.TrackArchive {
                 
             case .rampToNext:
                 #warning("> TODO: This calculation is not accurate, it is merely approximate.")
-                // Cubase (and other DAWs like Logic Pro X) have mysterious tempo ramp calculation algorithms
+                // Cubase (and other DAWs like Logic Pro X) have mysterious tempo ramp calculation
+                // algorithms
                 // I was not able to precisely reverse engineer the algo Cubase uses
                 // This is as close as I could get to approximate the calculation
                 
                 let startTempo = currentTempoEvent.tempo
                 let endTempo = nextTempoEvent?.tempo ?? 0.0
                 
-                // get PPQ duration between tempo events, and partial PPQ distance if it's a partial calculation
+                // get PPQ duration between tempo events, and partial PPQ distance if it's a partial
+                // calculation
                 let ppqTotalBetweenTempoEvents = (nextTempoEvent?.startTimeAsPPQ ?? 0.0) -
                     currentTempoEvent.startTimeAsPPQ
                 let position = ppqDuration / ppqTotalBetweenTempoEvents
@@ -133,7 +136,8 @@ extension Cubase.TrackArchive {
                 let avg2 = (startTempo + endTempo) / 2
                 let avg = avg1 + ((avg2 - avg1) * position)
                 
-                // this is the theoretical real time value (I think), but Cubase seemingly calculates it differently
+                // this is the theoretical real time value (I think), but Cubase seemingly
+                // calculates it differently
                 let theoretical = ppqDuration / (Self.xmlPPQ.double / (60.0 / avg))
                 
                 // now do some janky fakery to try to get closer to Cubase's readings
@@ -156,12 +160,17 @@ extension Cubase.TrackArchive {
         
         // old code - static tempo-based
         
-        // #warning("Relies on the session having only one (origin) tempo event. Future improvement here will require calculating real time values for musical timebase events considering the entire tempo track and all tempo events it contains")
-        // We're forcing compatibility only with sessions that contain an origin tempo event until such time when I can code the math to work out timecodes from a tempo track containing multiple tempo events
+        // #warning("Relies on the session having only one (origin) tempo event. Future improvement
+        // here will require calculating real time values for musical timebase events considering
+        // the entire tempo track and all tempo events it contains")
+        // We're forcing compatibility only with sessions that contain an origin tempo event until
+        // such time when I can code the math to work out timecodes from a tempo track containing
+        // multiple tempo events
         // The onus is on you to deal with Ramp tempo events, which adds complexity
         
         // let staticTempo = tempoTrack.events.first?.tempo
-        //     ?? TempoTrack.Event(timeAsPPQ: 0, tempo: 120.0, type: .jump).tempo // provide a standard default
+        //     // provide a standard default
+        //     ?? TempoTrack.Event(timeAsPPQ: 0, tempo: 120.0, type: .jump).tempo
         
         // return ofMusicalTimeValue / (Self.xmlPPQ.double / (60.0 / staticTempo))
     }

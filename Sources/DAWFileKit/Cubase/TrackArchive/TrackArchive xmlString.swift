@@ -237,7 +237,8 @@ extension Cubase.TrackArchive {
             let newTrack = XMLElement()
             
             // Flags
-            // ***** not sure what this value is for, but Cubase will refuse to open the XML if it's absent
+            // TODO: not sure what this value is for, but Cubase will refuse
+            // to open the XML if it's absent
             newTrack.addChild(XMLElement(
                 name: "int",
                 attributes: [
@@ -302,7 +303,12 @@ extension Cubase.TrackArchive {
             
             switch track {
             case let typed as MarkerTrack:
-                _addTrackMarker(using: newTrack, track: typed, idCounter: &idCounter, messages: &messages)
+                _addTrackMarker(
+                    using: newTrack,
+                    track: typed,
+                    idCounter: &idCounter,
+                    messages: &messages
+                )
                 
             default:
                 addEncodeMessage(
@@ -313,7 +319,8 @@ extension Cubase.TrackArchive {
             }
             
             // Track Device
-            // ***** not sure what this block is for, but Cubase will refuse to open the XML if it's absent
+            // TODO: not sure what this value is for, but Cubase will refuse
+            // to open the XML if it's absent
             let TrackDevice = XMLElement(
                 name: "obj",
                 attributes: [
@@ -377,7 +384,8 @@ extension Cubase.TrackArchive {
         for event in track.events {
             let newNode = XMLElement(name: "obj")
             
-            // add length as real time if present, otherwise convert the timecode object to real time
+            // add length as real time if present, otherwise convert the
+            // timecode object to real time
             if let eventStartRealTime = event.startRealTime {
                 newNode.addChild(XMLElement(
                     name: "float",
@@ -412,7 +420,8 @@ extension Cubase.TrackArchive {
             case let marker as CycleMarker: // MRangeMarkerEvent
                 newNode.addAttribute(withName: "class", value: "MRangeMarkerEvent")
                 
-                // add length as real time if present, otherwise convert the timecode object to real time
+                // add length as real time if present, otherwise convert the
+                // timecode object to real time
                 if let markerLengthRealTime = marker.lengthRealTime {
                     newNode.addChild(XMLElement(
                         name: "float",
