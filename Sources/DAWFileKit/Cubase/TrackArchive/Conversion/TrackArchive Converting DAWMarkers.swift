@@ -115,13 +115,13 @@ extension DAWMarker {
     }
 }
 
-extension [DAWMarker] {
+extension Array where Element == DAWMarker {
     internal func convertToCubaseTrackArchiveXMLMarkers(
         at frameRate: Timecode.FrameRate,
         startTimecode: Timecode,
         name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
     ) -> [Cubase.TrackArchive.Marker] {
-        reduce(into: []) { partialResult, marker in
+        reduce(into: [Cubase.TrackArchive.Marker]()) { partialResult, marker in
             if let converted = marker.convertToCubaseTrackArchiveXMLMarker(
                 at: frameRate,
                 startTimecode: startTimecode,
