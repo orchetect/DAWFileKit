@@ -13,35 +13,31 @@ extension ProTools {
     /// Contains parsed data after reading a Pro Tools Session Info text file.
     public struct SessionInfo: Equatable, Hashable {
         /// Meta data contained in the main header of the data file.
-        public var main = Main()
+        public internal(set) var main = Main()
         
         /// Files listing (online).
-        public var onlineFiles: [File]?
+        public internal(set) var onlineFiles: [File]?
         
         /// Files listing (offline).
-        public var offlineFiles: [File]?
+        public internal(set) var offlineFiles: [File]?
         
         /// Clips listing (online).
-        public var onlineClips: [Clip]?
+        public internal(set) var onlineClips: [Clip]?
         
         /// Clips listing (offline).
-        public var offlineClips: [Clip]?
+        public internal(set) var offlineClips: [Clip]?
         
         /// Plugin listing.
-        public var plugins: [Plugin]?
+        public internal(set) var plugins: [Plugin]?
         
         /// Tracks listing.
-        public var tracks: [Track]?
+        public internal(set) var tracks: [Track]?
         
         /// Markers listing.
-        public var markers: [Marker]?
+        public internal(set) var markers: [Marker]?
         
         /// Holds any extraneous sections or data that was not recognized while parsing the file.
-        public var orphanData: [OrphanData]?
-        
-        // MARK: - Default init
-        
-        public init() { }
+        public internal(set) var orphanData: [OrphanData]?
     }
 }
 

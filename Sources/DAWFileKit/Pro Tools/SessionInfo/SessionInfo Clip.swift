@@ -9,11 +9,11 @@ import Foundation
 extension ProTools.SessionInfo {
     /// Represents a clip used in the session.
     public struct Clip: Equatable, Hashable {
-        var name: String = ""
-        var sourceFile: String = ""
-        var channel: String?
+        public internal(set) var name: String = ""
+        public internal(set) var sourceFile: String = ""
+        public internal(set) var channel: String?
         
         /// Flag determining if clip was online (true) or offline (false)
-        var online: Bool = true
+        public internal(set) var online: Bool = true
     }
 }

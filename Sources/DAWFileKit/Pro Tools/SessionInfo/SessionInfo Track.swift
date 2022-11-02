@@ -10,12 +10,12 @@ import TimecodeKit
 extension ProTools.SessionInfo {
     /// Represents a track and its contents.
     public struct Track: Equatable, Hashable {
-        public var name: String = ""
-        public var comments: String = ""
-        public var userDelay: Int = 0
-        public var state: Set<State> = []
-        public var plugins: [String] = []
-        public var clips: [Clip] = []
+        public internal(set) var name: String = ""
+        public internal(set) var comments: String = ""
+        public internal(set) var userDelay: Int = 0
+        public internal(set) var state: Set<State> = []
+        public internal(set) var plugins: [String] = []
+        public internal(set) var clips: [Clip] = []
     }
 }
 
@@ -33,13 +33,13 @@ extension ProTools.SessionInfo.Track {
 extension ProTools.SessionInfo.Track {
     /// Represents a clip contained on a track.
     public struct Clip: Equatable, Hashable {
-        public var channel: Int = 0
-        public var event: Int = 0
-        public var name: String = ""
-        public var startTime: ProTools.SessionInfo.TimeValue?
-        public var endTime: ProTools.SessionInfo.TimeValue?
-        public var duration: ProTools.SessionInfo.TimeValue?
-        public var state: State = .unmuted
+        public internal(set) var channel: Int = 0
+        public internal(set) var event: Int = 0
+        public internal(set) var name: String = ""
+        public internal(set) var startTime: ProTools.SessionInfo.TimeValue?
+        public internal(set) var endTime: ProTools.SessionInfo.TimeValue?
+        public internal(set) var duration: ProTools.SessionInfo.TimeValue?
+        public internal(set) var state: State = .unmuted
         
         /// A clip's state (such as 'Muted', 'Unmuted')
         public enum State: String {

@@ -9,11 +9,11 @@ import Foundation
 extension ProTools.SessionInfo {
     /// Represents a plug-in used in the session
     public struct Plugin: Equatable, Hashable {
-        var manufacturer: String = ""
-        var name: String = ""
-        var version: String = ""
-        var format: String = ""
-        var stems: String = ""
-        var numberOfInstances: String = ""
+        public internal(set) var manufacturer: String = ""
+        public internal(set) var name: String = ""
+        public internal(set) var version: String = ""
+        public internal(set) var format: String = ""
+        public internal(set) var stems: String = ""
+        public internal(set) var numberOfInstances: String = ""
     }
 }

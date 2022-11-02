@@ -9,10 +9,10 @@ import Foundation
 extension ProTools.SessionInfo {
     /// Represents a file used in the session
     public struct File: Equatable, Hashable {
-        var filename: String = ""
-        var path: String = ""
+        public internal(set) var filename: String = ""
+        public internal(set) var path: String = ""
         
         /// Flag determining if file was online (true) or offline (false)
-        var online: Bool = true
+        public internal(set) var online: Bool = true
     }
 }

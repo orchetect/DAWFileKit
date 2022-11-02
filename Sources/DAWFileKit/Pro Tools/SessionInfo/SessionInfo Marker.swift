@@ -66,7 +66,7 @@ extension ProTools.SessionInfo {
         
         // MARK: - Init
         
-        public init(
+        init(
             number: Int,
             location: TimeValue?,
             timeReference: TimeValue,

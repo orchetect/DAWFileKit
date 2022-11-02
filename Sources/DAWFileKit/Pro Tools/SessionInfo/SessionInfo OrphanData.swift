@@ -8,7 +8,7 @@ import Foundation
 
 extension ProTools.SessionInfo {
     public struct OrphanData: Equatable, Hashable {
-        public let heading: String
-        public let content: [String]
+        public internal(set) var heading: String
+        public internal(set) var content: [String]
     }
 }
