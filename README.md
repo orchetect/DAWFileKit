@@ -36,14 +36,6 @@ Core unit tests implemented. More exhaustive tests can be added in future.
 ### Cubase: Track Archive XML
 
 - Ascertaining the absolute time position of events on tracks that are in musical timebase when the tempo track contains 'Ramp' tempo event(s) is currently not possible. The internal curve function that Cubase uses to calculate tempo ramps is not intuitive (ie: not linear or any obvious known curve function), and it may be a proprietary function. So this may never be possible with this library. The workaround is to not use 'Ramp' tempo events in a session, or if that is unavoidable, move/copy events to a track that is using absolute timebase which can be interpreted reliably with this library.
-- Track Archive XML file read/write has not been tested with Nuendo yet but it is likely that it should work the same as with Cubase.
-
-### Pro Tools: Session Info Text file
-
-- [ ] Handle *new-line* and *tab* characters in Markers list name/comment fields (Pro Tools allows them to be inserted or pasted from the clipboard when editing markers)
-- [ ] Add parsing modes specific for "TextEdit 'TEXT'" and "UTF-8 'TEXT'" File Format encodings
-- [ ] Analyze to see how extended characters are being encoded or (assumed to be) lossily converted to meaningless characters ("É" for "…", "Ñ" for "—", etc.)
-- [ ] Improve lossy character fix/replacement heuristic
 
 ## Affiliation
 
