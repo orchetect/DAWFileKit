@@ -21,7 +21,7 @@ extension Cubase.TrackArchive {
         // public var lengthTimeDomain: ?          // 'Length'.'Domain'.'Type' &
                                                    // 'Start'.'Domain'.'Period'
         
-        public var frameRate: Timecode.FrameRate?  // 'FrameType'
+        public var frameRate: TimecodeFrameRate?   // 'FrameType'
         
         // public var timeType: ?                  // 'TimeType'
         public var barOffset: Int?                 // 'BarOffset'

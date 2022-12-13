@@ -181,7 +181,7 @@ extension ProTools.SessionInfo {
     /// time string.
     static func formTimeValue(
         heuristic source: String,
-        at frameRate: Timecode.FrameRate?
+        at frameRate: TimecodeFrameRate?
     ) throws -> TimeValue {
         let detectedFormat = try TimeValueFormat(heuristic: source)
         return try formTimeValue(
@@ -195,7 +195,7 @@ extension ProTools.SessionInfo {
     /// This is simply a proxy method that calls the specific time format method.
     static func formTimeValue(
         source: String,
-        at frameRate: Timecode.FrameRate?,
+        at frameRate: TimecodeFrameRate?,
         format: TimeValueFormat
     ) throws -> TimeValue {
         switch format {
@@ -222,7 +222,7 @@ extension ProTools.SessionInfo {
     /// Ancillary timecode metadata is automatically derived from ``ProTools`` constants.
     static func formTimeValue(
         timecodeString: String,
-        at frameRate: Timecode.FrameRate
+        at frameRate: TimecodeFrameRate
     ) throws -> TimeValue {
         let timecode = try ProTools.formTimecode(timecodeString, at: frameRate)
         return .timecode(timecode)

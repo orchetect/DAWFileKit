@@ -26,11 +26,11 @@ public enum Cubase {
     
     /// `Timecode` struct template.
     public static func formTimecode(
-        realTimeValue: Double,
-        at rate: Timecode.FrameRate
+        realTime: Double,
+        at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            realTimeValue: realTimeValue,
+            realTime: realTime,
             at: rate,
             limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,

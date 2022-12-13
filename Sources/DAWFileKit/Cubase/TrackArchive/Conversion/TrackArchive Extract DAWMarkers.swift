@@ -60,7 +60,7 @@ extension Cubase.TrackArchive {
 extension Array where Element == CubaseTrackArchiveMarker {
     /// Converts `[CubaseTrackArchiveMarker]` to `[DAWMarker]`.
     public func convertToDAWMarkers(
-        originalFrameRate: Timecode.FrameRate
+        originalFrameRate: TimecodeFrameRate
     ) -> [DAWMarker] {
         // Cubase uses 80 subframes
         let subFramesBase: Timecode.SubFramesBase = ._80SubFrames

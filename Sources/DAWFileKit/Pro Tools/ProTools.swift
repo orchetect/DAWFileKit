@@ -23,7 +23,7 @@ public enum ProTools {
     /// `Timecode` struct template.
     public static func formTimecode(
         _ exactly: Timecode.Components,
-        at rate: Timecode.FrameRate
+        at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
             exactly,
@@ -37,7 +37,7 @@ public enum ProTools {
     /// `Timecode` struct template.
     public static func formTimecode(
         _ exactly: String,
-        at rate: Timecode.FrameRate
+        at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
             exactly,
@@ -51,10 +51,10 @@ public enum ProTools {
     /// `Timecode` struct template.
     public static func formTimecode(
         realTimeValue: Double,
-        at rate: Timecode.FrameRate
+        at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            realTimeValue: realTimeValue,
+            realTime: realTimeValue,
             at: rate,
             limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,

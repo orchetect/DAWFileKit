@@ -11,7 +11,7 @@ extension DAWMarker {
     /// Produces a timecode object from the marker's time data storage, after calculating the
     /// effective timecode by converting frame rates if necessary.
     public func resolvedTimecode(
-        at newFrameRate: Timecode.FrameRate,
+        at newFrameRate: TimecodeFrameRate,
         limit: Timecode.UpperLimit,
         base: Timecode.SubFramesBase
     ) -> Timecode? {
@@ -20,7 +20,7 @@ extension DAWMarker {
             // if storage is real time, we can form timecode without any additional information
             
             let timecode = try? Timecode(
-                realTimeValue: time,
+                realTime: time,
                 at: newFrameRate,
                 limit: limit,
                 base: base
@@ -48,7 +48,7 @@ extension DAWMarker {
                newFrameRate != timeStorage?.frameRate
             {
                 timecode = try? Timecode(
-                    realTimeValue: timecode!.realTimeValue,
+                    realTime: timecode!.realTimeValue,
                     at: newFrameRate,
                     limit: limit,
                     base: base
@@ -73,7 +73,7 @@ extension DAWMarker {
         switch timeStorage.value {
         case let .realTime(time):
             let timecode = try? Timecode(
-                realTimeValue: time,
+                realTime: time,
                 at: timeStorage.frameRate,
                 limit: limit,
                 base: base
