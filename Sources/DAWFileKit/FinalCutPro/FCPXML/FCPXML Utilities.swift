@@ -64,4 +64,53 @@ extension FinalCutPro.FCPXML {
         )
         return fRate
     }
+    
+    /// Convenience: returns the timecode frame rate for the given resource ID & "tcFormat".
+    static func timecodeFrameRate(
+        forResourceID id: String,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
+        in resources: [String: FinalCutPro.FCPXML.Resource]
+    ) -> TimecodeFrameRate? {
+        guard let videoRate = FinalCutPro.FCPXML.videoFrameRate(forResourceID: id, in: resources),
+              let frameRate = videoRate.timecodeFrameRate(drop: tcFormat?.isDrop ?? false)
+        else { return nil }
+        return frameRate
+    }
+    
+    /// Utility:
+    /// Convert raw "tcStart" or "duration" attribute string to Timecode.
+    static func timecode(
+        fromString rawString: String,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
+        resourceID: String,
+        resources: [String: FinalCutPro.FCPXML.Resource]
+    ) throws -> Timecode? {
+        guard let frameRate = timecodeFrameRate(
+            forResourceID: resourceID,
+            tcFormat: tcFormat,
+            in: resources
+        )
+        else { return nil }
+        
+        return try timecode(fromString: rawString, frameRate: frameRate)
+    }
+    
+    /// Utility:
+    /// Convert raw "tcStart" or "duration" attribute string to Timecode.
+    static func timecode(
+        fromString rawString: String,
+        frameRate: TimecodeFrameRate
+    ) throws -> Timecode? {
+        guard let parsedStr = FinalCutPro.FCPXML.parse(rationalTimeString: rawString)
+        else { return nil }
+        
+        switch parsedStr {
+        case .rational(let fraction):
+            return try FinalCutPro.formTimecode(rational: fraction, at: frameRate)
+            
+        case .value(let value):
+            // this could also work using Timecode(realTime:)
+            return try FinalCutPro.formTimecode(rational: (value, 1), at: frameRate)
+        }
+    }
 }

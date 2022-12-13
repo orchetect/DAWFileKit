@@ -84,7 +84,21 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // clips
         
-        #warning("> finish this test")
+        let clips = sequence.clips
+        
+        XCTAssertEqual(clips.count, 1)
+        
+        guard case let .title(clip) = clips[0] else { XCTFail("Clip was not expected type.") ; return }
+        
+        // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
+        XCTAssertEqual(clip.ref, "r2")
+        XCTAssertEqual(clip.offset, try TCC().toTimecode(at: ._29_97))
+        XCTAssertEqual(clip.offset.frameRate, ._29_97)
+        XCTAssertEqual(clip.name, "Basic Title")
+        XCTAssertEqual(clip.start, try TCC().toTimecode(at: ._29_97))
+        XCTAssertEqual(clip.start.frameRate, ._29_97)
+        XCTAssertEqual(clip.duration, try TCC(h: 00, m: 01, s: 03, f: 29).toTimecode(at: ._29_97))
+        XCTAssertEqual(clip.duration.frameRate, ._29_97)
         
         // markers
         

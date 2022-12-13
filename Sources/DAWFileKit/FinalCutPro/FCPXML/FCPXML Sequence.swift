@@ -1,3 +1,4 @@
+//
 //  FCPXML Sequence.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
@@ -32,38 +33,6 @@ extension FinalCutPro.FCPXML.Sequence {
         case audioLayout
         case audioRate
     }
-    
-    public enum ClipTypes: String {
-        case title
-        
-        // TODO: add additional clip types
-    }
-    
-    /// Sequence Clip.
-    public enum Clip {
-        case title(Title)
-        
-        // TODO: add additional clip types
-        
-        // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
-        /// Title Clip.
-        public struct Title {
-            public let ref: String // resource ID
-            public let offset: Timecode
-            public let name: String
-            public let start: Timecode
-            public let duration: Timecode
-            
-            /// Title clip XML Attributes.
-            public enum Attributes: String {
-                case ref // resource ID
-                case offset
-                case name
-                case start
-                case duration
-            }
-        }
-    }
 }
 
 extension FinalCutPro.FCPXML.Sequence {
@@ -76,14 +45,18 @@ extension FinalCutPro.FCPXML.Sequence {
         
         // "tcFormat"
         let tcFormatString = xmlLeaf.attributeStringValue(forName: Attributes.tcFormat.rawValue) ?? ""
-        let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: tcFormatString)
-        if tcFormat == nil {
-            print("Error: tcFormat could not be decoded.")
-        }
+        let tcFormat: FinalCutPro.FCPXML.TimecodeFormat = {
+            if let tcf = FinalCutPro.FCPXML.TimecodeFormat(rawValue: tcFormatString) {
+                return tcf
+            } else {
+                print("Error: tcFormat could not be decoded. Defaulting to non-drop (NDF).")
+                return .nonDropFrame
+            }
+        }()
         
         // "tcStart"
         if let startString = xmlLeaf.attributeStringValue(forName: Attributes.tcStart.rawValue),
-           let tc = try? Self.timecode(
+           let tc = try? FinalCutPro.FCPXML.timecode(
             fromString: startString,
             tcFormat: tcFormat,
             resourceID: format,
@@ -93,22 +66,22 @@ extension FinalCutPro.FCPXML.Sequence {
             startTimecode = tc
         } else {
             print("Error: tcStart could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            startTimecode = .init(at: ._30)
+            startTimecode = FinalCutPro.formTimecode(at: ._30)
         }
         
         // "duration"
         if let durString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
-           let tc = try? Self.timecode(
-               fromString: durString,
-               tcFormat: tcFormat,
-               resourceID: format,
-               resources: resources
+           let tc = try? FinalCutPro.FCPXML.timecode(
+            fromString: durString,
+            tcFormat: tcFormat,
+            resourceID: format,
+            resources: resources
            )
         {
             duration = tc
         } else {
             print("Error: duration could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            duration = .init(at: ._30)
+            duration = FinalCutPro.formTimecode(at: ._30)
         }
         
         // "audioLayout"
@@ -123,10 +96,10 @@ extension FinalCutPro.FCPXML.Sequence {
         }
         
         // "audioRate"
-        let ar = FinalCutPro.FCPXML.AudioRate(
+        
+        if let ar = FinalCutPro.FCPXML.AudioRate(
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue) ?? ""
-        )
-        if let ar = ar {
+        ) {
             audioRate = ar
         } else {
             print("Error: audioLayout missing or unrecognized. Defaulting to 48kHz.")
@@ -135,31 +108,45 @@ extension FinalCutPro.FCPXML.Sequence {
         
         // clips
         
-        clips = [] // TODO: replace this
+        let frameRate = Self.fRate(
+            forResourceID: format,
+            tcFormat: tcFormat,
+            in: resources
+        )
         
-        #warning("> finish parsing clips")
+        // TODO: not sure if it's ever possible to have more than one spine?
+        let spines = Self.spines(in: xmlLeaf)
+        
+        clips = spines.reduce(into: [Clip]()) { clips, spineLeaf in
+            let spineClips = Self.parseClips(
+                from: spineLeaf,
+                sequenceFrameRate: frameRate
+            )
+            clips.append(contentsOf: spineClips)
+        }
     }
     
-    /// Utility:
-    /// Convert raw "tcStart" or "duration" attribute string to Timecode.
-    static func timecode(
-        fromString rawString: String,
+    static func spines(in xmlLeaf: XMLElement) -> [XMLElement] {
+        xmlLeaf.children?.lazy
+            .filter { $0.name == "spine" }
+            .compactMap { $0 as? XMLElement } ?? []
+    }
+    
+    // Stupid workaround. Swift compiler was complaining when this was within the body of the init.
+    static func fRate(
+        forResourceID id: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        resourceID: String,
-        resources: [String: FinalCutPro.FCPXML.Resource]
-    ) throws -> Timecode? {
-        guard let parsedStr = FinalCutPro.FCPXML.parse(rationalTimeString: rawString),
-              let videoRate = FinalCutPro.FCPXML.videoFrameRate(forResourceID: resourceID, in: resources),
-              let fRate = videoRate.timecodeFrameRate(drop: tcFormat?.isDrop ?? false)
-        else { return nil }
-        
-        switch parsedStr {
-        case .rational(let fraction):
-            return try FinalCutPro.formTimecode(rational: fraction, at: fRate)
-            
-        case .value(let value):
-            // this could also work using Timecode(realTime:)
-            return try FinalCutPro.formTimecode(rational: (value, 1), at: fRate)
+        in resources: [String: FinalCutPro.FCPXML.Resource]
+    ) -> TimecodeFrameRate {
+        if let fr = FinalCutPro.FCPXML.timecodeFrameRate(
+            forResourceID: id,
+            tcFormat: tcFormat,
+            in: resources
+        ) {
+            return fr
+        } else {
+            print("Error: Could not determine frame rate. Defaulting to 30fps.")
+            return ._30
         }
     }
 }

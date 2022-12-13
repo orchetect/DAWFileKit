@@ -34,4 +34,16 @@ public enum FinalCutPro {
             format: timecodeStringFormat
         )
     }
+    
+    /// `Timecode` struct template.
+    public static func formTimecode(
+        at rate: TimecodeFrameRate
+    ) -> Timecode {
+        Timecode(
+            at: rate,
+            limit: timecodeUpperLimit,
+            base: timecodeSubFramesBase,
+            format: timecodeStringFormat
+        )
+    }
 }
