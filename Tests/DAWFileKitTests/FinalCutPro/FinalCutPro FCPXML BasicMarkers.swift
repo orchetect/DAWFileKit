@@ -30,6 +30,10 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
             fileContent: rawData
         )
         
+        // version
+        
+        XCTAssertEqual(fcpxml.version, .ver1_9)
+        
         // resources
         
         let resources = fcpxml.parseResources()

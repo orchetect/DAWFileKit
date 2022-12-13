@@ -11,7 +11,8 @@ import TimecodeKit
 @_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
-    /// [ID: Resource]
+    /// Parses resources.
+    /// - Returns: `[ID: Resource]`
     internal func parseResources() -> [String: Resource] {
         xmlResources?
             .children?

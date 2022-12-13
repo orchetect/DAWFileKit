@@ -18,6 +18,12 @@ extension FinalCutPro {
 }
 
 extension FinalCutPro.FCPXML {
+    /// Returns the FCPXML format version.
+    var version: Version? {
+        guard let verString = xmlRoot?.attributeStringValue(forName: "version") else { return nil }
+        return Version(rawValue: verString)
+    }
+    
     /// The root "fcpxml" element.
     var xmlRoot: XMLElement? {
         xml.children?
