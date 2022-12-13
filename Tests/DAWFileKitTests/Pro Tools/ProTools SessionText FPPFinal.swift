@@ -27,7 +27,7 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         // parse
         
         var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
-        let sessionInfo = try ProTools.SessionInfo(data: rawData, messages: &parseMessages)
+        let sessionInfo = try ProTools.SessionInfo(fileContent: rawData, messages: &parseMessages)
         
         // parse messages
         
