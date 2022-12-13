@@ -2,17 +2,18 @@
 
 [![CI Build Status](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml/badge.svg)](https://github.com/orchetect/DAWFileKit/actions/workflows/build.yml) [![Platforms - macOS 10.12+ | iOS 10+ | tvOS 10+](https://img.shields.io/badge/platforms-macOS%2010.12+%20|%20iOS%2010+%20|%20tvOS%2010+-lightgrey.svg?style=flat)](https://developer.apple.com/swift) ![Swift 5.5-5.7](https://img.shields.io/badge/Swift-5.5–5.7-orange.svg?style=flat) [![Xcode 13-14](https://img.shields.io/badge/Xcode-13–14-blue.svg?style=flat)](https://developer.apple.com/swift) [![License: MIT](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/orchetect/DAWFileKit/blob/main/LICENSE)
 
-A Swift library for reading and writing common import/export file formats between popular DAW applications and converting between formats.
+A Swift library for reading and writing common import/export file formats between popular DAW and video editing applications with the ability to convert between formats.
 
 ## Supported File Formats
 
-|                  Format                  |  Read   |  Write  |
-| :--------------------------------------: | :-----: | :-----: |
-|        Cubase: Track Archive XML         |  yes†   |  yes†   |
-|    Pro Tools: Session Info text file     |   yes   |   n/a   |
-|            Standard MIDI File            | planned |   yes   |
-|               Logic Pro X‡               | future? | future? |
-|            Final Cut Pro XML             | future? | future? |
+|              Format               |     Read      |     Write     |
+| :-------------------------------: | :-----------: | :-----------: |
+|     Cubase: Track Archive XML     |     yes†      |     yes†      |
+| Pro Tools: Session Info text file |      yes      |      n/a      |
+|        Standard MIDI File         |    planned    |      yes      |
+|           Logic Pro X‡            |    future?    |    future?    |
+|         Final Cut Pro XML         | basic support | basic support |
+|        Adobe Premiere XML         |    future?    |    future?    |
 
 *† Full read/write support for Cubase Track Archive XML files is implemented for tracks with absolute timebase, as well as tracks with musical timebase where the tempo track uses only 'Jump' tempo events and there are no 'Ramp' tempo events*
 
@@ -36,6 +37,10 @@ Core unit tests implemented. More exhaustive tests can be added in future.
 ### Cubase: Track Archive XML
 
 - Ascertaining the absolute time position of events on tracks that are in musical timebase when the tempo track contains 'Ramp' tempo event(s) is currently not possible. The internal curve function that Cubase uses to calculate tempo ramps is not intuitive (ie: not linear or any obvious known curve function), and it may be a proprietary function. So this may never be possible with this library. The workaround is to not use 'Ramp' tempo events in a session, or if that is unavoidable, move/copy events to a track that is using absolute timebase which can be interpreted reliably with this library.
+
+### Final Cut Pro XML
+
+- Basic support is implemented. More complete support may come in a future library update.
 
 ## Affiliation
 

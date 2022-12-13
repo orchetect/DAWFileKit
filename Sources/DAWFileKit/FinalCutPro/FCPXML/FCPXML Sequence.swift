@@ -132,7 +132,7 @@ extension FinalCutPro.FCPXML.Sequence {
             .compactMap { $0 as? XMLElement } ?? []
     }
     
-    // Stupid workaround. Swift compiler was complaining when this was within the body of the init.
+    // TODO: Stupid workaround. Swift compiler was complaining when this was within the body of the init.
     static func fRate(
         forResourceID id: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,

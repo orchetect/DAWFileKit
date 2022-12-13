@@ -11,7 +11,7 @@
             <project name="Test Project" uid="5F39A86E-B599-43BE-A080-B5F7AE2D41AF" modDate="2022-12-12 16:10:56 -0800">
                 <sequence format="r1" duration="1920919/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
                     <spine>
-                        <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
+                        <title ref="r2" offset="0s" name="Basic Title" start="108108000/30000s" duration="1920919/30000s">
                             <text>
                                 <text-style ref="ts1">Title</text-style>
                             </text>
@@ -20,7 +20,7 @@
                             </text-style-def>
                             <marker start="27248221/7500s" duration="1001/30000s" value="Standard Marker" note="some notes here"/>
                             <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
-                            <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yey"/>
+                            <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yay"/>
                             <chapter-marker start="108995887/30000s" duration="1001/30000s" value="Chapter Marker" posterOffset="11/30s"/>
                         </title>
                     </spine>
