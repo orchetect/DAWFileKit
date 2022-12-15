@@ -11,7 +11,7 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     enum ParsedRational {
         case value(Int)
-        case rational((numerator: Int, denominator: Int))
+        case rational(Fraction)
     }
     
     /// Parse a raw rational time string (ie: "100/3000s" or "10s").
@@ -29,7 +29,7 @@ extension FinalCutPro.FCPXML {
               let n = groups[1]?.int,
               let d = groups[2]?.int
         {
-            return .rational((numerator: n, denominator: d))
+            return .rational(Fraction(n, d))
         }
         
         // otherwise, try as a single integer (not a fraction)
@@ -59,7 +59,7 @@ extension FinalCutPro.FCPXML {
               case let .rational(frac) = parsed
         else { return nil }
         let fRate = VideoFrameRate(
-            rationalFrameDuration: frac,
+            frameDuration: frac,
             interlaced: interlaced
         )
         return fRate
@@ -105,12 +105,12 @@ extension FinalCutPro.FCPXML {
         else { return nil }
         
         switch parsedStr {
-        case .rational(let fraction):
+        case let .rational(fraction):
             return try FinalCutPro.formTimecode(rational: fraction, at: frameRate)
             
-        case .value(let value):
+        case let .value(value):
             // this could also work using Timecode(realTime:)
-            return try FinalCutPro.formTimecode(rational: (value, 1), at: frameRate)
+            return try FinalCutPro.formTimecode(rational: Fraction(value, 1), at: frameRate)
         }
     }
 }

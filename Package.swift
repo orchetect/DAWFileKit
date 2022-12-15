@@ -18,8 +18,8 @@ let package = Package(
     
     dependencies: [
         .package(url: "https://github.com/orchetect/OTCore", from: "1.4.2"),
-        .package(url: "https://github.com/orchetect/TimecodeKit", branch: "fcpxml-framerate"),
-        .package(url: "https://github.com/orchetect/MIDIKit.git", branch: "timecodekit-1.6.0-api")
+        .package(url: "https://github.com/orchetect/TimecodeKit", from: "1.6.0"),
+        .package(url: "https://github.com/orchetect/MIDIKit.git", from: "0.7.2")
     ],
     
     targets: [

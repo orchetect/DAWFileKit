@@ -23,11 +23,11 @@ public enum FinalCutPro {
     
     /// `Timecode` struct template.
     public static func formTimecode(
-        rational: (numerator: Int, denominator: Int),
+        rational: Fraction,
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            rational: rational,
+            rational,
             at: rate,
             limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
