@@ -4,6 +4,8 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
+#if os(macOS) // XMLNode only works on macOS
+
 import XCTest
 @testable import DAWFileKit
 import OTCore
@@ -151,3 +153,5 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         XCTAssertEqual(markers[3], expectedMarker3)
     }
 }
+
+#endif

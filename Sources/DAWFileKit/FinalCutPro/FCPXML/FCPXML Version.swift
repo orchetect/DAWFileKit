@@ -4,7 +4,7 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import Foundation
+#if os(macOS) // XMLNode only works on macOS
 
 extension FinalCutPro.FCPXML {
     /// FCPXML format version
@@ -22,3 +22,5 @@ extension FinalCutPro.FCPXML {
         case ver1_10 = "1.10"
     }
 }
+
+#endif
