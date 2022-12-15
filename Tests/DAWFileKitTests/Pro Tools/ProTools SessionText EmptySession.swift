@@ -28,7 +28,7 @@ class ProTools_SessionText_EmptySession: XCTestCase {
         
         var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
         let sessionInfo = try ProTools.SessionInfo(
-            data: rawData,
+            fileContent: rawData,
             // no time values present in the file but supply a time format anyway to suppress the
             // format auto-detect error
             timeValueFormat: .timecode,

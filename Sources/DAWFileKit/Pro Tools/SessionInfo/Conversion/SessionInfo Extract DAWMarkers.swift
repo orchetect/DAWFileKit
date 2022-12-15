@@ -25,7 +25,7 @@ extension ProTools.SessionInfo {
 extension Array where Element == ProTools.SessionInfo.Marker {
     /// Converts `[DAWFileKit.ProTools.SessionInfo.Marker]` to `[DAWMarker]`.
     public func convertToDAWMarkers(
-        originalFrameRate: Timecode.FrameRate
+        originalFrameRate: TimecodeFrameRate
     ) -> [DAWMarker] {
         // PT uses 100 subframes
         let subFramesBase: Timecode.SubFramesBase = ._100SubFrames

@@ -187,7 +187,7 @@ extension MIDIFile {
                 realTimePosition + deltaAdvanceRealTime
             
             if let debugRountTripTC = try? Timecode(
-                realTimeValue: debugMarkerRealTime / 1000.0,
+                realTime: debugMarkerRealTime / 1000.0,
                 at: frameRate,
                 limit: ._24hours
             ),

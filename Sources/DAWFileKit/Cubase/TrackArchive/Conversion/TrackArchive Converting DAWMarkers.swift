@@ -14,7 +14,7 @@ extension Cubase.TrackArchive {
     /// Returns XML data if success
     public init?(
         converting markers: [DAWMarker],
-        at frameRate: Timecode.FrameRate,
+        at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         includeComments: Bool,
         separateCommentTrack: Bool = false
@@ -72,7 +72,7 @@ extension Cubase.TrackArchive {
     internal static func buildTrack(
         name: String,
         from markers: [DAWMarker],
-        at frameRate: Timecode.FrameRate,
+        at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         markerName nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
     ) -> Cubase.TrackArchive.MarkerTrack {
@@ -90,7 +90,7 @@ extension Cubase.TrackArchive {
 
 extension DAWMarker {
     internal func convertToCubaseTrackArchiveXMLMarker(
-        at frameRate: Timecode.FrameRate,
+        at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
     ) -> Cubase.TrackArchive.Marker? {
@@ -119,7 +119,7 @@ extension DAWMarker {
 
 extension Array where Element == DAWMarker {
     internal func convertToCubaseTrackArchiveXMLMarkers(
-        at frameRate: Timecode.FrameRate,
+        at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
     ) -> [Cubase.TrackArchive.Marker] {

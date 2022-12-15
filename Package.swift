@@ -18,8 +18,8 @@ let package = Package(
     
     dependencies: [
         .package(url: "https://github.com/orchetect/OTCore", from: "1.4.2"),
-        .package(url: "https://github.com/orchetect/TimecodeKit", from: "1.4.0"),
-        .package(url: "https://github.com/orchetect/MIDIKit.git", from: "0.7.1")
+        .package(url: "https://github.com/orchetect/TimecodeKit", from: "1.6.0"),
+        .package(url: "https://github.com/orchetect/MIDIKit.git", from: "0.7.2")
     ],
     
     targets: [
@@ -37,7 +37,8 @@ let package = Package(
             dependencies: ["DAWFileKit"],
             resources: [
                 .copy("Cubase/Resources/Cubase TrackArchive XML"),
-                .copy("Pro Tools/Resources/PT Session Text Exports")
+                .copy("Pro Tools/Resources/PT Session Text Exports"),
+                .copy("FinalCutPro/Resources/FCPXML Exports")
             ]
         )
     ]

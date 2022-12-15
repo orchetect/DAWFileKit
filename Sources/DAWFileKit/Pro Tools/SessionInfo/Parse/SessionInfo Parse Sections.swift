@@ -114,7 +114,7 @@ extension ProTools.SessionInfo {
     ///   - mainFrameRate: Frame rate derived from the text file.
     static func detectTimeFormat(
         from sections: inout [FileSection: [String]],
-        mainFrameRate: Timecode.FrameRate?
+        mainFrameRate: TimecodeFrameRate?
     ) -> (format: TimeValueFormat, hasMixedFormats: Bool)? {
         // TODO: this is probably overkill
         // this examines EVERY time value in the entire file and then
@@ -476,7 +476,7 @@ extension ProTools.SessionInfo {
         init(
             lines: [String],
             timeValueFormat: TimeValueFormat,
-            mainFrameRate: Timecode.FrameRate?,
+            mainFrameRate: TimecodeFrameRate?,
             expectedAudioTrackCount: Int?
         ) {
             let tracksLines = Self.tracksLines(lines: lines)
@@ -650,7 +650,7 @@ extension ProTools.SessionInfo {
         static func process(
             tracksComponents: [TrackComponents],
             timeValueFormat: TimeValueFormat,
-            mainFrameRate: Timecode.FrameRate?,
+            mainFrameRate: TimecodeFrameRate?,
             expectedAudioTrackCount: Int?
         ) -> (tracks: [Track], messages: [ParseMessage]) {
             var messages: [ParseMessage] = []
@@ -788,7 +788,7 @@ extension ProTools.SessionInfo {
         init(
             lines: [String],
             timeValueFormat: TimeValueFormat,
-            mainFrameRate: Timecode.FrameRate?
+            mainFrameRate: TimecodeFrameRate?
         ) {
             let markersComponents = Self.markersComponents(lines: lines)
             messages.append(contentsOf: markersComponents.messages)
@@ -909,7 +909,7 @@ extension ProTools.SessionInfo {
         static func process(
             lineComponents: [MarkerComponents],
             timeValueFormat: TimeValueFormat,
-            mainFrameRate: Timecode.FrameRate?
+            mainFrameRate: TimecodeFrameRate?
         ) -> (markers: [Marker], messages: [ParseMessage]) {
             var messages: [ParseMessage] = []
             func addParseMessage(_ msg: ParseMessage) {

@@ -17,7 +17,7 @@ extension ProTools.SessionInfo {
         public internal(set) var bitDepth: String?
         
         public internal(set) var startTimecode: Timecode?
-        public internal(set) var frameRate: Timecode.FrameRate?
+        public internal(set) var frameRate: TimecodeFrameRate?
         
         public internal(set) var audioTrackCount: Int?
         public internal(set) var audioClipCount: Int?

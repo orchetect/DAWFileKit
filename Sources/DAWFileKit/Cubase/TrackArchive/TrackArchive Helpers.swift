@@ -32,7 +32,7 @@ extension Cubase.TrackArchive {
         guard let ofRealTimeValue = ofRealTimeValue else { return nil }
         guard let frameRate = main.frameRate else { return nil }
         
-        let tc = try? Cubase.formTimecode(realTimeValue: ofRealTimeValue, at: frameRate)
+        let tc = try? Cubase.formTimecode(realTime: ofRealTimeValue, at: frameRate)
         
         return tc
     }

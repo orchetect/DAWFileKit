@@ -23,7 +23,7 @@ extension ProTools.SessionInfo {
     ) throws {
         var dummy: [ParseMessage] = []
         try self.init(
-            data: data,
+            fileContent: data,
             timeValueFormat: timeValueFormat,
             messages: &dummy
         )
@@ -38,7 +38,7 @@ extension ProTools.SessionInfo {
     ///   - messages: An array of messages to update with information and errors during the parsing
     ///     process.
     public init(
-        data: Data,
+        fileContent data: Data,
         timeValueFormat: TimeValueFormat? = nil,
         messages: inout [ParseMessage]
     ) throws {

@@ -27,7 +27,7 @@ class Cubase_TrackArchive_MusicalAndLinearTest: XCTestCase {
         // parse
         
         var parseMessages: [Cubase.TrackArchive.ParseMessage] = []
-        let trackArchive = try Cubase.TrackArchive(data: rawData, messages: &parseMessages)
+        let trackArchive = try Cubase.TrackArchive(fileContent: rawData, messages: &parseMessages)
         
         // parse messages
         

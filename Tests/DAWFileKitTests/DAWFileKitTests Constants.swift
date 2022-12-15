@@ -11,6 +11,7 @@ import XCTest
 enum ResourcesFolder: String {
     case cubaseTrackArchiveXML = "Cubase TrackArchive XML"
     case ptSessionTextExports = "PT Session Text Exports"
+    case fcpxmlExports = "FCPXML Exports"
 }
 
 // MARK: - Utilities

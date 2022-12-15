@@ -44,7 +44,7 @@ extension Cubase.TrackArchive {
     public static let fileTypes = ["public.xml", "xml"]
     
     /// Frame rates and their numeric identifier as stored in the XML.
-    internal static var frameRateTable: [Int: Timecode.FrameRate] =
+    internal static var frameRateTable: [Int: TimecodeFrameRate] =
         [
             02: ._24,
             03: ._25,

@@ -12,14 +12,14 @@ extension DAWMarker {
         public let value: Value
         
         /// The original frame rate that was associated with the `timeStorage` value.
-        public let frameRate: Timecode.FrameRate
+        public let frameRate: TimecodeFrameRate
         
         /// The original timecode subframes divisor.
         public let base: Timecode.SubFramesBase
         
         public init(
             value: Value,
-            frameRate: Timecode.FrameRate,
+            frameRate: TimecodeFrameRate,
             base: Timecode.SubFramesBase
         ) {
             self.value = value
