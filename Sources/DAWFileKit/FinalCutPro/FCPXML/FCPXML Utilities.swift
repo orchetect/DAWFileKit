@@ -16,20 +16,21 @@ extension FinalCutPro.FCPXML {
         case rational(Fraction)
     }
     
-    /// Parse a raw rational time string (ie: "100/3000s" or "10s").
+    /// Parse a raw rational time string (ie: "100/3000s", "-11/30s" or "10s").
     /// Note that the string may be either a rational fraction or a whole number.
+    /// It may also be negative when a minus sign ("-") prefixes the string.
     static func parse(
         rationalTimeString: String
     ) -> ParsedRational? {
         // first test for rational fraction
-        let fractionPattern = #"^([0-9]+)/([0-9]+)s$"#
+        let fractionPattern = #"^([\-]{0,1}[0-9]+)/([0-9]+)s$"#
         
         var groups = rationalTimeString
             .regexMatches(captureGroupsFromPattern: fractionPattern)
         
         if groups.count == 3,
-              let n = groups[1]?.int,
-              let d = groups[2]?.int
+           let n = groups[1]?.int,
+           let d = groups[2]?.int
         {
             return .rational(Fraction(n, d))
         }
@@ -80,9 +81,9 @@ extension FinalCutPro.FCPXML {
     }
     
     /// Utility:
-    /// Convert raw "tcStart" or "duration" attribute string to Timecode.
+    /// Convert raw "tcStart" or "duration" attribute string to `Timecode`.
     static func timecode(
-        fromString rawString: String,
+        fromRational rawString: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
         resourceID: String,
         resources: [String: FinalCutPro.FCPXML.Resource]
@@ -94,13 +95,13 @@ extension FinalCutPro.FCPXML {
         )
         else { return nil }
         
-        return try timecode(fromString: rawString, frameRate: frameRate)
+        return try timecode(fromRational: rawString, frameRate: frameRate)
     }
     
     /// Utility:
-    /// Convert raw "tcStart" or "duration" attribute string to Timecode.
+    /// Convert raw "tcStart" or "duration" attribute string to `Timecode`.
     static func timecode(
-        fromString rawString: String,
+        fromRational rawString: String,
         frameRate: TimecodeFrameRate
     ) throws -> Timecode? {
         guard let parsedStr = FinalCutPro.FCPXML.parse(rationalTimeString: rawString)
@@ -113,6 +114,25 @@ extension FinalCutPro.FCPXML {
         case let .value(value):
             // this could also work using Timecode(realTime:)
             return try FinalCutPro.formTimecode(rational: Fraction(value, 1), at: frameRate)
+        }
+    }
+    
+    /// Utility:
+    /// Convert raw "tcStart" or "duration" attribute string to `TimecodeInterval`.
+    static func timecodeInterval(
+        fromRational rawString: String,
+        frameRate: TimecodeFrameRate
+    ) throws -> TimecodeInterval? {
+        guard let parsedStr = FinalCutPro.FCPXML.parse(rationalTimeString: rawString)
+        else { return nil }
+        
+        switch parsedStr {
+        case let .rational(fraction):
+            return try FinalCutPro.formTimecodeInterval(rational: fraction, at: frameRate)
+            
+        case let .value(value):
+            // this could also work using Timecode(realTime:)
+            return try FinalCutPro.formTimecodeInterval(rational: Fraction(value, 1), at: frameRate)
         }
     }
 }

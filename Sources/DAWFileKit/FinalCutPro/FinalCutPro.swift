@@ -11,8 +11,8 @@ import TimecodeKit
 /// Do not instance; use methods within directly.
 public enum FinalCutPro {
     /// `Timecode` setting for `.subFramesBase`.
-    /// Final Cut Pro uses 100 subframes per frame.
-    public static let timecodeSubFramesBase: Timecode.SubFramesBase = ._100SubFrames
+    /// Final Cut Pro uses 80 subframes per frame.
+    public static let timecodeSubFramesBase: Timecode.SubFramesBase = ._80SubFrames
     
     /// `Timecode` setting for `.upperLimit`.
     /// Final Cut Pro is confined to a 24-hour SMPTE timecode clock.
@@ -20,6 +20,18 @@ public enum FinalCutPro {
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
+    
+    /// `Timecode` struct template.
+    public static func formTimecode(
+        at rate: TimecodeFrameRate
+    ) -> Timecode {
+        Timecode(
+            at: rate,
+            limit: timecodeUpperLimit,
+            base: timecodeSubFramesBase,
+            format: timecodeStringFormat
+        )
+    }
     
     /// `Timecode` struct template.
     public static func formTimecode(
@@ -35,11 +47,22 @@ public enum FinalCutPro {
         )
     }
     
+    
     /// `Timecode` struct template.
-    public static func formTimecode(
+    public static func formTimecodeInterval(
         at rate: TimecodeFrameRate
-    ) -> Timecode {
-        Timecode(
+    ) -> TimecodeInterval {
+        let tc = formTimecode(at: rate)
+        return TimecodeInterval(tc)
+    }
+    
+    /// `Timecode` struct template.
+    public static func formTimecodeInterval(
+        rational: Fraction,
+        at rate: TimecodeFrameRate
+    ) throws -> TimecodeInterval {
+        try TimecodeInterval(
+            rational,
             at: rate,
             limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,

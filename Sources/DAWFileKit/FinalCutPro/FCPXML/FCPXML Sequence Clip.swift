@@ -83,7 +83,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip.Title {
         // "offset"
         if let offsetString = xmlLeaf.attributeStringValue(forName: Attributes.offset.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: offsetString,
+            fromRational: offsetString,
             frameRate: frameRate
            )
         {
@@ -99,7 +99,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip.Title {
         // "start"
         if let startString = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: startString,
+            fromRational: startString,
             frameRate: frameRate
            )
         {
@@ -112,7 +112,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip.Title {
         // "duration"
         if let durationString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: durationString,
+            fromRational: durationString,
             frameRate: frameRate
            )
         {
