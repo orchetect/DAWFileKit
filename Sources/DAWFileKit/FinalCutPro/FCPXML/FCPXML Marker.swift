@@ -90,12 +90,6 @@ extension FinalCutPro.FCPXML.Marker {
         case chapter = "Chapter"
         case toDo = "To Do"
     }
-    
-//    public enum ToDoStatus: String, CaseIterable {
-//        case notStarted = "Not Started"
-//        case inProgress = "In Progress" // TODO: not sure if FCP supports this? maybe older FCPXML ver?
-//        case done = "Done"
-//    }
 }
 
 extension FinalCutPro.FCPXML.Marker {
