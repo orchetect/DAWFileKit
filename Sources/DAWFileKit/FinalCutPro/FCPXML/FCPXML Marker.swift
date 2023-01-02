@@ -75,7 +75,10 @@ extension FinalCutPro.FCPXML.Marker {
         
         // <chapter-marker start="108995887/30000s" duration="1001/30000s" value="Chapter Marker" posterOffset="11/30s"/>
         /// Chapter Marker.
-        case chapter(posterOffset: Timecode)
+        ///
+        /// `posterOffset` is the chapter marker's thumbnail location expressed as a delta distance (offset) from the marker's position.
+        /// This may be positive or negative which is why it is encapsulated in a `TimecodeInterval`.
+        case chapter(posterOffset: TimecodeInterval)
         
         // <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
         // <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yey"/>
@@ -90,12 +93,6 @@ extension FinalCutPro.FCPXML.Marker {
         case chapter = "Chapter"
         case toDo = "To Do"
     }
-    
-//    public enum ToDoStatus: String, CaseIterable {
-//        case notStarted = "Not Started"
-//        case inProgress = "In Progress" // TODO: not sure if FCP supports this? maybe older FCPXML ver?
-//        case done = "Done"
-//    }
 }
 
 extension FinalCutPro.FCPXML.Marker {
@@ -116,7 +113,7 @@ extension FinalCutPro.FCPXML.Marker {
         // "start"
         if let startString = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: startString,
+            fromRational: startString,
             frameRate: frameRate
            )
         {
@@ -129,7 +126,7 @@ extension FinalCutPro.FCPXML.Marker {
         // "duration"
         if let durationString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: durationString,
+            fromRational: durationString,
             frameRate: frameRate
            )
         {
@@ -159,16 +156,19 @@ extension FinalCutPro.FCPXML.Marker {
             }
             
         case .chapterMarker:
+            // FYI: posterOffset (thumbnail timecode) can a be negative offset
+            // so we need to use TimecodeInterval
+            
             if let posterOffsetString = xmlLeaf.attributeStringValue(forName: Attributes.posterOffset.rawValue),
-               let tc = try? FinalCutPro.FCPXML.timecode(
-                fromString: posterOffsetString,
+               let tc = try? FinalCutPro.FCPXML.timecodeInterval(
+                fromRational: posterOffsetString,
                 frameRate: frameRate
                )
             {
                 metaData = .chapter(posterOffset: tc)
             } else {
                 print("Error: posterOffset could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-                metaData = .chapter(posterOffset: FinalCutPro.formTimecode(at: ._30))
+                metaData = .chapter(posterOffset: FinalCutPro.formTimecodeInterval(at: ._30))
             }
         }
     }

@@ -11,6 +11,8 @@ import TimecodeKit
 
 extension FinalCutPro {
     /// Final Cut Pro XML file (FCPXML/FCPXMLD)
+    ///
+    /// [Official FCPXML Apple docs](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/)
     public struct FCPXML {
         /// Direct access to the FCP XML file.
         public var xml: XMLDocument

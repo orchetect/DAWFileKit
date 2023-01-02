@@ -57,7 +57,7 @@ extension FinalCutPro.FCPXML.Sequence {
         // "tcStart"
         if let startString = xmlLeaf.attributeStringValue(forName: Attributes.tcStart.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: startString,
+            fromRational: startString,
             tcFormat: tcFormat,
             resourceID: format,
             resources: resources
@@ -72,7 +72,7 @@ extension FinalCutPro.FCPXML.Sequence {
         // "duration"
         if let durString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
-            fromString: durString,
+            fromRational: durString,
             tcFormat: tcFormat,
             resourceID: format,
             resources: resources
@@ -96,7 +96,6 @@ extension FinalCutPro.FCPXML.Sequence {
         }
         
         // "audioRate"
-        
         if let ar = FinalCutPro.FCPXML.AudioRate(
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue) ?? ""
         ) {
