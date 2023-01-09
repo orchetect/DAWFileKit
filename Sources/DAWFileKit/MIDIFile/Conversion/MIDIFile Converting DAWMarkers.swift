@@ -138,7 +138,7 @@ extension MIDIFile {
         // origin time offset in ms
         // start with slight offset so markers fall at the start of a frame and not just prior to
         // it, with tolerance for the deltaTicks round() up or down that happens
-        // based on our calculation method, some frame rates need a larger offest to overcome
+        // based on our calculation method, some frame rates need a larger offset to overcome
         // potential +/- variances
         var currentRealTimeOffset: Double
         var originRealTimeOffset: Double
@@ -186,17 +186,17 @@ extension MIDIFile {
             let debugMarkerRealTime = originRealTimeOffset + (startTimecode.realTimeValue * 1000) +
                 realTimePosition + deltaAdvanceRealTime
             
-            if let debugRountTripTC = try? Timecode(
+            if let debugRoundTripTC = try? Timecode(
                 realTime: debugMarkerRealTime / 1000.0,
                 at: frameRate,
                 limit: ._24hours
             ),
-                markerTimecode.stringValue != debugRountTripTC.stringValue
+                markerTimecode.stringValue != debugRoundTripTC.stringValue
             {
                 let errorString = "Warning: Marker origin "
                     + markerTimecode.stringValue
                     + " -> "
-                    + debugRountTripTC.stringValue
+                    + debugRoundTripTC.stringValue
                     + " read back from real time position."
                 messages.append(errorString)
             }
