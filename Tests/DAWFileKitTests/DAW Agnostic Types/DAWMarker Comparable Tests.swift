@@ -14,8 +14,6 @@ class DAWMarkerComparable_Tests: XCTestCase {
     
     // MARK: -
     
-    #warning("> add unit tests")
-    
     /// For comparison with the context of a timeline that is != 00:00:00:00
     func testCompareTo() throws {
         let frameRate: TimecodeFrameRate = ._24
