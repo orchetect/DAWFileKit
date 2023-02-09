@@ -138,4 +138,137 @@ class DAWMarkerComparable_Tests: XCTestCase {
             .orderedDescending
         )
     }
+    
+    func testCollection_isSorted() throws {
+        let frameRate: TimecodeFrameRate = ._24
+        
+        func dawMarker(_ string: String) -> DAWMarker {
+            DAWMarker(
+                storage: .init(
+                    value: .timecodeString(string),
+                    frameRate: frameRate,
+                    base: ._80SubFrames
+                ),
+                name: "Name",
+                comment: nil
+            )
+        }
+        
+        func tc(_ string: String) throws -> Timecode {
+            try string.toTimecode(at: frameRate)
+        }
+        
+        XCTAssertEqual(
+            [
+                dawMarker("00:00:00:00"),
+                dawMarker("00:00:00:01"),
+                dawMarker("00:00:00:14"),
+                dawMarker("00:00:00:15"),
+                dawMarker("00:00:00:15"), // sequential dupe
+                dawMarker("00:00:01:00"),
+                dawMarker("00:00:01:01"),
+                dawMarker("00:00:01:23"),
+                dawMarker("00:00:02:00"),
+                dawMarker("00:01:00:05"),
+                dawMarker("00:02:00:08"),
+                dawMarker("00:23:00:10"),
+                dawMarker("01:00:00:00"),
+                dawMarker("02:00:00:00"),
+                dawMarker("03:00:00:00")
+            ]
+            .isSorted(), // timelineStart of zero
+            true
+        )
+        
+        XCTAssertEqual(
+            [
+                dawMarker("00:00:00:00"),
+                dawMarker("00:00:00:01"),
+                dawMarker("00:00:00:14"),
+                dawMarker("00:00:00:15"),
+                dawMarker("00:00:00:15"), // sequential dupe
+                dawMarker("00:00:01:00"),
+                dawMarker("00:00:01:01"),
+                dawMarker("00:00:01:23"),
+                dawMarker("00:00:02:00"),
+                dawMarker("00:01:00:05"),
+                dawMarker("00:02:00:08"),
+                dawMarker("00:23:00:10"),
+                dawMarker("01:00:00:00"),
+                dawMarker("02:00:00:00"),
+                dawMarker("03:00:00:00")
+            ]
+            .isSorted(timelineStart: try tc("01:00:00:00")),
+            false
+        )
+        
+        XCTAssertEqual(
+            [
+                dawMarker("01:00:00:00"),
+                dawMarker("02:00:00:00"),
+                dawMarker("03:00:00:00"),
+                dawMarker("00:00:00:00"),
+                dawMarker("00:00:00:01"),
+                dawMarker("00:00:00:14"),
+                dawMarker("00:00:00:15"),
+                dawMarker("00:00:00:15"), // sequential dupe
+                dawMarker("00:00:01:00"),
+                dawMarker("00:00:01:01"),
+                dawMarker("00:00:01:23"),
+                dawMarker("00:00:02:00"),
+                dawMarker("00:01:00:05"),
+                dawMarker("00:02:00:08"),
+                dawMarker("00:23:00:10"),
+                dawMarker("00:59:59:23") // 1 frame before wrap around
+            ]
+            .isSorted(timelineStart: try tc("01:00:00:00")),
+            true
+        )
+        
+        XCTAssertEqual(
+            [
+                dawMarker("01:00:00:00"),
+                dawMarker("02:00:00:00"),
+                dawMarker("03:00:00:00"),
+                dawMarker("00:00:00:00"),
+                dawMarker("00:00:00:01"),
+                dawMarker("00:00:00:14"),
+                dawMarker("00:00:00:15"),
+                dawMarker("00:00:00:15"), // sequential dupe
+                dawMarker("00:00:01:00"),
+                dawMarker("00:00:01:01"),
+                dawMarker("00:00:01:23"),
+                dawMarker("00:00:02:00"),
+                dawMarker("00:01:00:05"),
+                dawMarker("00:02:00:08"),
+                dawMarker("00:23:00:10"),
+                dawMarker("00:59:59:23") // 1 frame before wrap around
+            ]
+            .isSorted(ascending: false, timelineStart: try tc("01:00:00:00")),
+            false
+        )
+        
+        XCTAssertEqual(
+            [
+                dawMarker("00:59:59:23"), // 1 frame before wrap around
+                dawMarker("00:23:00:10"),
+                dawMarker("00:02:00:08"),
+                dawMarker("00:01:00:05"),
+                dawMarker("00:00:02:00"),
+                dawMarker("00:00:01:23"),
+                dawMarker("00:00:01:01"),
+                dawMarker("00:00:01:00"),
+                dawMarker("00:00:00:15"),
+                dawMarker("00:00:00:15"), // sequential dupe
+                dawMarker("00:00:00:14"),
+                dawMarker("00:00:00:01"),
+                dawMarker("00:00:00:00"),
+                dawMarker("03:00:00:00"),
+                dawMarker("02:00:00:00"),
+                dawMarker("01:00:00:00")
+            ]
+            .isSorted(ascending: false, timelineStart: try tc("01:00:00:00")),
+            true
+        )
+    }
 }
