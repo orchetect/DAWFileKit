@@ -7,6 +7,28 @@
 import Foundation
 import TimecodeKit
 
+extension DAWMarker: Equatable {
+    public static func == (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
+        let lhsSFD = lhs.timeStorage?.base ?? ._80SubFrames
+        let rhsSFD = rhs.timeStorage?.base ?? ._80SubFrames
+        
+        if let lhsTC = lhs.originalTimecode(
+            limit: ._100days,
+            base: lhsSFD
+        ),
+           let rhsTC = rhs.originalTimecode(
+            limit: ._100days,
+            base: rhsSFD
+           )
+        {
+            return lhsTC == rhsTC
+            
+        } else {
+            return false
+        }
+    }
+}
+
 extension DAWMarker: Comparable {
     // useful for sorting markers or comparing markers chronologically
     // this is purely linear, and does not consider 24-hour wrap around.
@@ -79,28 +101,6 @@ extension DAWMarker {
             
         } else {
             return .orderedSame // TODO: throw an error instead?
-        }
-    }
-}
-
-extension DAWMarker: Equatable {
-    public static func == (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
-        let lhsSFD = lhs.timeStorage?.base ?? ._80SubFrames
-        let rhsSFD = rhs.timeStorage?.base ?? ._80SubFrames
-        
-        if let lhsTC = lhs.originalTimecode(
-            limit: ._100days,
-            base: lhsSFD
-        ),
-            let rhsTC = rhs.originalTimecode(
-                limit: ._100days,
-                base: rhsSFD
-            )
-        {
-            return lhsTC == rhsTC
-            
-        } else {
-            return false
         }
     }
 }
