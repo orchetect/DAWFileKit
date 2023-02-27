@@ -757,7 +757,7 @@ extension ProTools.SessionInfo {
                     ))
                 } else {
                     addParseMessage(.error(
-                        "Parsed track count differs from expected count. Expected \(expectedAudioTrackCount) items but only successfully parsed \(parsedTrackCount)."
+                        "Parsed track count differs from header track count. Header specifies \(expectedAudioTrackCount) tracks but only \(parsedTrackCount) tracks were parsed from the file. One possible reason is that the session info text file may have been exported using 'Selected Tracks Only'. The text file header will still contain the total number of tracks in the session. But it is also possible this is the result of a parsing error or a malformed file."
                     ))
                 }
             } else {
