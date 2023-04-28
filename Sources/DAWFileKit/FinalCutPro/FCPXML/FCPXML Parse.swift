@@ -39,12 +39,18 @@ extension FinalCutPro.FCPXML {
     public func events() -> [Event] {
         let resources = resources()
         return xmlEvents.map {
-            let projects = projects(in: $0, resources: resources)
-            let event = Event(
+            Event(
                 name: $0.attributeStringValue(forName: "name") ?? "",
-                projects: projects
+                projects: projects(in: $0, resources: resources)
             )
-            return event
+        }
+    }
+    
+    /// Returns all projects.
+    public func projects() -> [Project] {
+        let resources = resources()
+        return xmlEvents.flatMap {
+            projects(in: $0, resources: resources)
         }
     }
     
