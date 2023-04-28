@@ -12,6 +12,7 @@ import CoreMedia
 
 extension FinalCutPro.FCPXML {
     public struct Project {
+        public let name: String
         public let sequences: [Sequence]
         
         /// Returns the earliest sequence start timecode in the project.

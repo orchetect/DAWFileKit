@@ -35,13 +35,15 @@ extension FinalCutPro.FCPXML {
             } ?? [:]
     }
     
-    /// Returns events in first library.
-    /// (TODO: We're assuming the XML only contains one library)
+    /// Returns all events.
     public func events() -> [Event] {
         let resources = resources()
         return xmlEvents.map {
             let projects = projects(in: $0, resources: resources)
-            let event = Event(projects: projects)
+            let event = Event(
+                name: $0.attributeStringValue(forName: "name") ?? "",
+                projects: projects
+            )
             return event
         }
     }
@@ -55,7 +57,10 @@ extension FinalCutPro.FCPXML {
         let xmlElements = xmlLeaf.elements(forName: "project")
         let projects = xmlElements.map {
             let sequences = parseSequences(in: $0, resources: resources)
-            let project = Project(sequences: sequences)
+            let project = Project(
+                name: $0.attributeStringValue(forName: "name") ?? "",
+                sequences: sequences
+            )
             return project
         }
         return projects

@@ -12,6 +12,7 @@ import CoreMedia
 
 extension FinalCutPro.FCPXML {
     public struct Event {
+        public let name: String
         public let projects: [Project]
     }
 }
