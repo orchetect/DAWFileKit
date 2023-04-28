@@ -13,7 +13,7 @@ import CoreMedia
 
 extension FinalCutPro.FCPXML.Sequence {
     public enum ClipType: String {
-        case assetClip
+        case assetClip = "asset-clip"
         case title
         case video
         
