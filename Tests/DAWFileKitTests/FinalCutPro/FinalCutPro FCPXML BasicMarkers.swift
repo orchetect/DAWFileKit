@@ -38,7 +38,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // resources
         
-        let resources = fcpxml.parseResources()
+        let resources = fcpxml.resources()
         
         XCTAssertEqual(resources.count, 2)
         
@@ -62,7 +62,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // events
         
-        let events = fcpxml.parseEvents(resources: resources)
+        let events = fcpxml.events()
         
         XCTAssertEqual(events.count, 1)
         
@@ -71,6 +71,9 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         let projects = events[0].projects
         
         XCTAssertEqual(projects.count, 1)
+        
+        let project = projects[0]
+        XCTAssertEqual(project.startTimecode, try Timecode(Fraction(0, 1), at: ._29_97, base: ._80SubFrames))
         
         // sequences
         

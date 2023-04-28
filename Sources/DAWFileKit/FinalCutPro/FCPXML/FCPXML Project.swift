@@ -13,6 +13,14 @@ import CoreMedia
 extension FinalCutPro.FCPXML {
     public struct Project {
         public let sequences: [Sequence]
+        
+        /// Returns the earliest sequence start timecode in the project.
+        public var startTimecode: Timecode? {
+            sequences
+                .map(\.startTimecode)
+                .sorted()
+                .first
+        }
     }
 }
 

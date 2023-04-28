@@ -11,9 +11,9 @@ import TimecodeKit
 @_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
-    /// Parses resources.
+    /// Returns resources contained in the XML, keyed by the resource ID.
     /// - Returns: `[ID: Resource]`
-    internal func parseResources() -> [String: Resource] {
+    public func resources() -> [String: Resource] {
         xmlResources?
             .children?
             .lazy
@@ -37,17 +37,18 @@ extension FinalCutPro.FCPXML {
     
     /// Returns events in first library.
     /// (TODO: We're assuming the XML only contains one library)
-    public func parseEvents(
-        resources: [String: Resource]
-    ) -> [Event] {
-        xmlEvents.map {
-            let projects = parseProjects(in: $0, resources: resources)
+    public func events() -> [Event] {
+        let resources = resources()
+        return xmlEvents.map {
+            let projects = projects(in: $0, resources: resources)
             let event = Event(projects: projects)
             return event
         }
     }
     
-    internal func parseProjects(
+    /// Internal:
+    /// Parses projects from a leaf (usually from an `<event>` leaf).
+    internal func projects(
         in xmlLeaf: XMLElement,
         resources: [String: Resource]
     ) -> [Project] {
@@ -60,6 +61,8 @@ extension FinalCutPro.FCPXML {
         return projects
     }
     
+    /// Internal:
+    /// Parse sequences from a leaf (usually from a `<project>` leaf).
     internal func parseSequences(
         in xmlLeaf: XMLElement,
         resources: [String: Resource]

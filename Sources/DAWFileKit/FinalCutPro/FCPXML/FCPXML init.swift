@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Parse Track Archive XML file contents exported from Cubase.
+    /// Parse FCPXML file contents exported from Final Cut Pro.
     public init(
         fileContent data: Data
     ) throws {

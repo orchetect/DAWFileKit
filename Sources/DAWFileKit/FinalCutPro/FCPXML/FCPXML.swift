@@ -21,29 +21,30 @@ extension FinalCutPro {
 
 extension FinalCutPro.FCPXML {
     /// Returns the FCPXML format version.
-    var version: Version? {
+    public var version: Version? {
         guard let verString = xmlRoot?.attributeStringValue(forName: "version") else { return nil }
         return Version(rawValue: verString)
     }
     
-    /// The root "fcpxml" element.
-    var xmlRoot: XMLElement? {
+    /// The root "fcpxml" XML element.
+    public var xmlRoot: XMLElement? {
         xml.children?
             .lazy
             .compactMap { $0 as? XMLElement }
             .first(where: { $0.name == "fcpxml" })
     }
     
+    /// The "resources" XML element.
     var xmlResources: XMLElement? {
         xmlRoot?.elements(forName: "resources").first
     }
     
-    /// The "library" element.
-    var xmlLibrary: XMLElement? {
+    /// The "library" XML element.
+    public var xmlLibrary: XMLElement? {
         xmlRoot?.elements(forName: "library").first
     }
     
-    /// All "event" leafs within the library.
+    /// All "event" XML leafs within the library.
     var xmlEvents: [XMLElement] {
         xmlLibrary?.elements(forName: "event") ?? []
     }
