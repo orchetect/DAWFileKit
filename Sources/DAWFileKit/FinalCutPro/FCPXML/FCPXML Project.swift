@@ -15,11 +15,20 @@ extension FinalCutPro.FCPXML {
         public let name: String
         public let sequences: [Sequence]
         
-        /// Returns the earliest sequence start timecode in the project.
+        /// Returns the start timecode of the earliest sequence in the project.
         public var startTimecode: Timecode? {
             sequences
                 .map(\.startTimecode)
                 .sorted()
+                .first
+        }
+        
+        /// Returns the frame rate of the project.
+        public var frameRate: TimecodeFrameRate? {
+            sequences
+                .map(\.startTimecode)
+                .sorted()
+                .map(\.frameRate)
                 .first
         }
     }
