@@ -20,17 +20,25 @@ extension FinalCutPro.FCPXML {
             .compactMap { $0 as? XMLElement }
             .reduce(into: [String: Resource]()) { dict, element in
                 let id = element.attributeStringValue(forName: "id") ?? ""
-
-                switch element.name {
-                case Resource.ResourceType.effect.rawValue:
-                    let res = Resource.Effect(from: element)
-                    dict[id] = .effect(res)
-                case Resource.ResourceType.format.rawValue:
-                    let res = Resource.Format(from: element)
-                    dict[id] = .format(res)
-                default:
+                
+                guard let resourceName = element.name,
+                      let resource = Resource.ResourceType(rawValue: resourceName)
+                else {
                     let n = (element.name ?? "").quoted
                     print("Unhandled FCPXML resource type: \(n)")
+                    return
+                }
+                
+                switch resource {
+                case .asset:
+                    let res = Resource.Asset(from: element)
+                    dict[id] = .asset(res)
+                case .effect:
+                    let res = Resource.Effect(from: element)
+                    dict[id] = .effect(res)
+                case .format:
+                    let res = Resource.Format(from: element)
+                    dict[id] = .format(res)
                 }
             } ?? [:]
     }
