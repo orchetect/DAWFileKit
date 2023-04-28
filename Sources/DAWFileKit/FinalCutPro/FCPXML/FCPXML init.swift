@@ -11,15 +11,11 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Parse FCPXML file contents exported from Final Cut Pro.
-    public init(
-        fileContent data: Data
-    ) throws {
+    public init(fileContent data: Data) throws {
         let xmlDocument = try XMLDocument(data: data)
         self.init(fileContent: xmlDocument)
     }
-}
-
-extension FinalCutPro.FCPXML {
+    
     /// Initialize from FCPXML file that has been loaded into an `XMLDocument`.
     ///
     /// For fcpxml v1.10+ .fcpxmld bundles, load the .fcpxml file that is inside the bundle.
