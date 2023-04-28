@@ -26,6 +26,86 @@ extension FinalCutPro.FCPXML.Sequence {
     }
 }
 
+// MARK: - Clip Common
+
+extension FinalCutPro.FCPXML.Sequence.Clip {
+    /// Clip XML Attributes.
+    public enum Attributes: String {
+        case ref // resource ID
+        case offset
+        case name
+        case start
+        case duration
+    }
+    
+    static func getRef(
+        from xmlLeaf: XMLElement
+    ) -> String {
+        xmlLeaf.attributeStringValue(forName: Attributes.ref.rawValue) ?? ""
+    }
+    
+    static func getName(
+        from xmlLeaf: XMLElement
+    ) -> String {
+        xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue) ?? ""
+    }
+    
+    static func getTimecode(
+        attribute: Attributes,
+        from xmlLeaf: XMLElement,
+        sequenceFrameRate frameRate: TimecodeFrameRate
+    ) -> Timecode {
+        if let offsetString = xmlLeaf.attributeStringValue(forName: attribute.rawValue),
+           let tc = try? FinalCutPro.FCPXML.timecode(
+            fromRational: offsetString,
+            frameRate: frameRate
+           )
+        {
+            return tc
+        } else {
+            print("Error: \(attribute.rawValue) could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
+            return FinalCutPro.formTimecode(at: ._30)
+        }
+    }
+    
+    static func getMarkers(
+        from xmlLeaf: XMLElement,
+        sequenceFrameRate frameRate: TimecodeFrameRate
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        let children = xmlLeaf.children?.lazy
+            .compactMap { $0 as? XMLElement } ?? []
+        
+        var markers: [FinalCutPro.FCPXML.Marker] = []
+        
+        children.forEach {
+            let itemName = $0.name ?? ""
+            guard let item = FinalCutPro.FCPXML.Sequence.Clip.ClipItem(rawValue: itemName)
+            else {
+                print("Info: skipping clip item \(itemName.quoted). Not handled.")
+                return // next forEach
+            }
+            
+            // TODO: we'll just parse markers for the time being. more items can be added in future.
+            switch item {
+            case .marker, .chapterMarker:
+                guard let marker = FinalCutPro.FCPXML.Marker(
+                    from: $0,
+                    sequenceFrameRate: frameRate
+                )
+                else {
+                    print("Error: failed to parse marker.")
+                    return // next forEach
+                }
+                markers.append(marker)
+            }
+        }
+        
+        return markers
+    }
+}
+
+// MARK: - Title
+
 extension FinalCutPro.FCPXML.Sequence.Clip {
     // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
     /// Title Clip.
@@ -62,7 +142,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
 }
 
 extension FinalCutPro.FCPXML.Sequence.Clip.Title {
-    /// Title clip XML Attributes.
+    /// Clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
         case offset
@@ -78,80 +158,34 @@ extension FinalCutPro.FCPXML.Sequence.Clip.Title {
         sequenceFrameRate frameRate: TimecodeFrameRate
     ) {
         // "ref"
-        ref = xmlLeaf.attributeStringValue(forName: Attributes.ref.rawValue) ?? ""
+        ref = FinalCutPro.FCPXML.Sequence.Clip.getRef(from: xmlLeaf)
         
         // "offset"
-        if let offsetString = xmlLeaf.attributeStringValue(forName: Attributes.offset.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: offsetString,
-            frameRate: frameRate
-           )
-        {
-            offset = tc
-        } else {
-            print("Error: offset could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            offset = FinalCutPro.formTimecode(at: ._30)
-        }
+        offset = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+            attribute: .offset,
+            from: xmlLeaf,
+            sequenceFrameRate: frameRate
+        )
         
         // "name"
-        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue) ?? ""
+        name = FinalCutPro.FCPXML.Sequence.Clip.getName(from: xmlLeaf)
         
         // "start"
-        if let startString = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: startString,
-            frameRate: frameRate
-           )
-        {
-            start = tc
-        } else {
-            print("Error: start could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            start = FinalCutPro.formTimecode(at: ._30)
-        }
+        start = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+            attribute: .start,
+            from: xmlLeaf,
+            sequenceFrameRate: frameRate
+        )
         
         // "duration"
-        if let durationString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: durationString,
-            frameRate: frameRate
-           )
-        {
-            duration = tc
-        } else {
-            print("Error: duration could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            duration = FinalCutPro.formTimecode(at: ._30)
-        }
+        duration = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+            attribute: .duration,
+            from: xmlLeaf,
+            sequenceFrameRate: frameRate
+        )
         
         // contents
-        let children = xmlLeaf.children?.lazy
-            .compactMap { $0 as? XMLElement } ?? []
-        
-        var markers: [FinalCutPro.FCPXML.Marker] = []
-        
-        children.forEach {
-            let itemName = $0.name ?? ""
-            guard let item = FinalCutPro.FCPXML.Sequence.Clip.ClipItem(rawValue: itemName)
-            else {
-                print("Info: skipping clip item \(itemName.quoted). Not handled.")
-                return // next forEach
-            }
-            
-            // TODO: we'll just parse markers for the time being. more items can be added in future.
-            switch item {
-            case .marker, .chapterMarker:
-                guard let marker = FinalCutPro.FCPXML.Marker(
-                    from: $0,
-                    sequenceFrameRate: frameRate
-                )
-                else {
-                    print("Error: failed to parse marker.")
-                    return // next forEach
-                }
-                markers.append(marker)
-            }
-        }
-        
-        self.markers = markers
+        markers = FinalCutPro.FCPXML.Sequence.Clip.getMarkers(from: xmlLeaf, sequenceFrameRate: frameRate)
     }
 }
 
