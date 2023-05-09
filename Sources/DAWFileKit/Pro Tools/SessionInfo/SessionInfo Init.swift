@@ -42,14 +42,39 @@ extension ProTools.SessionInfo {
         timeValueFormat: TimeValueFormat? = nil,
         messages: inout [ParseMessage]
     ) throws {
-        guard let dataToString = String(data: data, encoding: .ascii) else {
+        // Mac OS Roman (legacy 'TextEdit' format when exporting from Pro Tools)
+        // https://en.wikipedia.org/wiki/Mac_OS_Roman
+        // The MIME Content-Type for this encoding is "text/plain; charset=macintosh"
+        // With the release of Mac OS X, Mac OS Roman and all other "scripts" (as classic Mac OS
+        // called them) were replaced by UTF-8 as the standard character encoding for the Macintosh
+        // operating system.
+        // Pro Tools still retains the Mac OS Roman encoding as its default export option.
+        // However UTF8 is selectable as an alternate encoding for export.
+        
+        // Note: NSString.stringEncoding() doesn't work as expected for our needs to
+        // attempt to detect text encoding of the file. Instead, a custom heuristic works
+        // more reliably as follows:
+        // 1. Attempt decoding UTF8 first, which often fails if extended
+        //    Mac OS Roman character codes are present.
+        // 2. Then fall back to Mac OS Roman as the second option.
+        // 3. Fail if neither encoding succeeds, since these are the only 2 encodings
+        //    that Pro Tools exports with.
+        
+        var rawString: String
+        if let decoded = String(data: data, encoding: .utf8) {
+            print("Detected UTF8")
+            rawString = decoded
+        } else if let decoded = String(data: data, encoding: .macOSRoman) {
+            print("Detected Mac OS Roman (Legacy 'TextEdit')")
+            rawString = decoded
+        } else {
             throw ParseError.general(
-                "Error: could not convert document file data to String."
+                "Error: could not convert document file data to string."
             )
         }
         
         try self.init(
-            fileContent: dataToString,
+            fileContent: rawString,
             timeValueFormat: timeValueFormat,
             messages: &messages
         )

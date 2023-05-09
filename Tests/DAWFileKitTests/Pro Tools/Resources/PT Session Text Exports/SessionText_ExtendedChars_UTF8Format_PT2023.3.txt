@@ -1,0 +1,29 @@
+SESSION NAME:	SessionText_UTF8Chars
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:50:00
+TIMECODE FORMAT:	24 Frame
+# OF AUDIO TRACKS:	0
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+O N L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+O F F L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+
+
+T R A C K  L I S T I N G
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+1   	01:00:00:00  	480000            	Samples  	Test Ellipsis…                   	
+2   	01:01:00:00  	3360000           	Samples  	Test Em Dash —                   	
+3   	01:02:00:00  	6240000           	Samples  	Test En Dash –                   	
+4   	01:03:00:00  	9120000           	Samples  	Right Side Quote’s Not An Apostrophe	
