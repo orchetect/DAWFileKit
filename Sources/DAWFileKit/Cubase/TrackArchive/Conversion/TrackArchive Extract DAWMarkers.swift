@@ -33,11 +33,10 @@ extension Cubase.TrackArchive {
             //    "sec session start time, \(markerTracks.count) marker tracks)"
             //)
             
-            for trackidx in markerTracks.indices {
-                for eventidx in markerTracks[trackidx].events.indices {
-                    if let srt = markerTracks[trackidx].events[eventidx].startRealTime {
-                        markerTracks[trackidx].events[eventidx]
-                            .startRealTime = srt + startTimeSeconds
+            for trackIdx in markerTracks.indices {
+                for eventIdx in markerTracks[trackIdx].events.indices {
+                    if let srt = markerTracks[trackIdx].events[eventIdx].startRealTime {
+                        markerTracks[trackIdx].events[eventIdx].startRealTime = srt + startTimeSeconds
                     }
                 }
             }

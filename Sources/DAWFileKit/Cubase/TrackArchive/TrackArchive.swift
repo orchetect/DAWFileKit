@@ -59,8 +59,9 @@ extension Cubase.TrackArchive {
             16: ._60
         ]
     
-    internal static var TrackTypeTable: [String: CubaseTrackArchiveTrack.Type] = [
+    internal static var trackTypeTable: [String: CubaseTrackArchiveTrack.Type] = [
         "MMarkerTrackEvent": MarkerTrack.self
+        // TODO: add additional track types in future
     ]
 }
 

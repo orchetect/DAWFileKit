@@ -178,11 +178,9 @@ extension Cubase.TrackArchive {
             .children?
             .first
         else {
-            addParseMessage(
-                .error(
-                    "Could not extract tempo information. First track could not be located."
-                )
-            )
+            addParseMessage(.error(
+                "Could not extract tempo information. First track could not be located."
+            ))
             return
         }
         
@@ -222,7 +220,7 @@ extension Cubase.TrackArchive {
                     .attributeStringValue(forName: "value")?
                     .double
                 
-                // if int "func" with value 1 exists, then it's a ramp
+                // if Int attribute "Func" with value of 1 exists, then it's a ramp
                 // if the key doesn't exist, it's a jump (default)
                 let type: TempoTrack.Event.TempoEventType = event.children?
                     .filter(nameAttribute: "Func")
@@ -271,9 +269,11 @@ extension Cubase.TrackArchive {
         for track in tracks {
             // get track type
             
-            let trackType = Self.TrackTypeTable[track.attributeStringValue(forName: "class") ?? ""]
+            let trackType = Self.trackTypeTable[track.attributeStringValue(forName: "class") ?? ""]
             
             // create new track object
+            
+            // TODO: add additional track types in future
             
             switch trackType {
             case is MarkerTrack.Type:
@@ -281,8 +281,7 @@ extension Cubase.TrackArchive {
                 
             default:
                 let newTrack = OrphanTrack(
-                    rawXMLContent: track
-                        .xmlString(options: .nodePrettyPrint)
+                    rawXMLContent: track.xmlString(options: .nodePrettyPrint)
                 )
                 self.tracks?.append(newTrack)
             }
@@ -303,6 +302,8 @@ extension Cubase.TrackArchive {
         
         var newTrack = MarkerTrack()
         
+        // TODO: abstract common track metadata to a generic track parser, then specialize per track type for events
+        
         // find list by matching both its name and class name
         let eventTree = track.children?
             .filter(nameAttribute: "Node")
@@ -318,8 +319,7 @@ extension Cubase.TrackArchive {
             .filter(nameAttribute: "Type")
             .first?
             .attributeStringValue(forName: "value")?
-            .int
-        {
+            .int {
         case 0?: trackDomain = .musical
         case 1?: trackDomain = .linear
         default: return
@@ -341,7 +341,6 @@ extension Cubase.TrackArchive {
         for event in events {
             switch event.attributeStringValue(forName: "class") {
             case "MMarkerEvent", "MRangeMarkerEvent": // all marker event types
-                
                 var newMarker: CubaseTrackArchiveMarker?
                 
                 var name: String?
@@ -376,7 +375,6 @@ extension Cubase.TrackArchive {
                 
                 switch event.attributeStringValue(forName: "class") {
                 case "MMarkerEvent": // single marker
-                    
                     guard let tcStart = tcStart else { continue }
                     newMarker = Marker(
                         name: name ?? "",
@@ -385,7 +383,6 @@ extension Cubase.TrackArchive {
                     )
                     
                 case "MRangeMarkerEvent": // cycle marker
-                    
                     var tcLength: Timecode?
                     var tcLengthRealTime: TimeInterval?
                     
@@ -428,9 +425,9 @@ extension Cubase.TrackArchive {
                 if let newMarker = newMarker { newTrack.events.append(newMarker) }
                 
             default:
-                addParseMessage(
-                    .error("Unrecognized marker track event in XML: \(event.xmlString)")
-                )
+                addParseMessage(.error(
+                    "Unrecognized marker track event in XML: \(event.xmlString)"
+                ))
             }
         }
         
