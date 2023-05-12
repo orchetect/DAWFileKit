@@ -42,6 +42,10 @@ extension ProTools.SessionInfo {
         timeValueFormat: TimeValueFormat? = nil,
         messages: inout [ParseMessage]
     ) throws {
+        func addParseMessage(_ msg: ParseMessage) {
+            messages.append(msg)
+        }
+        
         // Mac OS Roman (legacy 'TextEdit' format when exporting from Pro Tools)
         // https://en.wikipedia.org/wiki/Mac_OS_Roman
         // The MIME Content-Type for this encoding is "text/plain; charset=macintosh"
@@ -62,10 +66,10 @@ extension ProTools.SessionInfo {
         
         var rawString: String
         if let decoded = String(data: data, encoding: .utf8) {
-            print("Detected UTF8")
+            addParseMessage(.info("Detected format: UTF8"))
             rawString = decoded
         } else if let decoded = String(data: data, encoding: .macOSRoman) {
-            print("Detected Mac OS Roman (Legacy 'TextEdit')")
+            addParseMessage(.info("Detected format: Mac OS Roman (Legacy 'TextEdit')"))
             rawString = decoded
         } else {
             throw ParseError.general(
