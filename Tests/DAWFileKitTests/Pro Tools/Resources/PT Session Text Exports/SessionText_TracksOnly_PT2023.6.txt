@@ -1,0 +1,62 @@
+SESSION NAME:	SessionText_TracksOnly
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:50:00
+TIMECODE FORMAT:	24 Frame
+# OF AUDIO TRACKS:	163
+# OF AUDIO CLIPS:	1541
+# OF AUDIO FILES:	247
+
+
+T R A C K  L I S T I N G
+TRACK NAME:	Audio 1
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+1       	1       	Warm Day in the City          	   01:00:15:06	   01:01:05:13	   00:00:50:07	Unmuted
+1       	2       	Happy Go Lucky                	   01:01:05:13	   01:01:57:23	   00:00:52:09	Unmuted
+
+
+TRACK NAME:	Audio 2
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+TRACK NAME:	Audio 3
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+TRACK NAME:	Audio 4
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+TRACK NAME:	Audio 5
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+TRACK NAME:	Audio 6
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
+TRACK NAME:	Audio 7
+COMMENTS:	
+USER DELAY:	0 Samples
+STATE: 
+CHANNEL 	EVENT   	CLIP NAME                     	START TIME    	END TIME      	DURATION      	STATE
+
+
