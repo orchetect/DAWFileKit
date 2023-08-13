@@ -855,19 +855,73 @@ extension ProTools.SessionInfo {
                 return ([], messages)
             }
             
-            let estimatedItemCount = lines.count
+            // break markers list into raw text of individual markers so we can further parse then
             
-            let linesComponents: [MarkerComponents] = lines.reduce(into: []) { base, line in
-                if line.isEmpty { return }
+            // due to the fact that newline and tab characters can exist within the NAME and COMMENtS,
+            // we have to implement a more nuanced parser to accommodate.
+            // - if line starts with #, LOCATION, TIME REFERENCE, UNITS, and NAME with expected contents,
+            //   we can reasonably assume it's the start of a marker
+            // - if the next line does not match, assume it's part of the currently parsed marker
+            
+            // this pattern is designed to detect if a line is the start of a marker
+            let markerPrefixPattern = #"^(\d+)\s+\t([^\t\n]+)\s*\t([^\t\n]+)\s+\t(Samples|Ticks)\s+\t([\s\S]*?)$"#
+            
+            var rawMarkers: [String] = []
+            var currentLineContent: String?
+            
+            func finalizeRawMarker() {
+                if let cl = currentLineContent {
+                    rawMarkers.append(cl)
+                    currentLineContent = nil
+                }
+            }
+            
+            for lineIndex in lines.indices {
+                let lineContent = lines[lineIndex]
+                let markerPrefixMatches = lineContent.regexMatches(pattern: markerPrefixPattern)
+                if markerPrefixMatches.count == 1 {
+                    // finalize previous line
+                    finalizeRawMarker()
+                    // start new marker
+                    currentLineContent = lineContent
+                } else {
+                    // assume line is an additional line belonging to current marker
+                    
+                    // failsafe to report parse failure
+                    if currentLineContent == nil {
+                        addParseMessage(.error(
+                            "\(debugSectionName) section listing line \(lineIndex) was not parsable. Text file may be malformed."
+                        ))
+                    }
+                    
+                    currentLineContent? += "\n\(lineContent)"
+                }
+            }
+            
+            // finalize last marker
+            finalizeRawMarker()
+            
+            // parse each marker into its components
+            
+            let linesComponents: [MarkerComponents] = rawMarkers.reduce(into: []) { base, rawMarker in
+                if rawMarker.isEmpty { return }
                 
-                let columnData = line.split(separator: "\t")
+                // consolidate whitespaces for COMMENTS newlines.
+                // as long as the NAME does not contain newlines, Pro Tools will align the start of each
+                // newline in the COMMENTS with the COMMENTS column offset by essentially inserting a blank marker
+                // formatted in the same tab-delimited layout but using empty spaces.
+                let rawMarker = rawMarker.replacingOccurrences(
+                    of: "\n    \t             \t                  \t           \t                                 \t",
+                    with: "\n"
+                )
+                
+                let columnData = rawMarker.split(separator: "\t")
                     .map { String($0).trimmed } // split into array by tab character
                 
-                guard let strNumber = columnData[safe: 0],
-                      let strLocation = columnData[safe: 1],
-                      let strTimeReference = columnData[safe: 2],
-                      let strTimeReferenceBase = columnData[safe: 3],
-                      let strName = columnData[safe: 4]
+                guard let strNumber = columnData[safe: 0], // always index 0
+                      let strLocation = columnData[safe: 1],// always index 1
+                      let strTimeReference = columnData[safe: 2],// always index 2
+                      let strTimeReferenceBase = columnData[safe: 3] // always index 3
                 else {
                     // if these are nil, the text file could be malformed
                     addParseMessage(.error(
@@ -876,8 +930,13 @@ extension ProTools.SessionInfo {
                     return
                 }
                 
+                // marker name
+                // always starts at index 4. will be contained if no tab characters are contained within the text.
+                let strName = columnData[safe: 4] ?? ""
+                
                 // marker comment
-                let strComment = columnData[safe: 5]
+                var strComment = columnData[safe: 5...]?.joined(separator: "\t")
+                if strComment?.isEmpty == true { strComment = nil }
                 
                 base.append(
                     MarkerComponents(
@@ -891,19 +950,13 @@ extension ProTools.SessionInfo {
                 )
             }
             
-            // error check
+            // summary
             
             let actualItemCount = linesComponents.count
             
-            if estimatedItemCount == actualItemCount {
-                addParseMessage(.info(
-                    "Successfully parsed \(actualItemCount) \(debugSectionName) from text file."
-                ))
-            } else {
-                addParseMessage(.error(
-                    "Actual parsed \(debugSectionName) count differs from estimated count. Expected \(estimatedItemCount) but only successfully parsed \(actualItemCount)."
-                ))
-            }
+            addParseMessage(.info(
+                "Parsed \(actualItemCount) \(debugSectionName) from text file."
+            ))
             
             return (linesComponents, messages)
         }
