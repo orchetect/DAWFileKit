@@ -1,0 +1,43 @@
+SESSION NAME:	SessionText_NewLinesAndTabs
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:55:00
+TIMECODE FORMAT:	23.976 Frame
+# OF AUDIO TRACKS:	0
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+O N L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+O F F L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+
+
+T R A C K  L I S T I N G
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+1   	01:00:00:00  	240240            	Samples  	Marker Name
+With New Line        	
+2   	01:00:01:00  	288288            	Samples  	Normal Marker Name               	Comment Here
+    	             	                  	           	                                 	With New Line
+3   	01:00:02:00  	336336            	Samples  	Marker Name Again
+With New Line Again	Comment Here Again
+    	             	                  	           	                                 	With New Line Again
+4   	01:00:03:00  	384384            	Samples  	Normal Marker Name Again         	
+5   	01:00:04:00  	432432            	Samples  	Marker Name	With Tab             	
+6   	01:00:05:00  	480480            	Samples  	Normal Marker Name               	Comments Here	With Tab
+7   	01:00:06:00  	528528            	Samples  	Marker Name	With Tab             	Comments Here	With Tab
+8   	01:00:07:00  	576576            	Samples  	Marker Name	With Tab	And Another Tab	
+9   	01:00:08:00  	624624            	Samples  	Normal Marker Name               	Comment Here	With Tab	And Another Tab
+10  	01:00:09:00  	672672            	Samples  	Marker Name	With Tab	And Another Tab	Comment Here	With Tab	And Another Tab
+11  	01:00:10:00  	720720            	Samples  	Marker Name	With Tab
+And Newline 	
+12  	01:00:11:00  	768768            	Samples  	Normal Marker Name               	Comment Here	With Tab
+    	             	                  	           	                                 	And Newline
