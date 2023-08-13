@@ -16,7 +16,7 @@ class ProTools_SessionText_TracksOnly: XCTestCase {
     func testSessionText_TracksOnly() throws {
         // load file
         
-        let filename = "SessionText_TracksOnly_PT2023.6"
+        let filename = "SessionText_TracksOnly_OnlyTrackEDLs_PT2023.6"
         guard let rawData = loadFileContents(
             forResource: filename,
             withExtension: "txt",
