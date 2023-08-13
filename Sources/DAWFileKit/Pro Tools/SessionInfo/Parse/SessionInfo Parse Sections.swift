@@ -906,14 +906,20 @@ extension ProTools.SessionInfo {
             let linesComponents: [MarkerComponents] = rawMarkers.reduce(into: []) { base, rawMarker in
                 if rawMarker.isEmpty { return }
                 
+                var rawMarker = rawMarker
+                
                 // consolidate whitespaces for COMMENTS newlines.
                 // as long as the NAME does not contain newlines, Pro Tools will align the start of each
                 // newline in the COMMENTS with the COMMENTS column offset by essentially inserting a blank marker
                 // formatted in the same tab-delimited layout but using empty spaces.
-                let rawMarker = rawMarker.replacingOccurrences(
-                    of: "\n    \t             \t                  \t           \t                                 \t",
-                    with: "\n"
-                )
+                let commentNewLinePrefix = "    \t             \t                  \t           \t                                 \t"
+                
+                var commentsSuffix: String? = nil
+                if let firstCommentNewLineOffset = rawMarker.firstIndex(of: commentNewLinePrefix) {
+                    commentsSuffix = rawMarker[firstCommentNewLineOffset...]
+                        .replacingOccurrences(of: commentNewLinePrefix, with: "")
+                    rawMarker = String(rawMarker[..<firstCommentNewLineOffset])
+                }
                 
                 let columnData = rawMarker.split(separator: "\t")
                     .map { String($0).trimmed } // split into array by tab character
@@ -931,11 +937,33 @@ extension ProTools.SessionInfo {
                 }
                 
                 // marker name
-                // always starts at index 4. will be contained if no tab characters are contained within the text.
-                let strName = columnData[safe: 4] ?? ""
+                // always starts at index 4. will be self-contained if no tab characters are within the name.
+                let strName: String
                 
                 // marker comment
-                var strComment = columnData[safe: 5...]?.joined(separator: "\t")
+                var strComment: String?
+                if let commentsSuffix {
+                    guard columnData.count >= 6, let lastComponent = columnData.last else {
+                        addParseMessage(.error(
+                            "One or more \(debugSectionName) item elements failed to parse. Text file may be malformed."
+                        ))
+                        return
+                    }
+                    
+                    // assume if there are more than one remaining component, there are tab characters in the name
+                    strName = columnData
+                        .dropFirst(4)
+                        .dropLast(1)
+                        .joined(separator: "\t")
+                    
+                    // add the last component to the partial trailing comments
+                    strComment = lastComponent + "\n" + commentsSuffix
+                } else {
+                    // no newlines in the comments
+                    strName = columnData[safe: 4] ?? ""
+                    strComment = columnData[safe: 5...]?.joined(separator: "\t")
+                }
+                
                 if strComment?.isEmpty == true { strComment = nil }
                 
                 base.append(
