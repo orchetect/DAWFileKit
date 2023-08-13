@@ -573,31 +573,42 @@ extension ProTools.SessionInfo {
             // parse each track's contents
             
             // basic validation
-                
-            guard trackLines.count >= 6
+            
+            guard trackLines.count >= 5
             else { // track header has 6 rows, then regions are listed
                 addParseMessage(.error(
                     "Error: text file contains a track listing but format is not as expected. Aborting marker parsing."
                 ))
                 return (nil, messages)
             }
-                
+            
             // check params
-                
+            
+            // NOTE:
+            // the PLUG-INS line may legitimately be missing if user opted out of exporting plug-in information from Pro Tools
+            
             let paramsRegex =
-                #"(?-i)^TRACK NAME:\t(.*)\nCOMMENTS:\t(.*(?:(?:\n*.)*))\nUSER DELAY:\t(.*)\nSTATE:\s(.*)\nPLUG-INS:\s(?:\t{0,1})(.*)\n(?:CHANNEL.*STATE)((?:\n.*)*)"#
-                
+                #"(?-i)^TRACK NAME:\t(.*)\nCOMMENTS:\t(.*(?:(?:\n*.)*))\nUSER DELAY:\t(.*)\nSTATE:\s(.*)(?:\nPLUG-INS:\s(?:\t{0,1})(.*)){0,1}\n(?:CHANNEL.*STATE)((?:\n.*)*)"#
+            
             let getParams = trackLines
                 .joined(separator: "\n")
                 .regexMatches(captureGroupsFromPattern: paramsRegex)
                 .dropFirst()
-                .map { $0 ?? "<<NIL>>" }
-                
-            if getParams.count != 6 {
+                .map { $0 ?? "" }
+            
+            guard getParams.count == 6 else {
                 addParseMessage(.error(
                     "Parse: \(debugSectionName) listing block: Text does not contain parameter block, or parameter block is not formatted as expected."
                 ))
+                
+                return (nil, messages)
             }
+            
+            let trackName = getParams[0]
+            let trackComments = getParams[1]
+            let trackUserDelay = getParams[2]
+            let trackState = getParams[3]
+            let trackPlugins = getParams[4]
             
             // clips
             
@@ -614,7 +625,7 @@ extension ProTools.SessionInfo {
                     guard columns.count == 7 else {
                         let clipDetail = columns.map { $0.quoted }.joined(separator: ", ")
                         addParseMessage(.error(
-                            "Parse: \(debugSectionName) listing for track \"\(getParams[0])\": Did not find expected number of tabular columns. Found \(columns.count) columns but expected 7. This clip cannot be parsed: [\(clipDetail)]"
+                            "Parse: \(debugSectionName) listing for track \"\(trackName)\": Did not find expected number of tabular columns. Found \(columns.count) columns but expected 7. This clip cannot be parsed: [\(clipDetail)]"
                         ))
                         
                         return // continue loop
@@ -636,11 +647,11 @@ extension ProTools.SessionInfo {
             // return
             
             let components = TrackComponents(
-                name: getParams[0],
-                comments: getParams[1],
-                userDelay: getParams[2],
-                state: getParams[3],
-                plugins: getParams[4],
+                name: trackName,
+                comments: trackComments,
+                userDelay: trackUserDelay,
+                state: trackState,
+                plugins: trackPlugins,
                 clips: clips
             )
             
@@ -756,7 +767,7 @@ extension ProTools.SessionInfo {
                         "Parsed \(parsedTrackCount) tracks from text file."
                     ))
                 } else {
-                    addParseMessage(.error(
+                    addParseMessage(.info(
                         "Parsed track count differs from header track count. Header specifies \(expectedAudioTrackCount) tracks but only \(parsedTrackCount) tracks were parsed from the file. One possible reason is that the session info text file may have been exported using 'Selected Tracks Only'. The text file header will still contain the total number of tracks in the session. But it is also possible this is the result of a parsing error or a malformed file."
                     ))
                 }
