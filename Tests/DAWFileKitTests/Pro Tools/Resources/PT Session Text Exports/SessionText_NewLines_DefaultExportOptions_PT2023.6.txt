@@ -1,0 +1,33 @@
+SESSION NAME:	SessionText_NewLines
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:55:00
+TIMECODE FORMAT:	23.976 Frame
+# OF AUDIO TRACKS:	0
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+O N L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+O F F L I N E  F I L E S  I N  S E S S I O N
+Filename	Location
+
+
+P L U G - I N S  L I S T I N G
+MANUFACTURER            	PLUG-IN NAME            	VERSION         	FORMAT          	STEMS                   	NUMBER OF INSTANCES
+
+
+T R A C K  L I S T I N G
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	COMMENTS
+1   	01:00:00:00  	240240            	Samples  	Marker Name
+With New Line        	
+2   	01:00:01:00  	288288            	Samples  	Normal Marker Name               	Comment Here
+    	             	                  	           	                                 	With New Line
+3   	01:00:02:00  	336336            	Samples  	Marker Name Again
+With New Line Again	Comment Here Again
+    	             	                  	           	                                 	With New Line Again
+4   	01:00:03:00  	384384            	Samples  	Normal Maker Name Again          	
