@@ -174,47 +174,47 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
     }
     
     func testSessionText_Timecode() throws {
-        func TC(_ tcc: TCC) -> Timecode {
-            try! ProTools.formTimecode(tcc, at: ._23_976)
+        func TC(_ tcc: Timecode.Components) -> Timecode {
+            try! ProTools.formTimecode(tcc, at: .fps23_976)
         }
         try runSessionText(
             filename: "SessionText_TimeFormats_Timecode_PT2022.9",
             
-            track1ClipStartTime: .timecode(TC(TCC(h: 23, m: 57, s: 25, f: 00))),
-            track1ClipEndTime:   .timecode(TC(TCC(h: 23, m: 57, s: 38, f: 08))),
-            track1ClipDuration:  .timecode(TC(TCC(h: 00, m: 00, s: 13, f: 08))),
+            track1ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 25, f: 00))),
+            track1ClipEndTime:   .timecode(TC(.init(h: 23, m: 57, s: 38, f: 08))),
+            track1ClipDuration:  .timecode(TC(.init(h: 00, m: 00, s: 13, f: 08))),
             
-            track2ClipStartTime: .timecode(TC(TCC(h: 23, m: 57, s: 08, f: 08))),
-            track2ClipEndTime:   .timecode(TC(TCC(h: 23, m: 57, s: 21, f: 17))),
-            track2ClipDuration:  .timecode(TC(TCC(h: 00, m: 00, s: 13, f: 08))),
+            track2ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 08, f: 08))),
+            track2ClipEndTime:   .timecode(TC(.init(h: 23, m: 57, s: 21, f: 17))),
+            track2ClipDuration:  .timecode(TC(.init(h: 00, m: 00, s: 13, f: 08))),
             
-            marker1Location:     .timecode(TC(TCC(h: 23, m: 57, s: 56, f: 02))),
+            marker1Location:     .timecode(TC(.init(h: 23, m: 57, s: 56, f: 02))),
             marker1TimeRef:      .samples(2_695_168),
             
-            marker2Location:     .timecode(TC(TCC(h: 23, m: 58, s: 55, f: 18))),
+            marker2Location:     .timecode(TC(.init(h: 23, m: 58, s: 55, f: 18))),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: nil)
         )
     }
     
     func testSessionText_Timecode_ShowSubframes() throws {
-        func TC(_ tcc: TCC) -> Timecode {
-            try! ProTools.formTimecode(tcc, at: ._23_976)
+        func TC(_ tcc:  Timecode.Components) -> Timecode {
+            try! ProTools.formTimecode(tcc, at: .fps23_976)
         }
         try runSessionText(
             filename: "SessionText_TimeFormats_Timecode_ShowSubframes_PT2022.9",
             
-            track1ClipStartTime: .timecode(TC(TCC(h: 23, m: 57, s: 25, f: 00, sf: 00))),
-            track1ClipEndTime:   .timecode(TC(TCC(h: 23, m: 57, s: 38, f: 08, sf: 68))),
-            track1ClipDuration:  .timecode(TC(TCC(h: 00, m: 00, s: 13, f: 08, sf: 68))),
+            track1ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 25, f: 00, sf: 00))),
+            track1ClipEndTime:   .timecode(TC(.init(h: 23, m: 57, s: 38, f: 08, sf: 68))),
+            track1ClipDuration:  .timecode(TC(.init(h: 00, m: 00, s: 13, f: 08, sf: 68))),
             
-            track2ClipStartTime: .timecode(TC(TCC(h: 23, m: 57, s: 08, f: 08, sf: 50))),
-            track2ClipEndTime:   .timecode(TC(TCC(h: 23, m: 57, s: 21, f: 17, sf: 18))),
-            track2ClipDuration:  .timecode(TC(TCC(h: 00, m: 00, s: 13, f: 08, sf: 68))),
+            track2ClipStartTime: .timecode(TC(.init(h: 23, m: 57, s: 08, f: 08, sf: 50))),
+            track2ClipEndTime:   .timecode(TC(.init(h: 23, m: 57, s: 21, f: 17, sf: 18))),
+            track2ClipDuration:  .timecode(TC(.init(h: 00, m: 00, s: 13, f: 08, sf: 68))),
             
-            marker1Location:     .timecode(TC(TCC(h: 23, m: 57, s: 56, f: 02, sf: 24))),
+            marker1Location:     .timecode(TC(.init(h: 23, m: 57, s: 56, f: 02, sf: 24))),
             marker1TimeRef:      .samples(2_695_168),
             
-            marker2Location:     .timecode(TC(TCC(h: 23, m: 58, s: 55, f: 18, sf: 41))),
+            marker2Location:     .timecode(TC(.init(h: 23, m: 58, s: 55, f: 18, sf: 41))),
             marker2TimeRef:      .barsAndBeats(bar: 58, beat: 4, ticks: 735)
         )
     }
@@ -260,9 +260,9 @@ class ProTools_SessionText_TimeFormats: XCTestCase {
         XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
         XCTAssertEqual(
             sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(TCC(h: 23, m: 57, s: 00, f: 00), at: ._23_976)
+            try ProTools.formTimecode(.init(h: 23, m: 57, s: 00, f: 00), at: .fps23_976)
         )
-        XCTAssertEqual(sessionInfo.main.frameRate,         ._23_976)
+        XCTAssertEqual(sessionInfo.main.frameRate,         .fps23_976)
         XCTAssertEqual(sessionInfo.main.audioTrackCount,   2)
         XCTAssertEqual(sessionInfo.main.audioClipCount,    0)
         XCTAssertEqual(sessionInfo.main.audioFileCount,    0)

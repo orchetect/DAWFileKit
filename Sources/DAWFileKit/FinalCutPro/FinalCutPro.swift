@@ -12,11 +12,11 @@ import TimecodeKit
 public enum FinalCutPro {
     /// `Timecode` setting for `.subFramesBase`.
     /// Final Cut Pro uses 80 subframes per frame.
-    public static let timecodeSubFramesBase: Timecode.SubFramesBase = ._80SubFrames
+    public static let timecodeSubFramesBase: Timecode.SubFramesBase = .max80SubFrames
     
     /// `Timecode` setting for `.upperLimit`.
     /// Final Cut Pro is confined to a 24-hour SMPTE timecode clock.
-    public static let timecodeUpperLimit: Timecode.UpperLimit = ._24hours
+    public static let timecodeUpperLimit: Timecode.UpperLimit = .max24Hours
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
@@ -26,10 +26,10 @@ public enum FinalCutPro {
         at rate: TimecodeFrameRate
     ) -> Timecode {
         Timecode(
+            .zero,
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
     
@@ -39,11 +39,10 @@ public enum FinalCutPro {
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            rational,
+            .rational(rational),
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
     
@@ -64,9 +63,8 @@ public enum FinalCutPro {
         try TimecodeInterval(
             rational,
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
 }

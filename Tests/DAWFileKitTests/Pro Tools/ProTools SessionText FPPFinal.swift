@@ -46,9 +46,9 @@ class ProTools_SessionText_FPPFinal: XCTestCase {
         XCTAssertEqual(sessionInfo.main.bitDepth,        "24-bit")
         XCTAssertEqual(
             sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
+            try ProTools.formTimecode(.init(h: 0, m: 59, s: 55, f: 00), at: .fps23_976)
         )
-        XCTAssertEqual(sessionInfo.main.frameRate,       ._23_976)
+        XCTAssertEqual(sessionInfo.main.frameRate,       .fps23_976)
         XCTAssertEqual(sessionInfo.main.audioTrackCount, 51)
         XCTAssertEqual(sessionInfo.main.audioClipCount,  765)
         XCTAssertEqual(sessionInfo.main.audioFileCount,  142)

@@ -144,7 +144,7 @@ extension MIDIFile {
         var originRealTimeOffset: Double
         
         switch frameRate {
-        case ._29_97_drop, ._59_94_drop, ._119_88_drop:
+        case .fps29_97d, .fps59_94d, .fps119_88d:
             currentRealTimeOffset = 1.500 // ms
             originRealTimeOffset = 1.500 // ms
         default:
@@ -163,8 +163,8 @@ extension MIDIFile {
             // get marker's timecode object
             guard let markerTimecode = marker.resolvedTimecode(
                 at: frameRate,
-                limit: upperLimit,
-                base: subFramesBase
+                base: subFramesBase,
+                limit: upperLimit
             ) else {
                 throw BuildError.general(
                     "Encountered an invalid timecode in the markers list."
@@ -187,16 +187,17 @@ extension MIDIFile {
                 realTimePosition + deltaAdvanceRealTime
             
             if let debugRoundTripTC = try? Timecode(
-                realTime: debugMarkerRealTime / 1000.0,
+                .realTime(seconds: debugMarkerRealTime / 1000.0),
                 at: frameRate,
-                limit: ._24hours
+                limit: .max24Hours
             ),
-                markerTimecode.stringValue != debugRoundTripTC.stringValue
+                markerTimecode.stringValue(format: [.showSubFrames])
+                != debugRoundTripTC.stringValue(format: [.showSubFrames])
             {
                 let errorString = "Warning: Marker origin "
-                    + markerTimecode.stringValue
+                    + markerTimecode.stringValue()
                     + " -> "
-                    + debugRoundTripTC.stringValue
+                    + debugRoundTripTC.stringValue()
                     + " read back from real time position."
                 messages.append(errorString)
             }

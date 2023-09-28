@@ -49,9 +49,9 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
         XCTAssertEqual(
             sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(TCC(h: 0, m: 59, s: 55, f: 00), at: ._23_976)
+            try ProTools.formTimecode(.init(h: 0, m: 59, s: 55, f: 00), at: .fps23_976)
         )
-        XCTAssertEqual(sessionInfo.main.frameRate,         ._23_976)
+        XCTAssertEqual(sessionInfo.main.frameRate,         .fps23_976)
         XCTAssertEqual(sessionInfo.main.audioTrackCount,   0)
         XCTAssertEqual(sessionInfo.main.audioClipCount,    0)
         XCTAssertEqual(sessionInfo.main.audioFileCount,    0)
@@ -90,7 +90,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker1.number,             1)
         XCTAssertEqual(
             marker1.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 00, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 00, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker1.timeReference,      .samples(240240))
         XCTAssertEqual(marker1.name,               "Marker Name\nWith New Line")
@@ -100,7 +100,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker2.number,             2)
         XCTAssertEqual(
             marker2.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 01, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 01, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker2.timeReference,      .samples(288288))
         XCTAssertEqual(marker2.name,               "Normal Marker Name")
@@ -110,7 +110,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker3.number,             3)
         XCTAssertEqual(
             marker3.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 02, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 02, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker3.timeReference,      .samples(336336))
         XCTAssertEqual(marker3.name,               "Marker Name Again\nWith New Line Again")
@@ -120,7 +120,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker4.number,             4)
         XCTAssertEqual(
             marker4.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 03, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 03, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker4.timeReference,      .samples(384384))
         XCTAssertEqual(marker4.name,               "Normal Marker Name Again")
@@ -130,7 +130,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker5.number,             5)
         XCTAssertEqual(
             marker5.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 04, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 04, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker5.timeReference,      .samples(432432))
         XCTExpectFailure("No reasonable way to parse tabs in this manner.") // ⚠️
@@ -142,7 +142,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker6.number,             6)
         XCTAssertEqual(
             marker6.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 05, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 05, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker6.timeReference,      .samples(480480))
         XCTAssertEqual(marker6.name,               "Normal Marker Name")
@@ -152,7 +152,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker7.number,             7)
         XCTAssertEqual(
             marker7.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 06, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 06, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker7.timeReference,      .samples(528528))
         XCTExpectFailure("No reasonable way to parse tabs in this manner.") // ⚠️
@@ -164,7 +164,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker8.number,             8)
         XCTAssertEqual(
             marker8.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 07, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 07, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker8.timeReference,      .samples(576576))
         XCTExpectFailure("No reasonable way to parse tabs in this manner.") // ⚠️
@@ -176,7 +176,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker9.number,             9)
         XCTAssertEqual(
             marker9.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 08, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 08, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker9.timeReference,      .samples(624624))
         XCTAssertEqual(marker9.name,               "Normal Marker Name")
@@ -186,7 +186,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker10.number,            10)
         XCTAssertEqual(
             marker10.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 09, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 09, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker10.timeReference,     .samples(672672))
         XCTExpectFailure("No reasonable way to parse tabs in this manner.") // ⚠️
@@ -198,7 +198,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker11.number,            11)
         XCTAssertEqual(
             marker11.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 10, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 10, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker11.timeReference,     .samples(720720))
         XCTExpectFailure("No reasonable way to parse tabs in this manner.") // ⚠️
@@ -210,7 +210,7 @@ class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
         XCTAssertEqual(marker12.number,            12)
         XCTAssertEqual(
             marker12.location,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 11, f: 00), at: ._23_976))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 11, f: 00), at: .fps23_976))
         )
         XCTAssertEqual(marker12.timeReference,     .samples(768768))
         XCTExpectFailure("No reasonable way to parse tabs in this manner.") // ⚠️

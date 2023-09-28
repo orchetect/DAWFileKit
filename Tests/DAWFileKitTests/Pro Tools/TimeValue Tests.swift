@@ -17,68 +17,68 @@ class ProTools_TimeValueTests: XCTestCase {
     
     func testFormTimeValue_Timecode() throws {
         // empty
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "", at: ._30))
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: " ", at: ._30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "", at: .fps30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: " ", at: .fps30))
         
         // -- subframes not enabled --
         // non-drop
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "00:00:00:00", at: ._30),
-            .timecode(try! "00:00:00:00".toTimecode(at: ._30))
+            try PTSI.formTimeValue(timecodeString: "00:00:00:00", at: .fps30),
+            .timecode(try Timecode(.string("00:00:00:00"), at: .fps30))
         )
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "01:23:45:10", at: ._30),
-            .timecode(try! "01:23:45:10".toTimecode(at: ._30))
+            try PTSI.formTimeValue(timecodeString: "01:23:45:10", at: .fps30),
+            .timecode(try Timecode(.string("01:23:45:10"), at: .fps30))
         )
         // drop-frame
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "00:00:00;00", at: ._29_97_drop),
-            .timecode(try! "00:00:00;00".toTimecode(at: ._29_97_drop))
+            try PTSI.formTimeValue(timecodeString: "00:00:00;00", at: .fps29_97d),
+            .timecode(try Timecode(.string("00:00:00;00"), at: .fps29_97d))
         )
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "01:23:45;10", at: ._29_97_drop),
-            .timecode(try! "01:23:45;10".toTimecode(at: ._29_97_drop))
+            try PTSI.formTimeValue(timecodeString: "01:23:45;10", at: .fps29_97d),
+            .timecode(try Timecode(.string("01:23:45;10"), at: .fps29_97d))
         )
         
         // -- subframes enabled --
         // non-drop
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "00:00:00:00.00", at: ._30),
-            .timecode(try! "00:00:00:00.00".toTimecode(at: ._30))
+            try PTSI.formTimeValue(timecodeString: "00:00:00:00.00", at: .fps30),
+            .timecode(try Timecode(.string("00:00:00:00.00"), at: .fps30))
         )
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "01:23:45:10.23", at: ._30),
-            .timecode(try! "01:23:45:10.23".toTimecode(at: ._30))
+            try PTSI.formTimeValue(timecodeString: "01:23:45:10.23", at: .fps30),
+            .timecode(try Timecode(.string("01:23:45:10.23"), at: .fps30))
         )
         // drop-frame
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "00:00:00;00.00", at: ._29_97_drop),
-            .timecode(try! "00:00:00;00.00".toTimecode(at: ._29_97_drop))
+            try PTSI.formTimeValue(timecodeString: "00:00:00;00.00", at: .fps29_97d),
+            .timecode(try Timecode(.string("00:00:00;00.00"), at: .fps29_97d))
         )
         XCTAssertEqual(
-            try PTSI.formTimeValue(timecodeString: "01:23:45;10.23", at: ._29_97_drop),
-            .timecode(try! "01:23:45;10.23".toTimecode(at: ._29_97_drop))
+            try PTSI.formTimeValue(timecodeString: "01:23:45;10.23", at: .fps29_97d),
+            .timecode(try Timecode(.string("01:23:45;10.23"), at: .fps29_97d))
         )
         
         // malformed
         // * - the non-throwing lines below are valid in TimecodeKit but are not valid
         //     in a Pro Tools session info text file, however this is not an error condition
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: ":::", at: ._30))
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: ":::.", at: ._30))
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00.00", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "000:00:00:00", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "000:00:00:00.00", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00:00", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00:00.00", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "00:00:00:00.", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "00:00:00:00.0", at: ._30)) // *
-        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "00:00:00:00.000", at: ._30)) // *
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "AB:00:00:00", at: ._30))
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "AB:00:00:00.00", at: ._30))
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "0.00.00.00", at: ._30))
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "00.00.00.00", at: ._30))
-        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "00.00.00.00.00", at: ._30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: ":::", at: .fps30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: ":::.", at: .fps30))
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00.00", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "000:00:00:00", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "000:00:00:00.00", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00:00", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "0:00:00:00:00.00", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "00:00:00:00.", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "00:00:00:00.0", at: .fps30)) // *
+        XCTAssertNoThrow(try PTSI.formTimeValue(timecodeString: "00:00:00:00.000", at: .fps30)) // *
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "AB:00:00:00", at: .fps30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "AB:00:00:00.00", at: .fps30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "0.00.00.00", at: .fps30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "00.00.00.00", at: .fps30))
+        XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: "00.00.00.00.00", at: .fps30))
     }
     
     func testFormTimeValue_MinSecs() throws {

@@ -28,7 +28,7 @@ extension Array where Element == ProTools.SessionInfo.Marker {
         originalFrameRate: TimecodeFrameRate
     ) -> [DAWMarker] {
         // PT uses 100 subframes
-        let subFramesBase: Timecode.SubFramesBase = ._100SubFrames
+        let subFramesBase: Timecode.SubFramesBase = .max100SubFrames
         
         // init array so we can append to it
         var markers: [DAWMarker] = []
@@ -40,7 +40,7 @@ extension Array where Element == ProTools.SessionInfo.Marker {
             else { continue }
             
             let storage = DAWMarker.Storage(
-                value: .timecodeString(tc.stringValue),
+                value: .timecodeString(tc.stringValue(format: ProTools.timecodeStringFormat)),
                 frameRate: originalFrameRate,
                 base: subFramesBase
             )

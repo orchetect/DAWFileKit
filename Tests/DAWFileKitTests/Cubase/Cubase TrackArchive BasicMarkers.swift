@@ -41,18 +41,18 @@ class Cubase_TrackArchive_BasicMarkers: XCTestCase {
         // ---- main ----
         
         // frame rate
-        XCTAssertEqual(trackArchive.main.frameRate, ._23_976)
+        XCTAssertEqual(trackArchive.main.frameRate, .fps23_976)
         
         // start timecode
         XCTAssertEqual(
             trackArchive.main.startTimecode?.components,
-            TCC(d: 0, h: 00, m: 59, s: 59, f: 10, sf: 19)
+            .init(d: 0, h: 00, m: 59, s: 59, f: 10, sf: 19)
         )
         
         // length timecode
         XCTAssertEqual(
             trackArchive.main.lengthTimecode?.components,
-            TCC(d: 0, h: 00, m: 05, s: 00, f: 00, sf: 00)
+            .init(d: 0, h: 00, m: 05, s: 00, f: 00, sf: 00)
         )
         
         // TimeType - not implemented yet
@@ -112,13 +112,13 @@ class Cubase_TrackArchive_BasicMarkers: XCTestCase {
         
         XCTAssertEqual(
             track1event1?.startTimecode.components,
-            TCC(d: 0, h: 01, m: 00, s: 01, f: 12, sf: 22)
+            .init(d: 0, h: 01, m: 00, s: 01, f: 12, sf: 22)
         )
         // Cubase project displays 00:00:02:02.03 as the cycle marker length
         // but our calculations get 00:00:02:02.02
         XCTAssertEqual(
             track1event1?.lengthTimecode.components,
-            TCC(d: 0, h: 00, m: 00, s: 02, f: 02, sf: 02)
+            .init(d: 0, h: 00, m: 00, s: 02, f: 02, sf: 02)
         )
         
         // track 2 - musical mode
@@ -135,13 +135,13 @@ class Cubase_TrackArchive_BasicMarkers: XCTestCase {
         
         XCTAssertEqual(
             track2event1?.startTimecode.components,
-            TCC(d: 0, h: 01, m: 00, s: 03, f: 14, sf: 25)
+            .init(d: 0, h: 01, m: 00, s: 03, f: 14, sf: 25)
         )
         // Cubase project displays 00:00:02:02.03 as the cycle marker length
         // but our calculations get 00:00:02:02.02
         XCTAssertEqual(
             track2event1?.lengthTimecode.components,
-            TCC(d: 0, h: 00, m: 00, s: 02, f: 02, sf: 02)
+            .init(d: 0, h: 00, m: 00, s: 02, f: 02, sf: 02)
         )
         
         // track 3 - linear mode (absolute time)
@@ -157,7 +157,7 @@ class Cubase_TrackArchive_BasicMarkers: XCTestCase {
         XCTAssertEqual(track3event1?.name, "Marker at One Hour")
         XCTAssertEqual(
             track3event1?.startTimecode.components,
-            TCC(d: 0, h: 01, m: 00, s: 00, f: 00, sf: 00)
+            .init(d: 0, h: 01, m: 00, s: 00, f: 00, sf: 00)
         )
     }
 }

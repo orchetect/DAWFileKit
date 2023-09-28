@@ -77,7 +77,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         let project = projects[0]
         XCTAssertEqual(project.name, "Test Project")
-        XCTAssertEqual(project.startTimecode, try Timecode(Fraction(0, 1), at: ._29_97, base: ._80SubFrames))
+        XCTAssertEqual(project.startTimecode, try Timecode(.rational(0, 1), at: .fps29_97, base: .max80SubFrames))
         
         // sequences
         
@@ -89,10 +89,10 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // <sequence format="r1" duration="1920919/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.startTimecode, try TCC().toTimecode(at: ._29_97, base: ._80SubFrames))
-        XCTAssertEqual(sequence.startTimecode.frameRate, ._29_97)
-        XCTAssertEqual(sequence.startTimecode.subFramesBase, ._80SubFrames)
-        XCTAssertEqual(sequence.duration, try TCC(h: 00, m: 01, s: 03, f: 29).toTimecode(at: ._29_97, base: ._80SubFrames))
+        XCTAssertEqual(sequence.startTimecode, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(sequence.startTimecode.frameRate, .fps29_97)
+        XCTAssertEqual(sequence.startTimecode.subFramesBase, .max80SubFrames)
+        XCTAssertEqual(sequence.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -106,13 +106,13 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // <title ref="r2" offset="0s" name="Basic Title" start="108108000/30000s" duration="1920919/30000s">
         XCTAssertEqual(clip.ref, "r2")
-        XCTAssertEqual(clip.offset, try TCC().toTimecode(at: ._29_97, base: ._80SubFrames))
-        XCTAssertEqual(clip.offset.frameRate, ._29_97)
+        XCTAssertEqual(clip.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(clip.offset.frameRate, .fps29_97)
         XCTAssertEqual(clip.name, "Basic Title")
-        XCTAssertEqual(clip.start, try TCC(h: 1).toTimecode(at: ._29_97, base: ._80SubFrames))
-        XCTAssertEqual(clip.start.frameRate, ._29_97)
-        XCTAssertEqual(clip.duration, try TCC(h: 00, m: 01, s: 03, f: 29).toTimecode(at: ._29_97, base: ._80SubFrames))
-        XCTAssertEqual(clip.duration.frameRate, ._29_97)
+        XCTAssertEqual(clip.start, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(clip.start.frameRate, .fps29_97)
+        XCTAssertEqual(clip.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(clip.duration.frameRate, .fps29_97)
         
         // markers
         
@@ -123,8 +123,8 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // <marker start="27248221/7500s" duration="1001/30000s" value="Standard Marker" note="some notes here"/>
         let expectedMarker0 = FinalCutPro.FCPXML.Marker(
             name: "Standard Marker",
-            start: try TCC(h: 01, m: 00, s: 29, f: 14).toTimecode(at: ._29_97, base: ._80SubFrames),
-            duration: try TCC(f: 1).toTimecode(at: ._29_97, base: ._80SubFrames),
+            start: try Timecode(.components(h: 01, m: 00, s: 29, f: 14), at: .fps29_97, base: .max80SubFrames),
+            duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
             note: "some notes here",
             metaData: .standard
         )
@@ -133,8 +133,8 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
         let expectedMarker1 = FinalCutPro.FCPXML.Marker(
             name: "To Do Marker, Incomplete",
-            start: try TCC(h: 01, m: 00, s: 29, f: 15).toTimecode(at: ._29_97, base: ._80SubFrames),
-            duration: try TCC(f: 1).toTimecode(at: ._29_97, base: ._80SubFrames),
+            start: try Timecode(.components(h: 01, m: 00, s: 29, f: 15), at: .fps29_97, base: .max80SubFrames),
+            duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
             note: "more notes here",
             metaData: .toDo(completed: false)
         )
@@ -143,8 +143,8 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yay"/>
         let expectedMarker2 = FinalCutPro.FCPXML.Marker(
             name: "To Do Marker, Completed",
-            start: try TCC(h: 01, m: 00, s: 29, f: 16).toTimecode(at: ._29_97, base: ._80SubFrames),
-            duration: try TCC(f: 1).toTimecode(at: ._29_97, base: ._80SubFrames),
+            start: try Timecode(.components(h: 01, m: 00, s: 29, f: 16), at: .fps29_97, base: .max80SubFrames),
+            duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
             note: "notes yay",
             metaData: .toDo(completed: true)
         )
@@ -153,10 +153,10 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // <chapter-marker start="108995887/30000s" duration="1001/30000s" value="Chapter Marker" posterOffset="11/30s"/>
         let expectedMarker3 = FinalCutPro.FCPXML.Marker(
             name: "Chapter Marker",
-            start: try TCC(h: 01, m: 00, s: 29, f: 17).toTimecode(at: ._29_97, base: ._80SubFrames),
-            duration: try TCC(f: 1).toTimecode(at: ._29_97),
+            start: try Timecode(.components(h: 01, m: 00, s: 29, f: 17), at: .fps29_97, base: .max80SubFrames),
+            duration: try Timecode(.components(f: 1), at: .fps29_97),
             note: "",
-            metaData: .chapter(posterOffset: .init(try TCC(f: 10, sf: 79).toTimecode(at: ._29_97, base: ._80SubFrames)))
+            metaData: .chapter(posterOffset: .init(try Timecode(.components(f: 10, sf: 79), at: .fps29_97, base: .max80SubFrames)))
         )
         XCTAssertEqual(markers[3], expectedMarker3)
     }

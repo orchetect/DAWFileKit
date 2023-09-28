@@ -62,7 +62,7 @@ extension Array where Element == CubaseTrackArchiveMarker {
         originalFrameRate: TimecodeFrameRate
     ) -> [DAWMarker] {
         // Cubase uses 80 subframes
-        let subFramesBase: Timecode.SubFramesBase = ._80SubFrames
+        let subFramesBase: Timecode.SubFramesBase = .max80SubFrames
         
         // init array so we can append to it
         var markers: [DAWMarker] = []
@@ -86,7 +86,7 @@ extension Array where Element == CubaseTrackArchiveMarker {
                 markers.append(newMarker)
             } else {
                 let storage = DAWMarker.Storage(
-                    value: .timecodeString(tc.stringValue),
+                    value: .timecodeString(tc.stringValue(format: Cubase.timecodeStringFormat)),
                     frameRate: originalFrameRate,
                     base: subFramesBase
                 )

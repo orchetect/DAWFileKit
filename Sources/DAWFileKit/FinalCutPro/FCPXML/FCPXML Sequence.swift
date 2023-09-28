@@ -66,7 +66,7 @@ extension FinalCutPro.FCPXML.Sequence {
             startTimecode = tc
         } else {
             print("Error: tcStart could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            startTimecode = FinalCutPro.formTimecode(at: ._30)
+            startTimecode = FinalCutPro.formTimecode(at: .fps30)
         }
         
         // "duration"
@@ -81,7 +81,7 @@ extension FinalCutPro.FCPXML.Sequence {
             duration = tc
         } else {
             print("Error: duration could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            duration = FinalCutPro.formTimecode(at: ._30)
+            duration = FinalCutPro.formTimecode(at: .fps30)
         }
         
         // "audioLayout"
@@ -145,7 +145,7 @@ extension FinalCutPro.FCPXML.Sequence {
             return fr
         } else {
             print("Error: Could not determine frame rate. Defaulting to 30fps.")
-            return ._30
+            return .fps30
         }
     }
 }

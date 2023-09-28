@@ -46,30 +46,25 @@ class Cubase_TrackArchive_RoundingTest: XCTestCase {
         XCTAssertNotNil(track1)
         XCTAssertEqual(track1?.events.count, 4)
         
-        var track1event1 = track1?.events[safe: 0] as? Cubase.TrackArchive.Marker
-        var track1event2 = track1?.events[safe: 1] as? Cubase.TrackArchive.Marker
-        var track1event3 = track1?.events[safe: 2] as? Cubase.TrackArchive.Marker
-        var track1event4 = track1?.events[safe: 3] as? Cubase.TrackArchive.Marker
-        
-        track1event1?.startTimecode.stringFormat = [.showSubFrames]
-        track1event2?.startTimecode.stringFormat = [.showSubFrames]
-        track1event3?.startTimecode.stringFormat = [.showSubFrames]
-        track1event4?.startTimecode.stringFormat = [.showSubFrames]
+        let track1event1 = track1?.events[safe: 0] as? Cubase.TrackArchive.Marker
+        let track1event2 = track1?.events[safe: 1] as? Cubase.TrackArchive.Marker
+        let track1event3 = track1?.events[safe: 2] as? Cubase.TrackArchive.Marker
+        let track1event4 = track1?.events[safe: 3] as? Cubase.TrackArchive.Marker
         
         XCTAssertEqual(
-            track1event1?.startTimecode.stringValue,
+            track1event1?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:01:29.00"
         ) // as displayed in Cubase
         XCTAssertEqual(
-            track1event2?.startTimecode.stringValue,
+            track1event2?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:01:29.78"
         ) // as displayed in Cubase
         XCTAssertEqual(
-            track1event3?.startTimecode.stringValue,
+            track1event3?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:01:29.79"
         ) // as displayed in Cubase
         XCTAssertEqual(
-            track1event4?.startTimecode.stringValue,
+            track1event4?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:02:00.00"
         ) // as displayed in Cubase
         
@@ -79,30 +74,25 @@ class Cubase_TrackArchive_RoundingTest: XCTestCase {
         XCTAssertNotNil(track2)
         XCTAssertEqual(track2?.events.count, 4)
         
-        var track2event1 = track2?.events[safe: 0] as? Cubase.TrackArchive.Marker
-        var track2event2 = track2?.events[safe: 1] as? Cubase.TrackArchive.Marker
-        var track2event3 = track2?.events[safe: 2] as? Cubase.TrackArchive.Marker
-        var track2event4 = track2?.events[safe: 3] as? Cubase.TrackArchive.Marker
-        
-        track2event1?.startTimecode.stringFormat = [.showSubFrames]
-        track2event2?.startTimecode.stringFormat = [.showSubFrames]
-        track2event3?.startTimecode.stringFormat = [.showSubFrames]
-        track2event4?.startTimecode.stringFormat = [.showSubFrames]
+        let track2event1 = track2?.events[safe: 0] as? Cubase.TrackArchive.Marker
+        let track2event2 = track2?.events[safe: 1] as? Cubase.TrackArchive.Marker
+        let track2event3 = track2?.events[safe: 2] as? Cubase.TrackArchive.Marker
+        let track2event4 = track2?.events[safe: 3] as? Cubase.TrackArchive.Marker
         
         XCTAssertEqual(
-            track2event1?.startTimecode.stringValue,
+            track2event1?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:01:29.00"
         ) // as displayed in Cubase
         XCTAssertEqual(
-            track2event2?.startTimecode.stringValue,
+            track2event2?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:01:29.78"
         ) // as displayed in Cubase
         XCTAssertEqual(
-            track2event3?.startTimecode.stringValue,
+            track2event3?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:01:29.79"
         ) // as displayed in Cubase
         XCTAssertEqual(
-            track2event4?.startTimecode.stringValue,
+            track2event4?.startTimecode.stringValue(format: [.showSubFrames]),
             "01:00:02:00.00"
         ) // as displayed in Cubase
     }

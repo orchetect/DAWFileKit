@@ -12,18 +12,18 @@ extension DAWMarker {
     /// effective timecode by converting frame rates if necessary.
     public func resolvedTimecode(
         at newFrameRate: TimecodeFrameRate,
-        limit: Timecode.UpperLimit,
-        base: Timecode.SubFramesBase
+        base: Timecode.SubFramesBase,
+        limit: Timecode.UpperLimit
     ) -> Timecode? {
         switch timeStorage?.value {
         case let .realTime(time):
             // if storage is real time, we can form timecode without any additional information
             
             let timecode = try? Timecode(
-                realTime: time,
+                .realTime(seconds: time),
                 at: newFrameRate,
-                limit: limit,
-                base: base
+                base: base,
+                limit: limit
             )
             
             return timecode
@@ -35,10 +35,10 @@ extension DAWMarker {
             let usingFrameRate = timeStorage?.frameRate ?? newFrameRate
             
             var timecode = try? Timecode(
-                string,
+                .string(string),
                 at: usingFrameRate,
-                limit: limit,
-                base: base
+                base: base,
+                limit: limit
             )
             
             // if frame rates differ, convert
@@ -48,10 +48,10 @@ extension DAWMarker {
                newFrameRate != timeStorage?.frameRate
             {
                 timecode = try? Timecode(
-                    realTime: timecode!.realTimeValue,
+                    .realTime(seconds: timecode!.realTimeValue),
                     at: newFrameRate,
-                    limit: limit,
-                    base: base
+                    base: base,
+                    limit: limit
                 )
             }
             
@@ -65,28 +65,28 @@ extension DAWMarker {
     /// Computed property, not cached.
     /// Returns a timecode object constructed from the `timeStorage` contents.
     public func originalTimecode(
-        limit: Timecode.UpperLimit,
-        base: Timecode.SubFramesBase
+        base: Timecode.SubFramesBase,
+        limit: Timecode.UpperLimit
     ) -> Timecode? {
         guard let timeStorage = timeStorage else { return nil }
         
         switch timeStorage.value {
         case let .realTime(time):
             let timecode = try? Timecode(
-                realTime: time,
+                .realTime(seconds: time),
                 at: timeStorage.frameRate,
-                limit: limit,
-                base: base
+                base: base,
+                limit: limit
             )
             
             return timecode
             
         case let .timecodeString(string):
             let timecode = try? Timecode(
-                string,
+                .string(string),
                 at: timeStorage.frameRate,
-                limit: limit,
-                base: base
+                base: base,
+                limit: limit
             )
             
             return timecode

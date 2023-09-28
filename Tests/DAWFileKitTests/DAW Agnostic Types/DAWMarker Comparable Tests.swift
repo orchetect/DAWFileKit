@@ -16,14 +16,14 @@ class DAWMarkerComparable_Tests: XCTestCase {
     
     /// For comparison with the context of a timeline that is != 00:00:00:00
     func testCompareTo() throws {
-        let frameRate: TimecodeFrameRate = ._24
+        let frameRate: TimecodeFrameRate = .fps24
         
         func dawMarker(_ string: String) -> DAWMarker {
             DAWMarker(
                 storage: .init(
                     value: .timecodeString(string),
                     frameRate: frameRate,
-                    base: ._80SubFrames
+                    base: .max80SubFrames
                 ),
                 name: "Name",
                 comment: nil
@@ -31,7 +31,7 @@ class DAWMarkerComparable_Tests: XCTestCase {
         }
         
         func tc(_ string: String) throws -> Timecode {
-            try string.toTimecode(at: frameRate)
+            try Timecode(.string(string), at: frameRate)
         }
         
         // orderedSame (==)
@@ -138,14 +138,14 @@ class DAWMarkerComparable_Tests: XCTestCase {
     }
     
     func testCollection_isSorted() throws {
-        let frameRate: TimecodeFrameRate = ._24
+        let frameRate: TimecodeFrameRate = .fps24
         
         func dawMarker(_ string: String) -> DAWMarker {
             DAWMarker(
                 storage: .init(
                     value: .timecodeString(string),
                     frameRate: frameRate,
-                    base: ._80SubFrames
+                    base: .max80SubFrames
                 ),
                 name: "Name",
                 comment: nil
@@ -153,7 +153,7 @@ class DAWMarkerComparable_Tests: XCTestCase {
         }
         
         func tc(_ string: String) throws -> Timecode {
-            try string.toTimecode(at: frameRate)
+            try Timecode(.string(string), at: frameRate)
         }
         
         XCTAssertEqual(

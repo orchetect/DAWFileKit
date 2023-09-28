@@ -15,26 +15,25 @@ public enum Cubase {
     
     /// `Timecode` setting for `.subFramesBase`.
     /// Cubase uses 80 subframes per frame.
-    public static let timecodeSubFramesBase: Timecode.SubFramesBase = ._80SubFrames
+    public static let timecodeSubFramesBase: Timecode.SubFramesBase = .max80SubFrames
     
     /// `Timecode` setting for `.upperLimit`.
     /// Cubase allows for up to 100 days, not confined to a 24-hour SMPTE timecode clock.
-    public static let timecodeUpperLimit: Timecode.UpperLimit = ._100days
+    public static let timecodeUpperLimit: Timecode.UpperLimit = .max100Days
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
     
     /// `Timecode` struct template.
     public static func formTimecode(
-        realTime: Double,
+        realTime: TimeInterval,
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            realTime: realTime,
+            .realTime(seconds: realTime),
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
 }

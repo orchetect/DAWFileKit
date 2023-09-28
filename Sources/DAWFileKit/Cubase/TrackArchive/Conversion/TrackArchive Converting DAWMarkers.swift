@@ -99,8 +99,8 @@ extension DAWMarker {
         
         guard let startTC = try? resolvedTimecode(
             at: frameRate,
-            limit: upperLimit,
-            base: subFramesBase
+            base: subFramesBase,
+            limit: upperLimit
         )?
             .subtracting(startTimecode.components)
         else {

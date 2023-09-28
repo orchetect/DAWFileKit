@@ -9,8 +9,8 @@ import TimecodeKit
 
 extension DAWMarker: Equatable {
     public static func == (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
-        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: ._100days),
-              let rhsTC = rhs.convertToTimecodeForComparison(limit: ._100days)
+        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: .max100Days),
+              let rhsTC = rhs.convertToTimecodeForComparison(limit: .max100Days)
         else { return false }
         
         return lhsTC == rhsTC
@@ -21,8 +21,8 @@ extension DAWMarker: Comparable {
     // useful for sorting markers or comparing markers chronologically
     // this is purely linear, and does not consider 24-hour wrap around.
     public static func < (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
-        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: ._100days),
-              let rhsTC = rhs.convertToTimecodeForComparison(limit: ._100days)
+        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: .max100Days),
+              let rhsTC = rhs.convertToTimecodeForComparison(limit: .max100Days)
         else { return false }
         
         return lhsTC < rhsTC
@@ -59,7 +59,7 @@ extension DAWMarker {
     /// Note that passing `timelineStart` of `nil` or zero (00:00:00:00) is the same as using the
     /// standard  `<`, `==`, or  `>` operators as a sort comparator.
     public func compare(to other: DAWMarker, timelineStart: Timecode? = nil) -> ComparisonResult? {
-        let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? ._24hours
+        let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? .max24Hours
         
         guard let lhsTC = convertToTimecodeForComparison(limit: limit),
               let rhsTC = other.convertToTimecodeForComparison(limit: limit)
@@ -106,7 +106,7 @@ extension Collection where Element == DAWMarker {
                          timelineStart: Timecode? = nil) -> Bool? {
         guard count > 1 else { return true }
         
-        let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? ._24hours
+        let limit: Timecode.UpperLimit = timelineStart?.upperLimit ?? .max24Hours
         let timecodes = compactMap { $0.convertToTimecodeForComparison(limit: limit) }
         
         // if any markers failed to convert to timecode, abort
@@ -205,8 +205,8 @@ where Element == DAWMarker,
 extension DAWMarker {
     fileprivate func convertToTimecodeForComparison(limit: Timecode.UpperLimit) -> Timecode? {
         originalTimecode(
-            limit: limit,
-            base: timeStorage?.base ?? ._80SubFrames
+            base: timeStorage?.base ?? .max80SubFrames,
+            limit: limit
         )
     }
 }

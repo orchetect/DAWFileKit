@@ -120,7 +120,7 @@ extension FinalCutPro.FCPXML.Marker {
             start = tc
         } else {
             print("Error: start could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            start = FinalCutPro.formTimecode(at: ._30)
+            start = FinalCutPro.formTimecode(at: .fps30)
         }
         
         // "duration"
@@ -133,7 +133,7 @@ extension FinalCutPro.FCPXML.Marker {
             duration = tc
         } else {
             print("Error: duration could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            duration = FinalCutPro.formTimecode(at: ._30)
+            duration = FinalCutPro.formTimecode(at: .fps30)
         }
         
         // "value" // marker name
@@ -168,7 +168,7 @@ extension FinalCutPro.FCPXML.Marker {
                 metaData = .chapter(posterOffset: tc)
             } else {
                 print("Error: posterOffset could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-                metaData = .chapter(posterOffset: FinalCutPro.formTimecodeInterval(at: ._30))
+                metaData = .chapter(posterOffset: FinalCutPro.formTimecodeInterval(at: .fps30))
             }
         }
     }

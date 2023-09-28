@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
             return tc
         } else {
             print("Error: \(attribute.rawValue) could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            return FinalCutPro.formTimecode(at: ._30)
+            return FinalCutPro.formTimecode(at: .fps30)
         }
     }
     

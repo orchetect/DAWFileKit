@@ -209,13 +209,13 @@ extension Collection where Element == CubaseTrackArchiveMarker {
             switch element {
             case let marker as Cubase.TrackArchive.Marker:
                 outputString += "\(marker.name)".tabbed
-                    + marker.startTimecode.stringValue
+                    + marker.startTimecode.stringValue(format: Cubase.timecodeStringFormat)
                     .newLined
                 
             case let marker as Cubase.TrackArchive.CycleMarker:
                 outputString += "\(marker.name)".tabbed
-                    + marker.startTimecode.stringValue.tabbed
-                    + marker.lengthTimecode.stringValue
+                    + marker.startTimecode.stringValue(format: Cubase.timecodeStringFormat).tabbed
+                    + marker.lengthTimecode.stringValue(format: Cubase.timecodeStringFormat)
                     .newLined
                 
             default:

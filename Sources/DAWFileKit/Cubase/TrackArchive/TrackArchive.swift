@@ -46,17 +46,17 @@ extension Cubase.TrackArchive {
     /// Frame rates and their numeric identifier as stored in the XML.
     internal static var frameRateTable: [Int: TimecodeFrameRate] =
         [
-            02: ._24,
-            03: ._25,
-            04: ._29_97,
-            05: ._30,
-            06: ._29_97_drop,
-            07: ._30_drop,
-            12: ._23_976,
-            13: ._24_98,
-            14: ._50,
-            15: ._59_94,
-            16: ._60
+            02: .fps24,
+            03: .fps25,
+            04: .fps29_97,
+            05: .fps30,
+            06: .fps29_97d,
+            07: .fps30d,
+            12: .fps23_976,
+            13: .fps24_98,
+            14: .fps50,
+            15: .fps59_94,
+            16: .fps60
         ]
     
     internal static var trackTypeTable: [String: CubaseTrackArchiveTrack.Type] = [

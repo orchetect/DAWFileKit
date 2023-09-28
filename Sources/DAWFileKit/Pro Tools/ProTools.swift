@@ -11,11 +11,11 @@ import TimecodeKit
 public enum ProTools {
     /// `Timecode` setting for `.subFramesBase`.
     /// Pro Tools uses 100 subframes per frame.
-    public static let timecodeSubFramesBase: Timecode.SubFramesBase = ._100SubFrames
+    public static let timecodeSubFramesBase: Timecode.SubFramesBase = .max100SubFrames
     
     /// `Timecode` setting for `.upperLimit`.
     /// Pro Tools uses a 24-hour SMPTE timecode clock.
-    public static let timecodeUpperLimit: Timecode.UpperLimit = ._24hours
+    public static let timecodeUpperLimit: Timecode.UpperLimit = .max24Hours
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
@@ -26,11 +26,10 @@ public enum ProTools {
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            exactly,
+            .components(exactly),
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
     
@@ -40,25 +39,23 @@ public enum ProTools {
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            exactly,
+            .string(exactly),
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
     
     /// `Timecode` struct template.
     public static func formTimecode(
-        realTimeValue: Double,
+        realTimeValue: TimeInterval,
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            realTime: realTimeValue,
+            .realTime(seconds: realTimeValue),
             at: rate,
-            limit: timecodeUpperLimit,
             base: timecodeSubFramesBase,
-            format: timecodeStringFormat
+            limit: timecodeUpperLimit
         )
     }
 }

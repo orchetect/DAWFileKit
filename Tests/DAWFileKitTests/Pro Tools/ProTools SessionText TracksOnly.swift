@@ -49,9 +49,9 @@ class ProTools_SessionText_TracksOnly: XCTestCase {
         XCTAssertEqual(sessionInfo.main.bitDepth,          "24-bit")
         XCTAssertEqual(
             sessionInfo.main.startTimecode,
-            try ProTools.formTimecode(TCC(h: 0, m: 59, s: 50, f: 00), at: ._24)
+            try ProTools.formTimecode(.init(h: 0, m: 59, s: 50, f: 00), at: .fps24)
         )
-        XCTAssertEqual(sessionInfo.main.frameRate,         ._24)
+        XCTAssertEqual(sessionInfo.main.frameRate,         .fps24)
         XCTAssertEqual(sessionInfo.main.audioTrackCount,   163)
         XCTAssertEqual(sessionInfo.main.audioClipCount,    1541)
         XCTAssertEqual(sessionInfo.main.audioFileCount,    247)
@@ -97,15 +97,15 @@ class ProTools_SessionText_TracksOnly: XCTestCase {
         XCTAssertEqual(track1clip1.name,          "Warm Day in the City")
         XCTAssertEqual(
             track1clip1.startTime,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 00, s: 15, f: 06), at: ._24))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 00, s: 15, f: 06), at: .fps24))
         )
         XCTAssertEqual(
             track1clip1.endTime,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 01, s: 05, f: 13), at: ._24))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 01, s: 05, f: 13), at: .fps24))
         )
         XCTAssertEqual(
             track1clip1.duration,
-            .timecode(try ProTools.formTimecode(TCC(h: 00, m: 00, s: 50, f: 07), at: ._24))
+            .timecode(try ProTools.formTimecode(.init(h: 00, m: 00, s: 50, f: 07), at: .fps24))
         )
         XCTAssertEqual(track1clip1.state,         .unmuted)
         
@@ -116,15 +116,15 @@ class ProTools_SessionText_TracksOnly: XCTestCase {
         XCTAssertEqual(track1clip2.name,          "Happy Go Lucky")
         XCTAssertEqual(
             track1clip2.startTime,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 01, s: 05, f: 13), at: ._24))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 01, s: 05, f: 13), at: .fps24))
         )
         XCTAssertEqual(
             track1clip2.endTime,
-            .timecode(try ProTools.formTimecode(TCC(h: 01, m: 01, s: 57, f: 23), at: ._24))
+            .timecode(try ProTools.formTimecode(.init(h: 01, m: 01, s: 57, f: 23), at: .fps24))
         )
         XCTAssertEqual(
             track1clip2.duration,
-            .timecode(try ProTools.formTimecode(TCC(h: 00, m: 00, s: 52, f: 09), at: ._24))
+            .timecode(try ProTools.formTimecode(.init(h: 00, m: 00, s: 52, f: 09), at: .fps24))
         )
         XCTAssertEqual(track1clip2.state,         .unmuted)
         

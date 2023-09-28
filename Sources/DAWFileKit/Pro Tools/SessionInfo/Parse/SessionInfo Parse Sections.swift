@@ -45,25 +45,25 @@ extension ProTools.SessionInfo {
             
             // TIMECODE FORMAT
             switch section[4] {
-            case "23.976 Frame":      main.frameRate = ._23_976
-            case "24 Frame":          main.frameRate = ._24
-            case "25 Frame":          main.frameRate = ._25
-            case "29.97 Frame":       main.frameRate = ._29_97
-            case "29.97 Drop Frame":  main.frameRate = ._29_97_drop
-            case "30 Frame":          main.frameRate = ._30
-            case "30 Drop Frame":     main.frameRate = ._30_drop
-            case "47.952 Frame":      main.frameRate = ._47_952
-            case "48 Frame":          main.frameRate = ._48
-            case "50 Frame":          main.frameRate = ._50
-            case "59.94 Frame":       main.frameRate = ._59_94
-            case "59.94 Drop Frame":  main.frameRate = ._59_94_drop
-            case "60 Frame":          main.frameRate = ._60
-            case "60 Drop Frame":     main.frameRate = ._60_drop
-            case "100 Frame":         main.frameRate = ._100
-            case "119.88 Frame":      main.frameRate = ._119_88
-            case "119.88 Drop Frame": main.frameRate = ._119_88_drop
-            case "120 Frame":         main.frameRate = ._120
-            case "120 Drop Frame":    main.frameRate = ._120_drop
+            case "23.976 Frame":      main.frameRate = .fps23_976
+            case "24 Frame":          main.frameRate = .fps24
+            case "25 Frame":          main.frameRate = .fps25
+            case "29.97 Frame":       main.frameRate = .fps29_97
+            case "29.97 Drop Frame":  main.frameRate = .fps29_97d
+            case "30 Frame":          main.frameRate = .fps30
+            case "30 Drop Frame":     main.frameRate = .fps30d
+            case "47.952 Frame":      main.frameRate = .fps47_952
+            case "48 Frame":          main.frameRate = .fps48
+            case "50 Frame":          main.frameRate = .fps50
+            case "59.94 Frame":       main.frameRate = .fps59_94
+            case "59.94 Drop Frame":  main.frameRate = .fps59_94d
+            case "60 Frame":          main.frameRate = .fps60
+            case "60 Drop Frame":     main.frameRate = .fps60d
+            case "100 Frame":         main.frameRate = .fps100
+            case "119.88 Frame":      main.frameRate = .fps119_88
+            case "119.88 Drop Frame": main.frameRate = .fps119_88d
+            case "120 Frame":         main.frameRate = .fps120
+            case "120 Drop Frame":    main.frameRate = .fps120d
             default:
                 addParseMessage(.error(
                     "Parse: Header block: Found frame rate but not handled/recognized: \(section[4]). Parsing frame rate property as 'undefined'."
@@ -1044,7 +1044,7 @@ extension ProTools.SessionInfo {
                             }
                         } else {
                             // attempt to salvage the data by assuming a default frame rate of 30fps
-                            if let timecode = try? Timecode(rawValues: line.location, at: ._30) {
+                            if let timecode = try? Timecode(.string(line.location), at: .fps30, by: .allowingInvalid) {
                                 location = .timecode(timecode)
                                 addParseMessage(.error(
                                     "FYI: Could not validate timecode \(line.location.quoted) because file frame rate could not be determined."
