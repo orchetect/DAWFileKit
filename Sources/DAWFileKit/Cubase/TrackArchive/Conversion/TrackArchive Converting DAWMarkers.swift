@@ -17,7 +17,7 @@ extension Cubase.TrackArchive {
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
         includeComments: Bool,
-        separateCommentTrack: Bool = false
+        separateCommentsTrack: Bool = false
     ) {
         self.init()
         
@@ -37,7 +37,7 @@ extension Cubase.TrackArchive {
                 
                 // add comment to marker text, if comments are included and comments aren't destined
                 // for their own track
-                if includeComments, !separateCommentTrack,
+                if includeComments, !separateCommentsTrack,
                    let comment = marker.comment
                 {
                     name += " - " + comment
@@ -49,7 +49,7 @@ extension Cubase.TrackArchive {
         tracks?.append(markersTrack)
         
         // comments track
-        if includeComments, separateCommentTrack {
+        if includeComments, separateCommentsTrack {
             let commentsTrack = Self.buildTrack(
                 name: "Markers",
                 from: markers,
