@@ -164,7 +164,8 @@ extension MIDIFile {
             guard let markerTimecode = marker.resolvedTimecode(
                 at: frameRate,
                 base: subFramesBase,
-                limit: upperLimit
+                limit: upperLimit,
+                startTimecode: startTimecode
             ) else {
                 throw BuildError.general(
                     "Encountered an invalid timecode in the markers list."

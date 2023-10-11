@@ -96,14 +96,13 @@ extension DAWMarker {
         let upperLimit = startTimecode.upperLimit
         let subFramesBase = startTimecode.subFramesBase
         
-        guard let startTC = try? resolvedTimecode(
+        guard let markerTC = resolvedTimecode(
             at: frameRate,
             base: subFramesBase,
-            limit: upperLimit
-        )?
-            .subtracting(startTimecode.components)
-        else {
-            // logger.error("Could not resolve timecode.")
+            limit: upperLimit,
+            startTimecode: startTimecode
+        ) else {
+            assertionFailure("Could not resolve timecode.")
             return nil
         }
         
@@ -111,7 +110,7 @@ extension DAWMarker {
         
         return Cubase.TrackArchive.Marker(
             name: markerName,
-            startTimecode: startTC
+            startTimecode: markerTC
         )
     }
 }
@@ -123,13 +122,15 @@ extension Array where Element == DAWMarker {
         name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
     ) -> [Cubase.TrackArchive.Marker] {
         reduce(into: [Cubase.TrackArchive.Marker]()) { partialResult, marker in
-            if let converted = marker.convertToCubaseTrackArchiveXMLMarker(
+            guard let converted = marker.convertToCubaseTrackArchiveXMLMarker(
                 at: frameRate,
                 startTimecode: startTimecode,
                 name: nameBlock
-            ) {
-                partialResult.append(converted)
+            ) else {
+                assertionFailure("Could not convert marker.")
+                return
             }
+            partialResult.append(converted)
         }
     }
 }

@@ -73,7 +73,7 @@ extension Array where Element == CubaseTrackArchiveMarker {
             
             if marker.startRealTime != nil {
                 let storage = DAWMarker.Storage(
-                    value: .realTime(marker.startRealTime!),
+                    value: .realTime(relativeToStart: marker.startRealTime!),
                     frameRate: originalFrameRate,
                     base: subFramesBase
                 )
@@ -86,7 +86,7 @@ extension Array where Element == CubaseTrackArchiveMarker {
                 markers.append(newMarker)
             } else {
                 let storage = DAWMarker.Storage(
-                    value: .timecodeString(tc.stringValue(format: Cubase.timecodeStringFormat)),
+                    value: .timecodeString(absolute: tc.stringValue(format: Cubase.timecodeStringFormat)),
                     frameRate: originalFrameRate,
                     base: subFramesBase
                 )

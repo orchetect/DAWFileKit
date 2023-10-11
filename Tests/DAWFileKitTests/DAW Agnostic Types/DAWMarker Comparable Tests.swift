@@ -21,7 +21,7 @@ class DAWMarkerComparable_Tests: XCTestCase {
         func dawMarker(_ string: String) -> DAWMarker {
             DAWMarker(
                 storage: .init(
-                    value: .timecodeString(string),
+                    value: .timecodeString(absolute: string),
                     frameRate: frameRate,
                     base: .max80SubFrames
                 ),
@@ -143,7 +143,7 @@ class DAWMarkerComparable_Tests: XCTestCase {
         func dawMarker(_ string: String) -> DAWMarker {
             DAWMarker(
                 storage: .init(
-                    value: .timecodeString(string),
+                    value: .timecodeString(absolute: string),
                     frameRate: frameRate,
                     base: .max80SubFrames
                 ),

@@ -20,7 +20,7 @@ class DAWMarkerConversions_Tests: XCTestCase {
         
         let marker = DAWMarker(
             storage: .init(
-                value: .timecodeString("00:00:05:17"),
+                value: .timecodeString(absolute: "00:00:05:17"),
                 frameRate: .fps23_976,
                 base: sfBase
             ),
@@ -31,7 +31,8 @@ class DAWMarkerConversions_Tests: XCTestCase {
         let resolved = marker.resolvedTimecode(
             at: .fps23_976,
             base: sfBase,
-            limit: .max24Hours
+            limit: .max24Hours,
+            startTimecode: Timecode(.zero, at: .fps23_976)
         )!
         
         XCTAssertEqual(resolved.frameRate, .fps23_976)
@@ -48,7 +49,7 @@ class DAWMarkerConversions_Tests: XCTestCase {
         
         let marker = DAWMarker(
             storage: .init(
-                value: .timecodeString("00:00:09:09"),
+                value: .timecodeString(absolute: "00:00:09:09"),
                 frameRate: .fps23_976,
                 base: sfBase
             ),
@@ -59,7 +60,8 @@ class DAWMarkerConversions_Tests: XCTestCase {
         let resolved = marker.resolvedTimecode(
             at: .fps23_976,
             base: sfBase,
-            limit: .max24Hours
+            limit: .max24Hours,
+            startTimecode: Timecode(.zero, at: .fps23_976)
         )!
         
         XCTAssertEqual(resolved.frameRate, .fps23_976)
@@ -76,7 +78,7 @@ class DAWMarkerConversions_Tests: XCTestCase {
         
         let marker = DAWMarker(
             storage: .init(
-                value: .timecodeString("00:00:05:17"),
+                value: .timecodeString(absolute: "00:00:05:17"),
                 frameRate: .fps23_976,
                 base: sfBase
             ),
@@ -87,7 +89,8 @@ class DAWMarkerConversions_Tests: XCTestCase {
         let resolved = marker.resolvedTimecode(
             at: .fps30,
             base: sfBase,
-            limit: .max24Hours
+            limit: .max24Hours,
+            startTimecode: Timecode(.zero, at: .fps30)
         )!
         
         XCTAssertEqual(resolved.frameRate, .fps30)

@@ -9,8 +9,11 @@ import TimecodeKit
 
 extension DAWMarker.Storage {
     public enum Value {
-        case realTime(TimeInterval)
-        case timecodeString(String)
+        /// Real time in seconds, relative to the start time.
+        case realTime(relativeToStart: TimeInterval)
+        
+        /// Timecode string, absolute timestamp (not an interval from start time).
+        case timecodeString(absolute: String)
         
         /// Returns the backing storage formatted as a string, for use in writing to the document
         /// file.
@@ -50,13 +53,13 @@ extension DAWMarker.Storage.Value: Codable {
         
         do {
             let value = try container.decode(TimeInterval.self, forKey: .realTime)
-            self = .realTime(value)
+            self = .realTime(relativeToStart: value)
             return
         } catch { lastError = error }
         
         do {
             let value = try container.decode(String.self, forKey: .timecodeString)
-            self = .timecodeString(value)
+            self = .timecodeString(absolute: value)
             return
         } catch { lastError = error }
         

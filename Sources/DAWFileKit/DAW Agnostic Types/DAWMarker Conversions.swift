@@ -13,20 +13,23 @@ extension DAWMarker {
     public func resolvedTimecode(
         at newFrameRate: TimecodeFrameRate,
         base: Timecode.SubFramesBase,
-        limit: Timecode.UpperLimit
+        limit: Timecode.UpperLimit,
+        startTimecode: Timecode
     ) -> Timecode? {
         switch timeStorage?.value {
-        case let .realTime(time):
+        case let .realTime(secondsRelativeToStart):
             // if storage is real time, we can form timecode without any additional information
             
-            let timecode = try? Timecode(
-                .realTime(seconds: time),
+            guard let realTimeDurationAsTimecode = try? Timecode(
+                .realTime(seconds: secondsRelativeToStart),
                 at: newFrameRate,
                 base: base,
                 limit: limit
-            )
+            ),
+                  let offsetTimecode = try? startTimecode.adding(realTimeDurationAsTimecode)
+            else { return nil }
             
-            return timecode
+            return offsetTimecode
             
         case let .timecodeString(string):
             // if storage is a timecode string, we need original frame rate
@@ -71,9 +74,9 @@ extension DAWMarker {
         guard let timeStorage = timeStorage else { return nil }
         
         switch timeStorage.value {
-        case let .realTime(time):
+        case let .realTime(secondsRelativeToStart):
             let timecode = try? Timecode(
-                .realTime(seconds: time),
+                .realTime(seconds: secondsRelativeToStart),
                 at: timeStorage.frameRate,
                 base: base,
                 limit: limit

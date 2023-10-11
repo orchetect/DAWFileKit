@@ -40,7 +40,7 @@ extension Array where Element == ProTools.SessionInfo.Marker {
             else { continue }
             
             let storage = DAWMarker.Storage(
-                value: .timecodeString(tc.stringValue(format: ProTools.timecodeStringFormat)),
+                value: .timecodeString(absolute: tc.stringValue(format: ProTools.timecodeStringFormat)),
                 frameRate: originalFrameRate,
                 base: subFramesBase
             )
