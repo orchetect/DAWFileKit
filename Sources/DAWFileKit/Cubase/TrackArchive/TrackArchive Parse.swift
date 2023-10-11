@@ -64,11 +64,9 @@ extension Cubase.TrackArchive {
             .filter(nameAttribute: "Setup")
             .first
         else {
-            addParseMessage(
-                .error(
-                    "Could not extract global session information. Setup block could not be located."
-                )
-            )
+            addParseMessage(.error(
+                "Could not extract global session information. Setup block could not be located."
+            ))
             return
         }
         

@@ -11,8 +11,8 @@ import Foundation
 import TimecodeKit
 
 extension Cubase.TrackArchive {
-    /// Returns XML data if success
-    public init?(
+    /// Creates a new Track Archive XML file by converting markers to marker track(s).
+    public init(
         converting markers: [DAWMarker],
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
@@ -68,7 +68,6 @@ extension Cubase.TrackArchive {
         }
     }
     
-    /// Returns XML data if success
     internal static func buildTrack(
         name: String,
         from markers: [DAWMarker],
