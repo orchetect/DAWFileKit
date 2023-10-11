@@ -8,6 +8,7 @@
 
 import Foundation
 @_implementationOnly import OTCore
+import TimecodeKit
 
 extension Cubase.TrackArchive {
     // MARK: xmlString
@@ -357,7 +358,8 @@ extension Cubase.TrackArchive {
             messages.append(msg)
         }
         
-        var markerIDCounter = 0
+        var staticMarkerIDCounter = 0
+        var cycleMarkerIDCounter = 0
         
         newTrack.name = "obj"
         newTrack.addAttributes([
@@ -399,13 +401,18 @@ extension Cubase.TrackArchive {
                     ]
                 ))
             } else {
+                let sessionStartTC = (main.startTimecode ?? Timecode(.zero, at: main.frameRate ?? event.startTimecode.frameRate))
+                let eventTC = event.startTimecode
+                let sortedTCs = [sessionStartTC, eventTC].sorted(timelineStart: sessionStartTC)
+                let offsetTC = sortedTCs[0].interval(to: sortedTCs[1]).flattened()
+                
                 newNode.addChild(XMLElement(
                     name: "float",
                     attributes: [
                         ("name", "Start"),
                         (
                             "value",
-                            event.startTimecode
+                            offsetTC
                                 .realTimeValue
                                 .stringValueHighPrecision
                         )
@@ -463,15 +470,35 @@ extension Cubase.TrackArchive {
                 ("value", event.name)
             ]))
             
-            markerIDCounter += 1
-            newNode.addChild(XMLElement(name: "int", attributes: [
-                ("name", "ID"),
-                (
-                    "value",
-                    markerIDCounter.string
+            switch event {
+            case is Marker: // MMarkerEvent
+                staticMarkerIDCounter += 1
+                newNode.addChild(XMLElement(name: "int", attributes: [
+                    ("name", "ID"),
+                    (
+                        "value",
+                        staticMarkerIDCounter.string
+                    )
+                ]))
+                
+            case is CycleMarker: // MRangeMarkerEvent
+                cycleMarkerIDCounter += 1
+                newNode.addChild(XMLElement(name: "int", attributes: [
+                    ("name", "ID"),
+                    (
+                        "value",
+                        cycleMarkerIDCounter.string
+                    )
+                ]))
+                
+            default:
+                addEncodeMessage(
+                    .error(
+                        "Unhandled marker event type while building XML file: \(type(of: event))."
+                    )
                 )
-            ]))
-            
+                continue
+            }
             newNode.addAttribute(withName: "ID", value: idCounter.getNewID().string)
             
             eventsNode.addChild(newNode)
