@@ -72,7 +72,7 @@ extension Cubase.TrackArchive {
         // comments track
         if includeComments, separateCommentsTrack {
             let commentsTrack = Self.buildTrack(
-                name: "Markers",
+                name: "Comments",
                 from: markers,
                 at: frameRate,
                 startTimecode: startTimecode,
