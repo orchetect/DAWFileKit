@@ -21,12 +21,18 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
             DAWMarker(storage: .init(value: .realTime(relativeToStart: 1.0), frameRate: .fps24, base: .max80SubFrames), name: "Marker2", comment: nil)
         ]
         
+        var buildMessages: [Cubase.TrackArchive.EncodeMessage] = []
         let trackArchive = Cubase.TrackArchive(
             converting: dawMarkers,
             at: .fps24,
             startTimecode: Timecode(.zero, at: .fps24),
-            includeComments: true
+            includeComments: true,
+            separateCommentsTrack: false,
+            buildMessages: &buildMessages
         )
+        
+        // build messages
+        XCTAssertEqual(buildMessages.count, 0)
         
         // main
         XCTAssertEqual(trackArchive.main.startTimecode, Timecode(.zero, at: .fps24))
@@ -59,12 +65,18 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
             DAWMarker(storage: .init(value: .realTime(relativeToStart: 1.0), frameRate: .fps24, base: .max80SubFrames), name: "Marker2", comment: "Comment2")
         ]
         
+        var buildMessages: [Cubase.TrackArchive.EncodeMessage] = []
         let trackArchive = Cubase.TrackArchive(
             converting: dawMarkers,
             at: .fps24,
             startTimecode: Timecode(.zero, at: .fps24),
-            includeComments: true
+            includeComments: true,
+            separateCommentsTrack: false,
+            buildMessages: &buildMessages
         )
+        
+        // build messages
+        XCTAssertEqual(buildMessages.count, 0)
         
         // main
         XCTAssertEqual(trackArchive.main.startTimecode, Timecode(.zero, at: .fps24))
@@ -97,12 +109,18 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
             DAWMarker(storage: .init(value: .realTime(relativeToStart: 1.0), frameRate: .fps24, base: .max80SubFrames), name: "Marker2", comment: "Comment2")
         ]
         
+        var buildMessages: [Cubase.TrackArchive.EncodeMessage] = []
         let trackArchive = Cubase.TrackArchive(
             converting: dawMarkers,
             at: .fps24,
             startTimecode: Timecode(.zero, at: .fps24),
-            includeComments: false
+            includeComments: false,
+            separateCommentsTrack: false,
+            buildMessages: &buildMessages
         )
+        
+        // build messages
+        XCTAssertEqual(buildMessages.count, 0)
         
         // main
         XCTAssertEqual(trackArchive.main.startTimecode, Timecode(.zero, at: .fps24))
@@ -135,12 +153,18 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
             DAWMarker(storage: .init(value: .timecodeString(absolute: "00:00:01:00"), frameRate: .fps24, base: .max80SubFrames), name: "Marker2", comment: nil)
         ]
         
+        var buildMessages: [Cubase.TrackArchive.EncodeMessage] = []
         let trackArchive = Cubase.TrackArchive(
             converting: dawMarkers,
             at: .fps24,
             startTimecode: Timecode(.zero, at: .fps24),
-            includeComments: true
+            includeComments: true,
+            separateCommentsTrack: false,
+            buildMessages: &buildMessages
         )
+        
+        // build messages
+        XCTAssertEqual(buildMessages.count, 0)
         
         // main
         XCTAssertEqual(trackArchive.main.startTimecode, Timecode(.zero, at: .fps24))
@@ -173,12 +197,18 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
             DAWMarker(storage: .init(value: .timecodeString(absolute: "00:00:01:00"), frameRate: .fps24, base: .max80SubFrames), name: "Marker2", comment: nil)
         ]
         
+        var buildMessages: [Cubase.TrackArchive.EncodeMessage] = []
         let trackArchive = Cubase.TrackArchive(
             converting: dawMarkers,
             at: .fps24,
             startTimecode: try Timecode(.components(h: 23), at: .fps24),
-            includeComments: true
+            includeComments: true,
+            separateCommentsTrack: false,
+            buildMessages: &buildMessages
         )
+        
+        // build messages
+        XCTAssertEqual(buildMessages.count, 0)
         
         // main
         XCTAssertEqual(trackArchive.main.startTimecode, try Timecode(.components(h: 23), at: .fps24))

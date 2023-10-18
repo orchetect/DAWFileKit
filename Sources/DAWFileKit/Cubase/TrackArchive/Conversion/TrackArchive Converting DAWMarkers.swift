@@ -19,6 +19,26 @@ extension Cubase.TrackArchive {
         includeComments: Bool,
         separateCommentsTrack: Bool = false
     ) {
+        var buildMessages: [Cubase.TrackArchive.EncodeMessage] = []
+        self.init(
+            converting: markers,
+            at: frameRate,
+            startTimecode: startTimecode,
+            includeComments: includeComments,
+            separateCommentsTrack: separateCommentsTrack,
+            buildMessages: &buildMessages
+        )
+    }
+    
+    /// Creates a new Track Archive XML file by converting markers to marker track(s).
+    public init(
+        converting markers: [DAWMarker],
+        at frameRate: TimecodeFrameRate,
+        startTimecode: Timecode,
+        includeComments: Bool,
+        separateCommentsTrack: Bool = false,
+        buildMessages messages: inout [Cubase.TrackArchive.EncodeMessage]
+    ) {
         self.init()
         
         main.startTimecode = startTimecode
@@ -44,7 +64,8 @@ extension Cubase.TrackArchive {
                 }
                 
                 return name
-            }
+            },
+            buildMessages: &messages
         )
         tracks?.append(markersTrack)
         
@@ -62,7 +83,8 @@ extension Cubase.TrackArchive {
                     else { return nil }
                     
                     return comment
-                }
+                },
+                buildMessages: &messages
             )
             tracks?.append(commentsTrack)
         }
@@ -73,14 +95,16 @@ extension Cubase.TrackArchive {
         from markers: [DAWMarker],
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
-        markerName nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
+        markerName nameBlock: (_ marker: DAWMarker) -> String? = { $0.name },
+        buildMessages messages: inout [Cubase.TrackArchive.EncodeMessage]
     ) -> Cubase.TrackArchive.MarkerTrack {
         var track = Cubase.TrackArchive.MarkerTrack()
         track.name = name
         let convertedMarkers = markers.convertToCubaseTrackArchiveXMLMarkers(
             at: frameRate,
             startTimecode: startTimecode,
-            name: nameBlock
+            name: nameBlock,
+            buildMessages: &messages
         )
         track.events.append(contentsOf: convertedMarkers)
         return track
@@ -88,13 +112,17 @@ extension Cubase.TrackArchive {
 }
 
 extension DAWMarker {
+    /// If `nameBlock` returns `nil`, this will also return `nil`.
     internal func convertToCubaseTrackArchiveXMLMarker(
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
-        name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
+        name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name },
+        buildMessages messages: inout [Cubase.TrackArchive.EncodeMessage]
     ) -> Cubase.TrackArchive.Marker? {
         let upperLimit = startTimecode.upperLimit
         let subFramesBase = startTimecode.subFramesBase
+        
+        let markerName = nameBlock(self)
         
         guard let markerTC = resolvedTimecode(
             at: frameRate,
@@ -102,11 +130,13 @@ extension DAWMarker {
             limit: upperLimit,
             startTimecode: startTimecode
         ) else {
-            assertionFailure("Could not resolve timecode.")
+            let tcString = startTimecode.stringValue(format: [.showSubFrames])
+            let mnString = (markerName ?? "").quoted
+            messages.append(.error("Could not resolve timecode for marker at timecode \(tcString) with name \(mnString)."))
             return nil
         }
         
-        guard let markerName = nameBlock(self) else { return nil }
+        guard let markerName = markerName else { return nil }
         
         return Cubase.TrackArchive.Marker(
             name: markerName,
@@ -116,18 +146,21 @@ extension DAWMarker {
 }
 
 extension Array where Element == DAWMarker {
+    /// If `nameBlock` returns `nil`, this will return an empty array.
     internal func convertToCubaseTrackArchiveXMLMarkers(
         at frameRate: TimecodeFrameRate,
         startTimecode: Timecode,
-        name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name }
+        name nameBlock: (_ marker: DAWMarker) -> String? = { $0.name },
+        buildMessages messages: inout [Cubase.TrackArchive.EncodeMessage]
     ) -> [Cubase.TrackArchive.Marker] {
         reduce(into: [Cubase.TrackArchive.Marker]()) { partialResult, marker in
             guard let converted = marker.convertToCubaseTrackArchiveXMLMarker(
                 at: frameRate,
                 startTimecode: startTimecode,
-                name: nameBlock
+                name: nameBlock,
+                buildMessages: &messages
             ) else {
-                assertionFailure("Could not convert marker.")
+                // no need to append a buildMessages error since the method already will if necessary
                 return
             }
             partialResult.append(converted)
