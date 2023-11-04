@@ -42,10 +42,10 @@ extension FinalCutPro.FCPXML.Clip.Video {
     /// Video clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
-        case offset
+        case offset // TODO: replace with FCPXMLTimingAttributes
         case name
-        case start
-        case duration
+        case start // TODO: replace with FCPXMLTimingAttributes
+        case duration // TODO: replace with FCPXMLTimingAttributes
         case role
     }
     
@@ -56,6 +56,7 @@ extension FinalCutPro.FCPXML.Clip.Video {
         // "ref"
         ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "offset"
         offset = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .offset,
@@ -66,6 +67,7 @@ extension FinalCutPro.FCPXML.Clip.Video {
         // "name"
         name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "start"
         start = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .start,
@@ -73,6 +75,7 @@ extension FinalCutPro.FCPXML.Clip.Video {
             sequenceFrameRate: frameRate
         )
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "duration"
         duration = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .duration,

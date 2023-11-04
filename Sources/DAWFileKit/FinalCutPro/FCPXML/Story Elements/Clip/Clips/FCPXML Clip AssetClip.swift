@@ -60,9 +60,9 @@ extension FinalCutPro.FCPXML.Clip.AssetClip {
     /// Asset clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
-        case offset
+        case offset // TODO: replace with FCPXMLTimingAttributes
         case name
-        case duration
+        case duration // TODO: replace with FCPXMLTimingAttributes
         case audioRole
     }
     
@@ -73,6 +73,7 @@ extension FinalCutPro.FCPXML.Clip.AssetClip {
         // "ref"
         ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "offset"
         offset = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .offset,
@@ -83,6 +84,7 @@ extension FinalCutPro.FCPXML.Clip.AssetClip {
         // "name"
         name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "duration"
         duration = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .duration,

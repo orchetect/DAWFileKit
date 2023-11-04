@@ -14,22 +14,30 @@ import TimecodeKit
 /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/timeline_attributes
 /// ).
 ///
+/// - `format`
+/// - `tcFormat`
+/// - `tcStart`
+///
 /// > Final Cut Pro FCPXML 1.11 Reference:
+/// >
+/// > Define characteristics of a timeline.
 /// >
 /// > The `sequence` element creates a new timeline. Use the timeline attributes to define its
 /// > characteristics. Use the attributes with the `clip` element, when it appears as a top-level
 /// > story element, to describe a browser clip in an event.
 public protocol FCPXMLTimelineAttributes {
-    // "format" a.k.a. resource ID
+    // a.k.a. resource ID
+    /// A reference to the video format defined by the `format` element.
     var format: String { get }
     
     // "tcStart", also parses "tcFormat"
+    /// The timecode origin represented as a time value.
     var startTimecode: Timecode { get }
 }
 
 public enum FCPXMLTimelineAttributesKey: String, XMLParsableAttributesKey {
     case format
-    case tcFormat
+    case tcFormat // once parsed, can be determined from `startTimecode.isDrop` property
     case tcStart
 }
 
@@ -72,7 +80,11 @@ extension FCPXMLTimelineAttributes {
             resources: resources
         )
         
-        return (format: format, timecodeFormat: tcFormat, startTimecode: startTimecode)
+        return (
+            format: format,
+            timecodeFormat: tcFormat,
+            startTimecode: startTimecode
+        )
     }
     
     // MARK: - Defaults and Validation
@@ -89,7 +101,8 @@ extension FCPXMLTimelineAttributes {
         startTimecode: Timecode
     ) {
         let attrs = parseTimelineAttributes(
-            from: xmlLeaf, resources: resources
+            from: xmlLeaf, 
+            resources: resources
         )
         
         let format = validateTimelineAttributes(format: attrs.format)

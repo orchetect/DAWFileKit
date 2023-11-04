@@ -11,6 +11,8 @@ import TimecodeKit
 import CoreMedia
 @_implementationOnly import OTCore
 
+// TODO: Refactor this as "FinalCutPro.FCP.AnyClip", refactor parsing into more general story element parser
+
 extension FinalCutPro.FCPXML {
     /// Clip story element.
     /// Represents a basic unit of editing.
@@ -108,6 +110,7 @@ extension FinalCutPro.FCPXML.Clip {
 }
 
 extension FinalCutPro.FCPXML {
+    // TODO: refactor into more general story element parser
     static func parseClips(
         from xmlLeaf: XMLElement,
         sequenceFrameRate frameRate: TimecodeFrameRate

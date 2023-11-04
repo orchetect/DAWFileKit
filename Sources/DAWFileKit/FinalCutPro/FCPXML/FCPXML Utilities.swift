@@ -74,7 +74,7 @@ extension FinalCutPro.FCPXML {
         return fRate
     }
     
-    /// Convenience: returns the timecode frame rate for the given resource ID & "tcFormat".
+    /// Convenience: returns the timecode frame rate for the given resource ID & `tcFormat`.
     static func timecodeFrameRate(
         forResourceID id: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
@@ -91,7 +91,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML {
     /// Utility:
-    /// Convert raw "tcStart" or "duration" attribute string to `Timecode`.
+    /// Convert raw attribute value string to `Timecode`.
     static func timecode(
         fromRational rawString: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
@@ -109,7 +109,7 @@ extension FinalCutPro.FCPXML {
     }
     
     /// Utility:
-    /// Convert raw "tcStart" or "duration" attribute string to `Timecode`.
+    /// Convert raw attribute value string to `Timecode`.
     static func timecode(
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
@@ -122,13 +122,13 @@ extension FinalCutPro.FCPXML {
             return try FinalCutPro.formTimecode(rational: fraction, at: frameRate)
             
         case let .value(value):
-            // this could also work using Timecode(realTime:)
+            // this could also work using Timecode(.realTime(), at:)
             return try FinalCutPro.formTimecode(rational: Fraction(value, 1), at: frameRate)
         }
     }
     
     /// Utility:
-    /// Convert raw "tcStart" or "duration" attribute string to `TimecodeInterval`.
+    /// Convert raw attribute value string to `TimecodeInterval`.
     static func timecodeInterval(
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
@@ -141,7 +141,7 @@ extension FinalCutPro.FCPXML {
             return try FinalCutPro.formTimecodeInterval(rational: fraction, at: frameRate)
             
         case let .value(value):
-            // this could also work using Timecode(realTime:)
+            // this could also work using Timecode(.realTime(), at:)
             return try FinalCutPro.formTimecodeInterval(rational: Fraction(value, 1), at: frameRate)
         }
     }

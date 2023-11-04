@@ -49,10 +49,10 @@ extension FinalCutPro.FCPXML.Clip.Title {
     /// Title clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
-        case offset
+        case offset // TODO: replace with FCPXMLTimingAttributes
         case name
-        case start
-        case duration
+        case start // TODO: replace with FCPXMLTimingAttributes
+        case duration // TODO: replace with FCPXMLTimingAttributes
     }
     
     /// Note: `frameDuration` and `tcFormat` is not stored in `<title>`,
@@ -64,6 +64,7 @@ extension FinalCutPro.FCPXML.Clip.Title {
         // "ref"
         ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "offset"
         offset = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .offset,
@@ -74,6 +75,7 @@ extension FinalCutPro.FCPXML.Clip.Title {
         // "name"
         name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "start"
         start = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .start,
@@ -81,6 +83,7 @@ extension FinalCutPro.FCPXML.Clip.Title {
             sequenceFrameRate: frameRate
         )
         
+        // TODO: replace with FCPXMLTimingAttributes
         // "duration"
         duration = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .duration,
