@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+@_implementationOnly import OTCore
 
 /// Story element that can contain [Timeline Attributes](
 /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/timeline_attributes
@@ -19,8 +20,6 @@ import TimecodeKit
 /// > characteristics. Use the attributes with the `clip` element, when it appears as a top-level
 /// > story element, to describe a browser clip in an event.
 public protocol FCPXMLTimelineAttributes {
-    typealias Key = FCPXMLTimelineAttributesKey
-    
     // "format" a.k.a. resource ID
     var format: String { get }
     
@@ -28,31 +27,22 @@ public protocol FCPXMLTimelineAttributes {
     var startTimecode: Timecode { get }
 }
 
-public enum FCPXMLTimelineAttributesKey: String {
+public enum FCPXMLTimelineAttributesKey: String, XMLParsableAttributesKey {
     case format
     case tcFormat
     case tcStart
 }
 
 extension FCPXMLTimelineAttributes {
+    fileprivate typealias Key = FCPXMLTimelineAttributesKey
+    
     // MARK: - Raw Values
     
     static func parseTimelineAttributesRawValues(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) -> [FCPXMLTimelineAttributesKey: String] {
-        var dict: [Key: String] = [:]
-        
-        // `format`
-        dict[.format] = xmlLeaf.attributeStringValue(forName: Key.format.rawValue)
-        
-        // `tcFormat`
-        dict[.tcFormat] = xmlLeaf.attributeStringValue(forName: Key.tcFormat.rawValue)
-        
-        // `tcStart`
-        dict[.tcStart] = xmlLeaf.attributeStringValue(forName: Key.tcStart.rawValue)
-        
-        return dict
+        xmlLeaf.parseAttributesRawValues(key: Key.self)
     }
     
     // MARK: - Typed Values
