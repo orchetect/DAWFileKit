@@ -10,6 +10,8 @@ import Foundation
 @_implementationOnly import OTCore
 import TimecodeKit
 
+// MARK: - Rational Time Value Utils
+
 extension FinalCutPro.FCPXML {
     enum ParsedRational {
         case value(Int)
@@ -50,7 +52,11 @@ extension FinalCutPro.FCPXML {
         
         return nil
     }
-    
+}
+
+// MARK: - Frame Rate Utils
+
+extension FinalCutPro.FCPXML {
     /// Convenience: returns the video frame rate for the given resource ID.
     static func videoFrameRate(
         forResourceID id: String,
@@ -79,7 +85,11 @@ extension FinalCutPro.FCPXML {
         else { return nil }
         return frameRate
     }
-    
+}
+
+// MARK: - Timecode Utils
+
+extension FinalCutPro.FCPXML {
     /// Utility:
     /// Convert raw "tcStart" or "duration" attribute string to `Timecode`.
     static func timecode(

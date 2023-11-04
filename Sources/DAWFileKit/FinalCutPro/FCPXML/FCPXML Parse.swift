@@ -10,6 +10,8 @@ import Foundation
 import TimecodeKit
 @_implementationOnly import OTCore
 
+// MARK: - XMLRoot/fcpxml/*
+
 extension FinalCutPro.FCPXML {
     /// Returns resources contained in the XML, keyed by the resource ID.
     /// - Returns: `[ID: Resource]`
@@ -53,7 +55,11 @@ extension FinalCutPro.FCPXML {
             )
         }
     }
-    
+}
+
+// MARK: - XMLRoot/fcpxml/library/event/*
+
+extension FinalCutPro.FCPXML {
     /// Returns all projects.
     public func projects() -> [Project] {
         let resources = resources()
@@ -79,7 +85,11 @@ extension FinalCutPro.FCPXML {
         }
         return projects
     }
-    
+}
+
+// MARK: - XMLRoot/fcpxml/library/event/project/*
+
+extension FinalCutPro.FCPXML {
     /// Internal:
     /// Parse sequences from a leaf (usually from a `<project>` leaf).
     internal func parseSequences(

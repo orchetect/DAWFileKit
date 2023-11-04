@@ -24,18 +24,6 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Sequence {
-    /// Sequence XML Attributes.
-    public enum Attributes: String {
-        case format // resource ID
-        case duration
-        case tcStart
-        case tcFormat
-        case audioLayout
-        case audioRate
-    }
-}
-
-extension FinalCutPro.FCPXML.Sequence {
     internal init(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.Resource]

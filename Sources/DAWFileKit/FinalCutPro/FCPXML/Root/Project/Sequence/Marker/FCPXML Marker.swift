@@ -36,66 +36,6 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Marker {
-    /// Returns the marker type.
-    public var markerType: MarkerType {
-        switch metaData {
-        case .standard: return .standard
-        case .chapter: return .chapter
-        case .toDo: return .toDo
-        }
-    }
-    
-    public enum MarkerNodeType: String {
-        case marker
-        case chapterMarker = "chapter-marker"
-    }
-    
-    /// Marker XML Attributes.
-    public enum Attributes: String {
-        // XML Attributes all Markers have in common.
-        case start
-        case duration
-        case value // marker name
-        case note
-        
-        // Chapter Marker only
-        case posterOffset
-        
-        // To Do Marker only
-        case completed
-    }
-}
-
-extension FinalCutPro.FCPXML.Marker {
-    public enum MarkerMetaData: Equatable, Hashable {
-        
-        // <marker start="27248221/7500s" duration="1001/30000s" value="Standard Marker" note="some notes here"/>
-        /// Standard Marker.
-        case standard
-        
-        // <chapter-marker start="108995887/30000s" duration="1001/30000s" value="Chapter Marker" posterOffset="11/30s"/>
-        /// Chapter Marker.
-        ///
-        /// `posterOffset` is the chapter marker's thumbnail location expressed as a delta distance (offset) from the marker's position.
-        /// This may be positive or negative which is why it is encapsulated in a `TimecodeInterval`.
-        case chapter(posterOffset: TimecodeInterval)
-        
-        // <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
-        // <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yey"/>
-        /// To Do Marker.
-        case toDo(completed: Bool)
-    }
-}
-
-extension FinalCutPro.FCPXML.Marker {
-    public enum MarkerType: String, CaseIterable {
-        case standard = "Standard"
-        case chapter = "Chapter"
-        case toDo = "To Do"
-    }
-}
-
-extension FinalCutPro.FCPXML.Marker {
     /// Init from XML. If marker type is unrecognized, returns `nil`.
     internal init?(
         from xmlLeaf: XMLElement,
@@ -170,6 +110,17 @@ extension FinalCutPro.FCPXML.Marker {
                 print("Error: posterOffset could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
                 metaData = .chapter(posterOffset: FinalCutPro.formTimecodeInterval(at: .fps30))
             }
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Marker {
+    /// Returns the marker type.
+    public var markerType: MarkerType {
+        switch metaData {
+        case .standard: return .standard
+        case .chapter: return .chapter
+        case .toDo: return .toDo
         }
     }
 }

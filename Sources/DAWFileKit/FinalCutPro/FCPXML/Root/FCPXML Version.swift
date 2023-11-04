@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 extension FinalCutPro.FCPXML {
-    /// FCPXML format version
+    /// FCPXML format version.
     public enum Version: String {
         case ver1_0 = "1.0"
         case ver1_1 = "1.1"
@@ -21,6 +21,15 @@ extension FinalCutPro.FCPXML {
         case ver1_9 = "1.9"
         case ver1_10 = "1.10"
         case ver1_11 = "1.11"
+    }
+}
+
+extension FinalCutPro.FCPXML {
+    /// Returns the FCPXML format version.
+    public var version: Version? {
+        guard let verString = xmlRoot?.attributeStringValue(forName: FCPXMLAttributes.version.rawValue)
+        else { return nil }
+        return Version(rawValue: verString)
     }
 }
 

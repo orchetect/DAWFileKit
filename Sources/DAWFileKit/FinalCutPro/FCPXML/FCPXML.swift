@@ -12,6 +12,42 @@ import TimecodeKit
 extension FinalCutPro {
     /// Final Cut Pro XML file (FCPXML/FCPXMLD)
     ///
+    /// General structure when exporting from Final Cut Pro:
+    ///
+    /// ```xml
+    /// <fcpxml version="1.9">
+    ///   <resources>
+    ///     <format id="r1" ... >
+    ///   </resources>
+    ///   <library location="file:/// ...">
+    ///     <event name="MyEvent" ... >
+    ///       <project name="MyProject" ... >
+    ///         <sequence ... >
+    ///           <spine>
+    ///             <!-- clips listed here -->
+    ///           </spine>
+    ///         </sequence>
+    ///       </project>
+    ///     </event>
+    ///   </library>
+    /// </fcpxml>
+    /// ```
+    ///
+    /// It is also possible for `event`s, `project`s and `asset-clip`s to be within the
+    /// `fcpxml` element without an encapsulating in a hierarchical structure
+    /// (ie: `event`s within `library`, `project`s within `event`s, etc.).
+    /// This is how Apple's FCPXML Reference recommends 3rd party applications to create FCPXML files.
+    ///
+    /// ```xml
+    /// <fcpxml version="1.9">
+    ///   <resources> ... </resources>
+    ///   <project name="MyProject" ... >
+    ///     <sequence ... > ... </sequence>
+    ///   </project>
+    ///   <event name="MyEvent" ... > ... </event>
+    /// </fcpxml>
+    /// ```
+    ///
     /// [Official FCPXML Apple docs](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/)
     public struct FCPXML {
         /// Direct access to the FCP XML file.
@@ -19,11 +55,11 @@ extension FinalCutPro {
     }
 }
 
+// MARK: - XMLRoot/*
+
 extension FinalCutPro.FCPXML {
-    /// Returns the FCPXML format version.
-    public var version: Version? {
-        guard let verString = xmlRoot?.attributeStringValue(forName: "version") else { return nil }
-        return Version(rawValue: verString)
+    enum RootElements: String {
+        case fcpxml
     }
     
     /// The root "fcpxml" XML element.
@@ -31,55 +67,53 @@ extension FinalCutPro.FCPXML {
         xml.children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .first(where: { $0.name == "fcpxml" })
+            .first(where: { $0.name == RootElements.fcpxml.rawValue })
     }
     
-    /// The "resources" XML element.
-    var xmlResources: XMLElement? {
-        xmlRoot?.elements(forName: "resources").first
-    }
-    
-    /// The "library" XML element.
-    public var xmlLibrary: XMLElement? {
-        xmlRoot?.elements(forName: "library").first
-    }
-    
-    /// All "event" XML leafs within the library.
-    var xmlEvents: [XMLElement] {
-        xmlLibrary?.elements(forName: "event") ?? []
+    enum FCPXMLAttributes: String {
+        case version
     }
 }
 
+// MARK: - XMLRoot/fcpxml/*
+
 extension FinalCutPro.FCPXML {
-    /// "tcFormat" attribute.
-    public enum TimecodeFormat: String {
-        case dropFrame = "DF"
-        case nonDropFrame = "NDF"
-        
-        public var isDrop: Bool {
-            switch self {
-            case .dropFrame: return true
-            case .nonDropFrame: return false
-            }
-        }
+    /// > Final Cut Pro Reference:
+    /// >
+    /// > The root element in an FCPXML document is `fcpxml`, which can contain the following elements:
+    /// > - A `resources` element, that contains descriptions of media assets and other resources.
+    /// > - An optional `import-options` element, that controls how Final Cut Pro imports the FCPXML document.
+    /// > - One of the following optional elements that describe how to organize and use media assets:
+    /// >   - a `library` element that contains a list of event elements;
+    /// >   - a series of `event` elements that contain story elements and project elements; or
+    /// >   - a combination of story elements and `project` elements.
+    /// >
+    /// > Note: Starting in FCPXML 1.9, the elements that describe how to organize and use media assets are optional. The only required element in the fcpxml root element is the resources element.
+    enum FCPXMLElements: String {
+        case resources
+        case library
+        case event
+        case importOptions = "import-options"
     }
     
-    /// "audioLayout" attribute.
-    public enum AudioLayout: String {
-        case mono
-        case stereo
-        case surround
+    /// The `resources` XML element.
+    /// Exactly one of these elements is always required, regardless of the version of the FCPXML.
+    var xmlResources: XMLElement? {
+        xmlRoot?.elements(forName: FCPXMLElements.resources.rawValue).first
     }
     
-    /// "audioRate" attribute.
-    public enum AudioRate: String {
-        case rate32kHz = "32k"
-        case rate44_1kHz = "44.1k"
-        case rate48kHz = "48k"
-        case rate88_2kHz = "88.2k"
-        case rate96kHz = "96k"
-        case rate176_4kHz = "176.4k"
-        case rate192kHz = "192k"
+    /// The `library` XML element.
+    public var xmlLibrary: XMLElement? {
+        xmlRoot?.elements(forName: FCPXMLElements.library.rawValue).first
+    }
+}
+
+// MARK: - XMLRoot/fcpxml/library/*
+
+extension FinalCutPro.FCPXML {
+    /// All "event" XML leafs within the library.
+    var xmlEvents: [XMLElement] {
+        xmlLibrary?.elements(forName: "event") ?? []
     }
 }
 
