@@ -47,7 +47,7 @@ extension FinalCutPro.FCPXML {
             } ?? [:]
     }
     
-    /// A fcpxml file may contain one or zero `library` elements.
+    /// A fcpxml file may or may not contain one library.
     public func library() -> Library? {
         guard let library = xmlLibrary else { return nil }
         let location = library.attributeStringValue(forName: "location") ?? ""

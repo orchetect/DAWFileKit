@@ -19,12 +19,11 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // load file
         
         let filename = "BasicMarkers"
-        guard let rawData = loadFileContents(
+        let rawData = try XCTUnwrap(loadFileContents(
             forResource: filename,
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
-        )
-        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        ))
         
         // load
         

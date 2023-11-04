@@ -33,21 +33,19 @@ extension FinalCutPro {
     /// </fcpxml>
     /// ```
     ///
-    /// It is also possible for `event`s, `project`s and `asset-clip`s to be within the
-    /// `fcpxml` element without an encapsulating in a hierarchical structure
-    /// (ie: `event`s within `library`, `project`s within `event`s, etc.).
-    /// This is how Apple's FCPXML Reference recommends 3rd party applications to create FCPXML files.
-    ///
-    /// ```xml
-    /// <fcpxml version="1.9">
-    ///   <resources> ... </resources>
-    ///   <project name="MyProject" ... >
-    ///     <sequence ... > ... </sequence>
-    ///   </project>
-    ///   <event name="MyEvent" ... > ... </event>
-    ///   <asset-clip ... />
-    /// </fcpxml>
-    /// ```
+    /// > Note: Starting in FCPXML 1.9, the elements that describe how to organize and use media assets are optional.
+    /// > The only required element in the `fcpxml` root element is the `resources` element.
+    /// >
+    /// > ```xml
+    /// > <fcpxml version="1.9">
+    /// >   <resources> ... </resources>
+    /// >   <project name="MyProject" ... >
+    /// >     <sequence ... > ... </sequence>
+    /// >   </project>
+    /// >   <event name="MyEvent" ... > ... </event>
+    /// >   <asset-clip ... />
+    /// > </fcpxml>
+    /// > ```
     ///
     /// [Official FCPXML Apple docs](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/)
     public struct FCPXML {
@@ -89,7 +87,8 @@ extension FinalCutPro.FCPXML {
     /// >   - a series of `event` elements that contain story elements and project elements; or
     /// >   - a combination of story elements and `project` elements.
     /// >
-    /// > Note: Starting in FCPXML 1.9, the elements that describe how to organize and use media assets are optional. The only required element in the fcpxml root element is the resources element.
+    /// > Note: Starting in FCPXML 1.9, the elements that describe how to organize and use media assets are optional. 
+    /// > The only required element in the `fcpxml` root element is the `resources` element.
     enum FCPXMLElements: String {
         case resources
         case library
@@ -104,6 +103,7 @@ extension FinalCutPro.FCPXML {
     }
     
     /// The `library` XML element, if it exists.
+    /// One or zero of these elements may be present within the `fcpxml` element.
     public var xmlLibrary: XMLElement? {
         xmlRoot?.elements(forName: FCPXMLElements.library.rawValue).first
     }
