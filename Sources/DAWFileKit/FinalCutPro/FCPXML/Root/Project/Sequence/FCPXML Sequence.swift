@@ -23,45 +23,25 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence {
+extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
     internal init(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
-        // "format"
-        format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue) ?? ""
+        // parses `format`, `tcStart`, `tcFormat`
+        let timelineAttributes = Self.parseTimelineAttributesDefaulted(
+            from: xmlLeaf, resources: resources
+        )
+        // `format`
+        format = timelineAttributes.format
+        // `tcStart`
+        startTimecode = timelineAttributes.startTimecode
         
-        // "tcFormat"
-        let tcFormatString = xmlLeaf.attributeStringValue(forName: Attributes.tcFormat.rawValue) ?? ""
-        let tcFormat: FinalCutPro.FCPXML.TimecodeFormat = {
-            if let tcf = FinalCutPro.FCPXML.TimecodeFormat(rawValue: tcFormatString) {
-                return tcf
-            } else {
-                print("Error: tcFormat could not be decoded. Defaulting to non-drop (NDF).")
-                return .nonDropFrame
-            }
-        }()
-        
-        // "tcStart"
-        if let startString = xmlLeaf.attributeStringValue(forName: Attributes.tcStart.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: startString,
-            tcFormat: tcFormat,
-            resourceID: format,
-            resources: resources
-           )
-        {
-            startTimecode = tc
-        } else {
-            print("Error: tcStart could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            startTimecode = FinalCutPro.formTimecode(at: .fps30)
-        }
-        
-        // "duration"
+        // `duration`
         if let durString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
            let tc = try? FinalCutPro.FCPXML.timecode(
             fromRational: durString,
-            tcFormat: tcFormat,
+            tcFormat: timelineAttributes.timecodeFormat,
             resourceID: format,
             resources: resources
            )
@@ -97,7 +77,7 @@ extension FinalCutPro.FCPXML.Sequence {
         
         let frameRate = Self.fRate(
             forResourceID: format,
-            tcFormat: tcFormat,
+            tcFormat: timelineAttributes.timecodeFormat,
             in: resources
         )
         
