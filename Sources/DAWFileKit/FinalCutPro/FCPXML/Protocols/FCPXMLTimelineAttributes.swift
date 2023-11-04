@@ -126,8 +126,9 @@ extension FCPXMLTimelineAttributes {
         startTimecode: Timecode?
     ) -> Timecode {
         guard let startTimecode = startTimecode else {
-            print("Error: tcStart could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            return FinalCutPro.formTimecode(at: .fps30)
+            let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
+            print("Error: tcStart could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
+            return defaultTimecode
         }
         return startTimecode
     }

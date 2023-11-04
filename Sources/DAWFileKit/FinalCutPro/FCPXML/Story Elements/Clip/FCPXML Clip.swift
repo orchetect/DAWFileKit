@@ -65,8 +65,9 @@ extension FinalCutPro.FCPXML.Clip {
         {
             return tc
         } else {
-            print("Error: \(attribute.rawValue) could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            return FinalCutPro.formTimecode(at: .fps30)
+            let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
+            print("Error: \(attribute.rawValue) could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            return defaultTimecode
         }
     }
     

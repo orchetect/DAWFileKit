@@ -59,8 +59,9 @@ extension FinalCutPro.FCPXML.Marker {
         {
             start = tc
         } else {
-            print("Error: start could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            start = FinalCutPro.formTimecode(at: .fps30)
+            let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
+            print("Error: start could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            start = defaultTimecode
         }
         
         // "duration"
@@ -72,8 +73,9 @@ extension FinalCutPro.FCPXML.Marker {
         {
             duration = tc
         } else {
-            print("Error: duration could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            duration = FinalCutPro.formTimecode(at: .fps30)
+            let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
+            print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            duration = defaultTimecode
         }
         
         // "value" - marker name
@@ -107,8 +109,9 @@ extension FinalCutPro.FCPXML.Marker {
             {
                 metaData = .chapter(posterOffset: tc)
             } else {
-                print("Error: posterOffset could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-                metaData = .chapter(posterOffset: FinalCutPro.formTimecodeInterval(at: .fps30))
+                let defaultTimecodeInterval = FinalCutPro.formTimecodeInterval(at: frameRate)
+                print("Error: posterOffset could not be decoded. Defaulting to \(defaultTimecodeInterval.description) @ \(frameRate.stringValueVerbose).")
+                metaData = .chapter(posterOffset: defaultTimecodeInterval)
             }
         }
     }

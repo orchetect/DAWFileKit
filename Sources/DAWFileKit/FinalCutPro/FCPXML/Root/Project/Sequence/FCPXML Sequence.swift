@@ -48,8 +48,9 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         {
             duration = tc
         } else {
-            print("Error: duration could not be decoded. Defaulting to 00:00:00:00 @ 30fps.")
-            duration = FinalCutPro.formTimecode(at: .fps30)
+            let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
+            print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
+            duration = defaultTimecode
         }
         
         // "audioLayout"
