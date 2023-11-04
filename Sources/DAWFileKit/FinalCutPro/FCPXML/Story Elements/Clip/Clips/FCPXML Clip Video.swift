@@ -12,7 +12,7 @@ import TimecodeKit
 extension FinalCutPro.FCPXML.Clip {
     // <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
     /// Video Clip.
-    public struct Video {
+    public struct Video: FCPXMLStoryElement {
         public let ref: String // resource ID
         public let offset: Timecode
         public let name: String

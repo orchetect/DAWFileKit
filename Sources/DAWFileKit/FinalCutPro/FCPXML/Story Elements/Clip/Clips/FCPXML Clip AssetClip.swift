@@ -33,7 +33,7 @@ extension FinalCutPro.FCPXML.Clip {
     /// > > Note:
     /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
     /// > > components from a media file as a clip.
-    public struct AssetClip {
+    public struct AssetClip: FCPXMLStoryElement {
         public let ref: String // resource ID
         public let offset: Timecode
         public let name: String
