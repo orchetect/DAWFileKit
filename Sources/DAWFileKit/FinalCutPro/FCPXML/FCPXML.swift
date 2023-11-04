@@ -77,7 +77,7 @@ extension FinalCutPro.FCPXML {
 // MARK: - XMLRoot/fcpxml/*
 
 extension FinalCutPro.FCPXML {
-    /// > Final Cut Pro Reference:
+    /// > Final Cut Pro FCPXML Reference:
     /// >
     /// > The root element in an FCPXML document is `fcpxml`, which can contain the following elements:
     /// > - A `resources` element, that contains descriptions of media assets and other resources.
