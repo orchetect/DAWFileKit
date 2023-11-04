@@ -8,6 +8,20 @@
 
 import Foundation
 
+/// FCPXML story elements.
+///
+/// - `clip`
+/// - `asset-clip`
+/// - `sync-clip`
+/// - `audio`
+/// - `video`
+/// - `mc-clip`
+/// - `ref-clip`
+/// - `gap`
+/// - `spine`
+/// - `audition`
+/// - `sequence`
+///
 /// > Final Cut Pro FCPXML 1.11 Reference:
 /// >
 /// > Use Story Elements to arrange video or audio materials and titles or generators into a
