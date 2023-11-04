@@ -12,7 +12,7 @@ import CoreMedia
 extension FinalCutPro.FCPXML {
     /// Represent a single event in a library.
     ///
-    /// > Final Cut Pro FCPXML Reference:
+    /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > An event may contain clips as story elements and projects, along with keyword collections
     /// > and smart collections. The keyword-collection and smart-collection elements organize clips

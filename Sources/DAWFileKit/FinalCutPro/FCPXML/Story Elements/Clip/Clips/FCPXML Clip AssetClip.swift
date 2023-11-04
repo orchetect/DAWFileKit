@@ -12,6 +12,27 @@ import TimecodeKit
 extension FinalCutPro.FCPXML.Clip {
     // <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
     /// Asset Clip.
+    /// References a single media asset.
+    ///
+    /// > Final Cut Pro FCPXML 1.11 Reference:
+    /// >
+    /// > Use an `asset-clip` element as a shorthand for a `clip` when it references the entire set
+    /// > of media components in a single media.
+    /// >
+    /// > Specify the timing of the edit through the Timing Attributes. The `start` and `duration`
+    /// > attributes of the `asset-clip` element apply to all media components in the asset.
+    /// >
+    /// > Use the `audio-role` and `video-role` attributes to specify the main role. Generate
+    /// > subroles using the main role name, followed by a numerical suffix. For example,
+    /// > `dialogue.dialogue-1`, `dialogue.dialogue-2` and so on.
+    /// >
+    /// > Just as you do with the `clip` element, you can also use a `asset-clip` element as an
+    /// > immediate child element of an event element to represent a browser clip. In this case, use
+    /// > the Timeline Attributes to specify its format, etc.
+    /// >
+    /// > > Note:
+    /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
+    /// > > components from a media file as a clip.
     public struct AssetClip {
         public let ref: String // resource ID
         public let offset: Timecode
@@ -75,3 +96,4 @@ extension FinalCutPro.FCPXML.Clip.AssetClip {
 }
 
 #endif
+

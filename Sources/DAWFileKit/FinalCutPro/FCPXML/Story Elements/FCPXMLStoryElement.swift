@@ -8,11 +8,13 @@
 
 import Foundation
 
-/// > Final Cut Pro FCPXML Reference:
+/// > Final Cut Pro FCPXML 1.11 Reference:
 /// >
 /// > Use Story Elements to arrange video or audio materials and titles or generators into a
 /// > timeline, in the order you want them to appear when it plays on the timeline.
-/// > Use the Timing Attributes for additional control over their precise timing.
+/// > Use the [Timing Attributes](
+/// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
+/// > ) for additional control over their precise timing.
 /// >
 /// > Anchor one or more other story elements to each story element. An anchored item has a positive
 /// > or negative lane index that either positions the item above or below its base element in the
