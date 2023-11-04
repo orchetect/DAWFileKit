@@ -14,23 +14,25 @@ extension FinalCutPro.FCPXML {
     public struct Project {
         public let name: String
         public let sequences: [Sequence]
-        
-        /// Returns the start timecode of the earliest sequence in the project.
-        public var startTimecode: Timecode? {
-            sequences
-                .map(\.startTimecode)
-                .sorted()
-                .first
-        }
-        
-        /// Returns the frame rate of the project.
-        public var frameRate: TimecodeFrameRate? {
-            sequences
-                .map(\.startTimecode)
-                .sorted()
-                .map(\.frameRate)
-                .first
-        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Project {
+    /// Returns the start timecode of the earliest sequence in the project.
+    public var startTimecode: Timecode? {
+        sequences
+            .map(\.startTimecode)
+            .sorted()
+            .first
+    }
+    
+    /// Returns the frame rate of the project.
+    public var frameRate: TimecodeFrameRate? {
+        sequences
+            .map(\.startTimecode)
+            .sorted()
+            .map(\.frameRate)
+            .first
     }
 }
 

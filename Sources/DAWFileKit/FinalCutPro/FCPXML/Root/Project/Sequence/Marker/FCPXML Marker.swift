@@ -76,7 +76,7 @@ extension FinalCutPro.FCPXML.Marker {
             duration = FinalCutPro.formTimecode(at: .fps30)
         }
         
-        // "value" // marker name
+        // "value" - marker name
         name = xmlLeaf.attributeStringValue(forName: Attributes.value.rawValue) ?? ""
         
         // "note"

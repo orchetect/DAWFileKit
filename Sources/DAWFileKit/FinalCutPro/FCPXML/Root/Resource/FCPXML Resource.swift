@@ -10,13 +10,13 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // TODO: additional resource types need to be added
-    
     /// Resource
     public enum Resource: Equatable, Hashable {
         case asset(Asset)
         case effect(Effect)
         case format(Format)
+        
+        // TODO: additional resource types need to be added
     }
 }
 
@@ -25,6 +25,8 @@ extension FinalCutPro.FCPXML.Resource {
         case asset
         case effect
         case format
+        
+        // TODO: additional resource types need to be added
     }
 }
 #endif
