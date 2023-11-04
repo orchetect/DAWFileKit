@@ -60,6 +60,13 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         )
         XCTAssertEqual(resources["r2"], .effect(r2))
         
+        // library
+        
+        let library = try XCTUnwrap(fcpxml.library())
+        
+        let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
+        XCTAssertEqual(library.location, libraryURL)
+        
         // events
         
         let events = fcpxml.events()

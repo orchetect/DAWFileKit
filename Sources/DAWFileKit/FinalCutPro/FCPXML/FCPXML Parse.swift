@@ -45,6 +45,21 @@ extension FinalCutPro.FCPXML {
             } ?? [:]
     }
     
+    public func library() -> Library? {
+        guard let library = xmlLibrary else { return nil }
+        let location = library.attributeStringValue(forName: "location") ?? ""
+        
+        guard let locationURL = URL(string: location) else {
+            print("Invalid fcpxml library URL: \(location.quoted)")
+            return nil
+        }
+        return Library(location: locationURL)
+    }
+}
+
+// MARK: - XMLRoot/fcpxml/library/*
+
+extension FinalCutPro.FCPXML {
     /// Returns all events.
     public func events() -> [Event] {
         let resources = resources()
