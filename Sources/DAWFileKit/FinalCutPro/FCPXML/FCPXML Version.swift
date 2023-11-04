@@ -20,6 +20,7 @@ extension FinalCutPro.FCPXML {
         case ver1_8 = "1.8"
         case ver1_9 = "1.9"
         case ver1_10 = "1.10"
+        case ver1_11 = "1.11"
     }
 }
 

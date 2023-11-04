@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Parse FCPXML file contents exported from Final Cut Pro.
+    /// Parse FCPXML/FCPXMLD file contents exported from Final Cut Pro.
     public init(fileContent data: Data) throws {
         let xmlDocument = try XMLDocument(data: data)
         self.init(fileContent: xmlDocument)
