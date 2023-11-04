@@ -14,6 +14,8 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Returns resources contained in the XML, keyed by the resource ID.
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    ///
     /// - Returns: `[ID: Resource]`
     public func resources() -> [String: Resource] {
         xmlResources?
@@ -45,6 +47,7 @@ extension FinalCutPro.FCPXML {
             } ?? [:]
     }
     
+    /// A fcpxml file may contain one or zero `library` elements.
     public func library() -> Library? {
         guard let library = xmlLibrary else { return nil }
         let location = library.attributeStringValue(forName: "location") ?? ""
@@ -57,34 +60,80 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-// MARK: - XMLRoot/fcpxml/library/*
+// MARK: fcpxml/event or
+// MARK: fcpxml/library/event
 
 extension FinalCutPro.FCPXML {
-    /// Returns all events.
+    /// Convenience to return all events.
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    ///
+    /// Events may exist within:
+    /// - the `fcpxml` element
+    /// - the `fcpxml/library` element if it exists
     public func events() -> [Event] {
         let resources = resources()
-        return xmlEvents.map {
+        var gatheredEvents: [Event] = []
+        
+        if let xmlRoot = xmlRoot {
+            gatheredEvents.append(contentsOf: events(in: xmlRoot, resources: resources))
+        }
+        
+        if let xmlLibrary = xmlLibrary {
+            gatheredEvents.append(contentsOf: events(in: xmlLibrary, resources: resources))
+        }
+        
+        return gatheredEvents
+    }
+    
+    /// Internal:
+    /// Parses events from a leaf (usually from the `fcpxml` leaf or an `library` leaf).
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    internal func events(
+        in xmlLeaf: XMLElement,
+        resources: [String: Resource]
+    ) -> [Event] {
+        let xmlElements = xmlLeaf.elements(forName: "event")
+        let events = xmlElements.map {
             Event(
                 name: $0.attributeStringValue(forName: "name") ?? "",
                 projects: projects(in: $0, resources: resources)
             )
         }
+        return events
     }
 }
 
-// MARK: - XMLRoot/fcpxml/library/event/*
+// MARK: fcpxml/project or
+// MARK: fcpxml/event/project or
+// MARK: fcpxml/library/event/project
 
 extension FinalCutPro.FCPXML {
-    /// Returns all projects.
+    /// Convenience to return all projects.
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    ///
+    /// Projects may exist within:
+    /// - the `fcpxml` element
+    /// - an `fcpxml/event` element
+    /// - an `fcpxml/library/event` element
     public func projects() -> [Project] {
         let resources = resources()
-        return xmlEvents.flatMap {
-            projects(in: $0, resources: resources)
+        var gatheredProjects: [Project] = []
+        
+        if let xmlRoot = xmlRoot {
+            gatheredProjects.append(contentsOf: projects(in: xmlRoot, resources: resources))
         }
+        
+        let projectsInEvents: [Project] = events().reduce(into: []) { projectsInEvents, event in
+            projectsInEvents.append(contentsOf: event.projects)
+        }
+        gatheredProjects.append(contentsOf: projectsInEvents)
+        
+        return gatheredProjects
     }
     
     /// Internal:
-    /// Parses projects from a leaf (usually from an `<event>` leaf).
+    /// Parses projects from a leaf (usually from the `fcpxml` leaf or an `event` leaf).
+    /// This is computed, so it is best to avoid repeat calls to this method.
     internal func projects(
         in xmlLeaf: XMLElement,
         resources: [String: Resource]
@@ -102,11 +151,14 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-// MARK: - XMLRoot/fcpxml/library/event/project/*
+// MARK: fcpxml/project/sequence or
+// MARK: fcpxml/event/project/sequence or
+// MARK: fcpxml/library/event/project/sequence
 
 extension FinalCutPro.FCPXML {
     /// Internal:
-    /// Parse sequences from a leaf (usually from a `<project>` leaf).
+    /// Parse sequences from a leaf (usually from a `project` leaf).
+    /// This is computed, so it is best to avoid repeat calls to this method.
     internal func parseSequences(
         in xmlLeaf: XMLElement,
         resources: [String: Resource]

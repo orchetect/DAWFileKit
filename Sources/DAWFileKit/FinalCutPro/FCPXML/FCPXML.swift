@@ -45,6 +45,7 @@ extension FinalCutPro {
     ///     <sequence ... > ... </sequence>
     ///   </project>
     ///   <event name="MyEvent" ... > ... </event>
+    ///   <asset-clip ... />
     /// </fcpxml>
     /// ```
     ///
@@ -102,18 +103,9 @@ extension FinalCutPro.FCPXML {
         xmlRoot?.elements(forName: FCPXMLElements.resources.rawValue).first
     }
     
-    /// The `library` XML element.
+    /// The `library` XML element, if it exists.
     public var xmlLibrary: XMLElement? {
         xmlRoot?.elements(forName: FCPXMLElements.library.rawValue).first
-    }
-}
-
-// MARK: - XMLRoot/fcpxml/library/*
-
-extension FinalCutPro.FCPXML {
-    /// All "event" XML leafs within the library.
-    var xmlEvents: [XMLElement] {
-        xmlLibrary?.elements(forName: "event") ?? []
     }
 }
 
