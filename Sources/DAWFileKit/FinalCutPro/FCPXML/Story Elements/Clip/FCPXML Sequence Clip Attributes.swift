@@ -11,7 +11,7 @@ import TimecodeKit
 import CoreMedia
 @_implementationOnly import OTCore
 
-extension FinalCutPro.FCPXML.Sequence.Clip {
+extension FinalCutPro.FCPXML.Clip {
     /// Clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID

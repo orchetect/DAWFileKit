@@ -104,8 +104,8 @@ extension FinalCutPro.FCPXML.Sequence {
         // TODO: not sure if it's ever possible to have more than one spine? keep them separate?
         let spines = Self.spines(in: xmlLeaf)
         
-        clips = spines.reduce(into: [Clip]()) { clips, spineLeaf in
-            let spineClips = Self.parseClips(
+        clips = spines.reduce(into: [FinalCutPro.FCPXML.Clip]()) { clips, spineLeaf in
+            let spineClips = FinalCutPro.FCPXML.parseClips(
                 from: spineLeaf,
                 sequenceFrameRate: frameRate
             )

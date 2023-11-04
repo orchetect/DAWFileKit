@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Sequence.Clip {
+extension FinalCutPro.FCPXML.Clip {
     // <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
     /// Video Clip.
     public struct Video {
@@ -38,7 +38,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence.Clip.Video {
+extension FinalCutPro.FCPXML.Clip.Video {
     /// Video clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
@@ -54,27 +54,27 @@ extension FinalCutPro.FCPXML.Sequence.Clip.Video {
         sequenceFrameRate frameRate: TimecodeFrameRate
     ) {
         // "ref"
-        ref = FinalCutPro.FCPXML.Sequence.Clip.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
         // "offset"
-        offset = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        offset = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .offset,
             from: xmlLeaf,
             sequenceFrameRate: frameRate
         )
         
         // "name"
-        name = FinalCutPro.FCPXML.Sequence.Clip.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
         // "start"
-        start = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        start = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .start,
             from: xmlLeaf,
             sequenceFrameRate: frameRate
         )
         
         // "duration"
-        duration = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        duration = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .duration,
             from: xmlLeaf,
             sequenceFrameRate: frameRate

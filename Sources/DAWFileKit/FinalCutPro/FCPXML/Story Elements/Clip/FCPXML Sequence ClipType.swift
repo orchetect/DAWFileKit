@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension FinalCutPro.FCPXML.Sequence {
+extension FinalCutPro.FCPXML {
     public enum ClipType: String {
         case assetClip = "asset-clip"
         case title

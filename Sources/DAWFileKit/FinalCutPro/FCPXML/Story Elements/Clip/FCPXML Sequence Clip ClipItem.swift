@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Sequence.Clip {
+extension FinalCutPro.FCPXML.Clip {
     /// Items within clips.
     public enum ClipItem: String {
         case marker // includes standard and to-do markers

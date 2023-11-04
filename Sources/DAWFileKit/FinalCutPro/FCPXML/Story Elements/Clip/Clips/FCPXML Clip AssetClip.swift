@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Sequence.Clip {
+extension FinalCutPro.FCPXML.Clip {
     // <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
     /// Asset Clip.
     public struct AssetClip {
@@ -35,7 +35,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence.Clip.AssetClip {
+extension FinalCutPro.FCPXML.Clip.AssetClip {
     /// Asset clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
@@ -50,20 +50,20 @@ extension FinalCutPro.FCPXML.Sequence.Clip.AssetClip {
         sequenceFrameRate frameRate: TimecodeFrameRate
     ) {
         // "ref"
-        ref = FinalCutPro.FCPXML.Sequence.Clip.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
         // "offset"
-        offset = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        offset = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .offset,
             from: xmlLeaf,
             sequenceFrameRate: frameRate
         )
         
         // "name"
-        name = FinalCutPro.FCPXML.Sequence.Clip.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
         // "duration"
-        duration = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        duration = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .duration,
             from: xmlLeaf,
             sequenceFrameRate: frameRate

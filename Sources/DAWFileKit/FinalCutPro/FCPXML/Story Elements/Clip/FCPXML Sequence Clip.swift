@@ -11,9 +11,9 @@ import TimecodeKit
 import CoreMedia
 @_implementationOnly import OTCore
 
-extension FinalCutPro.FCPXML.Sequence {
+extension FinalCutPro.FCPXML {
     /// Sequence Clip.
-    public enum Clip {
+    public enum Clip: FCPXMLStoryElement {
         case assetClip(AssetClip)
         case title(Title)
         case video(Video)
@@ -24,7 +24,7 @@ extension FinalCutPro.FCPXML.Sequence {
 
 // MARK: - Clip Common
 
-extension FinalCutPro.FCPXML.Sequence.Clip {
+extension FinalCutPro.FCPXML.Clip {
     static func getRef(
         from xmlLeaf: XMLElement
     ) -> String {
@@ -66,7 +66,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
         
         children.forEach {
             let itemName = $0.name ?? ""
-            guard let item = FinalCutPro.FCPXML.Sequence.Clip.ClipItem(rawValue: itemName)
+            guard let item = FinalCutPro.FCPXML.Clip.ClipItem(rawValue: itemName)
             else {
                 print("Info: skipping clip item \(itemName.quoted). Not handled.")
                 return // next forEach
@@ -91,7 +91,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence {
+extension FinalCutPro.FCPXML {
     static func parseClips(
         from xmlLeaf: XMLElement,
         sequenceFrameRate frameRate: TimecodeFrameRate

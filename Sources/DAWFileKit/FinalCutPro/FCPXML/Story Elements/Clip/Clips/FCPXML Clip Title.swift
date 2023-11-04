@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Sequence.Clip {
+extension FinalCutPro.FCPXML.Clip {
     // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
     /// Title Clip.
     ///
@@ -45,7 +45,7 @@ extension FinalCutPro.FCPXML.Sequence.Clip {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence.Clip.Title {
+extension FinalCutPro.FCPXML.Clip.Title {
     /// Title clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
@@ -62,34 +62,34 @@ extension FinalCutPro.FCPXML.Sequence.Clip.Title {
         sequenceFrameRate frameRate: TimecodeFrameRate
     ) {
         // "ref"
-        ref = FinalCutPro.FCPXML.Sequence.Clip.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
         // "offset"
-        offset = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        offset = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .offset,
             from: xmlLeaf,
             sequenceFrameRate: frameRate
         )
         
         // "name"
-        name = FinalCutPro.FCPXML.Sequence.Clip.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
         // "start"
-        start = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        start = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .start,
             from: xmlLeaf,
             sequenceFrameRate: frameRate
         )
         
         // "duration"
-        duration = FinalCutPro.FCPXML.Sequence.Clip.getTimecode(
+        duration = FinalCutPro.FCPXML.Clip.getTimecode(
             attribute: .duration,
             from: xmlLeaf,
             sequenceFrameRate: frameRate
         )
         
         // contents
-        markers = FinalCutPro.FCPXML.Sequence.Clip.getMarkers(from: xmlLeaf, sequenceFrameRate: frameRate)
+        markers = FinalCutPro.FCPXML.Clip.getMarkers(from: xmlLeaf, sequenceFrameRate: frameRate)
     }
 }
 
