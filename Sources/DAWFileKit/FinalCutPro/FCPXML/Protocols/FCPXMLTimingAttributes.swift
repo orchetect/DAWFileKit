@@ -104,7 +104,8 @@ extension FCPXMLTimingAttributes {
     static func parseTimingAttributesDefaulted(
         frameRate: TimecodeFrameRate,
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.Resource],
+        logErrors: Bool = true
     ) -> (
         offset: Timecode,
         start: Timecode,
@@ -116,9 +117,9 @@ extension FCPXMLTimingAttributes {
             resources: resources
         )
         
-        let offset = validateTimingAttributes(offset: attrs.offset, frameRate: frameRate)
-        let start = validateTimingAttributes(start: attrs.start, frameRate: frameRate)
-        let duration = validateTimingAttributes(duration: attrs.duration, frameRate: frameRate)
+        let offset = validateTimingAttributes(offset: attrs.offset, frameRate: frameRate, logErrors: logErrors)
+        let start = validateTimingAttributes(start: attrs.start, frameRate: frameRate, logErrors: logErrors)
+        let duration = validateTimingAttributes(duration: attrs.duration, frameRate: frameRate, logErrors: logErrors)
         
         return (
             offset: offset,
@@ -130,11 +131,14 @@ extension FCPXMLTimingAttributes {
     /// Provides suitable default if necessary.
     static func validateTimingAttributes(
         offset timecode: Timecode?,
-        frameRate: TimecodeFrameRate
+        frameRate: TimecodeFrameRate,
+        logErrors: Bool = true
     ) -> Timecode {
         guard let timecode = timecode else {
             let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
-            print("Error: offset could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            if logErrors {
+                print("Error: offset could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            }
             return defaultTimecode
         }
         return timecode
@@ -143,11 +147,14 @@ extension FCPXMLTimingAttributes {
     /// Provides suitable default if necessary.
     static func validateTimingAttributes(
         start timecode: Timecode?,
-        frameRate: TimecodeFrameRate
+        frameRate: TimecodeFrameRate,
+        logErrors: Bool = true
     ) -> Timecode {
         guard let timecode = timecode else {
             let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
-            print("Error: start could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            if logErrors {
+                print("Error: start could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            }
             return defaultTimecode
         }
         return timecode
@@ -156,11 +163,14 @@ extension FCPXMLTimingAttributes {
     /// Provides suitable default if necessary.
     static func validateTimingAttributes(
         duration timecode: Timecode?,
-        frameRate: TimecodeFrameRate
+        frameRate: TimecodeFrameRate,
+        logErrors: Bool = true
     ) -> Timecode {
         guard let timecode = timecode else {
             let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
-            print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            if logErrors {
+                print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
+            }
             return defaultTimecode
         }
         return timecode
