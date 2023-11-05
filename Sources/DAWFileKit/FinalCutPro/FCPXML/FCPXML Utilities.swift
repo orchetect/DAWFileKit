@@ -82,7 +82,8 @@ extension FinalCutPro.FCPXML {
     ) -> VideoFrameRate? {
         guard case let .format(fmt) = resources[id] else { return nil }
         let interlaced = fmt.fieldOrder != nil
-        guard let parsed = parse(rationalTimeString: fmt.frameDuration),
+        guard let frameDuration = fmt.frameDuration,
+              let parsed = parse(rationalTimeString: frameDuration),
               case let .rational(frac) = parsed
         else { return nil }
         let fRate = VideoFrameRate(

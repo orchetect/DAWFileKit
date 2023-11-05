@@ -23,36 +23,40 @@ extension FinalCutPro.FCPXML {
     /// > See [`asset`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset).
     public struct Asset: Equatable, Hashable {
         // shared resource attributes
-        public let name: String
-        public let id: String
+        public var name: String?
+        public var id: String?
         
         // base attributes
-        public let start: String
-        public let duration: String
-        public let format: String?
+        public var start: String?
+        public var duration: String?
+        public var format: String?
         
         // asset attributes
-        public let uid: String
+        public var uid: String
         
         // implied asset attributes
-        public let hasVideo: Bool
-        public let hasAudio: Bool
-        public let audioSources: Int
-        public let audioChannels: Int
-        public let audioRate: Int?
-        public let videoSources: Int
-        public let auxVideoFlags: String?
+        public var hasVideo: Bool
+        public var hasAudio: Bool
+        public var audioSources: Int
+        public var audioChannels: Int
+        public var audioRate: Int?
+        public var videoSources: Int
+        public var auxVideoFlags: String?
         
-        // TODO: refactor to strong types
-        public let xmlChildren: [XMLElement]
+        // TODO: refactor unfinished attributes to strong types
+        public var xmlChildren: [XMLElement]
         
         internal init(
-            name: String,
-            id: String,
-            start: String,
-            duration: String,
+            // shared resource attributes
+            name: String?,
+            id: String?,
+            // base attributes
+            start: String?,
+            duration: String?,
             format: String?,
+            // asset attributes
             uid: String,
+            // implied asset attributes
             hasVideo: Bool,
             hasAudio: Bool,
             audioSources: Int,
@@ -60,6 +64,7 @@ extension FinalCutPro.FCPXML {
             audioRate: Int?,
             videoSources: Int,
             auxVideoFlags: String?,
+            // TODO: refactor unfinished attributes to strong types
             xmlChildren: [XMLElement]
         ) {
             // shared resource attributes
@@ -83,17 +88,18 @@ extension FinalCutPro.FCPXML {
             self.videoSources = videoSources
             self.auxVideoFlags = auxVideoFlags
             
+            // TODO: refactor unfinished attributes to strong types
             self.xmlChildren = xmlChildren
         }
         
         init(from xmlLeaf: XMLElement) {
             // shared resource attributes
-            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue) ?? ""
-            id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) ?? ""
+            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+            id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue)
             
             // base attributes
-            start = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue) ?? ""
-            duration = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue) ?? ""
+            start = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue)
+            duration = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue)
             format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue)
             
             // asset attributes
@@ -108,7 +114,7 @@ extension FinalCutPro.FCPXML {
             videoSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.videoSources.rawValue) ?? "0") ?? 0
             auxVideoFlags = xmlLeaf.attributeStringValue(forName: Attributes.auxVideoFlags.rawValue)
             
-            // TODO: refactor to strong types
+            // TODO: refactor unfinished attributes to strong types
             xmlChildren = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
         }
     }

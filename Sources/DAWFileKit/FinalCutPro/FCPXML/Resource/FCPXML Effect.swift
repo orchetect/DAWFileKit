@@ -23,31 +23,35 @@ extension FinalCutPro.FCPXML {
     /// > See [`effect`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/effect).
     public struct Effect: Equatable, Hashable {
         // shared resource attributes
-        let name: String
-        let id: String
+        public var id: String // required
+        public var name: String?
         
         // effect attributes
-        let uid: String
+        public var uid: String // required
+        public var src: String?
         
-        init(
-            name: String,
+        public init(
             id: String,
-            uid: String
+            name: String?,
+            uid: String,
+            src: String?
         ) {
             // shared resource attributes
-            self.name = name
             self.id = id
+            self.name = name
             
             // effect attributes
             self.uid = uid
+            self.src = src
         }
         
         init(from xmlLeaf: XMLElement) {
-            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue) ?? ""
             id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) ?? ""
+            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
             
             // effect attributes
             uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) ?? ""
+            src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
         }
     }
 }
@@ -55,11 +59,12 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Effect {
     public enum Attributes: String {
         // shared resource attributes
-        case name
         case id
+        case name
         
         // effect attributes
         case uid
+        case src
     }
 }
 
