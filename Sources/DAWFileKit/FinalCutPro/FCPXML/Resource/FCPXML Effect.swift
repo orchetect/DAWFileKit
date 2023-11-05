@@ -44,21 +44,11 @@ extension FinalCutPro.FCPXML {
             self.uid = uid
             self.src = src
         }
-        
-        init?(from xmlLeaf: XMLElement) {
-            guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
-            self.id = id
-            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
-            
-            // effect attributes
-            guard let uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) else { return nil }
-            self.uid = uid
-            src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
-        }
     }
 }
 
 extension FinalCutPro.FCPXML.Effect {
+    /// Attributes unique to ``Effect``.
     public enum Attributes: String {
         // shared resource attributes
         case id
@@ -67,6 +57,17 @@ extension FinalCutPro.FCPXML.Effect {
         // effect attributes
         case uid
         case src
+    }
+    
+    init?(from xmlLeaf: XMLElement) {
+        guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+        self.id = id
+        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+        
+        // effect attributes
+        guard let uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) else { return nil }
+        self.uid = uid
+        src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
     }
 }
 

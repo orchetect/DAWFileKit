@@ -40,7 +40,7 @@ extension FinalCutPro.FCPXML {
         public var projection: String?
         public var stereoscopic: String?
         
-        init(
+        public init(
             id: String,
             name: String?,
             frameDuration: String?,
@@ -68,28 +68,11 @@ extension FinalCutPro.FCPXML {
             self.projection = projection
             self.stereoscopic = stereoscopic
         }
-        
-        init?(from xmlLeaf: XMLElement) {
-            // shared resource attributes
-            guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
-            self.id = id
-            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
-            
-            // format attributes
-            frameDuration = xmlLeaf.attributeStringValue(forName: Attributes.frameDuration.rawValue)
-            fieldOrder = xmlLeaf.attributeStringValue(forName: Attributes.fieldOrder.rawValue)
-            width = Int(xmlLeaf.attributeStringValue(forName: Attributes.width.rawValue) ?? "")
-            height = Int(xmlLeaf.attributeStringValue(forName: Attributes.height.rawValue) ?? "")
-            paspH = xmlLeaf.attributeStringValue(forName: Attributes.paspH.rawValue)
-            paspV = xmlLeaf.attributeStringValue(forName: Attributes.paspV.rawValue)
-            colorSpace = xmlLeaf.attributeStringValue(forName: Attributes.colorSpace.rawValue)
-            projection = xmlLeaf.attributeStringValue(forName: Attributes.projection.rawValue)
-            stereoscopic = xmlLeaf.attributeStringValue(forName: Attributes.stereoscopic.rawValue)
-        }
     }
 }
 
 extension FinalCutPro.FCPXML.Format {
+    /// Attributes unique to ``Format``.
     public enum Attributes: String {
         // shared resource attributes
         case id
@@ -105,6 +88,24 @@ extension FinalCutPro.FCPXML.Format {
         case colorSpace
         case projection
         case stereoscopic // note that Apple docs misspell it as "sterioscopic"
+    }
+    
+    init?(from xmlLeaf: XMLElement) {
+        // shared resource attributes
+        guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+        self.id = id
+        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+        
+        // format attributes
+        frameDuration = xmlLeaf.attributeStringValue(forName: Attributes.frameDuration.rawValue)
+        fieldOrder = xmlLeaf.attributeStringValue(forName: Attributes.fieldOrder.rawValue)
+        width = Int(xmlLeaf.attributeStringValue(forName: Attributes.width.rawValue) ?? "")
+        height = Int(xmlLeaf.attributeStringValue(forName: Attributes.height.rawValue) ?? "")
+        paspH = xmlLeaf.attributeStringValue(forName: Attributes.paspH.rawValue)
+        paspV = xmlLeaf.attributeStringValue(forName: Attributes.paspV.rawValue)
+        colorSpace = xmlLeaf.attributeStringValue(forName: Attributes.colorSpace.rawValue)
+        projection = xmlLeaf.attributeStringValue(forName: Attributes.projection.rawValue)
+        stereoscopic = xmlLeaf.attributeStringValue(forName: Attributes.stereoscopic.rawValue)
     }
 }
 

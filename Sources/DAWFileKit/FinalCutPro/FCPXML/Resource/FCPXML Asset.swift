@@ -46,7 +46,7 @@ extension FinalCutPro.FCPXML {
         // TODO: refactor unfinished attributes to strong types
         public var xmlChildren: [XMLElement]
         
-        internal init(
+        public init(
             // shared resource attributes
             id: String,
             name: String?,
@@ -91,37 +91,11 @@ extension FinalCutPro.FCPXML {
             // TODO: refactor unfinished attributes to strong types
             self.xmlChildren = xmlChildren
         }
-        
-        init?(from xmlLeaf: XMLElement) {
-            // shared resource attributes
-            guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
-            self.id = id
-            name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
-            
-            // base attributes
-            start = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue)
-            duration = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue)
-            format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue)
-            
-            // asset attributes
-            uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
-            
-            // implied asset attributes
-            hasVideo = xmlLeaf.attributeStringValue(forName: Attributes.hasVideo.rawValue) ?? "0" == "1"
-            hasAudio = xmlLeaf.attributeStringValue(forName: Attributes.hasAudio.rawValue) ?? "0" == "1"
-            audioSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.audioSources.rawValue) ?? "0") ?? 0
-            audioChannels = Int(xmlLeaf.attributeStringValue(forName: Attributes.audioChannels.rawValue) ?? "0") ?? 0
-            audioRate = xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue)?.int
-            videoSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.videoSources.rawValue) ?? "0") ?? 0
-            auxVideoFlags = xmlLeaf.attributeStringValue(forName: Attributes.auxVideoFlags.rawValue)
-            
-            // TODO: refactor unfinished attributes to strong types
-            xmlChildren = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
-        }
     }
 }
 
 extension FinalCutPro.FCPXML.Asset {
+    /// Attributes unique to ``Asset``.
     public enum Attributes: String {
         // shared resource attributes
         case id
@@ -143,6 +117,33 @@ extension FinalCutPro.FCPXML.Asset {
         case audioRate
         case videoSources
         case auxVideoFlags
+    }
+    
+    init?(from xmlLeaf: XMLElement) {
+        // shared resource attributes
+        guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+        self.id = id
+        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+        
+        // base attributes
+        start = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue)
+        duration = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue)
+        format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue)
+        
+        // asset attributes
+        uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
+        
+        // implied asset attributes
+        hasVideo = xmlLeaf.attributeStringValue(forName: Attributes.hasVideo.rawValue) ?? "0" == "1"
+        hasAudio = xmlLeaf.attributeStringValue(forName: Attributes.hasAudio.rawValue) ?? "0" == "1"
+        audioSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.audioSources.rawValue) ?? "0") ?? 0
+        audioChannels = Int(xmlLeaf.attributeStringValue(forName: Attributes.audioChannels.rawValue) ?? "0") ?? 0
+        audioRate = xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue)?.int
+        videoSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.videoSources.rawValue) ?? "0") ?? 0
+        auxVideoFlags = xmlLeaf.attributeStringValue(forName: Attributes.auxVideoFlags.rawValue)
+        
+        // TODO: refactor unfinished attributes to strong types
+        xmlChildren = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
     }
 }
 
