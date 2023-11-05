@@ -78,17 +78,17 @@ extension FinalCutPro.FCPXML {
                 if let clipType = StoryElementType(rawValue: name) {
                     switch clipType {
                     case .assetClip:
-                        let clip = AssetClip(
+                        guard let clip = AssetClip(
                             from: childLeaf,
                             frameRate: frameRate
-                        )
+                        ) else { return nil }
                         return .assetClip(clip)
                         
                     case .video:
-                        let clip = Video(
+                        guard let clip = Video(
                             from: childLeaf,
                             frameRate: frameRate
-                        )
+                        ) else { return nil }
                         return .video(clip)
                         
                     default:
@@ -101,10 +101,10 @@ extension FinalCutPro.FCPXML {
                 if let effectType = EffectElementType(rawValue: name) {
                     switch effectType {
                     case .title:
-                        let clip = Title(
+                        guard let clip = Title(
                             from: childLeaf,
                             frameRate: frameRate
-                        )
+                        ) else { return nil }
                         return .title(clip)
                     
                     default:

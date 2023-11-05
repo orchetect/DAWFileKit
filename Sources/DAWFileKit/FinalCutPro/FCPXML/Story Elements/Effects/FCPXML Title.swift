@@ -18,21 +18,23 @@ extension FinalCutPro.FCPXML {
     /// Its frame rate is inferred from the sequence.
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `<title>` XML itself.
     public struct Title: FCPXMLStoryElement {
-        public let ref: String // resource ID
-        public let markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
-        // TODO: add audio/video roles?
+        public var ref: String // resource ID, required
+        public var role: String?
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
         // FCPXMLAnchorableAttributes
-        public let lane: Int?
-        public let offset: Timecode?
+        public var lane: Int?
+        public var offset: Timecode?
         
         // FCPXMLClipAttributes
-        public let name: String?
-        public let start: Timecode?
-        public let duration: Timecode?
-        public let enabled: Bool
+        public var name: String?
+        public var start: Timecode?
+        public var duration: Timecode?
+        public var enabled: Bool
         
-        internal init(
+        // TODO: add missing attributes and protocols
+        
+        public init(
             ref: String,
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -64,16 +66,19 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
     /// Title clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
+        case role
     }
     
     /// Note: `frameDuration` and `tcFormat` is not stored in `<title>`,
     /// it's inferred from the parent sequence.
-    internal init(
+    internal init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
-        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) ?? "" // TODO: error condition?
+        guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
+        self.ref = ref
         markers = FinalCutPro.FCPXML.getMarkers(from: xmlLeaf, frameRate: frameRate)
+        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
             frameRate: frameRate,

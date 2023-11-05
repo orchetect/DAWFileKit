@@ -12,9 +12,13 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     // <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
     
-    /// Video Clip.
+    /// Video element.
+    ///
+    /// > Final Cut Pro FCPXML 1.11 Reference:
+    /// >
+    /// > References video data from an `asset` or `effect` element.
     public struct Video: FCPXMLStoryElement {
-        public let ref: String // resource ID
+        public let ref: String // resource ID, required
         public let role: String?
         
         // FCPXMLAnchorableAttributes
@@ -27,7 +31,9 @@ extension FinalCutPro.FCPXML {
         public let duration: Timecode?
         public let enabled: Bool
         
-        internal init(
+        // TODO: add missing attributes and protocols
+        
+        public init(
             ref: String,
             role: String?,
             // FCPXMLAnchorableAttributes
@@ -62,11 +68,12 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
         case role
     }
     
-    internal init(
+    internal init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
-        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) ?? "" // TODO: error condition?
+        guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
+        self.ref = ref
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(

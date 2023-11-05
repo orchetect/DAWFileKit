@@ -12,10 +12,11 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     // <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
     
-    /// Asset Clip.
-    /// References a single media asset.
+    /// Asset Clip element.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
+    /// >
+    /// > References a single media asset.
     /// >
     /// > Use an `asset-clip` element as a shorthand for a `clip` when it references the entire set
     /// > of media components in a single media.
@@ -35,7 +36,7 @@ extension FinalCutPro.FCPXML {
     /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
     /// > > components from a media file as a clip.
     public struct AssetClip: FCPXMLStoryElement {
-        public var ref: String // resource ID
+        public var ref: String // resource ID, required
         public var audioRole: String?
         
         // FCPXMLAnchorableAttributes
@@ -48,9 +49,11 @@ extension FinalCutPro.FCPXML {
         public var duration: Timecode?
         public var enabled: Bool
         
+        // TODO: add missing attributes and protocols
+        
         // TODO: add attributes array, ie: markers?
         
-        internal init(
+        public init(
             ref: String,
             audioRole: String?,
             // FCPXMLAnchorableAttributes
@@ -85,11 +88,12 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
         case audioRole
     }
     
-    internal init(
+    internal init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
-        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) ?? "" // TODO: error condition?
+        guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
+        self.ref = ref
         audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
