@@ -32,13 +32,17 @@ public protocol FCPXMLTimelineAttributes {
     
     // "tcStart", also parses "tcFormat"
     /// The timecode origin represented as a time value.
-    var startTimecode: Timecode { get }
+    var start: Timecode { get }
+    
+    /// The timeline's extent (length) in parent time.
+    var duration: Timecode { get }
 }
 
 public enum FCPXMLTimelineAttributesKey: String, XMLParsableAttributesKey {
     case format
     case tcFormat // once parsed, can be determined from `startTimecode.isDrop` property
     case tcStart
+    case duration
 }
 
 extension FCPXMLTimelineAttributes {
@@ -62,7 +66,8 @@ extension FCPXMLTimelineAttributes {
     ) -> (
         format: String?,
         timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        startTimecode: Timecode?
+        start: Timecode?,
+        duration: Timecode?
     ) {
         let rawValues = parseTimelineAttributesRawValues(from: xmlLeaf, resources: resources)
         
@@ -73,8 +78,16 @@ extension FCPXMLTimelineAttributes {
         let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: rawValues[.tcFormat] ?? "")
         
         // `tcStart`
-        let startTimecode = try? FinalCutPro.FCPXML.timecode(
+        let start = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.tcStart] ?? "",
+            tcFormat: tcFormat,
+            resourceID: format ?? "",
+            resources: resources
+        )
+        
+        // `duration`
+        let duration = try? FinalCutPro.FCPXML.timecode(
+            fromRational: rawValues[.duration] ?? "",
             tcFormat: tcFormat,
             resourceID: format ?? "",
             resources: resources
@@ -83,7 +96,8 @@ extension FCPXMLTimelineAttributes {
         return (
             format: format,
             timecodeFormat: tcFormat,
-            startTimecode: startTimecode
+            start: start,
+            duration: duration
         )
     }
     
@@ -98,7 +112,8 @@ extension FCPXMLTimelineAttributes {
     ) -> (
         format: String,
         timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat,
-        startTimecode: Timecode
+        start: Timecode,
+        duration: Timecode
     ) {
         let attrs = parseTimelineAttributes(
             from: xmlLeaf, 
@@ -107,12 +122,14 @@ extension FCPXMLTimelineAttributes {
         
         let format = validateTimelineAttributes(format: attrs.format)
         let timecodeFormat = validateTimelineAttributes(timecodeFormat: attrs.timecodeFormat)
-        let startTimecode = validateTimelineAttributes(startTimecode: attrs.startTimecode)
+        let start = validateTimelineAttributes(start: attrs.start)
+        let duration = validateTimelineAttributes(duration: attrs.duration)
         
         return (
             format: format,
             timecodeFormat: timecodeFormat,
-            startTimecode: startTimecode
+            start: start,
+            duration: duration
         )
     }
     
@@ -136,14 +153,26 @@ extension FCPXMLTimelineAttributes {
     
     /// Provides suitable default if necessary.
     static func validateTimelineAttributes(
-        startTimecode: Timecode?
+        start timecode: Timecode?
     ) -> Timecode {
-        guard let startTimecode = startTimecode else {
+        guard let timecode = timecode else {
             let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
             print("Error: tcStart could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
             return defaultTimecode
         }
-        return startTimecode
+        return timecode
+    }
+    
+    /// Provides suitable default if necessary.
+    static func validateTimelineAttributes(
+        duration timecode: Timecode?
+    ) -> Timecode {
+        guard let timecode = timecode else {
+            let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
+            print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
+            return defaultTimecode
+        }
+        return timecode
     }
 }
 

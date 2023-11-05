@@ -54,25 +54,6 @@ extension FinalCutPro.FCPXML.Clip {
         xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue) ?? ""
     }
     
-    static func getTimecode(
-        attribute: Attributes,
-        from xmlLeaf: XMLElement,
-        sequenceFrameRate frameRate: TimecodeFrameRate
-    ) -> Timecode {
-        if let offsetString = xmlLeaf.attributeStringValue(forName: attribute.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: offsetString,
-            frameRate: frameRate
-           )
-        {
-            return tc
-        } else {
-            let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
-            print("Error: \(attribute.rawValue) could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
-            return defaultTimecode
-        }
-    }
-    
     static func getMarkers(
         from xmlLeaf: XMLElement,
         sequenceFrameRate frameRate: TimecodeFrameRate
@@ -113,7 +94,8 @@ extension FinalCutPro.FCPXML {
     // TODO: refactor into more general story element parser
     static func parseClips(
         from xmlLeaf: XMLElement,
-        sequenceFrameRate frameRate: TimecodeFrameRate
+        frameRate: TimecodeFrameRate,
+        resources: [String: FinalCutPro.FCPXML.Resource]
     ) -> [Clip] {
         xmlLeaf.children?
             .lazy
@@ -130,21 +112,24 @@ extension FinalCutPro.FCPXML {
                 case .assetClip:
                     let clip = Clip.AssetClip(
                         from: childLeaf,
-                        sequenceFrameRate: frameRate
+                        frameRate: frameRate,
+                        resources: resources
                     )
                     return .assetClip(clip)
                     
                 case .title:
                     let clip = Clip.Title(
                         from: childLeaf,
-                        sequenceFrameRate: frameRate
+                        frameRate: frameRate,
+                        resources: resources
                     )
                     return .title(clip)
                     
                 case .video:
                     let clip = Clip.Video(
                         from: childLeaf,
-                        sequenceFrameRate: frameRate
+                        frameRate: frameRate,
+                        resources: resources
                     )
                     return .video(clip)
                     

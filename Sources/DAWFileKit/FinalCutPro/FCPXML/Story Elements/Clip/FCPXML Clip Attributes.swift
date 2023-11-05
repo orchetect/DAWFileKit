@@ -15,13 +15,14 @@ extension FinalCutPro.FCPXML.Clip {
     /// Clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
-        case offset
         case name
-        case start
-        case duration
+        
+        case offset // TODO: handle with FCPXMLTimingAttributes
+        case start // TODO: handle with FCPXMLTimingAttributes
+        case duration // TODO: handle with FCPXMLTimingAttributes
         
         case audioRole
-        case role // video role
+        case role // TODO: video role; change name to `videoRole`?
     }
 }
 

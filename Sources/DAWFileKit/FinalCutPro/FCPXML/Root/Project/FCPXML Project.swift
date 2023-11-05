@@ -21,7 +21,7 @@ extension FinalCutPro.FCPXML.Project {
     /// Returns the start timecode of the earliest sequence in the project.
     public var startTimecode: Timecode? {
         sequences
-            .map(\.startTimecode)
+            .map(\.start)
             .sorted()
             .first
     }
@@ -29,7 +29,7 @@ extension FinalCutPro.FCPXML.Project {
     /// Returns the frame rate of the project.
     public var frameRate: TimecodeFrameRate? {
         sequences
-            .map(\.startTimecode)
+            .map(\.start)
             .sorted()
             .map(\.frameRate)
             .first

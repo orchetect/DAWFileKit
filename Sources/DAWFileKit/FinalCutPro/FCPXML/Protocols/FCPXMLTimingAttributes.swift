@@ -35,7 +35,7 @@ public protocol FCPXMLTimingAttributes {
     /// The start of an element’s local timeline used to schedule its contained and anchored items.
     var start: Timecode { get }
     
-    /// An element’s extent in parent time.
+    /// An element’s extent (length) in parent time.
     var duration: Timecode { get }
 }
 

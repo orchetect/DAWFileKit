@@ -14,9 +14,13 @@ import CoreMedia
 extension FinalCutPro.FCPXML {
     // <sequence format="r1" duration="1920919/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
     public struct Sequence {
+        // FCPXMLTimelineAttributes
         public let format: String
-        public let startTimecode: Timecode
+        public let start: Timecode
+        
+        // FCPXMLTimingAttributes
         public let duration: Timecode
+        
         public let audioLayout: AudioLayout
         public let audioRate: AudioRate
         public let clips: [Clip]
@@ -28,30 +32,17 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
-        // parses `format`, `tcStart`, `tcFormat`
+        // parses `format`, `tcStart`, `tcFormat`, `duration`
         let timelineAttributes = Self.parseTimelineAttributesDefaulted(
             from: xmlLeaf, resources: resources
         )
         // `format`
         format = timelineAttributes.format
         // `tcStart`
-        startTimecode = timelineAttributes.startTimecode
+        start = timelineAttributes.start
         
-        // `duration`
-        if let durString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: durString,
-            tcFormat: timelineAttributes.timecodeFormat,
-            resourceID: format,
-            resources: resources
-           )
-        {
-            duration = tc
-        } else {
-            let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
-            print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
-            duration = defaultTimecode
-        }
+        // parses `duration` and more
+        duration = timelineAttributes.duration
         
         // "audioLayout"
         let al = FinalCutPro.FCPXML.AudioLayout(
@@ -88,7 +79,8 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         clips = spines.reduce(into: [FinalCutPro.FCPXML.Clip]()) { clips, spineLeaf in
             let spineClips = FinalCutPro.FCPXML.parseClips(
                 from: spineLeaf,
-                sequenceFrameRate: frameRate
+                frameRate: frameRate,
+                resources: resources
             )
             clips.append(contentsOf: spineClips)
         }

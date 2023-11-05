@@ -35,62 +35,67 @@ extension FinalCutPro.FCPXML.Clip {
     /// > > components from a media file as a clip.
     public struct AssetClip: FCPXMLStoryElement {
         public let ref: String // resource ID
-        public let offset: Timecode
         public let name: String
+        
+        public let offset: Timecode
+        public let start: Timecode // TODO: not used?
         public let duration: Timecode
+        
         public let audioRole: String
         
         internal init(
             ref: String,
-            offset: Timecode,
             name: String,
+            offset: Timecode,
+            start: Timecode, // TODO: not used?
             duration: Timecode,
             audioRole: String
         ) {
             self.ref = ref
-            self.offset = offset
             self.name = name
+            self.offset = offset
+            self.start = start // TODO: not used?
             self.duration = duration
             self.audioRole = audioRole
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Clip.AssetClip {
+extension FinalCutPro.FCPXML.Clip.AssetClip: FCPXMLTimingAttributes {
     /// Asset clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
-        case offset // TODO: replace with FCPXMLTimingAttributes
         case name
-        case duration // TODO: replace with FCPXMLTimingAttributes
+        // case offset // handled with FCPXMLTimingAttributes
+        // case duration // handled with FCPXMLTimingAttributes
         case audioRole
     }
     
     internal init(
         from xmlLeaf: XMLElement,
-        sequenceFrameRate frameRate: TimecodeFrameRate
+        frameRate: TimecodeFrameRate,
+        resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
         // "ref"
         ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
         
-        // TODO: replace with FCPXMLTimingAttributes
-        // "offset"
-        offset = FinalCutPro.FCPXML.Clip.getTimecode(
-            attribute: .offset,
-            from: xmlLeaf,
-            sequenceFrameRate: frameRate
-        )
-        
         // "name"
         name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
         
-        // TODO: replace with FCPXMLTimingAttributes
-        // "duration"
-        duration = FinalCutPro.FCPXML.Clip.getTimecode(
-            attribute: .duration,
+        let timingAttributes = Self.parseTimingAttributesDefaulted(
+            frameRate: frameRate,
             from: xmlLeaf,
-            sequenceFrameRate: frameRate
+            resources: resources
         )
+        
+        // `offset`
+        offset = timingAttributes.offset
+        
+        // `start`
+        start = timingAttributes.start
+        
+        // `duration`
+        duration = timingAttributes.duration
         
         // "audioRole"
         audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue) ?? ""
