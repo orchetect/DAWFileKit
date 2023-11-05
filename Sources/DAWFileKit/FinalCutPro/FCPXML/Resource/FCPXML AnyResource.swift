@@ -34,4 +34,5 @@ extension FinalCutPro.FCPXML.AnyResource {
         case trackingShape = "tracking-shape"
     }
 }
+
 #endif
