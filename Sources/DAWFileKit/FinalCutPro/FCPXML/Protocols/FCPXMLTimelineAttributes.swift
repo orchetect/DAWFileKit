@@ -18,6 +18,8 @@ import TimecodeKit
 /// - `tcFormat`
 /// - `tcStart`
 ///
+/// Equivalent to `%media_attrs` in the DTD.
+///
 /// > Final Cut Pro FCPXML 1.11 Reference:
 /// >
 /// > Define characteristics of a timeline.
@@ -30,7 +32,7 @@ public protocol FCPXMLTimelineAttributes {
     /// A reference to the video format defined by the `format` element.
     var format: String { get }
     
-    // "tcStart", also parses "tcFormat"
+    // `tcStart`, also parses `tcFormat`
     /// The timecode origin represented as a time value.
     var start: Timecode { get }
     

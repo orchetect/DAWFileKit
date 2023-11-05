@@ -21,6 +21,11 @@ extension FinalCutPro.FCPXML.Sequence {
         
         case audioLayout
         case audioRate
+        
+        case note
+        case renderFormat
+        case keywords
+        case metadata
     }
 }
 

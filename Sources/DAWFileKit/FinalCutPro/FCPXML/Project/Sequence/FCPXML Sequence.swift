@@ -13,6 +13,9 @@ import CoreMedia
 
 extension FinalCutPro.FCPXML {
     // <sequence format="r1" duration="1920919/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+    
+    /// A container that represents the top-level sequence for a Final Cut Pro project or compound
+    /// clip.
     public struct Sequence {
         // FCPXMLTimelineAttributes
         public let format: String
@@ -24,7 +27,13 @@ extension FinalCutPro.FCPXML {
         public let audioLayout: AudioLayout
         public let audioRate: AudioRate
         
-        public let storyElements: [AnyStoryElement]
+        public let spine: [AnyStoryElement]
+        
+        public let renderFormat: String?
+        public let note: String?
+        public let keywords: String?
+        
+        // TODO: add metadata
     }
 }
 
@@ -66,7 +75,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             audioRate = ar
         } else {
             print("Error: audioLayout missing or unrecognized. Defaulting to 48kHz.")
-            audioRate =  .rate48kHz
+            audioRate = .rate48kHz
         }
         
         let frameRate = Self.fRate(
@@ -75,16 +84,27 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             in: resources
         )
         
-        // TODO: not sure if it's ever possible to have more than one spine? keep them separate? is there always a spine in a timeline/sequence?
+        renderFormat = xmlLeaf.attributeStringValue(forName: Attributes.renderFormat.rawValue)
+        
+        note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
+        
+        keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
+        
+        // spine
+        
         let spines = Self.spines(in: xmlLeaf)
         
-        storyElements = spines.reduce(into: [FinalCutPro.FCPXML.AnyStoryElement]()) { clips, spineLeaf in
-            let spineClips = FinalCutPro.FCPXML.parseStoryElements(
+        if spines.count != 1 {
+            print("Error: Expected exactly one spine in the sequence but found \(spines.count).")
+        }
+        
+        spine = spines.reduce(into: [FinalCutPro.FCPXML.AnyStoryElement]()) { elements, spineLeaf in
+            let parsedElements = FinalCutPro.FCPXML.parseStoryElements(
                 from: spineLeaf,
                 frameRate: frameRate,
                 resources: resources
             )
-            clips.append(contentsOf: spineClips)
+            elements.append(contentsOf: parsedElements)
         }
     }
     
