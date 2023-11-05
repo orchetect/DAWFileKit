@@ -12,14 +12,16 @@ import CoreMedia
 @_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML.Clip {
+    // TODO: factor out Attributes; replace with protocols
+    
     /// Clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
         case name
         
-        case offset // TODO: handle with FCPXMLTimingAttributes
-        case start // TODO: handle with FCPXMLTimingAttributes
-        case duration // TODO: handle with FCPXMLTimingAttributes
+        // case offset // handled with FCPXMLTimingAttributes
+        // case start // handled with FCPXMLTimingAttributes
+        // case duration // handled with FCPXMLTimingAttributes
         
         case audioRole
         case role // TODO: video role; change name to `videoRole`?

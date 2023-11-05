@@ -36,15 +36,18 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         let timelineAttributes = Self.parseTimelineAttributesDefaulted(
             from: xmlLeaf, resources: resources
         )
+        
         // `format`
         format = timelineAttributes.format
+        
         // `tcStart`
+        
         start = timelineAttributes.start
         
-        // parses `duration` and more
+        // `duration`
         duration = timelineAttributes.duration
         
-        // "audioLayout"
+        // `audioLayout`
         let al = FinalCutPro.FCPXML.AudioLayout(
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioLayout.rawValue) ?? ""
         )
@@ -55,7 +58,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             audioLayout =  .stereo
         }
         
-        // "audioRate"
+        // `audioRate`
         if let ar = FinalCutPro.FCPXML.AudioRate(
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue) ?? ""
         ) {
@@ -65,6 +68,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             audioRate =  .rate48kHz
         }
         
+        // TODO: parse more than clips, there are other story element types
         // clips
         
         let frameRate = Self.fRate(
