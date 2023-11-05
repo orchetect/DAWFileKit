@@ -11,13 +11,13 @@ import Foundation
 extension FinalCutPro.FCPXML.Sequence {
     // TODO: factor out Attributes; replace with protocols
     
-    /// Sequence XML Attributes.
+    /// Attributes unique to Sequence.
     public enum Attributes: String {
         // case format // resource ID // handled by FCPXMLTimelineAttributes
         
-        // case duration // handled by FCPXMLTimingAttributes
-        // case tcStart // handled by FCPXMLTimingAttributes
-        // case tcFormat // handled by FCPXMLTimingAttributes
+        // case duration // handled by FCPXMLClipAttributes
+        // case tcStart // handled by FCPXMLClipAttributes
+        // case tcFormat // handled by FCPXMLClipAttributes
         
         case audioLayout
         case audioRate

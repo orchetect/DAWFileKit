@@ -119,12 +119,12 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // <title ref="r2" offset="0s" name="Basic Title" start="108108000/30000s" duration="1920919/30000s">
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(element1.offset.frameRate, .fps29_97)
+        XCTAssertEqual(element1.offset?.frameRate, .fps29_97)
         XCTAssertEqual(element1.name, "Basic Title")
         XCTAssertEqual(element1.start, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(element1.start.frameRate, .fps29_97)
+        XCTAssertEqual(element1.start?.frameRate, .fps29_97)
         XCTAssertEqual(element1.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(element1.duration.frameRate, .fps29_97)
+        XCTAssertEqual(element1.duration?.frameRate, .fps29_97)
         
         // markers
         

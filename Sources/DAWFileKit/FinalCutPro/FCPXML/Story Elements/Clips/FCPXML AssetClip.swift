@@ -35,71 +35,77 @@ extension FinalCutPro.FCPXML {
     /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
     /// > > components from a media file as a clip.
     public struct AssetClip: FCPXMLStoryElement {
-        public let ref: String // resource ID
-        public let name: String
+        public var ref: String // resource ID
+        public var audioRole: String
         
-        public let offset: Timecode
-        public let start: Timecode // TODO: not used?
-        public let duration: Timecode
+        // FCPXMLAnchorableAttributes
+        public var lane: Int?
+        public var offset: Timecode?
         
-        public let audioRole: String
+        // FCPXMLClipAttributes
+        public var name: String?
+        public var start: Timecode?
+        public var duration: Timecode?
+        public var enabled: Bool
+        
+        // TODO: add attributes array, ie: markers?
         
         internal init(
             ref: String,
-            name: String,
+            audioRole: String,
+            // FCPXMLAnchorableAttributes
+            lane: Int?,
             offset: Timecode,
+            // FCPXMLClipAttributes
+            name: String,
             start: Timecode, // TODO: not used?
             duration: Timecode,
-            audioRole: String
+            enabled: Bool
         ) {
             self.ref = ref
-            self.name = name
+            self.audioRole = audioRole
+            
+            // FCPXMLAnchorableAttributes
+            self.lane = lane
             self.offset = offset
+            
+            // FCPXMLClipAttributes
+            self.name = name
             self.start = start // TODO: not used?
             self.duration = duration
-            self.audioRole = audioRole
+            self.enabled = enabled
         }
     }
 }
 
-extension FinalCutPro.FCPXML.AssetClip: FCPXMLTimingAttributes {
-    /// Asset clip XML Attributes.
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
+    /// Attributes unique to Asset Clip.
     public enum Attributes: String {
         case ref // resource ID
-        case name
-        // case offset // handled with FCPXMLTimingAttributes
-        // case duration // handled with FCPXMLTimingAttributes
         case audioRole
     }
     
     internal init(
         from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        frameRate: TimecodeFrameRate
     ) {
-        // "ref"
         ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
+        audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue) ?? ""
         
-        // "name"
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
-        
-        let timingAttributes = Self.parseTimingAttributesDefaulted(
+        let clipAttributes = Self.parseClipAttributes(
             frameRate: frameRate,
-            from: xmlLeaf,
-            resources: resources
+            from: xmlLeaf
         )
         
-        // `offset`
-        offset = timingAttributes.offset
+        // FCPXMLAnchorableAttributes
+        lane = clipAttributes.lane
+        offset = clipAttributes.offset
         
-        // `start`
-        start = timingAttributes.start
-        
-        // `duration`
-        duration = timingAttributes.duration
-        
-        // "audioRole"
-        audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue) ?? ""
+        // FCPXMLClipAttributes
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        start = clipAttributes.start
+        duration = clipAttributes.duration
+        enabled = clipAttributes.enabled
     }
 }
 

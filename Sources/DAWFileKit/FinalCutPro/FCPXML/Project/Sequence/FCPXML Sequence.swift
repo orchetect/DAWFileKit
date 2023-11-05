@@ -21,7 +21,7 @@ extension FinalCutPro.FCPXML {
         public let format: String
         public let start: Timecode
         
-        // FCPXMLTimingAttributes
+        // FCPXMLClipAttributes
         public let duration: Timecode
         
         public let audioLayout: AudioLayout

@@ -15,72 +15,74 @@ extension FinalCutPro.FCPXML {
     /// Video Clip.
     public struct Video: FCPXMLStoryElement {
         public let ref: String // resource ID
-        public let name: String
+        public let role: String?
         
-        // FCPXMLTimingAttributes
-        public let offset: Timecode
-        public let start: Timecode
-        public let duration: Timecode
+        // FCPXMLAnchorableAttributes
+        public let lane: Int?
+        public let offset: Timecode?
         
-        public let role: String
+        // FCPXMLClipAttributes
+        public let name: String?
+        public let start: Timecode?
+        public let duration: Timecode?
+        public let enabled: Bool
         
         internal init(
             ref: String,
-            name: String,
-            offset: Timecode,
-            start: Timecode,
-            duration: Timecode,
-            role: String
+            role: String?,
+            // FCPXMLAnchorableAttributes
+            lane: Int?,
+            offset: Timecode?,
+            // FCPXMLClipAttributes
+            name: String?,
+            start: Timecode?,
+            duration: Timecode?,
+            enabled: Bool
         ) {
             self.ref = ref
-            self.name = name
-            self.offset = offset
-            self.start = start
-            self.duration = duration
             self.role = role
+            
+            // FCPXMLAnchorableAttributes
+            self.lane = lane
+            self.offset = offset
+            
+            // FCPXMLClipAttributes
+            self.name = name
+            self.start = start // TODO: not used?
+            self.duration = duration
+            self.enabled = enabled
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Video: FCPXMLTimingAttributes {
-    /// Video clip XML Attributes.
+extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
+    /// Attributes unique to Video clip.
     public enum Attributes: String {
         case ref // resource ID
-        case name
-        // case offset // handled with FCPXMLTimingAttributes
-        // case start // handled with FCPXMLTimingAttributes
-        // case duration // handled with FCPXMLTimingAttributes
         case role
     }
     
     internal init(
         from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        frameRate: TimecodeFrameRate
     ) {
-        // `ref`
         ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
+        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue) ?? ""
         
-        // `name`
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
-        
-        let timingAttributes = Self.parseTimingAttributesDefaulted(
+        let clipAttributes = Self.parseClipAttributes(
             frameRate: frameRate,
-            from: xmlLeaf,
-            resources: resources
+            from: xmlLeaf
         )
         
-        // `offset`
-        offset = timingAttributes.offset
+        // FCPXMLAnchorableAttributes
+        lane = clipAttributes.lane
+        offset = clipAttributes.offset
         
-        // `start`
-        start = timingAttributes.start
-        
-        // `duration`
-        duration = timingAttributes.duration
-        
-        // `role`
-        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue) ?? ""
+        // FCPXMLClipAttributes
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        start = clipAttributes.start
+        duration = clipAttributes.duration
+        enabled = clipAttributes.enabled
     }
 }
 

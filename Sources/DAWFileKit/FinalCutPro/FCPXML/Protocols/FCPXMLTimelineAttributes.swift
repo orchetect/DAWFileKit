@@ -17,8 +17,11 @@ import TimecodeKit
 /// - `format`
 /// - `tcFormat`
 /// - `tcStart`
+/// - `duration`
 ///
 /// Equivalent to `%media_attrs` in the DTD.
+///
+/// Applies to `sequence` and `multicam` containers.
 ///
 /// > Final Cut Pro FCPXML 1.11 Reference:
 /// >

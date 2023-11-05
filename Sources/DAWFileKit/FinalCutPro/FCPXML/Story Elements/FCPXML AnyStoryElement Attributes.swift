@@ -19,9 +19,9 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
         case ref // resource ID
         case name
         
-        // case offset // handled with FCPXMLTimingAttributes
-        // case start // handled with FCPXMLTimingAttributes
-        // case duration // handled with FCPXMLTimingAttributes
+        // case offset // handled with FCPXMLClipAttributes
+        // case start // handled with FCPXMLClipAttributes
+        // case duration // handled with FCPXMLClipAttributes
         
         case audioRole
         case role // TODO: video role; change name to `videoRole`?

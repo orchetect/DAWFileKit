@@ -83,16 +83,14 @@ extension FinalCutPro.FCPXML {
                     case .assetClip:
                         let clip = AssetClip(
                             from: childLeaf,
-                            frameRate: frameRate,
-                            resources: resources
+                            frameRate: frameRate
                         )
                         return .assetClip(clip)
                         
                     case .video:
                         let clip = Video(
                             from: childLeaf,
-                            frameRate: frameRate,
-                            resources: resources
+                            frameRate: frameRate
                         )
                         return .video(clip)
                         
@@ -108,8 +106,7 @@ extension FinalCutPro.FCPXML {
                     case .title:
                         let clip = Title(
                             from: childLeaf,
-                            frameRate: frameRate,
-                            resources: resources
+                            frameRate: frameRate
                         )
                         return .title(clip)
                     
