@@ -85,7 +85,7 @@ extension FinalCutPro.FCPXML.Marker {
            )
         {
             duration = tc
-        } 
+        }
         
         // "value" - marker name
         guard let name = xmlLeaf.attributeStringValue(forName: Attributes.value.rawValue) else { return nil }
@@ -108,19 +108,21 @@ extension FinalCutPro.FCPXML.Marker {
             }
             
         case .chapterMarker:
-            // FYI: posterOffset (thumbnail timecode) can a be negative offset
+            // FYI: posterOffset (thumbnail timecode) is optional, but can a be negative offset
             // so we need to use TimecodeInterval
             
-            guard let posterOffsetString = xmlLeaf.attributeStringValue(forName: Attributes.posterOffset.rawValue),
-                let tc = try? FinalCutPro.FCPXML.timecodeInterval(
+            var posterOffset: TimecodeInterval? = nil
+            if let posterOffsetString = xmlLeaf.attributeStringValue(forName: Attributes.posterOffset.rawValue) {
+                guard let tc = try? FinalCutPro.FCPXML.timecodeInterval(
                     fromRational: posterOffsetString,
                     frameRate: frameRate
-                )
-            else {
-                print("Error: marker posterOffset could not be decoded.")
-                return nil
+                ) else {
+                    print("Error: marker posterOffset could not be decoded.")
+                    return nil
+                }
+                posterOffset = tc
             }
-            metaData = .chapter(posterOffset: tc)
+            metaData = .chapter(posterOffset: posterOffset)
         }
     }
 }

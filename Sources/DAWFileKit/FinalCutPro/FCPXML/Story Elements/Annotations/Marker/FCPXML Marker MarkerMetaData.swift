@@ -20,7 +20,7 @@ extension FinalCutPro.FCPXML.Marker {
         ///
         /// `posterOffset` is the chapter marker's thumbnail location expressed as a delta distance (offset) from the marker's position.
         /// This may be positive or negative which is why it is encapsulated in a `TimecodeInterval`.
-        case chapter(posterOffset: TimecodeInterval)
+        case chapter(posterOffset: TimecodeInterval?)
         
         // <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
         // <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yey"/>
