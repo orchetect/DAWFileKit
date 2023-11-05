@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Resource {
+extension FinalCutPro.FCPXML.AnyResource {
     public struct Effect: Equatable, Hashable {
         let name: String
         let uid: String
@@ -27,7 +27,7 @@ extension FinalCutPro.FCPXML.Resource {
     }
 }
 
-extension FinalCutPro.FCPXML.Resource.Effect {
+extension FinalCutPro.FCPXML.AnyResource.Effect {
     public enum Attributes: String {
         case name
         case uid

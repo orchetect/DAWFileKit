@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Resource {
+extension FinalCutPro.FCPXML.AnyResource {
     public struct Format: Equatable, Hashable {
         public let name: String
         public let frameDuration: String
@@ -50,7 +50,7 @@ extension FinalCutPro.FCPXML.Resource {
     }
 }
 
-extension FinalCutPro.FCPXML.Resource.Format {
+extension FinalCutPro.FCPXML.AnyResource.Format {
     public enum Attributes: String {
         case name
         case frameDuration

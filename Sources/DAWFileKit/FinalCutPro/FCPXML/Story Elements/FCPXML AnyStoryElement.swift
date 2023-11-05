@@ -67,7 +67,7 @@ extension FinalCutPro.FCPXML {
     static func parseStoryElements(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> [AnyStoryElement] {
         xmlLeaf.children?
             .lazy

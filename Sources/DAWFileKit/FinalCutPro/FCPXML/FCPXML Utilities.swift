@@ -78,7 +78,7 @@ extension FinalCutPro.FCPXML {
     /// Convenience: returns the video frame rate for the given resource ID.
     static func videoFrameRate(
         forResourceID id: String,
-        in resources: [String: FinalCutPro.FCPXML.Resource]
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> VideoFrameRate? {
         guard case let .format(fmt) = resources[id] else { return nil }
         let interlaced = fmt.fieldOrder != nil
@@ -96,7 +96,7 @@ extension FinalCutPro.FCPXML {
     static func timecodeFrameRate(
         forResourceID id: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        in resources: [String: FinalCutPro.FCPXML.Resource]
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> TimecodeFrameRate? {
         guard let videoRate = FinalCutPro.FCPXML.videoFrameRate(forResourceID: id, in: resources),
               let frameRate = videoRate.timecodeFrameRate(drop: tcFormat?.isDrop ?? false)
@@ -114,7 +114,7 @@ extension FinalCutPro.FCPXML {
         fromRational rawString: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
         resourceID: String,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) throws -> Timecode? {
         guard let frameRate = timecodeFrameRate(
             forResourceID: resourceID,

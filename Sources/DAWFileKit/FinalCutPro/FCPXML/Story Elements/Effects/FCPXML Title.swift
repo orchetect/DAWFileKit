@@ -64,7 +64,7 @@ extension FinalCutPro.FCPXML.Title: FCPXMLTimingAttributes {
     internal init(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         // `ref`
         ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)

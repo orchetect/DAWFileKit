@@ -16,17 +16,17 @@ extension FinalCutPro.FCPXML {
     /// Returns resources contained in the XML, keyed by the resource ID.
     /// This is computed, so it is best to avoid repeat calls to this method.
     ///
-    /// - Returns: `[ID: Resource]`
-    public func resources() -> [String: Resource] {
+    /// - Returns: `[ID: AnyResource]`
+    public func resources() -> [String: AnyResource] {
         xmlResources?
             .children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .reduce(into: [String: Resource]()) { dict, element in
+            .reduce(into: [String: AnyResource]()) { dict, element in
                 let id = element.attributeStringValue(forName: "id") ?? ""
                 
                 guard let resourceName = element.name,
-                      let resource = Resource.ResourceType(rawValue: resourceName)
+                      let resource = AnyResource.ResourceType(rawValue: resourceName)
                 else {
                     let n = (element.name ?? "").quoted
                     print("Unhandled FCPXML resource type: \(n)")
@@ -35,13 +35,13 @@ extension FinalCutPro.FCPXML {
                 
                 switch resource {
                 case .asset:
-                    let res = Resource.Asset(from: element)
+                    let res = AnyResource.Asset(from: element)
                     dict[id] = .asset(res)
                 case .effect:
-                    let res = Resource.Effect(from: element)
+                    let res = AnyResource.Effect(from: element)
                     dict[id] = .effect(res)
                 case .format:
-                    let res = Resource.Format(from: element)
+                    let res = AnyResource.Format(from: element)
                     dict[id] = .format(res)
                 }
             } ?? [:]
@@ -90,7 +90,7 @@ extension FinalCutPro.FCPXML {
     /// This is computed, so it is best to avoid repeat calls to this method.
     internal func events(
         in xmlLeaf: XMLElement,
-        resources: [String: Resource]
+        resources: [String: AnyResource]
     ) -> [Event] {
         let xmlElements = xmlLeaf.elements(forName: "event")
         let events = xmlElements.map {
@@ -136,7 +136,7 @@ extension FinalCutPro.FCPXML {
     /// This is computed, so it is best to avoid repeat calls to this method.
     internal func projects(
         in xmlLeaf: XMLElement,
-        resources: [String: Resource]
+        resources: [String: AnyResource]
     ) -> [Project] {
         let xmlElements = xmlLeaf.elements(forName: "project")
         let projects = xmlElements.map {
@@ -161,7 +161,7 @@ extension FinalCutPro.FCPXML {
     /// This is computed, so it is best to avoid repeat calls to this method.
     internal func parseSequences(
         in xmlLeaf: XMLElement,
-        resources: [String: Resource]
+        resources: [String: AnyResource]
     ) -> [Sequence] {
         let xmlElements = xmlLeaf.elements(forName: "sequence")
         let sequences = xmlElements.map {

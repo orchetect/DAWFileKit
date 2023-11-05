@@ -52,7 +52,7 @@ extension FCPXMLTimingAttributes {
     
     static func parseTimingAttributesRawValues(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> [FCPXMLTimingAttributesKey: String] {
         xmlLeaf.parseAttributesRawValues(key: Key.self)
     }
@@ -63,7 +63,7 @@ extension FCPXMLTimingAttributes {
     static func parseTimingAttributes(
         frameRate: TimecodeFrameRate,
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> (
         offset: Timecode?,
         start: Timecode?,
@@ -104,7 +104,7 @@ extension FCPXMLTimingAttributes {
     static func parseTimingAttributesDefaulted(
         frameRate: TimecodeFrameRate,
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource],
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
         logErrors: Bool = true
     ) -> (
         offset: Timecode,

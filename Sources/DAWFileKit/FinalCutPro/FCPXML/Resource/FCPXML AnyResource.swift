@@ -1,5 +1,5 @@
 //
-//  FCPXML Resource.swift
+//  FCPXML AnyResource.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,8 +10,8 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Resource
-    public enum Resource: Equatable, Hashable {
+    /// Type-erased container for a shared resource.
+    public enum AnyResource: Equatable, Hashable {
         case asset(Asset)
         case effect(Effect)
         case format(Format)
@@ -20,7 +20,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Resource {
+extension FinalCutPro.FCPXML.AnyResource {
+    /// Shared resource type.
     public enum ResourceType: String {
         case asset
         case effect

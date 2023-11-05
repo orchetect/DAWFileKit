@@ -52,7 +52,7 @@ extension FCPXMLTimelineAttributes {
     
     static func parseTimelineAttributesRawValues(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> [FCPXMLTimelineAttributesKey: String] {
         xmlLeaf.parseAttributesRawValues(key: Key.self)
     }
@@ -62,7 +62,7 @@ extension FCPXMLTimelineAttributes {
     /// Parse attributes if present, and return typed values.
     static func parseTimelineAttributes(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> (
         format: String?,
         timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat?,
@@ -108,7 +108,7 @@ extension FCPXMLTimelineAttributes {
     /// will be logged to the console.
     static func parseTimelineAttributesDefaulted(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource],
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
         logErrors: Bool = true
     ) -> (
         format: String,

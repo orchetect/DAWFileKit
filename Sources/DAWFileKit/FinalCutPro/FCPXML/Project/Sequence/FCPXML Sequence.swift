@@ -31,7 +31,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
     internal init(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.Resource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         // parses `format`, `tcStart`, `tcFormat`, `duration`
         let timelineAttributes = Self.parseTimelineAttributesDefaulted(
@@ -98,7 +98,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
     static func fRate(
         forResourceID id: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        in resources: [String: FinalCutPro.FCPXML.Resource]
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> TimecodeFrameRate {
         if let fr = FinalCutPro.FCPXML.timecodeFrameRate(
             forResourceID: id,
