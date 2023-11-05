@@ -102,27 +102,27 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
-        // clips
+        // story elements (clips etc.)
         
-        let clips = sequence.clips
+        let elements = sequence.storyElements
         
-        XCTAssertEqual(clips.count, 1)
+        XCTAssertEqual(elements.count, 1)
         
-        guard case let .title(clip) = clips[0] else { XCTFail("Clip was not expected type.") ; return }
+        guard case let .title(element1) = elements[0] else { XCTFail("Clip was not expected type.") ; return }
         
         // <title ref="r2" offset="0s" name="Basic Title" start="108108000/30000s" duration="1920919/30000s">
-        XCTAssertEqual(clip.ref, "r2")
-        XCTAssertEqual(clip.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(clip.offset.frameRate, .fps29_97)
-        XCTAssertEqual(clip.name, "Basic Title")
-        XCTAssertEqual(clip.start, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(clip.start.frameRate, .fps29_97)
-        XCTAssertEqual(clip.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(clip.duration.frameRate, .fps29_97)
+        XCTAssertEqual(element1.ref, "r2")
+        XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(element1.offset.frameRate, .fps29_97)
+        XCTAssertEqual(element1.name, "Basic Title")
+        XCTAssertEqual(element1.start, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(element1.start.frameRate, .fps29_97)
+        XCTAssertEqual(element1.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(element1.duration.frameRate, .fps29_97)
         
         // markers
         
-        let markers = clip.markers
+        let markers = element1.markers
         
         XCTAssertEqual(markers.count, 4)
         

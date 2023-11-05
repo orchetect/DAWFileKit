@@ -1,5 +1,5 @@
 //
-//  FCPXML Clip AssetClip.swift
+//  FCPXML AssetClip.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -77,10 +77,10 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLTimingAttributes {
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
         // "ref"
-        ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.AnyStoryElement.getRef(from: xmlLeaf)
         
         // "name"
-        name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.AnyStoryElement.getName(from: xmlLeaf)
         
         let timingAttributes = Self.parseTimingAttributesDefaulted(
             frameRate: frameRate,

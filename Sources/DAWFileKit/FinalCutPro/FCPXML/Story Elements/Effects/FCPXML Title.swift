@@ -1,5 +1,5 @@
 //
-//  FCPXML Clip Title.swift
+//  FCPXML Title.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -66,10 +66,10 @@ extension FinalCutPro.FCPXML.Title: FCPXMLTimingAttributes {
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
         // `ref`
-        ref = FinalCutPro.FCPXML.Clip.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.AnyStoryElement.getRef(from: xmlLeaf)
         
         // `name`
-        name = FinalCutPro.FCPXML.Clip.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.AnyStoryElement.getName(from: xmlLeaf)
         
         let timingAttributes = Self.parseTimingAttributesDefaulted(
             frameRate: frameRate,
@@ -87,7 +87,8 @@ extension FinalCutPro.FCPXML.Title: FCPXMLTimingAttributes {
         duration = timingAttributes.duration
         
         // contents
-        markers = FinalCutPro.FCPXML.Clip.getMarkers(from: xmlLeaf, sequenceFrameRate: frameRate)
+        markers = FinalCutPro.FCPXML.AnyStoryElement
+            .getMarkers(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

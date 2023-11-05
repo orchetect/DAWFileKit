@@ -1,5 +1,5 @@
 //
-//  FCPXML Sequence Clip Attributes.swift
+//  FCPXML AnyStoryElement Attributes.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,7 +11,7 @@ import TimecodeKit
 import CoreMedia
 @_implementationOnly import OTCore
 
-extension FinalCutPro.FCPXML.Clip {
+extension FinalCutPro.FCPXML.AnyStoryElement {
     // TODO: factor out Attributes; replace with protocols
     
     /// Clip XML Attributes.

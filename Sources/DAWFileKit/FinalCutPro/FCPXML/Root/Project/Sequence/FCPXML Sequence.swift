@@ -24,8 +24,7 @@ extension FinalCutPro.FCPXML {
         public let audioLayout: AudioLayout
         public let audioRate: AudioRate
         
-        // TODO: this should contain a more generic story element protocol, not just clips
-        public let clips: [Clip]
+        public let storyElements: [AnyStoryElement]
     }
 }
 
@@ -57,7 +56,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             audioLayout = al
         } else {
             print("Error: audioLayout missing or unrecognized. Defaulting to stereo.")
-            audioLayout =  .stereo
+            audioLayout = .stereo
         }
         
         // `audioRate`
@@ -79,9 +78,8 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         // TODO: not sure if it's ever possible to have more than one spine? keep them separate? is there always a spine in a timeline/sequence?
         let spines = Self.spines(in: xmlLeaf)
         
-        // TODO: this should parse any type of story element, not just clips
-        clips = spines.reduce(into: [FinalCutPro.FCPXML.Clip]()) { clips, spineLeaf in
-            let spineClips = FinalCutPro.FCPXML.parseClips(
+        storyElements = spines.reduce(into: [FinalCutPro.FCPXML.AnyStoryElement]()) { clips, spineLeaf in
+            let spineClips = FinalCutPro.FCPXML.parseStoryElements(
                 from: spineLeaf,
                 frameRate: frameRate,
                 resources: resources
