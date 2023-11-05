@@ -23,6 +23,8 @@ extension FinalCutPro.FCPXML {
         
         public let audioLayout: AudioLayout
         public let audioRate: AudioRate
+        
+        // TODO: this should contain a more generic story element protocol, not just clips
         public let clips: [Clip]
     }
 }
@@ -68,18 +70,16 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             audioRate =  .rate48kHz
         }
         
-        // TODO: parse more than clips, there are other story element types
-        // clips
-        
         let frameRate = Self.fRate(
             forResourceID: format,
             tcFormat: timelineAttributes.timecodeFormat,
             in: resources
         )
         
-        // TODO: not sure if it's ever possible to have more than one spine? keep them separate?
+        // TODO: not sure if it's ever possible to have more than one spine? keep them separate? is there always a spine in a timeline/sequence?
         let spines = Self.spines(in: xmlLeaf)
         
+        // TODO: this should parse any type of story element, not just clips
         clips = spines.reduce(into: [FinalCutPro.FCPXML.Clip]()) { clips, spineLeaf in
             let spineClips = FinalCutPro.FCPXML.parseClips(
                 from: spineLeaf,

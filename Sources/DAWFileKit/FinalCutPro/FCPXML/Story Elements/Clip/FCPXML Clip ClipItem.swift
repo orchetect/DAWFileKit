@@ -9,6 +9,8 @@
 import Foundation
 import TimecodeKit
 
+// TODO: refactor this as top-level Annotation elements
+
 extension FinalCutPro.FCPXML.Clip {
     /// Items within clips.
     public enum ClipItem: String {

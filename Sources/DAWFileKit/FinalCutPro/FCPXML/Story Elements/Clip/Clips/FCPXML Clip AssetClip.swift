@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Clip {
+extension FinalCutPro.FCPXML {
     // <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
     /// Asset Clip.
     /// References a single media asset.
@@ -61,7 +61,7 @@ extension FinalCutPro.FCPXML.Clip {
     }
 }
 
-extension FinalCutPro.FCPXML.Clip.AssetClip: FCPXMLTimingAttributes {
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLTimingAttributes {
     /// Asset clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID

@@ -9,7 +9,7 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.Clip {
+extension FinalCutPro.FCPXML {
     // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
     /// Title Clip.
     ///
@@ -48,7 +48,7 @@ extension FinalCutPro.FCPXML.Clip {
     }
 }
 
-extension FinalCutPro.FCPXML.Clip.Title: FCPXMLTimingAttributes {
+extension FinalCutPro.FCPXML.Title: FCPXMLTimingAttributes {
     /// Title clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
