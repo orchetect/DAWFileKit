@@ -11,6 +11,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
+    
     /// Title Clip.
     ///
     /// This is a FCP meta type and video is generated.
