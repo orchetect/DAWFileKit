@@ -58,10 +58,10 @@ extension FinalCutPro.FCPXML.Video: FCPXMLTimingAttributes {
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
         // `ref`
-        ref = FinalCutPro.FCPXML.AnyStoryElement.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
         
         // `name`
-        name = FinalCutPro.FCPXML.AnyStoryElement.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
         
         let timingAttributes = Self.parseTimingAttributesDefaulted(
             frameRate: frameRate,

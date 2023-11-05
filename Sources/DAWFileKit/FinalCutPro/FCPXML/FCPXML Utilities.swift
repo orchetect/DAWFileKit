@@ -10,6 +10,24 @@ import Foundation
 @_implementationOnly import OTCore
 import TimecodeKit
 
+// MARK: - Generic XML Utils
+
+extension FinalCutPro.FCPXML {
+    // TODO: refactor to new FCPXML protocol?
+    static func getRefAttribute(
+        from xmlLeaf: XMLElement
+    ) -> String {
+        xmlLeaf.attributeStringValue(forName: "ref") ?? ""
+    }
+    
+    // TODO: refactor to new FCPXML protocol?
+    static func getNameAttribute(
+        from xmlLeaf: XMLElement
+    ) -> String {
+        xmlLeaf.attributeStringValue(forName: "name") ?? ""
+    }
+}
+
 // MARK: - Rational Time Value Utils
 
 extension FinalCutPro.FCPXML {

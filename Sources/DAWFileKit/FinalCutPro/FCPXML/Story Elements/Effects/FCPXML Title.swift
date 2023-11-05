@@ -27,7 +27,7 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add audio/video roles?
         
-        // Contents
+        // TODO: should probably be story elements, not just markers
         public let markers: [FinalCutPro.FCPXML.Marker]
         
         internal init(
@@ -36,7 +36,7 @@ extension FinalCutPro.FCPXML {
             offset: Timecode,
             start: Timecode,
             duration: Timecode,
-            markers: [FinalCutPro.FCPXML.Marker]
+            markers: [FinalCutPro.FCPXML.Marker] // TODO: should probably be story elements, not just markers
         ) {
             self.ref = ref
             self.name = name
@@ -66,10 +66,10 @@ extension FinalCutPro.FCPXML.Title: FCPXMLTimingAttributes {
         resources: [String: FinalCutPro.FCPXML.Resource]
     ) {
         // `ref`
-        ref = FinalCutPro.FCPXML.AnyStoryElement.getRef(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
         
         // `name`
-        name = FinalCutPro.FCPXML.AnyStoryElement.getName(from: xmlLeaf)
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
         
         let timingAttributes = Self.parseTimingAttributesDefaulted(
             frameRate: frameRate,
@@ -86,9 +86,8 @@ extension FinalCutPro.FCPXML.Title: FCPXMLTimingAttributes {
         // `duration`
         duration = timingAttributes.duration
         
-        // contents
-        markers = FinalCutPro.FCPXML.AnyStoryElement
-            .getMarkers(from: xmlLeaf, frameRate: frameRate)
+        // TODO: should probably be story elements, not just markers
+        markers = FinalCutPro.FCPXML.getMarkers(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

@@ -24,19 +24,7 @@ import CoreMedia
 
 // MARK: - Utilities
 
-extension FinalCutPro.FCPXML.AnyStoryElement {
-    static func getRef(
-        from xmlLeaf: XMLElement
-    ) -> String {
-        xmlLeaf.attributeStringValue(forName: Attributes.ref.rawValue) ?? ""
-    }
-    
-    static func getName(
-        from xmlLeaf: XMLElement
-    ) -> String {
-        xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue) ?? ""
-    }
-    
+extension FinalCutPro.FCPXML {
     static func getMarkers(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
