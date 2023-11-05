@@ -131,41 +131,41 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // <marker start="27248221/7500s" duration="1001/30000s" value="Standard Marker" note="some notes here"/>
         let expectedMarker0 = FinalCutPro.FCPXML.Marker(
-            name: "Standard Marker",
             start: try Timecode(.components(h: 01, m: 00, s: 29, f: 14), at: .fps29_97, base: .max80SubFrames),
             duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
-            note: "some notes here",
-            metaData: .standard
+            name: "Standard Marker",
+            metaData: .standard,
+            note: "some notes here"
         )
         XCTAssertEqual(markers[0], expectedMarker0)
         
         // <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
         let expectedMarker1 = FinalCutPro.FCPXML.Marker(
-            name: "To Do Marker, Incomplete",
             start: try Timecode(.components(h: 01, m: 00, s: 29, f: 15), at: .fps29_97, base: .max80SubFrames),
             duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
-            note: "more notes here",
-            metaData: .toDo(completed: false)
+            name: "To Do Marker, Incomplete",
+            metaData: .toDo(completed: false),
+            note: "more notes here"
         )
         XCTAssertEqual(markers[1], expectedMarker1)
         
         // <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yay"/>
         let expectedMarker2 = FinalCutPro.FCPXML.Marker(
-            name: "To Do Marker, Completed",
             start: try Timecode(.components(h: 01, m: 00, s: 29, f: 16), at: .fps29_97, base: .max80SubFrames),
             duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
-            note: "notes yay",
-            metaData: .toDo(completed: true)
+            name: "To Do Marker, Completed",
+            metaData: .toDo(completed: true),
+            note: "notes yay"
         )
         XCTAssertEqual(markers[2], expectedMarker2)
         
         // <chapter-marker start="108995887/30000s" duration="1001/30000s" value="Chapter Marker" posterOffset="11/30s"/>
         let expectedMarker3 = FinalCutPro.FCPXML.Marker(
-            name: "Chapter Marker",
             start: try Timecode(.components(h: 01, m: 00, s: 29, f: 17), at: .fps29_97, base: .max80SubFrames),
             duration: try Timecode(.components(f: 1), at: .fps29_97),
-            note: "",
-            metaData: .chapter(posterOffset: .init(try Timecode(.components(f: 10, sf: 79), at: .fps29_97, base: .max80SubFrames)))
+            name: "Chapter Marker",
+            metaData: .chapter(posterOffset: .init(try Timecode(.components(f: 10, sf: 79), at: .fps29_97, base: .max80SubFrames))),
+            note: nil
         )
         XCTAssertEqual(markers[3], expectedMarker3)
     }

@@ -13,33 +13,48 @@ import CoreMedia
 extension FinalCutPro.FCPXML {
     /// Represents a marker event and its contents.
     public struct Marker: Equatable, Hashable {
-        public var start: Timecode
-        public var duration: Timecode
-        public var name: String
-        public var note: String
-        public var metaData: MarkerMetaData
+        public var start: Timecode // required
+        public var duration: Timecode?
+        public var name: String // a.k.a. `value`, required
+        public var metaData: MarkerMetaData // required
+        public var note: String?
         
         public init(
-            name: String,
             start: Timecode,
-            duration: Timecode,
-            note: String,
-            metaData: MarkerMetaData = .standard
+            duration: Timecode?,
+            name: String,
+            metaData: MarkerMetaData = .standard,
+            note: String?
         ) {
-            self.name = name
             self.start = start
             self.duration = duration
-            self.note = note
+            self.name = name
             self.metaData = metaData
+            self.note = note
         }
     }
 }
 
 extension FinalCutPro.FCPXML.Marker {
+    /// Attributes unique to Marker.
+    public enum Attributes: String {
+        // common for all marker types
+        case start
+        case duration
+        case value // a.k.a name
+        case note
+        
+        // Chapter Marker only
+        case posterOffset
+        
+        // To Do Marker only
+        case completed
+    }
+    
     /// Init from XML. If marker type is unrecognized, returns `nil`.
-    internal init?(
+    init?(
         from xmlLeaf: XMLElement,
-        sequenceFrameRate frameRate: TimecodeFrameRate
+        frameRate: TimecodeFrameRate
     ) {
         let leafName = xmlLeaf.name ?? ""
         guard let nodeType = MarkerNodeType(rawValue: leafName)
@@ -51,18 +66,16 @@ extension FinalCutPro.FCPXML.Marker {
         // parse common attributes that all markers share
         
         // "start"
-        if let startString = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue),
-           let tc = try? FinalCutPro.FCPXML.timecode(
-            fromRational: startString,
-            frameRate: frameRate
-           )
-        {
-            start = tc
-        } else {
-            let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
-            print("Error: start could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
-            start = defaultTimecode
+        guard let startString = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue),
+              let start = try? FinalCutPro.FCPXML.timecode(
+                  fromRational: startString,
+                  frameRate: frameRate
+              )
+        else {
+            print("Error: marker start could not be decoded.")
+            return nil
         }
+        self.start = start
         
         // "duration"
         if let durationString = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue),
@@ -72,17 +85,14 @@ extension FinalCutPro.FCPXML.Marker {
            )
         {
             duration = tc
-        } else {
-            let defaultTimecode = FinalCutPro.formTimecode(at: frameRate)
-            print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ \(frameRate.stringValueVerbose).")
-            duration = defaultTimecode
-        }
+        } 
         
         // "value" - marker name
-        name = xmlLeaf.attributeStringValue(forName: Attributes.value.rawValue) ?? ""
+        guard let name = xmlLeaf.attributeStringValue(forName: Attributes.value.rawValue) else { return nil }
+        self.name = name
         
         // "note"
-        note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue) ?? ""
+        note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
         
         // check marker type to parse additional metadata
         
@@ -101,18 +111,16 @@ extension FinalCutPro.FCPXML.Marker {
             // FYI: posterOffset (thumbnail timecode) can a be negative offset
             // so we need to use TimecodeInterval
             
-            if let posterOffsetString = xmlLeaf.attributeStringValue(forName: Attributes.posterOffset.rawValue),
-               let tc = try? FinalCutPro.FCPXML.timecodeInterval(
-                fromRational: posterOffsetString,
-                frameRate: frameRate
-               )
-            {
-                metaData = .chapter(posterOffset: tc)
-            } else {
-                let defaultTimecodeInterval = FinalCutPro.formTimecodeInterval(at: frameRate)
-                print("Error: posterOffset could not be decoded. Defaulting to \(defaultTimecodeInterval.description) @ \(frameRate.stringValueVerbose).")
-                metaData = .chapter(posterOffset: defaultTimecodeInterval)
+            guard let posterOffsetString = xmlLeaf.attributeStringValue(forName: Attributes.posterOffset.rawValue),
+                let tc = try? FinalCutPro.FCPXML.timecodeInterval(
+                    fromRational: posterOffsetString,
+                    frameRate: frameRate
+                )
+            else {
+                print("Error: marker posterOffset could not be decoded.")
+                return nil
             }
+            metaData = .chapter(posterOffset: tc)
         }
     }
 }

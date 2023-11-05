@@ -45,10 +45,7 @@ extension FinalCutPro.FCPXML {
             // TODO: we'll just parse markers for the time being. more items can be added in future.
             switch item {
             case .marker, .chapterMarker:
-                guard let marker = FinalCutPro.FCPXML.Marker(
-                    from: $0,
-                    sequenceFrameRate: frameRate
-                )
+                guard let marker = FinalCutPro.FCPXML.Marker(from: $0, frameRate: frameRate)
                 else {
                     print("Error: failed to parse marker.")
                     return // next forEach
