@@ -1,5 +1,5 @@
 //
-//  FCPXML Resource Format.swift
+//  FCPXML Format.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -9,7 +9,8 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.AnyResource {
+extension FinalCutPro.FCPXML {
+    /// Format shared resource.
     public struct Format: Equatable, Hashable {
         public let name: String
         public let frameDuration: String
@@ -50,7 +51,7 @@ extension FinalCutPro.FCPXML.AnyResource {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyResource.Format {
+extension FinalCutPro.FCPXML.Format {
     public enum Attributes: String {
         case name
         case frameDuration

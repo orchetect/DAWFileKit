@@ -33,16 +33,29 @@ extension FinalCutPro.FCPXML {
                     return
                 }
                 
+                // TODO: refactor into AnyResource?
                 switch resource {
                 case .asset:
-                    let res = AnyResource.Asset(from: element)
+                    let res = Asset(from: element)
                     dict[id] = .asset(res)
-                case .effect:
-                    let res = AnyResource.Effect(from: element)
-                    dict[id] = .effect(res)
+                case .media:
+                    let res = Media(from: element)
+                    dict[id] = .media(res)
                 case .format:
-                    let res = AnyResource.Format(from: element)
+                    let res = Format(from: element)
                     dict[id] = .format(res)
+                case .effect:
+                    let res = Effect(from: element)
+                    dict[id] = .effect(res)
+                case .locator:
+                    let res = Locator(from: element)
+                    dict[id] = .locator(res)
+                case .objectTracker:
+                    let res = ObjectTracker(from: element)
+                    dict[id] = .objectTracker(res)
+                case .trackingShape:
+                    let res = TrackingShape(from: element)
+                    dict[id] = .trackingShape(res)
                 }
             } ?? [:]
     }

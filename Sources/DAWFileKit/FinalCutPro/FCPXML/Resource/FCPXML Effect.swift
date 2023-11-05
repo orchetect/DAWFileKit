@@ -1,5 +1,5 @@
 //
-//  FCPXML Resource Effect.swift
+//  FCPXML Effect.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -9,7 +9,8 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.AnyResource {
+extension FinalCutPro.FCPXML {
+    /// Effect shared resource.
     public struct Effect: Equatable, Hashable {
         let name: String
         let uid: String
@@ -27,7 +28,7 @@ extension FinalCutPro.FCPXML.AnyResource {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyResource.Effect {
+extension FinalCutPro.FCPXML.Effect {
     public enum Attributes: String {
         case name
         case uid

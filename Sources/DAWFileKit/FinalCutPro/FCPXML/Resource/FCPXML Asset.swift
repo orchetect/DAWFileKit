@@ -1,5 +1,5 @@
 //
-//  FCPXML Resource Asset.swift
+//  FCPXML Asset.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -9,7 +9,8 @@
 import Foundation
 import TimecodeKit
 
-extension FinalCutPro.FCPXML.AnyResource {
+extension FinalCutPro.FCPXML {
+    /// Asset shared resource.
     public struct Asset: Equatable, Hashable {
         public let name: String
         public let uid: String
@@ -75,7 +76,7 @@ extension FinalCutPro.FCPXML.AnyResource {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyResource.Asset {
+extension FinalCutPro.FCPXML.Asset {
     public enum Attributes: String {
         case name
         case uid

@@ -42,7 +42,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         XCTAssertEqual(resources.count, 2)
         
         // <format id="r1" name="FFVideoFormat1080p2997" frameDuration="1001/30000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
-        let r1 = FinalCutPro.FCPXML.AnyResource.Format(
+        let r1 = FinalCutPro.FCPXML.Format(
             name: "FFVideoFormat1080p2997",
             frameDuration: "1001/30000s",
             fieldOrder: nil,
@@ -53,7 +53,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         XCTAssertEqual(resources["r1"], .format(r1))
         
         // <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
-        let r2 = FinalCutPro.FCPXML.AnyResource.Effect(
+        let r2 = FinalCutPro.FCPXML.Effect(
             name: "Basic Title",
             uid: ".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"
         )

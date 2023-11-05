@@ -13,10 +13,12 @@ extension FinalCutPro.FCPXML {
     /// Type-erased container for a shared resource.
     public enum AnyResource: Equatable, Hashable {
         case asset(Asset)
-        case effect(Effect)
+        case media(Media)
         case format(Format)
-        
-        // TODO: additional resource types need to be added
+        case effect(Effect)
+        case locator(Locator)
+        case objectTracker(ObjectTracker)
+        case trackingShape(TrackingShape)
     }
 }
 
@@ -24,10 +26,12 @@ extension FinalCutPro.FCPXML.AnyResource {
     /// Shared resource type.
     public enum ResourceType: String {
         case asset
-        case effect
+        case media
         case format
-        
-        // TODO: additional resource types need to be added
+        case effect
+        case locator
+        case objectTracker = "object-tracker"
+        case trackingShape = "tracking-shape"
     }
 }
 #endif
