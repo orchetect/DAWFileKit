@@ -72,7 +72,7 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
-        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
+        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) ?? "" // TODO: error condition?
         markers = FinalCutPro.FCPXML.getMarkers(from: xmlLeaf, frameRate: frameRate)
         
         let clipAttributes = Self.parseClipAttributes(

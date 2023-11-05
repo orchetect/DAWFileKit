@@ -6,33 +6,80 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
+import CoreMedia
 import Foundation
 import TimecodeKit
-import CoreMedia
 
 extension FinalCutPro.FCPXML {
+    /// Project element.
     public struct Project {
-        public let name: String
-        public let sequences: [Sequence]
+        public var name: String?
+        public var id: String?
+        public var uid: String?
+        public var modDate: String?
+        public var sequence: Sequence
+        
+        public init(
+            name: String? = nil,
+            id: String? = nil,
+            uid: String? = nil,
+            modDate: String? = nil,
+            sequence: Sequence
+        ) {
+            self.name = name
+            self.id = id
+            self.uid = uid
+            self.modDate = modDate
+            self.sequence = sequence
+        }
     }
 }
 
 extension FinalCutPro.FCPXML.Project {
-    /// Returns the start timecode of the earliest sequence in the project.
-    public var startTimecode: Timecode? {
-        sequences
-            .map(\.start)
-            .sorted()
-            .first
+    /// Attributes unique to Project.
+    public enum Attributes: String {
+        case modDate
+        case sequence
     }
     
-    /// Returns the frame rate of the project.
+    internal init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) {
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        id = FinalCutPro.FCPXML.getIDAttribute(from: xmlLeaf)
+        uid = FinalCutPro.FCPXML.getUIDAttribute(from: xmlLeaf)
+        modDate = xmlLeaf.attributeStringValue(forName: Attributes.modDate.rawValue)
+        
+        guard let seq = Self.parseSequence(from: xmlLeaf, resources: resources) else { return nil }
+        sequence = seq
+    }
+    
+    internal static func parseSequence(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> FinalCutPro.FCPXML.Sequence? {
+        let sequences = FinalCutPro.FCPXML.parseSequences(in: xmlLeaf, resources: resources)
+        guard let sequence = sequences.first else {
+            print("Expected one sequence within project but found none.")
+            return nil
+        }
+        if sequences.count != 1 {
+            print("Expected one sequence within project but found \(sequences.count)")
+        }
+        return sequence
+    }
+}
+
+extension FinalCutPro.FCPXML.Project {
+    /// Convenience to return the start timecode of the earliest sequence in the project.
+    public var startTimecode: Timecode? {
+        sequence.start
+    }
+    
+    /// Convenience to return the frame rate of the project.
     public var frameRate: TimecodeFrameRate? {
-        sequences
-            .map(\.start)
-            .sorted()
-            .map(\.frameRate)
-            .first
+        sequence.start?.frameRate
     }
 }
 

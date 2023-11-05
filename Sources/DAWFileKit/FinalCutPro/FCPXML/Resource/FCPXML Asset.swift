@@ -23,8 +23,8 @@ extension FinalCutPro.FCPXML {
     /// > See [`asset`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset).
     public struct Asset: Equatable, Hashable {
         // shared resource attributes
+        public var id: String // required
         public var name: String?
-        public var id: String?
         
         // base attributes
         public var start: String?
@@ -32,7 +32,7 @@ extension FinalCutPro.FCPXML {
         public var format: String?
         
         // asset attributes
-        public var uid: String
+        public var uid: String?
         
         // implied asset attributes
         public var hasVideo: Bool
@@ -48,14 +48,14 @@ extension FinalCutPro.FCPXML {
         
         internal init(
             // shared resource attributes
+            id: String,
             name: String?,
-            id: String?,
             // base attributes
             start: String?,
             duration: String?,
             format: String?,
             // asset attributes
-            uid: String,
+            uid: String?,
             // implied asset attributes
             hasVideo: Bool,
             hasAudio: Bool,
@@ -68,8 +68,8 @@ extension FinalCutPro.FCPXML {
             xmlChildren: [XMLElement]
         ) {
             // shared resource attributes
-            self.name = name
             self.id = id
+            self.name = name
             
             // base attributes
             self.start = start
@@ -92,10 +92,11 @@ extension FinalCutPro.FCPXML {
             self.xmlChildren = xmlChildren
         }
         
-        init(from xmlLeaf: XMLElement) {
+        init?(from xmlLeaf: XMLElement) {
             // shared resource attributes
+            guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+            self.id = id
             name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
-            id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue)
             
             // base attributes
             start = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue)
@@ -103,7 +104,7 @@ extension FinalCutPro.FCPXML {
             format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue)
             
             // asset attributes
-            uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) ?? ""
+            uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
             
             // implied asset attributes
             hasVideo = xmlLeaf.attributeStringValue(forName: Attributes.hasVideo.rawValue) ?? "0" == "1"
@@ -123,8 +124,8 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Asset {
     public enum Attributes: String {
         // shared resource attributes
-        case name
         case id
+        case name
         
         // base attributes
         case start

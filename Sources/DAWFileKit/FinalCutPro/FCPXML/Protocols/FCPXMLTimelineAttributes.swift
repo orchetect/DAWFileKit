@@ -14,7 +14,7 @@ import TimecodeKit
 /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/timeline_attributes
 /// ).
 ///
-/// - `format`
+/// - `format` (required)
 /// - `tcFormat`
 /// - `tcStart`
 /// - `duration`
@@ -37,10 +37,10 @@ public protocol FCPXMLTimelineAttributes {
     
     // `tcStart`, also parses `tcFormat`
     /// The timecode origin represented as a time value.
-    var start: Timecode { get }
+    var start: Timecode? { get }
     
     /// The timeline's extent (length) in parent time.
-    var duration: Timecode { get }
+    var duration: Timecode? { get }
 }
 
 public enum FCPXMLTimelineAttributesKey: String, XMLParsableAttributesKey {
@@ -65,19 +65,20 @@ extension FCPXMLTimelineAttributes {
     // MARK: - Typed Values
     
     /// Parse attributes if present, and return typed values.
+    /// If required keys are not present and are not defaultable, this method returns `nil`.
     static func parseTimelineAttributes(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> (
-        format: String?,
+        format: String,
         timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat?,
         start: Timecode?,
         duration: Timecode?
-    ) {
+    )? {
         let rawValues = parseTimelineAttributesRawValues(from: xmlLeaf, resources: resources)
         
         // `format`
-        let format = rawValues[.format]
+        guard let format = rawValues[.format] else { return nil }
         
         // `tcFormat`
         let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: rawValues[.tcFormat] ?? "")
@@ -86,7 +87,7 @@ extension FCPXMLTimelineAttributes {
         let start = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.tcStart] ?? "",
             tcFormat: tcFormat,
-            resourceID: format ?? "",
+            resourceID: format,
             resources: resources
         )
         
@@ -94,7 +95,7 @@ extension FCPXMLTimelineAttributes {
         let duration = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.duration] ?? "",
             tcFormat: tcFormat,
-            resourceID: format ?? "",
+            resourceID: format,
             resources: resources
         )
         
@@ -104,91 +105,6 @@ extension FCPXMLTimelineAttributes {
             start: start,
             duration: duration
         )
-    }
-    
-    // MARK: - Defaults and Validation
-    
-    /// Parse attributes if present, and return typed values.
-    /// A default will be provided for any missing attributes, and any errors or missing values
-    /// will be logged to the console.
-    static func parseTimelineAttributesDefaulted(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        logErrors: Bool = true
-    ) -> (
-        format: String,
-        timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat,
-        start: Timecode,
-        duration: Timecode
-    ) {
-        let attrs = parseTimelineAttributes(
-            from: xmlLeaf, 
-            resources: resources
-        )
-        
-        let format = validateTimelineAttributes(format: attrs.format, logErrors: logErrors)
-        let timecodeFormat = validateTimelineAttributes(timecodeFormat: attrs.timecodeFormat, logErrors: logErrors)
-        let start = validateTimelineAttributes(start: attrs.start, logErrors: logErrors)
-        let duration = validateTimelineAttributes(duration: attrs.duration, logErrors: logErrors)
-        
-        return (
-            format: format,
-            timecodeFormat: timecodeFormat,
-            start: start,
-            duration: duration
-        )
-    }
-    
-    /// Provides suitable default if necessary.
-    static func validateTimelineAttributes(
-        format: String?,
-        logErrors: Bool = true
-    ) -> String {
-        format ?? ""
-    }
-    
-    /// Provides suitable default if necessary.
-    static func validateTimelineAttributes(
-        timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        logErrors: Bool = true
-    ) -> FinalCutPro.FCPXML.TimecodeFormat {
-        guard let timecodeFormat = timecodeFormat else {
-            if logErrors {
-                print("Error: tcFormat could not be decoded. Defaulting to non-drop (NDF).")
-            }
-            return .nonDropFrame
-        }
-        return timecodeFormat
-    }
-    
-    /// Provides suitable default if necessary.
-    static func validateTimelineAttributes(
-        start timecode: Timecode?,
-        logErrors: Bool = true
-    ) -> Timecode {
-        guard let timecode = timecode else {
-            let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
-            if logErrors {
-                print("Error: tcStart could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
-            }
-            return defaultTimecode
-        }
-        return timecode
-    }
-    
-    /// Provides suitable default if necessary.
-    static func validateTimelineAttributes(
-        duration timecode: Timecode?,
-        logErrors: Bool = true
-    ) -> Timecode {
-        guard let timecode = timecode else {
-            let defaultTimecode = FinalCutPro.formTimecode(at: .fps30)
-            if logErrors {
-                print("Error: duration could not be decoded. Defaulting to \(defaultTimecode.stringValue()) @ 30fps.")
-            }
-            return defaultTimecode
-        }
-        return timecode
     }
 }
 

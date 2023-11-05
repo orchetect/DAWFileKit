@@ -14,17 +14,31 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     // TODO: refactor to new FCPXML protocol?
+    static func getIDAttribute(
+        from xmlLeaf: XMLElement
+    ) -> String? {
+        xmlLeaf.attributeStringValue(forName: "id")
+    }
+    
+    // TODO: refactor to new FCPXML protocol?
+    static func getUIDAttribute(
+        from xmlLeaf: XMLElement
+    ) -> String? {
+        xmlLeaf.attributeStringValue(forName: "uid")
+    }
+    
+    // TODO: refactor to new FCPXML protocol?
     static func getRefAttribute(
         from xmlLeaf: XMLElement
-    ) -> String {
-        xmlLeaf.attributeStringValue(forName: "ref") ?? ""
+    ) -> String? {
+        xmlLeaf.attributeStringValue(forName: "ref")
     }
     
     // TODO: refactor to new FCPXML protocol?
     static func getNameAttribute(
         from xmlLeaf: XMLElement
-    ) -> String {
-        xmlLeaf.attributeStringValue(forName: "name") ?? ""
+    ) -> String? {
+        xmlLeaf.attributeStringValue(forName: "name")
     }
 }
 

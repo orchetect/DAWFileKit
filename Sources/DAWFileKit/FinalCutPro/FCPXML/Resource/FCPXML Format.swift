@@ -69,9 +69,10 @@ extension FinalCutPro.FCPXML {
             self.stereoscopic = stereoscopic
         }
         
-        init(from xmlLeaf: XMLElement) {
+        init?(from xmlLeaf: XMLElement) {
             // shared resource attributes
-            id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) ?? ""
+            guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+            self.id = id
             name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
             
             // format attributes

@@ -36,7 +36,7 @@ extension FinalCutPro.FCPXML {
     /// > > components from a media file as a clip.
     public struct AssetClip: FCPXMLStoryElement {
         public var ref: String // resource ID
-        public var audioRole: String
+        public var audioRole: String?
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -52,7 +52,7 @@ extension FinalCutPro.FCPXML {
         
         internal init(
             ref: String,
-            audioRole: String,
+            audioRole: String?,
             // FCPXMLAnchorableAttributes
             lane: Int?,
             offset: Timecode,
@@ -89,8 +89,8 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
-        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
-        audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue) ?? ""
+        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) ?? "" // TODO: error condition?
+        audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
             frameRate: frameRate,

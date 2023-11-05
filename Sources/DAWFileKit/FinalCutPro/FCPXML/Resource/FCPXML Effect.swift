@@ -45,12 +45,14 @@ extension FinalCutPro.FCPXML {
             self.src = src
         }
         
-        init(from xmlLeaf: XMLElement) {
-            id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) ?? ""
+        init?(from xmlLeaf: XMLElement) {
+            guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+            self.id = id
             name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
             
             // effect attributes
-            uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) ?? ""
+            guard let uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) else { return nil }
+            self.uid = uid
             src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
         }
     }

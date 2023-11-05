@@ -36,16 +36,16 @@ extension FinalCutPro.FCPXML {
                 // TODO: refactor into AnyResource?
                 switch resource {
                 case .asset:
-                    let res = Asset(from: element)
+                    guard let res = Asset(from: element) else { return }
                     dict[id] = .asset(res)
                 case .media:
                     let res = Media(from: element)
                     dict[id] = .media(res)
                 case .format:
-                    let res = Format(from: element)
+                    guard let res = Format(from: element) else { return }
                     dict[id] = .format(res)
                 case .effect:
-                    let res = Effect(from: element)
+                    guard let res = Effect(from: element) else { return }
                     dict[id] = .effect(res)
                 case .locator:
                     let res = Locator(from: element)
@@ -109,7 +109,7 @@ extension FinalCutPro.FCPXML {
         let events = xmlElements.map {
             Event(
                 name: $0.attributeStringValue(forName: "name") ?? "",
-                projects: projects(in: $0, resources: resources)
+                projects: Self.projects(in: $0, resources: resources)
             )
         }
         return events
@@ -133,7 +133,7 @@ extension FinalCutPro.FCPXML {
         var gatheredProjects: [Project] = []
         
         if let xmlRoot = xmlRoot {
-            gatheredProjects.append(contentsOf: projects(in: xmlRoot, resources: resources))
+            gatheredProjects.append(contentsOf: Self.projects(in: xmlRoot, resources: resources))
         }
         
         let projectsInEvents: [Project] = events().reduce(into: []) { projectsInEvents, event in
@@ -147,18 +147,13 @@ extension FinalCutPro.FCPXML {
     /// Internal:
     /// Parses projects from a leaf (usually from the `fcpxml` leaf or an `event` leaf).
     /// This is computed, so it is best to avoid repeat calls to this method.
-    internal func projects(
+    internal static func projects(
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Project] {
         let xmlElements = xmlLeaf.elements(forName: "project")
-        let projects = xmlElements.map {
-            let sequences = parseSequences(in: $0, resources: resources)
-            let project = Project(
-                name: $0.attributeStringValue(forName: "name") ?? "",
-                sequences: sequences
-            )
-            return project
+        let projects: [Project] = xmlElements.compactMap { projectLeaf in
+            Project(from: projectLeaf, resources: resources)
         }
         return projects
     }
@@ -172,12 +167,12 @@ extension FinalCutPro.FCPXML {
     /// Internal:
     /// Parse sequences from a leaf (usually from a `project` leaf).
     /// This is computed, so it is best to avoid repeat calls to this method.
-    internal func parseSequences(
+    internal static func parseSequences(
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Sequence] {
         let xmlElements = xmlLeaf.elements(forName: "sequence")
-        let sequences = xmlElements.map {
+        let sequences = xmlElements.compactMap {
             Sequence(from: $0, resources: resources)
         }
         return sequences

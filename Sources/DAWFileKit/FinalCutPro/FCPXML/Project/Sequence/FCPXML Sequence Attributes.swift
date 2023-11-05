@@ -13,18 +13,13 @@ extension FinalCutPro.FCPXML.Sequence {
     
     /// Attributes unique to Sequence.
     public enum Attributes: String {
-        // case format // resource ID // handled by FCPXMLTimelineAttributes
-        
-        // case duration // handled by FCPXMLClipAttributes
-        // case tcStart // handled by FCPXMLClipAttributes
-        // case tcFormat // handled by FCPXMLClipAttributes
-        
         case audioLayout
         case audioRate
-        
         case note
         case renderFormat
         case keywords
+        case spine
+        
         case metadata
     }
 }

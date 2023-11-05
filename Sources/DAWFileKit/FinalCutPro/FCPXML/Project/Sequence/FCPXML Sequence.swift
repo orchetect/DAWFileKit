@@ -19,117 +19,103 @@ extension FinalCutPro.FCPXML {
     public struct Sequence {
         // FCPXMLTimelineAttributes
         public let format: String
-        public let start: Timecode
+        public let start: Timecode?
+        public let duration: Timecode?
         
-        // FCPXMLClipAttributes
-        public let duration: Timecode
-        
-        public let audioLayout: AudioLayout
-        public let audioRate: AudioRate
-        
-        public let spine: [AnyStoryElement]
-        
+        public let audioLayout: AudioLayout?
+        public let audioRate: AudioRate?
         public let renderFormat: String?
         public let note: String?
         public let keywords: String?
+        public let spine: [AnyStoryElement]
         
         // TODO: add metadata
+        
+        public init?(
+            // FCPXMLTimelineAttributes
+            format: String,
+            start: Timecode?,
+            duration: Timecode?,
+            // sequence attributes
+            audioLayout: AudioLayout?,
+            audioRate: AudioRate?,
+            renderFormat: String?,
+            note: String?,
+            keywords: String?,
+            spine: [AnyStoryElement]
+        ) {
+            // FCPXMLTimelineAttributes
+            self.format = format
+            self.start = start
+            self.duration = duration
+            
+            // sequence attributes
+            self.audioLayout = audioLayout
+            self.audioRate = audioRate
+            self.renderFormat = renderFormat
+            self.note = note
+            self.keywords = keywords
+            self.spine = spine
+        }
     }
 }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
-    internal init(
+    internal init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         // parses `format`, `tcStart`, `tcFormat`, `duration`
-        let timelineAttributes = Self.parseTimelineAttributesDefaulted(
-            from: xmlLeaf, resources: resources
-        )
+        guard let timelineAttributes = Self.parseTimelineAttributes(
+            from: xmlLeaf,
+            resources: resources
+        ) else { return nil }
         
-        // `format`
         format = timelineAttributes.format
-        
-        // `tcStart`
-        
         start = timelineAttributes.start
-        
-        // `duration`
         duration = timelineAttributes.duration
         
-        // `audioLayout`
-        let al = FinalCutPro.FCPXML.AudioLayout(
+        audioLayout = FinalCutPro.FCPXML.AudioLayout(
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioLayout.rawValue) ?? ""
         )
-        if let al = al {
-            audioLayout = al
-        } else {
-            print("Error: audioLayout missing or unrecognized. Defaulting to stereo.")
-            audioLayout = .stereo
-        }
         
-        // `audioRate`
-        if let ar = FinalCutPro.FCPXML.AudioRate(
+        audioRate = FinalCutPro.FCPXML.AudioRate(
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue) ?? ""
-        ) {
-            audioRate = ar
-        } else {
-            print("Error: audioLayout missing or unrecognized. Defaulting to 48kHz.")
-            audioRate = .rate48kHz
-        }
+        )
         
-        let frameRate = Self.fRate(
+        guard let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(
             forResourceID: format,
             tcFormat: timelineAttributes.timecodeFormat,
             in: resources
-        )
+        ) else { return nil }
         
         renderFormat = xmlLeaf.attributeStringValue(forName: Attributes.renderFormat.rawValue)
-        
         note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
-        
         keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
-        
+                
         // spine
-        
-        let spines = Self.spines(in: xmlLeaf)
-        
-        if spines.count != 1 {
-            print("Error: Expected exactly one spine in the sequence but found \(spines.count).")
-        }
-        
-        spine = spines.reduce(into: [FinalCutPro.FCPXML.AnyStoryElement]()) { elements, spineLeaf in
-            let parsedElements = FinalCutPro.FCPXML.parseStoryElements(
-                from: spineLeaf,
-                frameRate: frameRate,
-                resources: resources
-            )
-            elements.append(contentsOf: parsedElements)
-        }
+        guard let spineLeaf = Self.parseSpine(from: xmlLeaf) else { return nil }
+        spine = FinalCutPro.FCPXML.parseStoryElements(
+            from: spineLeaf,
+            frameRate: frameRate,
+            resources: resources
+        )
     }
     
-    static func spines(in xmlLeaf: XMLElement) -> [XMLElement] {
-        xmlLeaf.children?.lazy
+    internal static func parseSpine(
+        from xmlLeaf: XMLElement
+    ) -> XMLElement? {
+        let spines = xmlLeaf.children?.lazy
             .filter { $0.name == "spine" }
             .compactMap { $0 as? XMLElement } ?? []
-    }
-    
-    // TODO: Stupid workaround. Swift compiler was complaining when this was within the body of the init.
-    static func fRate(
-        forResourceID id: String,
-        tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        in resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> TimecodeFrameRate {
-        if let fr = FinalCutPro.FCPXML.timecodeFrameRate(
-            forResourceID: id,
-            tcFormat: tcFormat,
-            in: resources
-        ) {
-            return fr
-        } else {
-            print("Error: Could not determine frame rate. Defaulting to 30fps.")
-            return .fps30
+        guard let spine = spines.first else {
+            print("Expected one spine within sequence but found none.")
+            return nil
         }
+        if spines.count != 1 {
+            print("Expected one spine within sequence but found \(spines.count)")
+        }
+        return spine
     }
 }
 

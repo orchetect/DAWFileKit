@@ -66,8 +66,8 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
-        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf)
-        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue) ?? ""
+        ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) ?? "" // TODO: error condition?
+        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
             frameRate: frameRate,

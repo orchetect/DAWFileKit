@@ -92,19 +92,15 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         XCTAssertEqual(project.name, "Test Project")
         XCTAssertEqual(project.startTimecode, try Timecode(.rational(0, 1), at: .fps29_97, base: .max80SubFrames))
         
-        // sequences
+        // sequence
         
-        let sequences = projects[0].sequences
-        
-        XCTAssertEqual(sequences.count, 1)
-        
-        let sequence = sequences[0]
+        let sequence = projects[0].sequence
         
         // <sequence format="r1" duration="1920919/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
         XCTAssertEqual(sequence.format, "r1")
         XCTAssertEqual(sequence.start, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
-        XCTAssertEqual(sequence.start.frameRate, .fps29_97)
-        XCTAssertEqual(sequence.start.subFramesBase, .max80SubFrames)
+        XCTAssertEqual(sequence.start?.frameRate, .fps29_97)
+        XCTAssertEqual(sequence.start?.subFramesBase, .max80SubFrames)
         XCTAssertEqual(sequence.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
