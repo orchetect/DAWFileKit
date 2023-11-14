@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML.Marker {
-    public enum MarkerNodeType: String {
+    public enum MarkerNodeType: String, CaseIterable {
         case marker
         case chapterMarker = "chapter-marker"
     }

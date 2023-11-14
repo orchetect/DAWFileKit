@@ -6,6 +6,8 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
+// TODO: refactor as `AnyClipType`
+
 import Foundation
 
 /// FCPXML story elements.

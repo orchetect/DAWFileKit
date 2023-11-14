@@ -147,7 +147,7 @@ extension FinalCutPro.FCPXML {
     /// Internal:
     /// Parses projects from a leaf (usually from the `fcpxml` leaf or an `event` leaf).
     /// This is computed, so it is best to avoid repeat calls to this method.
-    internal static func projects(
+    static func projects(
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Project] {
@@ -167,7 +167,7 @@ extension FinalCutPro.FCPXML {
     /// Internal:
     /// Parse sequences from a leaf (usually from a `project` leaf).
     /// This is computed, so it is best to avoid repeat calls to this method.
-    internal static func parseSequences(
+    static func parseSequences(
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Sequence] {

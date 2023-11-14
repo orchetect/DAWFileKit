@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: will likely factor this out, as it does not align with the DTD's structure.
+
 /// FCPXML adjustment and effects elements.
 ///
 /// - Audio Adjustment Elements

@@ -27,7 +27,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML {
     /// Returns the FCPXML format version.
     public var version: Version? {
-        guard let verString = xmlRoot?.attributeStringValue(forName: FCPXMLAttributes.version.rawValue)
+        guard let verString = xmlRoot?.attributeStringValue(forName: FCPXMLAttributesKey.version.rawValue)
         else { return nil }
         return Version(rawValue: verString)
     }

@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML {
             .first(where: { $0.name == RootElements.fcpxml.rawValue })
     }
     
-    enum FCPXMLAttributes: String {
+    enum FCPXMLAttributesKey: String {
         case version
     }
 }

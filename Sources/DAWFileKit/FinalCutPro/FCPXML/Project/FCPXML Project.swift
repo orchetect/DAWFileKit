@@ -36,7 +36,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Project {
-    /// Attributes unique to Project.
+    /// Attributes unique to ``Project``.
     public enum Attributes: String {
         case modDate
         case sequence

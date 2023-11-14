@@ -9,7 +9,9 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    public enum EffectElementType: String {
+    // TODO: will likely factor this out, as it does not align with the DTD's structure.
+    
+    public enum EffectElementType: String, CaseIterable {
         /// Applies transition effects that either stand by itself (no neighboring elements),
         /// combine two neighboring elements, or apply to a single element.
         ///

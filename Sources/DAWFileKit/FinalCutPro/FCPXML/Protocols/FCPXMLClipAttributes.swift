@@ -100,13 +100,13 @@ extension FCPXMLClipAttributes {
         
         // `start`
         let start = try? FinalCutPro.FCPXML.timecode(
-            fromRational: rawValues[.start] ?? "", 
+            fromRational: rawValues[.start] ?? "",
             frameRate: frameRate
         )
         
         // `duration`
         let duration = try? FinalCutPro.FCPXML.timecode(
-            fromRational: rawValues[.duration] ?? "", 
+            fromRational: rawValues[.duration] ?? "",
             frameRate: frameRate
         )
         
@@ -115,7 +115,7 @@ extension FCPXMLClipAttributes {
             switch zeroOrOne {
             case "0": return false
             case "1": return true
-            default: 
+            default:
                 print("Unexpected enabled value: \(zeroOrOne)")
                 return true
             }
