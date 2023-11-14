@@ -96,9 +96,8 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         // spine
         guard let spineLeaf = Self.parseSpine(from: xmlLeaf) else { return nil }
         spine = FinalCutPro.FCPXML.parseStoryElements(
-            from: spineLeaf,
-            frameRate: frameRate,
-            resources: resources
+            in: spineLeaf,
+            frameRate: frameRate
         )
     }
     

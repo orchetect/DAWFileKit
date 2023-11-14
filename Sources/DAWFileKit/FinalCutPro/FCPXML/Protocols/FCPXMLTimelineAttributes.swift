@@ -56,8 +56,7 @@ extension FCPXMLTimelineAttributes {
     // MARK: - Raw Values
     
     static func parseTimelineAttributesRawValues(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        from xmlLeaf: XMLElement
     ) -> [FCPXMLTimelineAttributesKey: String] {
         xmlLeaf.parseAttributesRawValues(key: Key.self)
     }
@@ -75,7 +74,7 @@ extension FCPXMLTimelineAttributes {
         start: Timecode?,
         duration: Timecode?
     )? {
-        let rawValues = parseTimelineAttributesRawValues(from: xmlLeaf, resources: resources)
+        let rawValues = parseTimelineAttributesRawValues(from: xmlLeaf)
         
         // `format`
         guard let format = rawValues[.format] else { return nil }
@@ -104,6 +103,26 @@ extension FCPXMLTimelineAttributes {
             timecodeFormat: tcFormat,
             start: start,
             duration: duration
+        )
+    }
+}
+
+extension FinalCutPro.FCPXML {
+    static func parseTimecodeFrameRate<C: FCPXMLTimelineAttributes>(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        timelineContext: C.Type,
+        timelineContextInstance: C
+    ) -> TimecodeFrameRate? {
+        guard let timelineAttributes = timelineContext.parseTimelineAttributes(
+            from: xmlLeaf,
+            resources: resources
+        ) else { return nil }
+        
+        return FinalCutPro.FCPXML.timecodeFrameRate(
+            forResourceID: timelineAttributes.format,
+            tcFormat: timelineAttributes.timecodeFormat,
+            in: resources
         )
     }
 }

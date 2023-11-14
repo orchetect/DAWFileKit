@@ -23,40 +23,11 @@ extension FinalCutPro.FCPXML {
             .lazy
             .compactMap { $0 as? XMLElement }
             .reduce(into: [String: AnyResource]()) { dict, element in
-                let id = element.attributeStringValue(forName: "id") ?? ""
+                guard let id = element.attributeStringValue(forName: "id"),
+                      let resource = AnyResource(from: element)
+                else { return }
                 
-                guard let resourceName = element.name,
-                      let resource = AnyResource.ResourceType(rawValue: resourceName)
-                else {
-                    let n = (element.name ?? "").quoted
-                    print("Unhandled FCPXML resource type: \(n)")
-                    return
-                }
-                
-                // TODO: refactor into AnyResource?
-                switch resource {
-                case .asset:
-                    guard let res = Asset(from: element) else { return }
-                    dict[id] = .asset(res)
-                case .media:
-                    let res = Media(from: element)
-                    dict[id] = .media(res)
-                case .format:
-                    guard let res = Format(from: element) else { return }
-                    dict[id] = .format(res)
-                case .effect:
-                    guard let res = Effect(from: element) else { return }
-                    dict[id] = .effect(res)
-                case .locator:
-                    let res = Locator(from: element)
-                    dict[id] = .locator(res)
-                case .objectTracker:
-                    let res = ObjectTracker(from: element)
-                    dict[id] = .objectTracker(res)
-                case .trackingShape:
-                    let res = TrackingShape(from: element)
-                    dict[id] = .trackingShape(res)
-                }
+                dict[id] = resource
             } ?? [:]
     }
     
@@ -88,11 +59,13 @@ extension FinalCutPro.FCPXML {
         var gatheredEvents: [Event] = []
         
         if let xmlRoot = xmlRoot {
-            gatheredEvents.append(contentsOf: events(in: xmlRoot, resources: resources))
+            let events = events(in: xmlRoot, resources: resources)
+            gatheredEvents.append(contentsOf: events)
         }
         
         if let xmlLibrary = xmlLibrary {
-            gatheredEvents.append(contentsOf: events(in: xmlLibrary, resources: resources))
+            let events = events(in: xmlLibrary, resources: resources)
+            gatheredEvents.append(contentsOf: events)
         }
         
         return gatheredEvents
@@ -101,16 +74,13 @@ extension FinalCutPro.FCPXML {
     /// Internal:
     /// Parses events from a leaf (usually from the `fcpxml` leaf or an `library` leaf).
     /// This is computed, so it is best to avoid repeat calls to this method.
-    internal func events(
+    func events(
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Event] {
         let xmlElements = xmlLeaf.elements(forName: "event")
-        let events = xmlElements.map {
-            Event(
-                name: $0.attributeStringValue(forName: "name") ?? "",
-                projects: Self.projects(in: $0, resources: resources)
-            )
+        let events = xmlElements.compactMap {
+            Event(from: $0, resources: resources)
         }
         return events
     }
@@ -133,12 +103,14 @@ extension FinalCutPro.FCPXML {
         var gatheredProjects: [Project] = []
         
         if let xmlRoot = xmlRoot {
-            gatheredProjects.append(contentsOf: Self.projects(in: xmlRoot, resources: resources))
+            let projects = Self.projects(in: xmlRoot, resources: resources)
+            gatheredProjects.append(contentsOf: projects)
         }
         
-        let projectsInEvents: [Project] = events().reduce(into: []) { projectsInEvents, event in
-            projectsInEvents.append(contentsOf: event.projects)
-        }
+        let projectsInEvents: [Project] = events()
+            .reduce(into: []) { projectsInEvents, event in
+                projectsInEvents.append(contentsOf: event.projects)
+            }
         gatheredProjects.append(contentsOf: projectsInEvents)
         
         return gatheredProjects
@@ -176,6 +148,108 @@ extension FinalCutPro.FCPXML {
             Sequence(from: $0, resources: resources)
         }
         return sequences
+    }
+}
+
+// MARK: - Story Elements
+
+extension FinalCutPro.FCPXML {
+    static func parseStoryElements(
+        in xmlLeaf: XMLElement,
+        frameRate: TimecodeFrameRate
+    ) -> [AnyStoryElement] {
+        xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement }
+            .compactMap { AnyStoryElement(from: $0, frameRate: frameRate) }
+        ?? []
+    }
+    
+    static func parseStoryElements<C: FCPXMLTimelineAttributes>(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        timelineContext: C.Type,
+        timelineContextInstance: C
+    ) -> [AnyStoryElement] {
+        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
+            from: xmlLeaf,
+            resources: resources,
+            timelineContext: timelineContext,
+            timelineContextInstance: timelineContextInstance
+        ) else { return [] }
+        return parseStoryElements(in: xmlLeaf, frameRate: frameRate)
+    }
+}
+
+// MARK: - Clips
+
+extension FinalCutPro.FCPXML {
+    static func parseClips(
+        in xmlLeaf: XMLElement,
+        frameRate: TimecodeFrameRate // TODO: refactor using resources instead?
+    ) -> [AnyClip] {
+        xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement }
+            .filter { xml in ClipType.allCases.contains(where: { ct in ct.rawValue == xml.name }) }
+            .compactMap { AnyClip(from: $0, frameRate: frameRate) }
+        ?? []
+    }
+    
+    static func parseClips<C: FCPXMLTimelineAttributes>(
+        in xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        timelineContext: C.Type,
+        timelineContextInstance: C
+    ) -> [AnyClip] {
+        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
+            from: xmlLeaf,
+            resources: resources,
+            timelineContext: timelineContext,
+            timelineContextInstance: timelineContextInstance
+        ) else { return [] }
+        return parseClips(in: xmlLeaf, frameRate: frameRate)
+    }
+}
+
+// MARK: - Markers
+
+extension FinalCutPro.FCPXML {
+    // TODO: refactor this as a more generic annotation parser
+    static func parseMarkers(
+        in xmlLeaf: XMLElement,
+        frameRate: TimecodeFrameRate
+    ) -> [Marker] {
+        let children = xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement } ?? []
+        
+        var markers: [Marker] = []
+        
+        children.forEach {
+            let itemName = $0.name ?? ""
+            guard let item = AnnotationType(rawValue: itemName)
+            else {
+                print("Info: skipping clip item \(itemName.quoted). Not handled.")
+                return // next forEach
+            }
+            
+            // TODO: we'll just parse markers for the time being. more items can be added in future.
+            switch item {
+            case .marker, .chapterMarker:
+                guard let marker = Marker(from: $0, frameRate: frameRate)
+                else {
+                    print("Error: failed to parse marker.")
+                    return // next forEach
+                }
+                markers.append(marker)
+            }
+        }
+        
+        return markers
     }
 }
 

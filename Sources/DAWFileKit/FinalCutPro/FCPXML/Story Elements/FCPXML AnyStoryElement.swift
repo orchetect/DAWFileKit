@@ -8,113 +8,76 @@
 
 import Foundation
 import TimecodeKit
-import CoreMedia
-@_implementationOnly import OTCore
-
- extension FinalCutPro.FCPXML {
-    /// Type-erased box containing a story element.
-    public enum AnyStoryElement: FCPXMLStoryElement {
-        case assetClip(AssetClip)
-        case title(Title)
-        case video(Video)
-
-        // TODO: add additional clip types
-    }
- }
-
-// MARK: - Utilities
+//import CoreMedia
+//@_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
-    static func getMarkers(
-        from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        let children = xmlLeaf.children?.lazy
-            .compactMap { $0 as? XMLElement } ?? []
-        
-        var markers: [FinalCutPro.FCPXML.Marker] = []
-        
-        children.forEach {
-            let itemName = $0.name ?? ""
-            guard let item = FinalCutPro.FCPXML.AnnotationType(rawValue: itemName)
-            else {
-                print("Info: skipping clip item \(itemName.quoted). Not handled.")
-                return // next forEach
-            }
-            
-            // TODO: we'll just parse markers for the time being. more items can be added in future.
-            switch item {
-            case .marker, .chapterMarker:
-                guard let marker = FinalCutPro.FCPXML.Marker(from: $0, frameRate: frameRate)
-                else {
-                    print("Error: failed to parse marker.")
-                    return // next forEach
-                }
-                markers.append(marker)
-            }
-        }
-        
-        return markers
+    /// Type-erased box containing a story element.
+    public enum AnyStoryElement: FCPXMLStoryElement {
+        case anyClip(AnyClip)
+        case audio(XMLElement)
+        case video(XMLElement)
+        case audition(XMLElement)
+        case gap(XMLElement)
+        case transition(XMLElement)
     }
 }
 
 extension FinalCutPro.FCPXML {
-    // TODO: this should parse any type of story element, not just clips
-    // TODO: refactor into more general story element parser
-    static func parseStoryElements(
-        from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> [AnyStoryElement] {
-        xmlLeaf.children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .compactMap { (childLeaf: XMLElement) -> AnyStoryElement? in
-                guard let name = childLeaf.name else {
-                    print("Error: unhandled story element type for xml leaf.)")
-                    return nil
-                }
-                
-                if let clipType = StoryElementType(rawValue: name) {
-                    switch clipType {
-                    case .assetClip:
-                        guard let clip = AssetClip(
-                            from: childLeaf,
-                            frameRate: frameRate
-                        ) else { return nil }
-                        return .assetClip(clip)
-                        
-                    case .video:
-                        guard let clip = Video(
-                            from: childLeaf,
-                            frameRate: frameRate
-                        ) else { return nil }
-                        return .video(clip)
-                        
-                    default:
-                        break
+    /// Story element type.
+    public enum StoryElementType: String, CaseIterable {
+        case audio
+        case video
+        case audition
+        case gap
+        case transition
+    }
+}
 
-                    }
-                }
-                
-                // TODO: this probably needs to be refactored since title is not technically a story element type, but an effect type
-                if let effectType = EffectElementType(rawValue: name) {
-                    switch effectType {
-                    case .title:
-                        guard let clip = Title(
-                            from: childLeaf,
-                            frameRate: frameRate
-                        ) else { return nil }
-                        return .title(clip)
-                    
-                    default:
-                        break
-                    }
-                }
-                
-                print("Error: unhandled story element type \(name.quoted)")
-                return nil
-            } ?? []
+extension FinalCutPro.FCPXML.AnyStoryElement {
+    init?(
+        from xmlLeaf: XMLElement,
+        frameRate: TimecodeFrameRate
+    ) {
+        guard let name = xmlLeaf.name else { return nil }
+        
+        if let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, frameRate: frameRate) {
+            self = .anyClip(clip)
+            return
+        }
+        
+        guard let seType = FinalCutPro.FCPXML.StoryElementType(rawValue: name) else {
+            return nil
+        }
+        
+        // TODO: add strong types to replace raw XML
+        switch seType {
+        case .audio:
+            self = .audio(xmlLeaf)
+        case .video:
+            self = .video(xmlLeaf)
+        case .audition:
+            self = .audition(xmlLeaf)
+        case .gap:
+            self = .gap(xmlLeaf)
+        case .transition:
+            self = .transition(xmlLeaf)
+        }
+    }
+    
+    init?<C: FCPXMLTimelineAttributes>(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        timelineContext: C.Type,
+        timelineContextInstance: C
+    ) {
+        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
+            from: xmlLeaf,
+            resources: resources,
+            timelineContext: timelineContext,
+            timelineContextInstance: timelineContextInstance
+        ) else { return nil }
+        self.init(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

@@ -130,6 +130,29 @@ extension FCPXMLClipAttributes {
             enabled: enabled
         )
     }
+    
+    // TODO: not used?
+    static func parseClipAttributes<C: FCPXMLTimelineAttributes>(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        timelineContext: C.Type,
+        timelineContextInstance: C
+    ) -> (
+        lane: Int?,
+        offset: Timecode?,
+        name: String?,
+        start: Timecode?,
+        duration: Timecode?,
+        enabled: Bool
+    )? {
+        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
+            from: xmlLeaf,
+            resources: resources,
+            timelineContext: timelineContext,
+            timelineContextInstance: timelineContextInstance
+        ) else { return nil }
+        return parseClipAttributes(frameRate: frameRate, from: xmlLeaf)
+    }
 }
 
 #endif
