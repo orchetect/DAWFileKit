@@ -25,7 +25,23 @@ extension FinalCutPro.FCPXML {
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/clip
     /// > ) to specify its format, etc.
     public struct Clip: FCPXMLStoryElement {
+        public var xml: XMLElement
+        
         // TODO: placeholder. finish building this.
+        
+        public init(
+            xml: XMLElement
+        ) {
+            self.xml = xml
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Clip {
+    init?(
+        from xmlLeaf: XMLElement
+    ) {
+        xml = xmlLeaf
     }
 }
 

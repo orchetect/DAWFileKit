@@ -91,6 +91,21 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
+    
+    init?<C: FCPXMLTimelineAttributes>(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        timelineContext: C.Type,
+        timelineContextInstance: C
+    ) {
+        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
+            from: xmlLeaf,
+            resources: resources,
+            timelineContext: timelineContext,
+            timelineContextInstance: timelineContextInstance
+        ) else { return nil }
+        self.init(from: xmlLeaf, frameRate: frameRate)
+    }
 }
 
 #endif

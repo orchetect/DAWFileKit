@@ -1,5 +1,5 @@
 //
-//  FCPXML AssetClip.swift
+//  FCPXML Title.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,34 +10,17 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
+    // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
     
-    /// Asset Clip element.
+    /// Title clip.
     ///
-    /// > Final Cut Pro FCPXML 1.11 Reference:
-    /// >
-    /// > References a single media asset.
-    /// >
-    /// > Use an `asset-clip` element as a shorthand for a `clip` when it references the entire set
-    /// > of media components in a single media.
-    /// >
-    /// > Specify the timing of the edit through the Timing Attributes. The `start` and `duration`
-    /// > attributes of the `asset-clip` element apply to all media components in the asset.
-    /// >
-    /// > Use the `audio-role` and `video-role` attributes to specify the main role. Generate
-    /// > subroles using the main role name, followed by a numerical suffix. For example,
-    /// > `dialogue.dialogue-1`, `dialogue.dialogue-2` and so on.
-    /// >
-    /// > Just as you do with the `clip` element, you can also use a `asset-clip` element as an
-    /// > immediate child element of an event element to represent a browser clip. In this case, use
-    /// > the Timeline Attributes to specify its format, etc.
-    /// >
-    /// > > Note:
-    /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
-    /// > > components from a media file as a clip.
-    public struct AssetClip: FCPXMLStoryElement {
+    /// This is a FCP meta type and video is generated.
+    /// Its frame rate is inferred from the sequence.
+    /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
+    public struct Title: FCPXMLStoryElement {
         public var ref: String // resource ID, required
-        public var audioRole: String?
+        public var role: String?
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -51,22 +34,20 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
-        // TODO: add attributes array, ie: markers?
-        
         public init(
             ref: String,
-            audioRole: String?,
+            markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
             lane: Int?,
-            offset: Timecode,
+            offset: Timecode?,
             // FCPXMLClipAttributes
-            name: String,
-            start: Timecode, // TODO: not used?
-            duration: Timecode,
+            name: String?,
+            start: Timecode?,
+            duration: Timecode?,
             enabled: Bool
         ) {
             self.ref = ref
-            self.audioRole = audioRole
+            self.markers = markers
             
             // FCPXMLAnchorableAttributes
             self.lane = lane
@@ -81,20 +62,23 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
-    /// Attributes unique to Asset Clip.
+extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
+    /// Title clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
-        case audioRole
+        case role
     }
     
+    /// Note: `frameDuration` and `tcFormat` is not stored in `<title>`,
+    /// it's inferred from the parent sequence.
     internal init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
-        audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue)
+        markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, frameRate: frameRate)
+        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
             frameRate: frameRate,
@@ -129,4 +113,3 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
 }
 
 #endif
-
