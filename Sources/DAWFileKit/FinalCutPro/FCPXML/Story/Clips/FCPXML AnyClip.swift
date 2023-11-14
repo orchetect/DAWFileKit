@@ -15,7 +15,6 @@ extension FinalCutPro.FCPXML {
         case assetClip(AssetClip)
         case audio(Audio)
         case clip(Clip)
-        case gap(Gap)
         case mcClip(MCClip)
         case refClip(RefClip)
         case syncClip(SyncClip)
@@ -48,20 +47,28 @@ extension FinalCutPro.FCPXML.AnyClip {
             let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf, resources: resources)
             self = .clip(clip)
             
-        case .title:
-            guard let clip = FinalCutPro.FCPXML.Title(from: xmlLeaf, resources: resources) else { return nil }
-            self = .title(clip)
+        case .mcClip:
+            let clip = FinalCutPro.FCPXML.MCClip(from: xmlLeaf, resources: resources)
+            self = .mcClip(clip)
+            
+        case .refClip:
+            let clip = FinalCutPro.FCPXML.RefClip(from: xmlLeaf, resources: resources)
+            self = .refClip(clip)
             
         case .syncClip:
             let clip = FinalCutPro.FCPXML.SyncClip(from: xmlLeaf, resources: resources)
             self = .syncClip(clip)
             
+        case .title:
+            guard let clip = FinalCutPro.FCPXML.Title(from: xmlLeaf, resources: resources) else { return nil }
+            self = .title(clip)
+            
         case .video:
             guard let clip = FinalCutPro.FCPXML.Video(from: xmlLeaf, resources: resources) else { return nil }
             self = .video(clip)
             
-        default:
-            // TODO: handle additional clip types
+        case .liveDrawing:
+            // TODO: implement this clip type
             print("Unhandled FCPXML clip type: \(name)")
             return nil
         }
@@ -77,7 +84,6 @@ extension FinalCutPro.FCPXML.AnyClip {
         case let .assetClip(clip): return clip.markers
         case let .audio(clip): return clip.markers
         case let .clip(clip): return clip.markers
-        case let .gap(clip): return clip.markers
         case let .mcClip(clip): return clip.markers
         case let .refClip(clip): return clip.markers
         case let .syncClip(clip): return clip.markers

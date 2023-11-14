@@ -15,10 +15,10 @@ extension FinalCutPro.FCPXML {
     /// Type-erased box containing a story element.
     public enum AnyStoryElement: FCPXMLStoryElement {
         case anyClip(AnyClip)
-        case audition(XMLElement)
-        case gap(XMLElement)
-        case sequence(XMLElement)
-        case spine(XMLElement)
+        case audition(Audition)
+        case gap(Gap)
+        case sequence(Sequence)
+        case spine(XMLElement) // TODO: replace with new Spine struct
         // case transition(XMLElement)
     }
 }
@@ -42,13 +42,24 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
         // TODO: add strong types to replace raw XML
         switch storyElementType {
         case .audition:
-            self = .audition(xmlLeaf)
+            let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
+            self = .audition(element)
+            
         case .gap:
-            self = .gap(xmlLeaf)
+            let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources)
+            self = .gap(element)
+            
         case .sequence:
-            self = .sequence(xmlLeaf)
+            guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
+            else {
+                print("Failed to parse FCPXML sequence.")
+                return nil
+            }
+            self = .sequence(element)
+            
         case .spine:
             self = .spine(xmlLeaf)
+            
         // case .transition:
         //     self = .transition(xmlLeaf)
         }
