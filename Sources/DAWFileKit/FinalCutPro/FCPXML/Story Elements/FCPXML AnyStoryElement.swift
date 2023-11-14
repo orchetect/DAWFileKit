@@ -26,11 +26,11 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyStoryElement {
     init?(
         from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         guard let name = xmlLeaf.name else { return nil }
         
-        if let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, frameRate: frameRate) {
+        if let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, resources: resources) {
             self = .anyClip(clip)
             return
         }
@@ -52,21 +52,6 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
         // case .transition:
         //     self = .transition(xmlLeaf)
         }
-    }
-    
-    init?<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return nil }
-        self.init(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

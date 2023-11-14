@@ -83,12 +83,6 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue) ?? ""
         )
         
-        guard let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(
-            forResourceID: format,
-            tcFormat: timelineAttributes.timecodeFormat,
-            in: resources
-        ) else { return nil }
-        
         renderFormat = xmlLeaf.attributeStringValue(forName: Attributes.renderFormat.rawValue)
         note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
         keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
@@ -97,7 +91,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         guard let spineLeaf = Self.parseSpine(from: xmlLeaf) else { return nil }
         spine = FinalCutPro.FCPXML.parseStoryElements(
             in: spineLeaf,
-            frameRate: frameRate
+            resources: resources
         )
     }
     

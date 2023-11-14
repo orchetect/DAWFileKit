@@ -73,16 +73,22 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
     /// it's inferred from the parent sequence.
     init?(
         from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
-        markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, frameRate: frameRate)
+        
+        if let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(for: xmlLeaf, in: resources) {
+            markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, frameRate: frameRate)
+        } else {
+            print("Title: Could not determine frame rate.")
+            markers = []
+        }
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
-            frameRate: frameRate,
-            from: xmlLeaf
+            from: xmlLeaf,
+            resources: resources
         )
         
         // FCPXMLAnchorableAttributes
@@ -94,21 +100,6 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
-    }
-    
-    init?<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return nil }
-        self.init(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

@@ -42,8 +42,8 @@ extension FCPXMLClipAttributes {
     
     /// Parse attributes if present, and return typed values.
     static func parseAnchorableAttributes(
-        frameRate: TimecodeFrameRate,
-        from xmlLeaf: XMLElement
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> (
         lane: Int?,
         offset: Timecode?
@@ -56,7 +56,8 @@ extension FCPXMLClipAttributes {
         // `offset`
         let offset = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.offset] ?? "",
-            frameRate: frameRate
+            xmlLeaf: xmlLeaf,
+            resources: resources
         )
         
         return (lane: lane, offset: offset)

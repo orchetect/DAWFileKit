@@ -28,9 +28,7 @@ class FinalCutPro_FCPXML_Structure: XCTestCase {
         
         // load
         
-        let fcpxml = try FinalCutPro.FCPXML(
-            fileContent: rawData
-        )
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // events
         

@@ -156,29 +156,14 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML {
     static func parseStoryElements(
         in xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> [AnyStoryElement] {
         xmlLeaf
             .children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .compactMap { AnyStoryElement(from: $0, frameRate: frameRate) }
+            .compactMap { AnyStoryElement(from: $0, resources: resources) }
         ?? []
-    }
-    
-    static func parseStoryElements<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) -> [AnyStoryElement] {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return [] }
-        return parseStoryElements(in: xmlLeaf, frameRate: frameRate)
     }
 }
 
@@ -187,30 +172,15 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML {
     static func parseClips(
         in xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate // TODO: refactor using resources instead?
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> [AnyClip] {
         xmlLeaf
             .children?
             .lazy
             .compactMap { $0 as? XMLElement }
             .filter { xml in ClipType.allCases.contains(where: { ct in ct.rawValue == xml.name }) }
-            .compactMap { AnyClip(from: $0, frameRate: frameRate) }
+            .compactMap { AnyClip(from: $0, resources: resources) }
         ?? []
-    }
-    
-    static func parseClips<C: FCPXMLTimelineAttributes>(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) -> [AnyClip] {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return [] }
-        return parseClips(in: xmlLeaf, frameRate: frameRate)
     }
 }
 

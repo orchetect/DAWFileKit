@@ -27,7 +27,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyClip {
     init?(
         from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         guard let name = xmlLeaf.name else { return nil }
         guard let clipType = FinalCutPro.FCPXML.ClipType(rawValue: name) else {
@@ -39,7 +39,7 @@ extension FinalCutPro.FCPXML.AnyClip {
         case .assetClip:
             guard let clip = FinalCutPro.FCPXML.AssetClip(
                 from: xmlLeaf,
-                frameRate: frameRate
+                resources: resources
             ) else { return nil }
             self = .assetClip(clip)
             
@@ -54,7 +54,7 @@ extension FinalCutPro.FCPXML.AnyClip {
         case .title:
             guard let clip = FinalCutPro.FCPXML.Title(
                 from: xmlLeaf,
-                frameRate: frameRate
+                resources: resources
             ) else { return nil }
             self = .title(clip)
             
@@ -65,7 +65,7 @@ extension FinalCutPro.FCPXML.AnyClip {
         case .video:
             guard let clip = FinalCutPro.FCPXML.Video(
                 from: xmlLeaf,
-                frameRate: frameRate
+                resources: resources
             ) else { return nil }
             self = .video(clip)
             
@@ -74,21 +74,6 @@ extension FinalCutPro.FCPXML.AnyClip {
             print("Unhandled FCPXML clip type: \(name)")
             return nil
         }
-    }
-    
-    init?<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return nil }
-        self.init(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

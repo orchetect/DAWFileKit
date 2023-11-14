@@ -70,15 +70,15 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
     
     init?(
         from xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(
-            frameRate: frameRate,
-            from: xmlLeaf
+            from: xmlLeaf,
+            resources: resources
         )
         
         // FCPXMLAnchorableAttributes
@@ -90,21 +90,6 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
-    }
-    
-    init?<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return nil }
-        self.init(from: xmlLeaf, frameRate: frameRate)
     }
 }
 

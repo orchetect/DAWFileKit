@@ -18,6 +18,10 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.TimecodeFormat {
+    public enum Attributes: String {
+        case tcFormat
+    }
+    
     public var isDrop: Bool {
         switch self {
         case .dropFrame: return true

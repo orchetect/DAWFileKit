@@ -89,34 +89,103 @@ extension FinalCutPro.FCPXML {
 // MARK: - Frame Rate Utils
 
 extension FinalCutPro.FCPXML {
+    // TODO: Refactor using AnyResource and/or resource protocol. I think more than just `format` resource can contain frame rate info?
     /// Convenience: returns the video frame rate for the given resource ID.
     static func videoFrameRate(
         forResourceID id: String,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> VideoFrameRate? {
-        guard case let .format(fmt) = resources[id] else { return nil }
-        let interlaced = fmt.fieldOrder != nil
-        guard let frameDuration = fmt.frameDuration,
+        guard case let .format(resource) = resources[id] else { return nil }
+        return videoFrameRate(forFormatResource: resource)
+    }
+    
+    // TODO: Refactor using AnyResource and/or resource protocol. I think more than just `format` resource can contain frame rate info?
+    /// Convenience: returns the video frame rate for the given resource ID.
+    static func videoFrameRate(
+        forFormatResource format: Format
+    ) -> VideoFrameRate? {
+        let interlaced = format.fieldOrder != nil
+        guard let frameDuration = format.frameDuration,
               let parsed = parse(rationalTimeString: frameDuration),
               case let .rational(frac) = parsed
         else { return nil }
-        let fRate = VideoFrameRate(
-            frameDuration: frac,
-            interlaced: interlaced
-        )
+        let fRate = VideoFrameRate(frameDuration: frac, interlaced: interlaced)
         return fRate
+    }
+    
+    /// Convenience: returns the timecode frame rate for the given resource ID.
+    /// Traverses parents to determine `tcFormat`.
+    static func timecodeFrameRate(
+        for xmlLeaf: XMLElement,
+        resourceID id: String,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> TimecodeFrameRate? {
+        guard let tcFormat = tcFormat(forElementOrAncestors: xmlLeaf)
+        else { return nil }
+        
+        return timecodeFrameRate(forResourceID: id, tcFormat: tcFormat, in: resources)
     }
     
     /// Convenience: returns the timecode frame rate for the given resource ID & `tcFormat`.
     static func timecodeFrameRate(
         forResourceID id: String,
-        tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> TimecodeFrameRate? {
         guard let videoRate = FinalCutPro.FCPXML.videoFrameRate(forResourceID: id, in: resources),
-              let frameRate = videoRate.timecodeFrameRate(drop: tcFormat?.isDrop ?? false)
+              let frameRate = videoRate.timecodeFrameRate(drop: tcFormat.isDrop)
         else { return nil }
         return frameRate
+    }
+    
+    /// Convenience: returns the timecode frame rate for the given resource ID & `tcFormat`.
+    static func timecodeFrameRate(
+        forFormatResource format: Format,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat
+    ) -> TimecodeFrameRate? {
+        guard let videoRate = FinalCutPro.FCPXML.videoFrameRate(forFormatResource: format),
+              let frameRate = videoRate.timecodeFrameRate(drop: tcFormat.isDrop)
+        else { return nil }
+        return frameRate
+    }
+    
+    /// Convenience: returns the timecode frame rate for the given resource ID.
+    /// Traverses parents to determine `format` (resource ID) and `tcFormat`.
+    static func timecodeFrameRate(
+        for xmlLeaf: XMLElement,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> TimecodeFrameRate? {
+        guard let format = format(forElementOrAncestors: xmlLeaf, in: resources),
+              let tcFormat = tcFormat(forElementOrAncestors: xmlLeaf)
+        else { return nil }
+        
+        return timecodeFrameRate(forFormatResource: format, tcFormat: tcFormat)
+    }
+    
+    /// Traverses the parents of the given XML leaf and returns the resource corresponding to the
+    /// nearest `format` attribute if found.
+    static func format(
+        forElementOrAncestors xmlLeaf: XMLElement,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> FinalCutPro.FCPXML.Format? {
+        let keyName = "format" // TODO: assign to static string constant
+        guard let formatID = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName),
+              let resource = resources[formatID],
+              case let .format(format) = resource
+        else { return nil }
+        return format
+    }
+    
+    /// Traverses the parents of the given XML leaf and returns the nearest `tcFormat` attribute if found.
+    static func tcFormat(
+        forElementOrAncestors xmlLeaf: XMLElement
+    ) -> FinalCutPro.FCPXML.TimecodeFormat? {
+        let keyName = FinalCutPro.FCPXML.TimecodeFormat.Attributes.tcFormat.rawValue
+        guard let tcFormatValue = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName),
+              let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: tcFormatValue)
+        else { return nil }
+        
+        return tcFormat
     }
 }
 
@@ -127,13 +196,30 @@ extension FinalCutPro.FCPXML {
     /// Convert raw attribute value string to `Timecode`.
     static func timecode(
         fromRational rawString: String,
-        tcFormat: FinalCutPro.FCPXML.TimecodeFormat?,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat,
         resourceID: String,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) throws -> Timecode? {
         guard let frameRate = timecodeFrameRate(
             forResourceID: resourceID,
             tcFormat: tcFormat,
+            in: resources
+        )
+        else { return nil }
+        
+        return try timecode(fromRational: rawString, frameRate: frameRate)
+    }
+    
+    /// Utility:
+    /// Convert raw attribute value string to `Timecode`.
+    /// Traverses the parents of the given XML leaf to determine frame rate.
+    static func timecode(
+        fromRational rawString: String,
+        xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) throws -> Timecode? {
+        guard let frameRate = timecodeFrameRate(
+            for: xmlLeaf,
             in: resources
         )
         else { return nil }

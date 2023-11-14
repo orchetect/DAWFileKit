@@ -27,9 +27,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // load
         
-        let fcpxml = try FinalCutPro.FCPXML(
-            fileContent: rawData
-        )
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
         
@@ -79,7 +77,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         XCTAssertEqual(events.count, 1)
         
-        let event = events[0]
+        let event = try XCTUnwrap(events[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
         
         // projects
@@ -137,7 +135,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
             metaData: .standard,
             note: "some notes here"
         )
-        XCTAssertEqual(markers[0], expectedMarker0)
+        XCTAssertEqual(markers[safe: 0], expectedMarker0)
         
         // <marker start="7266259/2000s" duration="1001/30000s" value="To Do Marker, Incomplete" completed="0" note="more notes here"/>
         let expectedMarker1 = FinalCutPro.FCPXML.Marker(
@@ -147,7 +145,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
             metaData: .toDo(completed: false),
             note: "more notes here"
         )
-        XCTAssertEqual(markers[1], expectedMarker1)
+        XCTAssertEqual(markers[safe: 1], expectedMarker1)
         
         // <marker start="54497443/15000s" duration="1001/30000s" value="To Do Marker, Completed" completed="1" note="notes yay"/>
         let expectedMarker2 = FinalCutPro.FCPXML.Marker(
@@ -157,7 +155,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
             metaData: .toDo(completed: true),
             note: "notes yay"
         )
-        XCTAssertEqual(markers[2], expectedMarker2)
+        XCTAssertEqual(markers[safe: 2], expectedMarker2)
         
         // <chapter-marker start="108995887/30000s" duration="1001/30000s" value="Chapter Marker" posterOffset="11/30s"/>
         let expectedMarker3 = FinalCutPro.FCPXML.Marker(
@@ -167,7 +165,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
             metaData: .chapter(posterOffset: .init(try Timecode(.components(f: 10, sf: 79), at: .fps29_97, base: .max80SubFrames))),
             note: nil
         )
-        XCTAssertEqual(markers[3], expectedMarker3)
+        XCTAssertEqual(markers[safe: 3], expectedMarker3)
     }
 }
 

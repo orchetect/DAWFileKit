@@ -57,31 +57,13 @@ extension FinalCutPro.FCPXML.Event {
     
     init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        frameRate: TimecodeFrameRate
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
         uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
         
-        // TODO: refactor using resources instead of frameRate?
-        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, frameRate: frameRate)
-        
+        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         projects = FinalCutPro.FCPXML.projects(in: xmlLeaf, resources: resources)
-    }
-    
-    init?<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) {
-        guard let frameRate = FinalCutPro.FCPXML.parseTimecodeFrameRate(
-            from: xmlLeaf,
-            resources: resources,
-            timelineContext: timelineContext,
-            timelineContextInstance: timelineContextInstance
-        ) else { return nil }
-        self.init(from: xmlLeaf, resources: resources, frameRate: frameRate)
     }
 }
 

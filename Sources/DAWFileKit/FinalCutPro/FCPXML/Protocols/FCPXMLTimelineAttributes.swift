@@ -80,7 +80,7 @@ extension FCPXMLTimelineAttributes {
         guard let format = rawValues[.format] else { return nil }
         
         // `tcFormat`
-        let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: rawValues[.tcFormat] ?? "")
+        let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: rawValues[.tcFormat] ?? "") ?? .nonDropFrame // TODO: ?
         
         // `tcStart`
         let start = try? FinalCutPro.FCPXML.timecode(
@@ -103,26 +103,6 @@ extension FCPXMLTimelineAttributes {
             timecodeFormat: tcFormat,
             start: start,
             duration: duration
-        )
-    }
-}
-
-extension FinalCutPro.FCPXML {
-    static func parseTimecodeFrameRate<C: FCPXMLTimelineAttributes>(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        timelineContext: C.Type,
-        timelineContextInstance: C
-    ) -> TimecodeFrameRate? {
-        guard let timelineAttributes = timelineContext.parseTimelineAttributes(
-            from: xmlLeaf,
-            resources: resources
-        ) else { return nil }
-        
-        return FinalCutPro.FCPXML.timecodeFrameRate(
-            forResourceID: timelineAttributes.format,
-            tcFormat: timelineAttributes.timecodeFormat,
-            in: resources
         )
     }
 }
