@@ -68,7 +68,7 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
         case role
     }
     
-    internal init?(
+    init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {

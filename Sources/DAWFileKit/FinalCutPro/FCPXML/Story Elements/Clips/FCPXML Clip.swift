@@ -38,7 +38,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Clip {
-    init?(
+    init(
         from xmlLeaf: XMLElement
     ) {
         xml = xmlLeaf

@@ -15,22 +15,11 @@ extension FinalCutPro.FCPXML {
     /// Type-erased box containing a story element.
     public enum AnyStoryElement: FCPXMLStoryElement {
         case anyClip(AnyClip)
-        case audio(XMLElement)
-        case video(XMLElement)
         case audition(XMLElement)
         case gap(XMLElement)
-        case transition(XMLElement)
-    }
-}
-
-extension FinalCutPro.FCPXML {
-    /// Story element type.
-    public enum StoryElementType: String, CaseIterable {
-        case audio
-        case video
-        case audition
-        case gap
-        case transition
+        case sequence(XMLElement)
+        case spine(XMLElement)
+        // case transition(XMLElement)
     }
 }
 
@@ -46,22 +35,22 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             return
         }
         
-        guard let seType = FinalCutPro.FCPXML.StoryElementType(rawValue: name) else {
+        guard let storyElementType = FinalCutPro.FCPXML.StoryElementType(rawValue: name) else {
             return nil
         }
         
         // TODO: add strong types to replace raw XML
-        switch seType {
-        case .audio:
-            self = .audio(xmlLeaf)
-        case .video:
-            self = .video(xmlLeaf)
+        switch storyElementType {
         case .audition:
             self = .audition(xmlLeaf)
         case .gap:
             self = .gap(xmlLeaf)
-        case .transition:
-            self = .transition(xmlLeaf)
+        case .sequence:
+            self = .sequence(xmlLeaf)
+        case .spine:
+            self = .spine(xmlLeaf)
+        // case .transition:
+        //     self = .transition(xmlLeaf)
         }
     }
     

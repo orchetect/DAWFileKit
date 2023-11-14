@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
     
     /// Note: `frameDuration` and `tcFormat` is not stored in `<title>`,
     /// it's inferred from the parent sequence.
-    internal init?(
+    init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {

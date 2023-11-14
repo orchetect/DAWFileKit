@@ -88,7 +88,7 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
         case audioRole
     }
     
-    internal init?(
+    init?(
         from xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
     ) {

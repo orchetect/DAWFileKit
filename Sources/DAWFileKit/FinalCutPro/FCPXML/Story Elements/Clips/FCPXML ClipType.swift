@@ -34,13 +34,7 @@ extension FinalCutPro.FCPXML {
         /// References a single media asset.
         case assetClip = "asset-clip"
         
-        /// Contains one active story element followed by alternative story elements in the audition
-        /// container.
-        case audition
-        
-        /// Defines a placeholder element that has no intrinsic audio or video data.
-        case gap
-        
+        /// Live drawing.
         case liveDrawing = "live-drawing"
     }
 }

@@ -13,7 +13,12 @@ extension FinalCutPro.FCPXML {
     /// Type-erased box containing a specialized clip instance.
     public enum AnyClip {
         case assetClip(AssetClip)
+        case audio(Audio)
         case clip(Clip)
+        case gap(Gap)
+        case mcClip(MCClip)
+        case refClip(RefClip)
+        case syncClip(SyncClip)
         case title(Title)
         case video(Video)
     }
@@ -38,10 +43,12 @@ extension FinalCutPro.FCPXML.AnyClip {
             ) else { return nil }
             self = .assetClip(clip)
             
+        case .audio:
+            let clip = FinalCutPro.FCPXML.Audio(from: xmlLeaf)
+            self = .audio(clip)
+            
         case .clip:
-            guard let clip = FinalCutPro.FCPXML.Clip(
-                from: xmlLeaf
-            ) else { return nil }
+            let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf)
             self = .clip(clip)
             
         case .title:
@@ -50,6 +57,10 @@ extension FinalCutPro.FCPXML.AnyClip {
                 frameRate: frameRate
             ) else { return nil }
             self = .title(clip)
+            
+        case .syncClip:
+            let clip = FinalCutPro.FCPXML.SyncClip(from: xmlLeaf)
+            self = .syncClip(clip)
             
         case .video:
             guard let clip = FinalCutPro.FCPXML.Video(
