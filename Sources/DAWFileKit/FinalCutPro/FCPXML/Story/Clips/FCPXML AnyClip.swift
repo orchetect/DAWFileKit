@@ -40,7 +40,7 @@ extension FinalCutPro.FCPXML.AnyClip {
             self = .assetClip(clip)
             
         case .audio:
-            let clip = FinalCutPro.FCPXML.Audio(from: xmlLeaf, resources: resources)
+            guard let clip = FinalCutPro.FCPXML.Audio(from: xmlLeaf, resources: resources) else { return nil }
             self = .audio(clip)
             
         case .clip:
@@ -48,11 +48,11 @@ extension FinalCutPro.FCPXML.AnyClip {
             self = .clip(clip)
             
         case .mcClip:
-            let clip = FinalCutPro.FCPXML.MCClip(from: xmlLeaf, resources: resources)
+            guard let clip = FinalCutPro.FCPXML.MCClip(from: xmlLeaf, resources: resources) else { return nil }
             self = .mcClip(clip)
             
         case .refClip:
-            let clip = FinalCutPro.FCPXML.RefClip(from: xmlLeaf, resources: resources)
+            guard let clip = FinalCutPro.FCPXML.RefClip(from: xmlLeaf, resources: resources) else { return nil }
             self = .refClip(clip)
             
         case .syncClip:
@@ -107,6 +107,22 @@ extension FinalCutPro.FCPXML.AnyClip {
         case let .syncClip(clip): return clip.markersDeep(auditions: auditionMask)
         case let .title(clip): return clip.markersDeep(auditions: auditionMask)
         case let .video(clip): return clip.markersDeep(auditions: auditionMask)
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyClip {
+    /// Convenience to return the offset of the clip.
+    public var offset: Timecode? {
+        switch self {
+        case let .assetClip(clip): return clip.offset
+        case let .audio(clip): return clip.offset
+        case let .clip(clip): return clip.offset
+        case let .mcClip(clip): return clip.offset
+        case let .refClip(clip): return clip.offset
+        case let .syncClip(clip): return clip.offset
+        case let .title(clip): return clip.offset
+        case let .video(clip): return clip.offset
         }
     }
 }

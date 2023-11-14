@@ -54,8 +54,6 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
-        // TODO: add attributes array, ie: markers?
-        
         public init(
             ref: String,
             audioRole: String?,
@@ -91,7 +89,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
-    /// Attributes unique to Asset Clip.
+    /// Attributes unique to ``AssetClip``.
     public enum Attributes: String {
         case ref // resource ID
         case audioRole

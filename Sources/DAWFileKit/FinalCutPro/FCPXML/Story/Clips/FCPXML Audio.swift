@@ -7,6 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
+import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Audio element.
@@ -15,36 +16,91 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > References audio data from an `asset` or `effect` element.
     public struct Audio: FCPXMLStoryElement {
-        public var xml: XMLElement // TODO: placeholder. finish building this.
-        
+        public var ref: String // resource ID, required
+        public var role: String?
         public var auditions: [Audition]
         public var clips: [AnyClip]
         public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
+        // FCPXMLAnchorableAttributes
+        public var lane: Int?
+        public var offset: Timecode?
+        
+        // FCPXMLClipAttributes
+        public var name: String?
+        public var start: Timecode?
+        public var duration: Timecode?
+        public var enabled: Bool
+        
+        // TODO: add missing attributes and protocols
+        
         public init(
+            ref: String,
+            role: String?,
             auditions: [Audition],
             clips: [AnyClip],
-            markers: [FinalCutPro.FCPXML.Marker]
+            markers: [FinalCutPro.FCPXML.Marker],
+            // FCPXMLAnchorableAttributes
+            lane: Int?,
+            offset: Timecode,
+            // FCPXMLClipAttributes
+            name: String,
+            start: Timecode, // TODO: not used?
+            duration: Timecode,
+            enabled: Bool
         ) {
-            xml = XMLElement() // TODO: temporary
-            
+            self.ref = ref
+            self.role = role
             self.auditions = auditions
             self.clips = clips
             self.markers = markers
+            
+            // FCPXMLAnchorableAttributes
+            self.lane = lane
+            self.offset = offset
+            
+            // FCPXMLClipAttributes
+            self.name = name
+            self.start = start // TODO: not used?
+            self.duration = duration
+            self.enabled = enabled
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Audio {
-    init(
+extension FinalCutPro.FCPXML.Audio: FCPXMLClipAttributes {
+    /// Attributes unique to ``Audio``.
+    public enum Attributes: String {
+        case ref // resource ID
+        case role
+    }
+    
+    init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        xml = xmlLeaf // TODO: temporary
+        guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
+        self.ref = ref
         
         auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
+        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
+        
+        let clipAttributes = Self.parseClipAttributes(
+            from: xmlLeaf,
+            resources: resources
+        )
+        
+        // FCPXMLAnchorableAttributes
+        lane = clipAttributes.lane
+        offset = clipAttributes.offset
+        
+        // FCPXMLClipAttributes
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        start = clipAttributes.start
+        duration = clipAttributes.duration
+        enabled = clipAttributes.enabled
     }
     
     // TODO: refactor using protocol and generics?

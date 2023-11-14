@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
-    /// Attributes unique to Video clip.
+    /// Attributes unique to ``Video`` clip.
     public enum Attributes: String {
         case ref // resource ID
         case role
