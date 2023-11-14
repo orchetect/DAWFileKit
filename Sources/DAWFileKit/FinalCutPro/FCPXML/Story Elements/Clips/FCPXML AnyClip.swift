@@ -37,42 +37,52 @@ extension FinalCutPro.FCPXML.AnyClip {
         
         switch clipType {
         case .assetClip:
-            guard let clip = FinalCutPro.FCPXML.AssetClip(
-                from: xmlLeaf,
-                resources: resources
-            ) else { return nil }
+            guard let clip = FinalCutPro.FCPXML.AssetClip(from: xmlLeaf, resources: resources) else { return nil }
             self = .assetClip(clip)
             
         case .audio:
-            let clip = FinalCutPro.FCPXML.Audio(from: xmlLeaf)
+            let clip = FinalCutPro.FCPXML.Audio(from: xmlLeaf, resources: resources)
             self = .audio(clip)
             
         case .clip:
-            let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf)
+            let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf, resources: resources)
             self = .clip(clip)
             
         case .title:
-            guard let clip = FinalCutPro.FCPXML.Title(
-                from: xmlLeaf,
-                resources: resources
-            ) else { return nil }
+            guard let clip = FinalCutPro.FCPXML.Title(from: xmlLeaf, resources: resources) else { return nil }
             self = .title(clip)
             
         case .syncClip:
-            let clip = FinalCutPro.FCPXML.SyncClip(from: xmlLeaf)
+            let clip = FinalCutPro.FCPXML.SyncClip(from: xmlLeaf, resources: resources)
             self = .syncClip(clip)
             
         case .video:
-            guard let clip = FinalCutPro.FCPXML.Video(
-                from: xmlLeaf,
-                resources: resources
-            ) else { return nil }
+            guard let clip = FinalCutPro.FCPXML.Video(from: xmlLeaf, resources: resources) else { return nil }
             self = .video(clip)
             
         default:
             // TODO: handle additional clip types
             print("Unhandled FCPXML clip type: \(name)")
             return nil
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyClip {
+    // TODO: refactor using protocol and generics?
+    /// Convenience to return markers within the clip.
+    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+    public var markers: [FinalCutPro.FCPXML.Marker] {
+        switch self {
+        case let .assetClip(clip): return clip.markers
+        case let .audio(clip): return clip.markers
+        case let .clip(clip): return clip.markers
+        case let .gap(clip): return clip.markers
+        case let .mcClip(clip): return clip.markers
+        case let .refClip(clip): return clip.markers
+        case let .syncClip(clip): return clip.markers
+        case let .title(clip): return clip.markers
+        case let .video(clip): return clip.markers
         }
     }
 }

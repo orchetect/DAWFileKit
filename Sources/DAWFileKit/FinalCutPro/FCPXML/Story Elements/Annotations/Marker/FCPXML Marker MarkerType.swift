@@ -9,6 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML.Marker {
+    // TODO: add support for `analysis-marker`?
     public enum MarkerType: String, CaseIterable {
         case standard = "Standard"
         case chapter = "Chapter"

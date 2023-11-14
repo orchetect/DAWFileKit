@@ -20,6 +20,8 @@ extension FinalCutPro.FCPXML {
     public struct Video: FCPXMLStoryElement {
         public let ref: String // resource ID, required
         public let role: String?
+        public var clips: [AnyClip]
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
         // FCPXMLAnchorableAttributes
         public let lane: Int?
@@ -36,6 +38,8 @@ extension FinalCutPro.FCPXML {
         public init(
             ref: String,
             role: String?,
+            clips: [AnyClip],
+            markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
             lane: Int?,
             offset: Timecode?,
@@ -47,6 +51,8 @@ extension FinalCutPro.FCPXML {
         ) {
             self.ref = ref
             self.role = role
+            self.clips = clips
+            self.markers = markers
             
             // FCPXMLAnchorableAttributes
             self.lane = lane
@@ -74,7 +80,10 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
     ) {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
+        
+        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
+        markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,

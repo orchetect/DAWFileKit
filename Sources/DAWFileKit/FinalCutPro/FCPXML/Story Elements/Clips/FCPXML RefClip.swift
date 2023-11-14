@@ -27,23 +27,31 @@ extension FinalCutPro.FCPXML {
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/ref-clip
     /// > ) to specify its format and other attributes.
     public struct RefClip: FCPXMLStoryElement {
-        public var xml: XMLElement
+        public var xml: XMLElement // TODO: placeholder. finish building this.
         
-        // TODO: placeholder. finish building this.
+        public var clips: [AnyClip]
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
         public init(
-            xml: XMLElement
+            clips: [AnyClip],
+            markers: [FinalCutPro.FCPXML.Marker]
         ) {
-            self.xml = xml
+            xml = XMLElement() // TODO: temporary
+            
+            self.clips = clips
+            self.markers = markers
         }
     }
 }
 
 extension FinalCutPro.FCPXML.RefClip {
     init(
-        from xmlLeaf: XMLElement
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         xml = xmlLeaf
+        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
+        markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
     }
 }
 

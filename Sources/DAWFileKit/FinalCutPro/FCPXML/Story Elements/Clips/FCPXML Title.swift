@@ -20,6 +20,7 @@ extension FinalCutPro.FCPXML {
     public struct Title: FCPXMLStoryElement {
         public var ref: String // resource ID, required
         public var role: String?
+        public var clips: [AnyClip]
         public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
         // FCPXMLAnchorableAttributes
@@ -36,6 +37,8 @@ extension FinalCutPro.FCPXML {
         
         public init(
             ref: String,
+            role: String?,
+            clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -47,6 +50,8 @@ extension FinalCutPro.FCPXML {
             enabled: Bool
         ) {
             self.ref = ref
+            self.role = role
+            self.clips = clips
             self.markers = markers
             
             // FCPXMLAnchorableAttributes
@@ -69,8 +74,6 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
         case role
     }
     
-    /// Note: `frameDuration` and `tcFormat` is not stored in `<title>`,
-    /// it's inferred from the parent sequence.
     init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
@@ -78,12 +81,8 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         
-        if let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(for: xmlLeaf, in: resources) {
-            markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, frameRate: frameRate)
-        } else {
-            print("Title: Could not determine frame rate.")
-            markers = []
-        }
+        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
+        markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         
         let clipAttributes = Self.parseClipAttributes(

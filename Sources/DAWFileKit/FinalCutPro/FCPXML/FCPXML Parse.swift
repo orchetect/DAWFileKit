@@ -221,6 +221,19 @@ extension FinalCutPro.FCPXML {
         
         return markers
     }
+    
+    // TODO: refactor this as a more generic annotation parser
+    static func parseMarkers(
+        in xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> [Marker] {
+        guard let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(for: xmlLeaf, in: resources)
+        else {
+            print("Error: Could not determine frame rate while parsing markers.")
+            return []
+        }
+        return parseMarkers(in: xmlLeaf, frameRate: frameRate)
+    }
 }
 
 #endif
