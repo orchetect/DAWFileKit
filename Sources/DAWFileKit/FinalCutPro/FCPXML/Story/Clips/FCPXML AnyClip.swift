@@ -91,6 +91,24 @@ extension FinalCutPro.FCPXML.AnyClip {
         case let .video(clip): return clip.markers
         }
     }
+    
+    // TODO: refactor using protocol and generics?
+    /// Convenience to return markers within the clip.
+    /// Operation is recursive and returns markers for all nested clips and elements.
+    public func markersDeep(
+        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        switch self {
+        case let .assetClip(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .audio(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .clip(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .mcClip(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .refClip(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .syncClip(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .title(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .video(clip): return clip.markersDeep(auditions: auditionMask)
+        }
+    }
 }
 
 #endif

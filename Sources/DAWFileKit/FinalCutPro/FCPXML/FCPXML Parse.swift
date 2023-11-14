@@ -170,6 +170,18 @@ extension FinalCutPro.FCPXML {
 // MARK: - Clips
 
 extension FinalCutPro.FCPXML {
+    static func parseAuditions(
+        in xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> [Audition] {
+        xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement }
+            .compactMap { Audition(from: $0, resources: resources) }
+        ?? []
+    }
+    
     static func parseClips(
         in xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]

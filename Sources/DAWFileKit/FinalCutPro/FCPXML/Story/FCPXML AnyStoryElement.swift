@@ -19,7 +19,6 @@ extension FinalCutPro.FCPXML {
         case gap(Gap)
         case sequence(Sequence)
         case spine(XMLElement) // TODO: replace with new Spine struct
-        // case transition(XMLElement)
     }
 }
 
@@ -39,7 +38,6 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             return nil
         }
         
-        // TODO: add strong types to replace raw XML
         switch storyElementType {
         case .audition:
             let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
@@ -59,9 +57,48 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             
         case .spine:
             self = .spine(xmlLeaf)
-            
-        // case .transition:
-        //     self = .transition(xmlLeaf)
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyStoryElement {
+    // TODO: refactor using protocol and generics?
+    /// Convenience to return markers within the story element.
+    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+    public var markers: [FinalCutPro.FCPXML.Marker] {
+        switch self {
+        case let .anyClip(clip): 
+            return clip.markers
+        case let .audition(audition):
+            return audition.clips.flatMap { $0.markers }
+        case let .gap(gap):
+            return gap.markers
+        case let .sequence(sequence):
+            return sequence.spine.flatMap { $0.markers }
+        case .spine(_):
+            print("Spine markers parsing: Not yet implemented.")
+            return []
+        }
+    }
+    
+    // TODO: refactor using protocol and generics?
+    /// Convenience to return markers within the story element.
+    /// Operation is recursive and returns markers for all nested clips and elements.
+    public func markersDeep(
+        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        switch self {
+        case let .anyClip(clip):
+            return clip.markersDeep(auditions: auditionMask)
+        case let .audition(audition):
+            return audition.markersDeep(for: auditionMask)
+        case let .gap(gap):
+            return gap.markersDeep(auditions: auditionMask)
+        case let .sequence(sequence):
+            return sequence.spine.flatMap { $0.markersDeep(auditions: auditionMask) }
+        case .spine(_):
+            print("Spine markers parsing: Not yet implemented.")
+            return []
         }
     }
 }

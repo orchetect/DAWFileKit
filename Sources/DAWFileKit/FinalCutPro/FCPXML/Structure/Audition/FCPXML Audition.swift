@@ -51,6 +51,26 @@ extension FinalCutPro.FCPXML.Audition {
         
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
     }
+    
+    // TODO: refactor using protocol and generics?
+    /// Convenience to return markers within the clip.
+    /// Operation is recursive and returns markers for all nested clips and elements.
+    public func markersDeep(for mask: Mask) -> [FinalCutPro.FCPXML.Marker] {
+        switch mask {
+        case .omitAuditions:
+            return []
+        case .activeAudition:
+            return clips.first?.markersDeep(auditions: mask) ?? []
+        case .allAuditions:
+            return clips.flatMap { $0.markersDeep(auditions: mask) }
+        }
+    }
+    
+    public enum Mask {
+        case omitAuditions
+        case activeAudition
+        case allAuditions
+    }
 }
 
 #endif

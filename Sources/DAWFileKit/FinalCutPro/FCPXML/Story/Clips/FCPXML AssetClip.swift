@@ -38,6 +38,7 @@ extension FinalCutPro.FCPXML {
     public struct AssetClip: FCPXMLStoryElement {
         public var ref: String // resource ID, required
         public var audioRole: String?
+        public var auditions: [Audition]
         public var clips: [AnyClip]
         public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
@@ -58,6 +59,7 @@ extension FinalCutPro.FCPXML {
         public init(
             ref: String,
             audioRole: String?,
+            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -71,6 +73,7 @@ extension FinalCutPro.FCPXML {
         ) {
             self.ref = ref
             self.audioRole = audioRole
+            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -101,6 +104,7 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         
+        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue)
@@ -119,6 +123,17 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClipAttributes {
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
+    }
+    
+    // TODO: refactor using protocol and generics?
+    /// Convenience to return markers within the clip.
+    /// Operation is recursive and returns markers for all nested clips and elements.
+    public func markersDeep(
+        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        markers
+            + auditions.flatMap { $0.markersDeep(for: auditionMask) }
+            + clips.flatMap { $0.markersDeep(auditions: auditionMask) }
     }
 }
 
