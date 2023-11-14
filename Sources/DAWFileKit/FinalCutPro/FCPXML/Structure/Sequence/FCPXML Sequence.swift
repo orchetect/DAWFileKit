@@ -61,7 +61,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
-    internal init?(
+    init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -95,7 +95,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         )
     }
     
-    internal static func parseSpine(
+    static func parseSpine(
         from xmlLeaf: XMLElement
     ) -> XMLElement? {
         let spines = xmlLeaf.children?.lazy
@@ -112,4 +112,19 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
     }
 }
 
+extension FinalCutPro.FCPXML.Sequence {
+    /// Convenience to return markers within the sequence.
+    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+    public var markers: [FinalCutPro.FCPXML.Marker] {
+        spine.flatMap { $0.markers }
+    }
+    
+    /// Convenience to return markers within the sequence.
+    /// Operation is recursive and returns markers for all nested clips and elements.
+    public func markersDeep(
+        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        spine.flatMap { $0.markersDeep(auditions: auditionMask) }
+    }
+}
 #endif

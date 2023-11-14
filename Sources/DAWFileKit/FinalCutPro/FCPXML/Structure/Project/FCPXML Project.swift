@@ -83,4 +83,20 @@ extension FinalCutPro.FCPXML.Project {
     }
 }
 
+extension FinalCutPro.FCPXML.Project {
+    /// Convenience to return markers within the project.
+    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+    public var markers: [FinalCutPro.FCPXML.Marker] {
+        sequence.markers
+    }
+    
+    /// Convenience to return markers within the project.
+    /// Operation is recursive and returns markers for all nested clips and elements.
+    public func markersDeep(
+        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        sequence.markersDeep(auditions: auditionMask)
+    }
+}
+
 #endif
