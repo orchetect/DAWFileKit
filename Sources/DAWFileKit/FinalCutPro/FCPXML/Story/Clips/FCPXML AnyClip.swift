@@ -75,6 +75,54 @@ extension FinalCutPro.FCPXML.AnyClip {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
+    public var asFCPXMLClipAttributes: FCPXMLClipAttributes {
+        switch self {
+        case let .assetClip(clip): return clip
+        case let .audio(clip): return clip
+        case let .clip(clip): return clip
+        case let .mcClip(clip): return clip
+        case let .refClip(clip): return clip
+        case let .syncClip(clip): return clip
+        case let .title(clip): return clip
+        case let .video(clip): return clip
+        }
+    }
+    
+    // FCPXMLAnchorableAttributes
+    
+    public var lane: Int? {
+        asFCPXMLClipAttributes.lane
+    }
+    
+    /// Convenience to return the offset of the clip.
+    public var offset: Timecode? {
+        asFCPXMLClipAttributes.offset
+    }
+    
+    // FCPXMLClipAttributes
+    
+    /// Convenience to return the name of the clip.
+    public var name: String? {
+        asFCPXMLClipAttributes.name
+    }
+    
+    /// Convenience to return the start of the clip.
+    public var start: Timecode? {
+        asFCPXMLClipAttributes.start
+    }
+    
+    /// Convenience to return the duration of the clip.
+    public var duration: Timecode? {
+        asFCPXMLClipAttributes.duration
+    }
+    
+    /// Convenience to return the enabled state of the clip.
+    public var enabled: Bool {
+        asFCPXMLClipAttributes.enabled
+    }
+}
+
 extension FinalCutPro.FCPXML.AnyClip {
     // TODO: refactor using protocol and generics?
     /// Convenience to return markers within the clip.
@@ -107,22 +155,6 @@ extension FinalCutPro.FCPXML.AnyClip {
         case let .syncClip(clip): return clip.markersDeep(auditions: auditionMask)
         case let .title(clip): return clip.markersDeep(auditions: auditionMask)
         case let .video(clip): return clip.markersDeep(auditions: auditionMask)
-        }
-    }
-}
-
-extension FinalCutPro.FCPXML.AnyClip {
-    /// Convenience to return the offset of the clip.
-    public var offset: Timecode? {
-        switch self {
-        case let .assetClip(clip): return clip.offset
-        case let .audio(clip): return clip.offset
-        case let .clip(clip): return clip.offset
-        case let .mcClip(clip): return clip.offset
-        case let .refClip(clip): return clip.offset
-        case let .syncClip(clip): return clip.offset
-        case let .title(clip): return clip.offset
-        case let .video(clip): return clip.offset
         }
     }
 }
