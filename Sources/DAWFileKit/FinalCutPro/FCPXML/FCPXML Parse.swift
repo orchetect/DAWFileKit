@@ -188,6 +188,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML {
     // TODO: refactor this as a more generic annotation parser
+    /// Parses markers shallowly in the given XML element.
     static func parseMarkers(
         in xmlLeaf: XMLElement,
         frameRate: TimecodeFrameRate
@@ -223,6 +224,7 @@ extension FinalCutPro.FCPXML {
     }
     
     // TODO: refactor this as a more generic annotation parser
+    /// Parses markers shallowly in the given XML element.
     static func parseMarkers(
         in xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
