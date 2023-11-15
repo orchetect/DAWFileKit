@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > References video data from an `asset` or `effect` element.
-    public struct Video: FCPXMLStoryElement {
+    public struct Video: FCPXMLStoryElement, FCPXMLClipAttributes {
         public let ref: String // resource ID, required
         public let role: String?
         public var auditions: [Audition]
@@ -70,7 +70,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
+extension FinalCutPro.FCPXML.Video {
     /// Attributes unique to ``Video`` clip.
     public enum Attributes: String {
         case ref // resource ID
@@ -104,16 +104,15 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-    
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        markers
-            + auditions.flatMap { $0.markersDeep(for: auditionMask) }
-            + clips.flatMap { $0.markersDeep(auditions: auditionMask) }
+}
+
+extension FinalCutPro.FCPXML.Video: FCPXMLMarkersExtractable {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        markers.convertToExtractedMarkers(settings: settings, parent: .video(self))
+            + auditions.flatMap { $0.extractMarkers(settings: settings) }
+            + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }
 

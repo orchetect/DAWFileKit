@@ -27,7 +27,7 @@ extension FinalCutPro.FCPXML {
     /// > represent a browser clip. In this case, use the [Timeline Attributes](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/ref-clip
     /// > ) to specify its format and other attributes.
-    public struct RefClip: FCPXMLStoryElement {
+    public struct RefClip: FCPXMLStoryElement, FCPXMLClipAttributes {
         public var ref: String // resource ID, required
         public var audioRoleSources: [String] // TODO: could refactor as struct with additional attributes
         public var auditions: [Audition]
@@ -80,7 +80,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.RefClip: FCPXMLClipAttributes {
+extension FinalCutPro.FCPXML.RefClip {
     /// Attributes unique to ``RefClip`` clip.
     public enum Attributes: String {
         case ref // resource ID
@@ -116,16 +116,15 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-    
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        markers
-            + auditions.flatMap { $0.markersDeep(for: auditionMask) }
-            + clips.flatMap { $0.markersDeep(auditions: auditionMask) }
+}
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLMarkersExtractable {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        markers.convertToExtractedMarkers(settings: settings, parent: .refClip(self))
+            + auditions.flatMap { $0.extractMarkers(settings: settings) }
+            + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }
 

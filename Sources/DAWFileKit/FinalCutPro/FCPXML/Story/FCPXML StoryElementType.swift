@@ -9,10 +9,9 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    public enum StoryElementType: String {
-        /// Contains one active story element followed by alternative story elements in the audition
-        /// container.
-        case audition
+    public enum StoryElementType {
+        /// A clip.
+        case anyClip(ClipType)
         
         /// A container that represents the top-level sequence for a Final Cut Pro project or
         /// compound clip.
@@ -20,6 +19,38 @@ extension FinalCutPro.FCPXML {
         
         /// Contains elements ordered sequentially in time.
         case spine
+    }
+}
+
+extension FinalCutPro.FCPXML.StoryElementType: RawRepresentable {
+    public typealias RawValue = String
+    
+    public init?(rawValue: String) {
+        guard let match = Self.allCases.first(where: { $0.rawValue == rawValue })
+        else { return nil }
+        self = match
+    }
+    
+    public var rawValue: String {
+        switch self {
+        case let .anyClip(clipType):
+            return clipType.rawValue
+        case .sequence:
+            return "sequence"
+        case .spine:
+            return "spine"
+        }
+    }
+}
+
+
+extension FinalCutPro.FCPXML.StoryElementType: CaseIterable {
+    public static var allCases: [FinalCutPro.FCPXML.StoryElementType] {
+        FinalCutPro.FCPXML.ClipType.allCases.map { .anyClip($0) }
+        + [
+            .sequence,
+            .spine
+        ]
     }
 }
 

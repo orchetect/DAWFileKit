@@ -27,7 +27,7 @@ extension FinalCutPro.FCPXML {
         public let renderFormat: String?
         public let note: String?
         public let keywords: String?
-        public let spine: [AnyStoryElement]
+        public let spine: Spine
         
         // TODO: add metadata
         
@@ -42,7 +42,7 @@ extension FinalCutPro.FCPXML {
             renderFormat: String?,
             note: String?,
             keywords: String?,
-            spine: [AnyStoryElement]
+            spine: Spine
         ) {
             // FCPXMLTimelineAttributes
             self.format = format
@@ -86,13 +86,10 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         renderFormat = xmlLeaf.attributeStringValue(forName: Attributes.renderFormat.rawValue)
         note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
         keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
-                
+        
         // spine
         guard let spineLeaf = Self.parseSpine(from: xmlLeaf) else { return nil }
-        spine = FinalCutPro.FCPXML.parseStoryElements(
-            in: spineLeaf,
-            resources: resources
-        )
+        spine = FinalCutPro.FCPXML.Spine(from: spineLeaf, resources: resources)
     }
     
     static func parseSpine(
@@ -112,19 +109,16 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence {
-    /// Convenience to return markers within the sequence.
-    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+extension FinalCutPro.FCPXML.Sequence: FCPXMLMarkersExtractable {
+    /// Convenience to return the enclosed spine's markers.
     public var markers: [FinalCutPro.FCPXML.Marker] {
-        spine.flatMap { $0.markers }
+        spine.markers
     }
     
-    /// Convenience to return markers within the sequence.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        spine.flatMap { $0.markersDeep(auditions: auditionMask) }
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        spine.extractMarkers(settings: settings)
     }
 }
 #endif

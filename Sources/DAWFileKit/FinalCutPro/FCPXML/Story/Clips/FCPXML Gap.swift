@@ -88,16 +88,15 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-    
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        markers
-            + auditions.flatMap { $0.markersDeep(for: auditionMask) }
-            + clips.flatMap { $0.markersDeep(auditions: auditionMask) }
+}
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLMarkersExtractable {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        markers.convertToExtractedMarkers(settings: settings, parent: .gap(self))
+            + auditions.flatMap { $0.extractMarkers(settings: settings) }
+            + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }
 

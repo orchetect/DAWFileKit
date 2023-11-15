@@ -104,9 +104,9 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         let spine = sequence.spine
         
-        XCTAssertEqual(spine.count, 1)
+        XCTAssertEqual(spine.elements.count, 1)
         
-        guard case let .anyClip(.title(element1)) = spine[0] else { XCTFail("Clip was not expected type.") ; return }
+        guard case let .anyClip(.title(element1)) = spine.elements[0] else { XCTFail("Clip was not expected type.") ; return }
         
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))

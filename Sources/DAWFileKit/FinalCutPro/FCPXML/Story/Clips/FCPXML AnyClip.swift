@@ -14,6 +14,7 @@ extension FinalCutPro.FCPXML {
     public enum AnyClip {
         case assetClip(AssetClip)
         case audio(Audio)
+        case audition(Audition)
         case clip(Clip)
         case gap(Gap)
         case mcClip(MCClip)
@@ -43,6 +44,10 @@ extension FinalCutPro.FCPXML.AnyClip {
         case .audio:
             guard let clip = FinalCutPro.FCPXML.Audio(from: xmlLeaf, resources: resources) else { return nil }
             self = .audio(clip)
+            
+        case .audition:
+            let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
+            self = .audition(element)
             
         case .clip:
             let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf, resources: resources)
@@ -80,11 +85,30 @@ extension FinalCutPro.FCPXML.AnyClip {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyClip {
+    /// Returns the clip type enum case.
+    public var clipType: FinalCutPro.FCPXML.ClipType {
+        switch self {
+        case .assetClip: return .assetClip
+        case .audio: return .audio
+        case .audition: return .audition
+        case .clip: return .clip
+        case .gap: return .gap
+        case .mcClip: return .mcClip
+        case .refClip: return .refClip
+        case .syncClip: return .syncClip
+        case .title: return .title
+        case .video: return .video
+        }
+    }
+}
+
 extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     public var asFCPXMLClipAttributes: FCPXMLClipAttributes {
         switch self {
         case let .assetClip(clip): return clip
         case let .audio(clip): return clip
+        case let .audition(clip): return clip
         case let .clip(clip): return clip
         case let .gap(clip): return clip
         case let .mcClip(clip): return clip
@@ -129,14 +153,12 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyClip {
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
     public var markers: [FinalCutPro.FCPXML.Marker] {
         switch self {
         case let .assetClip(clip): return clip.markers
         case let .audio(clip): return clip.markers
+        case let .audition(clip): return clip.markers
         case let .clip(clip): return clip.markers
         case let .gap(clip): return clip.markers
         case let .mcClip(clip): return clip.markers
@@ -147,22 +169,20 @@ extension FinalCutPro.FCPXML.AnyClip {
         }
     }
     
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         switch self {
-        case let .assetClip(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .audio(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .clip(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .gap(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .mcClip(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .refClip(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .syncClip(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .title(clip): return clip.markersDeep(auditions: auditionMask)
-        case let .video(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .assetClip(clip): return clip.extractMarkers(settings: settings)
+        case let .audio(clip): return clip.extractMarkers(settings: settings)
+        case let .audition(clip): return clip.extractMarkers(settings: settings)
+        case let .clip(clip): return clip.extractMarkers(settings: settings)
+        case let .gap(clip): return clip.extractMarkers(settings: settings)
+        case let .mcClip(clip): return clip.extractMarkers(settings: settings)
+        case let .refClip(clip): return clip.extractMarkers(settings: settings)
+        case let .syncClip(clip): return clip.extractMarkers(settings: settings)
+        case let .title(clip): return clip.extractMarkers(settings: settings)
+        case let .video(clip): return clip.extractMarkers(settings: settings)
         }
     }
 }

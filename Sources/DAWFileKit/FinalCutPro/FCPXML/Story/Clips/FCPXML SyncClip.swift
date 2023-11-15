@@ -15,7 +15,7 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.
-    public struct SyncClip: FCPXMLStoryElement {
+    public struct SyncClip: FCPXMLStoryElement, FCPXMLClipAttributes {
         public var auditions: [Audition]
         public var clips: [AnyClip]
         public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
@@ -62,7 +62,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.SyncClip: FCPXMLClipAttributes {
+extension FinalCutPro.FCPXML.SyncClip {
     // no ref, no role
     init(
         from xmlLeaf: XMLElement,
@@ -87,16 +87,15 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-    
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        markers
-            + auditions.flatMap { $0.markersDeep(for: auditionMask) }
-            + clips.flatMap { $0.markersDeep(auditions: auditionMask) }
+}
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLMarkersExtractable {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        markers.convertToExtractedMarkers(settings: settings, parent: .syncClip(self))
+            + auditions.flatMap { $0.extractMarkers(settings: settings) }
+            + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }
 

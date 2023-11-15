@@ -8,16 +8,13 @@
 
 import Foundation
 import TimecodeKit
-//import CoreMedia
-//@_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Type-erased box containing a story element.
     public enum AnyStoryElement: FCPXMLStoryElement {
         case anyClip(AnyClip)
-        case audition(Audition)
         case sequence(Sequence)
-        case spine(XMLElement) // TODO: replace with new Spine struct
+        case spine(Spine)
     }
 }
 
@@ -28,68 +25,53 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     ) {
         guard let name = xmlLeaf.name else { return nil }
         
-        if let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, resources: resources) {
+        guard let storyElementType = FinalCutPro.FCPXML.StoryElementType(rawValue: name)
+        else { return nil }
+        
+        switch storyElementType {
+        case .anyClip:
+            guard let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, resources: resources)
+            else { return nil }
+            
             self = .anyClip(clip)
-            return
-        }
-        
-        if let storyElementType = FinalCutPro.FCPXML.StoryElementType(rawValue: name) {
-            switch storyElementType {
-            case .audition:
-                let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
-                self = .audition(element)
                 
-            case .sequence:
-                guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
-                else {
-                    print("Failed to parse FCPXML sequence.")
-                    return nil
-                }
-                self = .sequence(element)
-                
-            case .spine:
-                self = .spine(xmlLeaf)
+        case .sequence:
+            guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
+            else {
+                print("Failed to parse FCPXML sequence.")
+                return nil
             }
+            self = .sequence(element)
+                
+        case .spine:
+            let element = FinalCutPro.FCPXML.Spine(from: xmlLeaf, resources: resources)
+            self = .spine(element)
         }
-        
-        return nil
     }
 }
 
-extension FinalCutPro.FCPXML.AnyStoryElement {
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the story element.
-    /// Operation is not recursive, and only returns markers attached to the clip itself and not markers within nested clips.
+extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLMarkersExtractable {
     public var markers: [FinalCutPro.FCPXML.Marker] {
         switch self {
-        case let .anyClip(clip): 
+        case let .anyClip(clip):
             return clip.markers
-        case let .audition(audition):
-            return audition.clips.flatMap { $0.markers }
         case let .sequence(sequence):
-            return sequence.spine.flatMap { $0.markers }
-        case .spine(_):
-            print("Spine markers parsing: Not yet implemented.")
-            return []
+            return sequence.markers
+        case let .spine(spine):
+            return spine.markers
         }
     }
     
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the story element.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         switch self {
         case let .anyClip(clip):
-            return clip.markersDeep(auditions: auditionMask)
-        case let .audition(audition):
-            return audition.markersDeep(for: auditionMask)
+            return clip.extractMarkers(settings: settings)
         case let .sequence(sequence):
-            return sequence.spine.flatMap { $0.markersDeep(auditions: auditionMask) }
-        case .spine(_):
-            print("Spine markers parsing: Not yet implemented.")
-            return []
+            return sequence.extractMarkers(settings: settings)
+        case let .spine(spine):
+            return spine.extractMarkers(settings: settings)
         }
     }
 }

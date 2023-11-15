@@ -47,11 +47,15 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
+        // spine
+        
+        let spine = sequence.spine
+        
         // clips
         
-        guard case let .anyClip(.title(title1)) = try XCTUnwrap(sequence.spine[safe: 0]),
-              case let .anyClip(.gap(gap)) = try XCTUnwrap(sequence.spine[safe: 1]),
-              case let .anyClip(.title(title2)) = try XCTUnwrap(sequence.spine[safe: 2])
+        guard case let .anyClip(.title(title1)) = try XCTUnwrap(spine.elements[safe: 0]),
+              case let .anyClip(.gap(gap)) = try XCTUnwrap(spine.elements[safe: 1]),
+              case let .anyClip(.title(title2)) = try XCTUnwrap(spine.elements[safe: 2])
         else { return }
         
         // clip 1 - title
@@ -133,11 +137,41 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         )
         XCTAssertEqual(title2Marker, expectedTitle2Marker)
         
-        // markers gathering
+        // extract markers
         
-        let gatheredMarkers = project.markersDeep(auditions: .activeAudition)
-        XCTAssertEqual(gatheredMarkers.count, 3)
-        XCTAssertEqual(gatheredMarkers, [expectedTitle1Marker, expectedGapMarker, expectedTitle2Marker])
+        let extractedMarkers = project
+            .extractMarkers(settings: FCPXMLMarkersExtractionSettings(
+                deep: true,
+                auditionMask: .activeAudition
+            ))
+        XCTAssertEqual(extractedMarkers.count, 3)
+        
+        let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
+        XCTAssertEqual(extractedTitle1Marker.marker, expectedTitle1Marker)
+        XCTAssertEqual(
+            extractedTitle1Marker.absoluteStart,
+            try Timecode(.components(h: 01, m: 00, s: 04, f: 15), at: .fps29_97, base: .max80SubFrames)
+        )
+        XCTAssertEqual(extractedTitle1Marker.parentType, .title)
+        XCTAssertEqual(extractedTitle1Marker.parentName, "Basic Title 1")
+        
+        let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 1])
+        XCTAssertEqual(extractedGapMarker.marker, expectedGapMarker)
+        XCTAssertEqual(
+            extractedGapMarker.absoluteStart,
+            try Timecode(.components(h: 01, m: 00, s: 15, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
+        XCTAssertEqual(extractedGapMarker.parentType, .gap)
+        XCTAssertEqual(extractedGapMarker.parentName, "Gap")
+        
+        let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 2])
+        XCTAssertEqual(extractedTitle2Marker.marker, expectedTitle2Marker)
+        XCTAssertEqual(
+            extractedTitle2Marker.absoluteStart,
+            try Timecode(.components(h: 01, m: 00, s: 27, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
+        XCTAssertEqual(extractedTitle2Marker.parentType, .title)
+        XCTAssertEqual(extractedTitle2Marker.parentName, "Basic Title 2")
     }
 }
 

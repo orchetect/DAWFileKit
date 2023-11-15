@@ -29,7 +29,7 @@ public enum FCPXMLAnchorableAttributesKey: String, XMLParsableAttributesKey {
     case offset
 }
 
-extension FCPXMLClipAttributes {
+extension FCPXMLAnchorableAttributes {
     fileprivate typealias Key = FCPXMLAnchorableAttributesKey
     
     // MARK: - Raw Values

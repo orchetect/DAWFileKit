@@ -16,8 +16,9 @@ extension FinalCutPro.FCPXML {
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
-    /// > When exported, the XML lists the currently active item as the first child in the audition container.
-    public struct Audition {
+    /// > When exported, the XML lists the currently active item as the first child in the audition
+    /// > container.
+    public struct Audition: FCPXMLStoryElement {
         public var clips: [AnyClip]
         
         public var lane: Int?
@@ -31,6 +32,28 @@ extension FinalCutPro.FCPXML {
             self.clips = clips
             self.lane = lane
         }
+    }
+}
+
+extension FinalCutPro.FCPXML.Audition: FCPXMLClipAttributes {
+    public var name: String? {
+        clips.first?.name
+    }
+    
+    public var start: TimecodeKit.Timecode? {
+        clips.first?.start
+    }
+    
+    public var duration: TimecodeKit.Timecode? {
+        clips.first?.duration
+    }
+    
+    public var enabled: Bool {
+        clips.first?.enabled ?? true
+    }
+    
+    public var offset: TimecodeKit.Timecode? {
+        clips.first?.offset
     }
 }
 
@@ -51,18 +74,37 @@ extension FinalCutPro.FCPXML.Audition {
         
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
     }
+}
+
+extension FinalCutPro.FCPXML.Audition {
+    /// Convenience to return the active audition clip.
+    public var activeClip: FinalCutPro.FCPXML.AnyClip? {
+        clips.first
+    }
     
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(for mask: Mask) -> [FinalCutPro.FCPXML.Marker] {
-        switch mask {
+    /// Convenience to return the inactive audition clips, if any.
+    public var inactiveClips: [FinalCutPro.FCPXML.AnyClip] {
+        Array(clips.dropFirst())
+    }
+}
+
+extension FinalCutPro.FCPXML.Audition: FCPXMLMarkersExtractable {
+    public var markers: [FinalCutPro.FCPXML.Marker] {
+        clips.first?.markers ?? []
+    }
+    
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        switch settings.auditionMask {
         case .omitAuditions:
             return []
+            
         case .activeAudition:
-            return clips.first?.markersDeep(auditions: mask) ?? []
+            return activeClip?.extractMarkers(settings: settings) ?? []
+            
         case .allAuditions:
-            return clips.flatMap { $0.markersDeep(auditions: mask) }
+            return clips.flatMap { $0.extractMarkers(settings: settings) }
         }
     }
     

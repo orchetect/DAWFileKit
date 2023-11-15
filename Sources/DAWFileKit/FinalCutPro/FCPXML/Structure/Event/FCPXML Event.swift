@@ -22,28 +22,23 @@ extension FinalCutPro.FCPXML {
         public var name: String?
         public var uid: String?
         
-        // TODO: public var auditions: [Audition] = []
-        
+        public var projects: [Project]
         public var clips: [AnyClip]
         
         // TODO: public var collectionFolders: [CollectionFolder] = []
-        
         // TODO: public var keywordCollections: [KeywordCollection] = []
-        
         // TODO: public var smartCollections: [SmartCollection] = []
-        
-        public var projects: [Project]
         
         public init(
             name: String? = nil,
             uid: String? = nil,
-            clips: [AnyClip] = [],
-            projects: [Project] = []
+            projects: [Project] = [],
+            clips: [AnyClip] = []
         ) {
             self.name = name
             self.uid = uid
-            self.clips = clips
             self.projects = projects
+            self.clips = clips
         }
     }
 }
@@ -62,8 +57,22 @@ extension FinalCutPro.FCPXML.Event {
         name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
         uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
         
-        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         projects = FinalCutPro.FCPXML.projects(in: xmlLeaf, resources: resources)
+        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
+    }
+}
+
+extension FinalCutPro.FCPXML.Event: FCPXMLMarkersExtractable {
+    /// Always returns an empty array since events cannot contain markers.
+    public var markers: [FinalCutPro.FCPXML.Marker] {
+        [] // events themselves cannot contain markers
+    }
+    
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        projects.flatMap { $0.extractMarkers(settings: settings) }
+            + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }
 

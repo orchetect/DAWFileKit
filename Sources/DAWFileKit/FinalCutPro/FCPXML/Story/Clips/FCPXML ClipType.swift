@@ -16,6 +16,10 @@ extension FinalCutPro.FCPXML {
         /// References audio data from an `asset` or `effect` element.
         case audio
         
+        /// Contains one active story element followed by alternative story elements in the audition
+        /// container.
+        case audition
+        
         /// Represents a basic unit of editing.
         case clip
         

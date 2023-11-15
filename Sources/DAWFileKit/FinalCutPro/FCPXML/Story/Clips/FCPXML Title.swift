@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     /// This is a FCP meta type and video is generated.
     /// Its frame rate is inferred from the sequence.
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
-    public struct Title: FCPXMLStoryElement {
+    public struct Title: FCPXMLStoryElement, FCPXMLClipAttributes {
         public var ref: String // resource ID, required
         public var role: String?
         public var auditions: [Audition]
@@ -70,7 +70,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
+extension FinalCutPro.FCPXML.Title {
     /// Attributes unique to ``Title`` clip.
     public enum Attributes: String {
         case ref // resource ID
@@ -104,16 +104,15 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-    
-    // TODO: refactor using protocol and generics?
-    /// Convenience to return markers within the clip.
-    /// Operation is recursive and returns markers for all nested clips and elements.
-    public func markersDeep(
-        auditions auditionMask: FinalCutPro.FCPXML.Audition.Mask
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        markers
-            + auditions.flatMap { $0.markersDeep(for: auditionMask) }
-            + clips.flatMap { $0.markersDeep(auditions: auditionMask) }
+}
+
+extension FinalCutPro.FCPXML.Title: FCPXMLMarkersExtractable {
+    public func extractMarkers(
+        settings: FCPXMLMarkersExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        markers.convertToExtractedMarkers(settings: settings, parent: .title(self))
+            + auditions.flatMap { $0.extractMarkers(settings: settings) }
+            + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }
 
