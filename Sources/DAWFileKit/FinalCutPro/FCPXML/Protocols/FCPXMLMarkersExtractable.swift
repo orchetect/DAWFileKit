@@ -50,9 +50,10 @@ extension FinalCutPro.FCPXML {
         
         public var absoluteStart: Timecode?
         
+        // TODO: abstract into a generic protocol that can describe any clip's details? we don't want to just store the clip itself though.
         public var parentType: ClipType
         public var parentName: String?
-        public var parentStart: Timecode?
+        public var parentAbsoluteStart: Timecode?
         public var parentDuration: Timecode?
         
         init(
@@ -63,9 +64,9 @@ extension FinalCutPro.FCPXML {
             self.marker = marker
             
             if let parentOffset = parent.offset,
-               let parentStart = parent.start
+               let parentAbsoluteStart = parent.start
             {
-                let offsetFromParentStart = marker.start - parentStart
+                let offsetFromParentStart = marker.start - parentAbsoluteStart
                 if let newTimecode = try? parentOffset.adding(offsetFromParentStart, by: .wrapping) {
                     absoluteStart = newTimecode
                 } else {
@@ -75,7 +76,7 @@ extension FinalCutPro.FCPXML {
             
             parentType = parent.clipType
             parentName = parent.name
-            parentStart = parent.start
+            parentAbsoluteStart = parent.offset
             parentDuration = parent.duration
         }
     }

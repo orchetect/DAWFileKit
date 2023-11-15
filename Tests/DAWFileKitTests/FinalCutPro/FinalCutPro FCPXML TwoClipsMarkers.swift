@@ -184,6 +184,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         )
         XCTAssertEqual(extractedTitle1Marker.parentType, .title)
         XCTAssertEqual(extractedTitle1Marker.parentName, "Basic Title 1")
+        XCTAssertEqual(
+            extractedTitle1Marker.parentAbsoluteStart,
+            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
+        XCTAssertEqual(
+            extractedTitle1Marker.parentDuration,
+            try Timecode(.components(h: 00, m: 00, s: 10, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
         
         let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 1])
         XCTAssertEqual(extractedGapMarker.marker, try expectedGapMarker)
@@ -193,6 +201,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         )
         XCTAssertEqual(extractedGapMarker.parentType, .gap)
         XCTAssertEqual(extractedGapMarker.parentName, "Gap")
+        XCTAssertEqual(
+            extractedGapMarker.parentAbsoluteStart,
+            try Timecode(.components(h: 01, m: 00, s: 10, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
+        XCTAssertEqual(
+            extractedGapMarker.parentDuration,
+            try Timecode(.components(h: 00, m: 00, s: 10, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
         
         let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 2])
         XCTAssertEqual(extractedTitle2Marker.marker, try expectedTitle2Marker)
@@ -202,6 +218,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         )
         XCTAssertEqual(extractedTitle2Marker.parentType, .title)
         XCTAssertEqual(extractedTitle2Marker.parentName, "Basic Title 2")
+        XCTAssertEqual(
+            extractedTitle2Marker.parentAbsoluteStart,
+            try Timecode(.components(h: 01, m: 00, s: 20, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
+        XCTAssertEqual(
+            extractedTitle2Marker.parentDuration,
+            try Timecode(.components(h: 00, m: 00, s: 10, f: 00), at: .fps29_97, base: .max80SubFrames)
+        )
     }
     
     func testExtractMarkers_ExcludeTitle() throws {
