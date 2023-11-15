@@ -15,6 +15,7 @@ extension FinalCutPro.FCPXML {
         case assetClip(AssetClip)
         case audio(Audio)
         case clip(Clip)
+        case gap(Gap)
         case mcClip(MCClip)
         case refClip(RefClip)
         case syncClip(SyncClip)
@@ -46,6 +47,10 @@ extension FinalCutPro.FCPXML.AnyClip {
         case .clip:
             let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf, resources: resources)
             self = .clip(clip)
+            
+        case .gap:
+            let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources)
+            self = .gap(element)
             
         case .mcClip:
             guard let clip = FinalCutPro.FCPXML.MCClip(from: xmlLeaf, resources: resources) else { return nil }
@@ -81,6 +86,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
         case let .assetClip(clip): return clip
         case let .audio(clip): return clip
         case let .clip(clip): return clip
+        case let .gap(clip): return clip
         case let .mcClip(clip): return clip
         case let .refClip(clip): return clip
         case let .syncClip(clip): return clip
@@ -132,6 +138,7 @@ extension FinalCutPro.FCPXML.AnyClip {
         case let .assetClip(clip): return clip.markers
         case let .audio(clip): return clip.markers
         case let .clip(clip): return clip.markers
+        case let .gap(clip): return clip.markers
         case let .mcClip(clip): return clip.markers
         case let .refClip(clip): return clip.markers
         case let .syncClip(clip): return clip.markers
@@ -150,6 +157,7 @@ extension FinalCutPro.FCPXML.AnyClip {
         case let .assetClip(clip): return clip.markersDeep(auditions: auditionMask)
         case let .audio(clip): return clip.markersDeep(auditions: auditionMask)
         case let .clip(clip): return clip.markersDeep(auditions: auditionMask)
+        case let .gap(clip): return clip.markersDeep(auditions: auditionMask)
         case let .mcClip(clip): return clip.markersDeep(auditions: auditionMask)
         case let .refClip(clip): return clip.markersDeep(auditions: auditionMask)
         case let .syncClip(clip): return clip.markersDeep(auditions: auditionMask)

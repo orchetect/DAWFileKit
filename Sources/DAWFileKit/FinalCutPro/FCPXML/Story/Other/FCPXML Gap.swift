@@ -7,6 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
+import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Gap element.
@@ -15,36 +16,77 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > Defines a placeholder element that has no intrinsic audio or video data.
     public struct Gap: FCPXMLStoryElement {
-        public var xml: XMLElement // TODO: placeholder. finish building this.
-        
         public var auditions: [Audition]
         public var clips: [AnyClip]
         public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
         
+        // FCPXMLAnchorableAttributes
+        public var lane: Int? // TODO: Gap doesn't have lane attribute?
+        public var offset: Timecode?
+        
+        // FCPXMLClipAttributes
+        public var name: String?
+        public var start: Timecode?
+        public var duration: Timecode?
+        public var enabled: Bool
+        
+        // TODO: add missing attributes and protocols
+        
         public init(
             auditions: [Audition],
             clips: [AnyClip],
-            markers: [FinalCutPro.FCPXML.Marker]
+            markers: [FinalCutPro.FCPXML.Marker],
+            // FCPXMLAnchorableAttributes
+            lane: Int?,
+            offset: Timecode,
+            // FCPXMLClipAttributes
+            name: String,
+            start: Timecode, // TODO: not used?
+            duration: Timecode,
+            enabled: Bool
         ) {
-            xml = XMLElement() // TODO: temporary
-            
             self.auditions = auditions
             self.clips = clips
             self.markers = markers
+            
+            // FCPXMLAnchorableAttributes
+            self.lane = lane
+            self.offset = offset
+            
+            // FCPXMLClipAttributes
+            self.name = name
+            self.start = start // TODO: not used?
+            self.duration = duration
+            self.enabled = enabled
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Gap {
+extension FinalCutPro.FCPXML.Gap: FCPXMLClipAttributes {
+    // no ref, no role
+    // no lane
     init(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        xml = xmlLeaf // TODO: temporary
-        
         auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
+        
+        let clipAttributes = Self.parseClipAttributes(
+            from: xmlLeaf,
+            resources: resources
+        )
+        
+        // FCPXMLAnchorableAttributes
+        lane = clipAttributes.lane
+        offset = clipAttributes.offset
+        
+        // FCPXMLClipAttributes
+        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        start = clipAttributes.start
+        duration = clipAttributes.duration
+        enabled = clipAttributes.enabled
     }
     
     // TODO: refactor using protocol and generics?

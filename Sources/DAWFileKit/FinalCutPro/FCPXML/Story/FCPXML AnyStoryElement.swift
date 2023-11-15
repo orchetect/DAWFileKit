@@ -16,7 +16,6 @@ extension FinalCutPro.FCPXML {
     public enum AnyStoryElement: FCPXMLStoryElement {
         case anyClip(AnyClip)
         case audition(Audition)
-        case gap(Gap)
         case sequence(Sequence)
         case spine(XMLElement) // TODO: replace with new Spine struct
     }
@@ -39,10 +38,6 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             case .audition:
                 let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
                 self = .audition(element)
-                
-            case .gap:
-                let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources)
-                self = .gap(element)
                 
             case .sequence:
                 guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
@@ -71,8 +66,6 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             return clip.markers
         case let .audition(audition):
             return audition.clips.flatMap { $0.markers }
-        case let .gap(gap):
-            return gap.markers
         case let .sequence(sequence):
             return sequence.spine.flatMap { $0.markers }
         case .spine(_):
@@ -92,8 +85,6 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             return clip.markersDeep(auditions: auditionMask)
         case let .audition(audition):
             return audition.markersDeep(for: auditionMask)
-        case let .gap(gap):
-            return gap.markersDeep(auditions: auditionMask)
         case let .sequence(sequence):
             return sequence.spine.flatMap { $0.markersDeep(auditions: auditionMask) }
         case .spine(_):

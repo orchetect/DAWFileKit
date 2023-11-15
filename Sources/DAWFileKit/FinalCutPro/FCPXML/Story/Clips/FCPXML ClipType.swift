@@ -19,6 +19,9 @@ extension FinalCutPro.FCPXML {
         /// Represents a basic unit of editing.
         case clip
         
+        /// Defines a placeholder element that has no intrinsic audio or video data.
+        case gap
+        
         /// Live drawing.
         case liveDrawing = "live-drawing"
         
