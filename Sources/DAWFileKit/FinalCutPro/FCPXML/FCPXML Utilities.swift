@@ -169,11 +169,53 @@ extension FinalCutPro.FCPXML {
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> FinalCutPro.FCPXML.Format? {
         let keyName = "format" // TODO: assign to static string constant
-        guard let formatID = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName),
-              let resource = resources[formatID],
-              case let .format(format) = resource
+        guard let resourceID = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName)
         else { return nil }
-        return format
+        
+        return format(for: resourceID, in: resources)
+    }
+    
+    static func format(
+        for resourceID: String,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> FinalCutPro.FCPXML.Format? {
+        guard let resource = resources[resourceID]
+        else { return nil }
+        
+        return format(for: resource, in: resources)
+    }
+    
+    static func format(
+        for resource: AnyResource,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> FinalCutPro.FCPXML.Format? {
+        switch resource {
+        case let .asset(asset):
+            guard let assetFormatID = asset.format else { return nil }
+            return format(for: assetFormatID, in: resources)
+            
+        case let .media(media):
+            #warning("> TODO: finish this")
+            return nil
+            
+        case let .format(format):
+            return format
+            
+        case .effect(_):
+            return nil // effects don't carry format info
+            
+        case .locator(_):
+            #warning("> TODO: finish this")
+            return nil
+            
+        case .objectTracker(_):
+            #warning("> TODO: finish this")
+            return nil
+            
+        case .trackingShape(_):
+            #warning("> TODO: finish this")
+            return nil
+        }
     }
     
     /// Traverses the parents of the given XML leaf and returns the nearest `tcFormat` attribute if found.

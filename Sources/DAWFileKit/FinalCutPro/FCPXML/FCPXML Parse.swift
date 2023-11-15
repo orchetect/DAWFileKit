@@ -210,7 +210,7 @@ extension FinalCutPro.FCPXML {
             let itemName = $0.name ?? ""
             guard let item = AnnotationType(rawValue: itemName)
             else {
-                print("Info: skipping clip item \(itemName.quoted). Not handled.")
+                // print("Info: skipping clip item \(itemName.quoted). Not handled.")
                 return // next forEach
             }
             
