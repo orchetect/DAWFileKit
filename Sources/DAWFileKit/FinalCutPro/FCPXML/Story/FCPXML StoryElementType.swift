@@ -1,5 +1,5 @@
 //
-//  FCPXML Sequence StoryElementType.swift
+//  FCPXML StoryElementType.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //

@@ -13,21 +13,8 @@ extension FinalCutPro.FCPXML {
         /// Event.
         case event
         
-        /// Root-level XML element.
-        case fcpxml
-        
-        /// Library.
-        case library
-        
         /// Project.
         case project
-        
-        /// Contains descriptions of media assets and other resources.
-        case resources
-        
-        /// A container that represents the top-level sequence for a Final Cut Pro project or
-        /// compound clip.
-        case sequence
     }
 }
 

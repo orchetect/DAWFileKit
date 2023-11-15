@@ -143,7 +143,7 @@ extension FinalCutPro.FCPXML {
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Sequence] {
-        let xmlElements = xmlLeaf.elements(forName: StructureElementType.sequence.rawValue)
+        let xmlElements = xmlLeaf.elements(forName: StoryElementType.sequence.rawValue)
         let sequences = xmlElements.compactMap {
             Sequence(from: $0, resources: resources)
         }

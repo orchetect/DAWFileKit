@@ -77,7 +77,7 @@ extension FinalCutPro.FCPXML {
         xml.children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .first(where: { $0.name == StructureElementType.fcpxml.rawValue })
+            .first(where: { $0.name == FoundationElementType.fcpxml.rawValue })
     }
     
     enum FCPXMLAttributesKey: String {
@@ -91,13 +91,13 @@ extension FinalCutPro.FCPXML {
     /// The `resources` XML element.
     /// Exactly one of these elements is always required, regardless of the version of the FCPXML.
     var xmlResources: XMLElement? {
-        xmlRoot?.elements(forName: StructureElementType.resources.rawValue).first
+        xmlRoot?.elements(forName: FoundationElementType.resources.rawValue).first
     }
     
     /// The `library` XML element, if it exists.
     /// One or zero of these elements may be present within the `fcpxml` element.
     public var xmlLibrary: XMLElement? {
-        xmlRoot?.elements(forName: StructureElementType.library.rawValue).first
+        xmlRoot?.elements(forName: FoundationElementType.library.rawValue).first
     }
 }
 

@@ -34,30 +34,30 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             return
         }
         
-        guard let storyElementType = FinalCutPro.FCPXML.StoryElementType(rawValue: name) else {
-            return nil
+        if let storyElementType = FinalCutPro.FCPXML.StoryElementType(rawValue: name) {
+            switch storyElementType {
+            case .audition:
+                let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
+                self = .audition(element)
+                
+            case .gap:
+                let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources)
+                self = .gap(element)
+                
+            case .sequence:
+                guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
+                else {
+                    print("Failed to parse FCPXML sequence.")
+                    return nil
+                }
+                self = .sequence(element)
+                
+            case .spine:
+                self = .spine(xmlLeaf)
+            }
         }
         
-        switch storyElementType {
-        case .audition:
-            let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
-            self = .audition(element)
-            
-        case .gap:
-            let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources)
-            self = .gap(element)
-            
-        case .sequence:
-            guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
-            else {
-                print("Failed to parse FCPXML sequence.")
-                return nil
-            }
-            self = .sequence(element)
-            
-        case .spine:
-            self = .spine(xmlLeaf)
-        }
+        return nil
     }
 }
 
