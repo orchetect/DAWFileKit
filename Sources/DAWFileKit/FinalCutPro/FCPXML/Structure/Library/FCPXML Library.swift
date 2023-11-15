@@ -47,4 +47,19 @@ extension FinalCutPro.FCPXML.Library {
     }
 }
 
+extension FinalCutPro.FCPXML.Library {
+    /// Returns the library name.
+    public var name: String {
+        // will be a file URL that is URL encoded
+        let libName = location
+            .deletingPathExtension()
+            .lastPathComponent
+        
+        // decode URL encoding
+        let libNameDecoded = libName.removingPercentEncoding ?? libName
+        
+        return libNameDecoded
+    }
+}
+
 #endif
