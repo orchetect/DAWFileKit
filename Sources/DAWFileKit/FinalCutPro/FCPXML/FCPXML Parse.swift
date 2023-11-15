@@ -78,7 +78,7 @@ extension FinalCutPro.FCPXML {
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Event] {
-        let xmlElements = xmlLeaf.elements(forName: "event")
+        let xmlElements = xmlLeaf.elements(forName: StructureElementType.event.rawValue)
         let events = xmlElements.compactMap {
             Event(from: $0, resources: resources)
         }
@@ -123,7 +123,7 @@ extension FinalCutPro.FCPXML {
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Project] {
-        let xmlElements = xmlLeaf.elements(forName: "project")
+        let xmlElements = xmlLeaf.elements(forName: StructureElementType.project.rawValue)
         let projects: [Project] = xmlElements.compactMap { projectLeaf in
             Project(from: projectLeaf, resources: resources)
         }
@@ -143,7 +143,7 @@ extension FinalCutPro.FCPXML {
         in xmlLeaf: XMLElement,
         resources: [String: AnyResource]
     ) -> [Sequence] {
-        let xmlElements = xmlLeaf.elements(forName: "sequence")
+        let xmlElements = xmlLeaf.elements(forName: StructureElementType.sequence.rawValue)
         let sequences = xmlElements.compactMap {
             Sequence(from: $0, resources: resources)
         }
