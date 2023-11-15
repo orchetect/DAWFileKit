@@ -34,7 +34,9 @@ extension FinalCutPro.FCPXML {
     /// A fcpxml file may or may not contain one library.
     public func library() -> Library? {
         guard let library = xmlLibrary else { return nil }
-        let location = library.attributeStringValue(forName: "location") ?? ""
+        let location = library.attributeStringValue(
+            forName: FinalCutPro.FCPXML.Library.Attributes.location.rawValue
+        ) ?? ""
         
         guard let locationURL = URL(string: location) else {
             print("Invalid fcpxml library URL: \(location.quoted)")

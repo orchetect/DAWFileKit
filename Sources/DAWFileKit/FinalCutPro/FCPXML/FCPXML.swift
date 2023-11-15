@@ -72,7 +72,8 @@ extension FinalCutPro {
 // MARK: - XMLRoot/*
 
 extension FinalCutPro.FCPXML {
-    /// The root "fcpxml" XML element.
+    /// Utility:
+    /// The root `fcpxml` XML element.
     public var xmlRoot: XMLElement? {
         xml.children?
             .lazy
@@ -88,12 +89,14 @@ extension FinalCutPro.FCPXML {
 // MARK: - XMLRoot/fcpxml/*
 
 extension FinalCutPro.FCPXML {
+    /// Utility:
     /// The `resources` XML element.
     /// Exactly one of these elements is always required, regardless of the version of the FCPXML.
     var xmlResources: XMLElement? {
         xmlRoot?.elements(forName: FoundationElementType.resources.rawValue).first
     }
     
+    /// Utility:
     /// The `library` XML element, if it exists.
     /// One or zero of these elements may be present within the `fcpxml` element.
     public var xmlLibrary: XMLElement? {
