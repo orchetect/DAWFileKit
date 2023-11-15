@@ -22,43 +22,26 @@ public protocol FCPXMLMarkersExtractable {
 extension FCPXMLMarkersExtractable { }
 
 public struct FCPXMLMarkersExtractionSettings {
-    /// If `true`, perform a deep traversal recursively gathering markers from all sub-elements.
-    /// If `false`, perform a shallow traversal of only the element's own markers.
-    public var deep: Bool
+    // /// If `true`, perform a deep traversal recursively gathering markers from all sub-elements.
+    // /// If `false`, perform a shallow traversal of only the element's own markers.
+    // public var deep: Bool
     
     /// Filter to apply to Auditions.
     public var auditionMask: FinalCutPro.FCPXML.Audition.Mask
     
+    /// Clip types to exclude during extraction.
+    public var excludeTypes: [FinalCutPro.FCPXML.ClipType]
+    
     public init(
-        deep: Bool,
-        auditionMask: FinalCutPro.FCPXML.Audition.Mask
+        // deep: Bool,
+        excludeTypes: [FinalCutPro.FCPXML.ClipType] = [],
+        auditionMask: FinalCutPro.FCPXML.Audition.Mask = .activeAudition
     ) {
-        self.deep = deep
+        // self.deep = deep
+        self.excludeTypes = excludeTypes
         self.auditionMask = auditionMask
     }
 }
-
-//extension FCPXMLMarkersExtractionSettings {
-//    func offset(of newOffset: Timecode?) -> Self {
-//        var copy = self
-//        copy.ancestorTCStart = newOffset
-//        return copy
-//    }
-//    
-//    func offset(by delta: Timecode?) -> Self {
-//        var copy = self
-//        if let delta = delta {
-//            if let po = copy.ancestorTCStart {
-//                copy.ancestorTCStart = po + delta
-//            } else {
-//                copy.ancestorTCStart = delta
-//            }
-//        } else {
-//            copy.ancestorTCStart = delta
-//        }
-//        return copy
-//    }
-//}
 
 extension FinalCutPro.FCPXML {
     /// Contains an extracted marker along with pertinent contextual metadata.
@@ -103,8 +86,10 @@ extension Collection<FinalCutPro.FCPXML.Marker> {
         settings: FCPXMLMarkersExtractionSettings,
         parent: FinalCutPro.FCPXML.AnyClip
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        map {
-            FinalCutPro.FCPXML.ExtractedMarker(
+        compactMap {
+            guard !settings.excludeTypes.contains(parent.clipType) else { return nil }
+            
+            return FinalCutPro.FCPXML.ExtractedMarker(
                 marker: $0,
                 settings: settings,
                 parent: parent

@@ -12,8 +12,6 @@ import CoreMedia
 @_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
-    // <sequence format="r1" duration="1920919/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
-    
     /// A container that represents the top-level sequence for a Final Cut Pro project or compound
     /// clip.
     public struct Sequence {

@@ -19,8 +19,6 @@ extension FinalCutPro.FCPXML {
         public var lane: Int?
         public var offset: Timecode?
         
-        // TODO: add missing attributes and protocols
-        
         public init(
             name: String?,
             elements: [FinalCutPro.FCPXML.AnyStoryElement],
