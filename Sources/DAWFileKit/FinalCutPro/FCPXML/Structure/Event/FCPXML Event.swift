@@ -71,7 +71,9 @@ extension FinalCutPro.FCPXML.Event: FCPXMLMarkersExtractable {
     public func extractMarkers(
         settings: FCPXMLMarkersExtractionSettings
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        projects.flatMap { $0.extractMarkers(settings: settings) }
+        let settings = settings.updating(ancestorEventName: name)
+        
+        return projects.flatMap { $0.extractMarkers(settings: settings) }
             + clips.flatMap { $0.extractMarkers(settings: settings) }
     }
 }

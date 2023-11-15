@@ -32,6 +32,10 @@ public struct FCPXMLMarkersExtractionSettings {
     /// Clip types to exclude during extraction.
     public var excludeTypes: [FinalCutPro.FCPXML.ClipType]
     
+    // internal
+    var ancestorEventName: String?
+    var ancestorProjectName: String?
+    
     public init(
         // deep: Bool,
         excludeTypes: [FinalCutPro.FCPXML.ClipType] = [],
@@ -40,6 +44,34 @@ public struct FCPXMLMarkersExtractionSettings {
         // self.deep = deep
         self.excludeTypes = excludeTypes
         self.auditionMask = auditionMask
+    }
+    
+    @_disfavoredOverload
+    init(
+        // deep: Bool,
+        excludeTypes: [FinalCutPro.FCPXML.ClipType] = [],
+        auditionMask: FinalCutPro.FCPXML.Audition.Mask = .activeAudition,
+        ancestorEventName: String? = nil,
+        ancestorProjectName: String? = nil
+    ) {
+        // self.deep = deep
+        self.excludeTypes = excludeTypes
+        self.auditionMask = auditionMask
+        self.ancestorEventName = ancestorEventName
+        self.ancestorProjectName = ancestorProjectName
+    }
+}
+
+extension FCPXMLMarkersExtractionSettings {
+    func updating(ancestorEventName: String? = nil, ancestorProjectName: String? = nil) -> Self {
+        var copy = self
+        if let ancestorEventName = ancestorEventName {
+            copy.ancestorEventName = ancestorEventName
+        }
+        if let ancestorProjectName = ancestorProjectName {
+            copy.ancestorProjectName = ancestorProjectName
+        }
+        return copy
     }
 }
 
@@ -50,10 +82,24 @@ extension FinalCutPro.FCPXML {
         
         public var absoluteStart: Timecode?
         
+        /// Contains an event name if the marker is a descendent of an event.
+        public var ancestorEventName: String?
+        
+        /// Contains a project name if the marker is a descendent of a project.
+        public var ancestorProjectName: String?
+        
         // TODO: abstract into a generic protocol that can describe any clip's details? we don't want to just store the clip itself though.
+        
+        /// The parent clip's type.
         public var parentType: ClipType
+        
+        /// The parent clip's name.
         public var parentName: String?
+        
+        /// The parent clip's absolute start time.
         public var parentAbsoluteStart: Timecode?
+        
+        /// The parent clip's duration.
         public var parentDuration: Timecode?
         
         init(
@@ -73,6 +119,9 @@ extension FinalCutPro.FCPXML {
                     print("Error offsetting timecode for marker \(marker.name.quoted).")
                 }
             }
+            
+            ancestorEventName = settings.ancestorEventName
+            ancestorProjectName = settings.ancestorProjectName
             
             parentType = parent.clipType
             parentName = parent.name
