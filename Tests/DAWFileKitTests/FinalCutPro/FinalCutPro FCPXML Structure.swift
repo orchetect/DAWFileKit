@@ -16,12 +16,11 @@ class FinalCutPro_FCPXML_Structure: XCTestCase {
     override func tearDown() { }
     
     /// Ensure that elements that can appear in various locations in the XML hierarchy are all found.
-    func testFCPXML_Structure() throws {
+    func testParse() throws {
         // load file
         
-        let filename = "Structure"
         let rawData = try XCTUnwrap(loadFileContents(
-            forResource: filename,
+            forResource: "Structure",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))

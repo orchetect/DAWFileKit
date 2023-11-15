@@ -15,12 +15,11 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
     override func setUp() { }
     override func tearDown() { }
     
-    func testFCPXML_BasicMarkers() throws {
+    func testParse() throws {
         // load file
         
-        let filename = "BasicMarkers"
         let rawData = try XCTUnwrap(loadFileContents(
-            forResource: filename,
+            forResource: "BasicMarkers",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
@@ -80,17 +79,17 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         // projects
         
-        let projects = events[0].projects
+        let projects = try XCTUnwrap(events[safe: 0]).projects
         
         XCTAssertEqual(projects.count, 1)
         
-        let project = projects[0]
+        let project = try XCTUnwrap(projects[safe: 0])
         XCTAssertEqual(project.name, "Test Project")
         XCTAssertEqual(project.startTimecode, try Timecode(.rational(0, 1), at: .fps29_97, base: .max80SubFrames))
         
         // sequence
         
-        let sequence = projects[0].sequence
+        let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         
         XCTAssertEqual(sequence.format, "r1")
         XCTAssertEqual(sequence.start, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))

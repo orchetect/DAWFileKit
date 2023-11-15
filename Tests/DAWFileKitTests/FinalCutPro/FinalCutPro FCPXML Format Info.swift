@@ -19,9 +19,8 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
     func testFormatAndTCFormat() throws {
         // load file
         
-        let filename = "BasicMarkers"
         let rawData = try XCTUnwrap(loadFileContents(
-            forResource: filename,
+            forResource: "BasicMarkers",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
