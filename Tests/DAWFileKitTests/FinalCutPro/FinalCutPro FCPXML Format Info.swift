@@ -16,7 +16,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
     override func tearDown() { }
     
     /// Ensure `format` and `tcFormat` information can be found by traversing XML parents.
-    func testFormatAndTCFormat() throws {
+    func testFirstFormatAndTCFormat() throws {
         // load file
         
         let rawData = try XCTUnwrap(loadFileContents(
@@ -58,7 +58,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `fcpxml` element will never have `format` or `tcFormat` attributes
         do {
-            let format = FinalCutPro.FCPXML.format(forElementOrAncestors: xmlRoot, in: resources)
+            let format = FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlRoot, in: resources)
             XCTAssertNil(format)
             
             let tcFormat = FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlRoot)
@@ -69,7 +69,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `library` element will never have `format` or `tcFormat` attributes
         do {
-            let format = FinalCutPro.FCPXML.format(forElementOrAncestors: xmlLibrary, in: resources)
+            let format = FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlLibrary, in: resources)
             XCTAssertNil(format)
             
             let tcFormat = FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlLibrary)
@@ -80,7 +80,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `event` element will never have `format` or `tcFormat` attributes
         do {
-            let format = FinalCutPro.FCPXML.format(forElementOrAncestors: xmlEvent, in: resources)
+            let format = FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlEvent, in: resources)
             XCTAssertNil(format)
             
             let tcFormat = FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlEvent)
@@ -91,7 +91,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `project` element will never have `format` or `tcFormat` attributes
         do {
-            let format = FinalCutPro.FCPXML.format(forElementOrAncestors: xmlProject, in: resources)
+            let format = FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlProject, in: resources)
             XCTAssertNil(format)
             
             let tcFormat = FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlProject)
@@ -102,7 +102,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `sequence` element will usually have `format` and `tcFormat` attributes
         do {
-            let format = try XCTUnwrap(FinalCutPro.FCPXML.format(forElementOrAncestors: xmlSequence, in: resources))
+            let format = try XCTUnwrap(FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlSequence, in: resources))
             XCTAssertEqual(format, r1)
             
             let tcFormat = try XCTUnwrap(FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlSequence))
@@ -113,7 +113,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `spine` element will usually have `format` and `tcFormat` attributes in its immediate `sequence` parent
         do {
-            let format = try XCTUnwrap(FinalCutPro.FCPXML.format(forElementOrAncestors: xmlSpine, in: resources))
+            let format = try XCTUnwrap(FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlSpine, in: resources))
             XCTAssertEqual(format, r1)
             
             let tcFormat = try XCTUnwrap(FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlSpine))
@@ -124,7 +124,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `title` element in this case inherits `format` and `tcFormat` attributes from its `sequence` ancestor
         do {
-            let format = try XCTUnwrap(FinalCutPro.FCPXML.format(forElementOrAncestors: xmlTitle, in: resources))
+            let format = try XCTUnwrap(FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlTitle, in: resources))
             XCTAssertEqual(format, r1)
             
             let tcFormat = try XCTUnwrap(FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlTitle))
@@ -135,7 +135,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         
         // `marker` element in this case inherits `format` and `tcFormat` attributes from its `sequence` ancestor
         do {
-            let format = try XCTUnwrap(FinalCutPro.FCPXML.format(forElementOrAncestors: xmlMarker1, in: resources))
+            let format = try XCTUnwrap(FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlMarker1, in: resources))
             XCTAssertEqual(format, r1)
             
             let tcFormat = try XCTUnwrap(FinalCutPro.FCPXML.tcFormat(forElementOrAncestors: xmlMarker1))

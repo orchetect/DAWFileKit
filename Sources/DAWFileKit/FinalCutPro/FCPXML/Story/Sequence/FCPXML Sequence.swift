@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     public struct Sequence {
         // FCPXMLTimelineAttributes
         public let format: String
-        public let start: Timecode?
+        public let startTimecode: Timecode? // (absolute `tcStart` timecode, not relative `start`)
         public let duration: Timecode?
         
         public let audioLayout: AudioLayout?
@@ -32,7 +32,7 @@ extension FinalCutPro.FCPXML {
         public init?(
             // FCPXMLTimelineAttributes
             format: String,
-            start: Timecode?,
+            startTimecode: Timecode?,
             duration: Timecode?,
             // sequence attributes
             audioLayout: AudioLayout?,
@@ -44,7 +44,7 @@ extension FinalCutPro.FCPXML {
         ) {
             // FCPXMLTimelineAttributes
             self.format = format
-            self.start = start
+            self.startTimecode = startTimecode
             self.duration = duration
             
             // sequence attributes
@@ -70,7 +70,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         ) else { return nil }
         
         format = timelineAttributes.format
-        start = timelineAttributes.start
+        startTimecode = timelineAttributes.startTimecode
         duration = timelineAttributes.duration
         
         audioLayout = FinalCutPro.FCPXML.AudioLayout(
@@ -107,16 +107,26 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
     }
 }
 
+extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
+    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .sequence }
+    
+    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement {
+        .sequence(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Sequence: FCPXMLMarkersExtractable {
-    /// Convenience to return the enclosed spine's markers.
+    /// Always returns an empty array since a sequence cannot directly contain markers.
     public var markers: [FinalCutPro.FCPXML.Marker] {
-        spine.markers
+        []
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        spine.extractMarkers(settings: settings)
+        let childAncestors = ancestorsOfParent + [self.asAnyStoryElement()]
+        return spine.extractMarkers(settings: settings, ancestorsOfParent: childAncestors)
     }
 }
 #endif

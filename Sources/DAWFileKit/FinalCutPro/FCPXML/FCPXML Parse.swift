@@ -164,18 +164,6 @@ extension FinalCutPro.FCPXML {
 // MARK: - Clips
 
 extension FinalCutPro.FCPXML {
-    static func parseAuditions(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> [Audition] {
-        xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .compactMap { Audition(from: $0, resources: resources) }
-        ?? []
-    }
-    
     static func parseClips(
         in xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
@@ -237,7 +225,8 @@ extension FinalCutPro.FCPXML {
     ) -> [Marker] {
         guard let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(for: xmlLeaf, in: resources)
         else {
-            print("Error: Could not determine frame rate while parsing markers.")
+            let leafName = (xmlLeaf.name ?? "").quoted
+            print("Error: Could not determine frame rate while parsing markers in \(leafName).")
             return []
         }
         return parseMarkers(in: xmlLeaf, frameRate: frameRate)

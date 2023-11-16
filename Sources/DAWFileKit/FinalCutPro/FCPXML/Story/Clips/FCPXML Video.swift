@@ -10,19 +10,16 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
-    
     /// Video element.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > References video data from an `asset` or `effect` element.
-    public struct Video: FCPXMLStoryElement, FCPXMLClipAttributes {
+    public struct Video: FCPXMLClipAttributes {
         public let ref: String // resource ID, required
         public let role: String?
-        public var auditions: [Audition]
         public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
         // FCPXMLAnchorableAttributes
         public let lane: Int?
@@ -39,7 +36,6 @@ extension FinalCutPro.FCPXML {
         public init(
             ref: String,
             role: String?,
-            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -53,7 +49,6 @@ extension FinalCutPro.FCPXML {
         ) {
             self.ref = ref
             self.role = role
-            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -63,7 +58,7 @@ extension FinalCutPro.FCPXML {
             
             // FCPXMLClipAttributes
             self.name = name
-            self.start = start // TODO: not used?
+            self.start = start
             self.duration = duration
             self.enabled = enabled
         }
@@ -84,7 +79,6 @@ extension FinalCutPro.FCPXML.Video {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         
-        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
@@ -106,13 +100,24 @@ extension FinalCutPro.FCPXML.Video {
     }
 }
 
+extension FinalCutPro.FCPXML.Video: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .video }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .video(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Video: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        markers.convertToExtractedMarkers(settings: settings, parent: .video(self))
-            + auditions.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        extractMarkers(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            children: clips.asAnyStoryElements()
+        )
     }
 }
 

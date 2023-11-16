@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Contains elements ordered sequentially in time.
-    public struct Spine: FCPXMLStoryElement, FCPXMLAnchorableAttributes {
+    public struct Spine: FCPXMLAnchorableAttributes {
         public var name: String?
         public var elements: [FinalCutPro.FCPXML.AnyStoryElement]
         
@@ -59,15 +59,27 @@ extension FinalCutPro.FCPXML.Spine {
     }
 }
 
+extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
+    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .spine }
+    
+    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement {
+        .spine(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Spine: FCPXMLMarkersExtractable {
     public var markers: [FinalCutPro.FCPXML.Marker] {
         elements.flatMap { $0.markers }
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        elements.flatMap { $0.extractMarkers(settings: settings) }
+        let childAncestors = ancestorsOfParent + [self.asAnyStoryElement()]
+        return elements.flatMap {
+            $0.extractMarkers(settings: settings, ancestorsOfParent: childAncestors)
+        }
     }
 }
 

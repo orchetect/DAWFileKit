@@ -10,8 +10,6 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
-    
     /// Asset Clip element.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
@@ -35,12 +33,11 @@ extension FinalCutPro.FCPXML {
     /// > > Note:
     /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
     /// > > components from a media file as a clip.
-    public struct AssetClip: FCPXMLStoryElement, FCPXMLClipAttributes {
+    public struct AssetClip: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
         public var audioRole: String?
-        public var auditions: [Audition]
         public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -57,7 +54,6 @@ extension FinalCutPro.FCPXML {
         public init(
             ref: String,
             audioRole: String?,
-            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -65,13 +61,12 @@ extension FinalCutPro.FCPXML {
             offset: Timecode,
             // FCPXMLClipAttributes
             name: String,
-            start: Timecode, // TODO: not used?
+            start: Timecode,
             duration: Timecode,
             enabled: Bool
         ) {
             self.ref = ref
             self.audioRole = audioRole
-            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -81,7 +76,7 @@ extension FinalCutPro.FCPXML {
             
             // FCPXMLClipAttributes
             self.name = name
-            self.start = start // TODO: not used?
+            self.start = start
             self.duration = duration
             self.enabled = enabled
         }
@@ -102,7 +97,6 @@ extension FinalCutPro.FCPXML.AssetClip {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         
-        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         audioRole = xmlLeaf.attributeStringValue(forName: Attributes.audioRole.rawValue)
@@ -124,13 +118,24 @@ extension FinalCutPro.FCPXML.AssetClip {
     }
 }
 
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .assetClip }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .assetClip(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        markers.convertToExtractedMarkers(settings: settings, parent: .assetClip(self))
-            + auditions.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        extractMarkers(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            children: clips.asAnyStoryElements()
+        )
     }
 }
 

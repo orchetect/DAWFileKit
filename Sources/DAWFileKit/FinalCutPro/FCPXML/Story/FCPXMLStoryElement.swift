@@ -6,8 +6,6 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-// TODO: refactor as `AnyClipType`
-
 import Foundation
 
 /// FCPXML story elements.
@@ -46,6 +44,12 @@ import Foundation
 /// > using the elements listed under [Annotation and Note Elements](
 /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
 /// > ).
-public protocol FCPXMLStoryElement { }
+public protocol FCPXMLStoryElement {
+    /// Returns the story element type enum case.
+    var storyElementType: FinalCutPro.FCPXML.StoryElementType { get }
+    
+    /// Returns the story element as ``FinalCutPro/FCPXML/AnyStoryElement``.
+    func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement
+}
 
 #endif

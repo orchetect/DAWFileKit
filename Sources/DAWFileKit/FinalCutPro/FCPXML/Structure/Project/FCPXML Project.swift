@@ -71,28 +71,39 @@ extension FinalCutPro.FCPXML.Project {
     }
 }
 
+extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
+    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
+        .project
+    }
+}
+
 extension FinalCutPro.FCPXML.Project {
     /// Convenience to return the start timecode of the earliest sequence in the project.
     public var startTimecode: Timecode? {
-        sequence.start
+        sequence.startTimecode
     }
     
     /// Convenience to return the frame rate of the project.
     public var frameRate: TimecodeFrameRate? {
-        sequence.start?.frameRate
+        sequence.startTimecode?.frameRate
     }
 }
 
 extension FinalCutPro.FCPXML.Project: FCPXMLMarkersExtractable {
-    /// Convenience to return the enclosed sequence's markers.
+    /// Always returns an empty array since a project cannot directly contain markers.
     public var markers: [FinalCutPro.FCPXML.Marker] {
-        sequence.markers
+        []
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        sequence.extractMarkers(settings: settings.updating(ancestorProjectName: name))
+        let settings = settings.updating(ancestorProjectName: name)
+        
+        // (can't include self as an ancestor since Project is not a story element)
+        
+        return sequence.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
     }
 }
 

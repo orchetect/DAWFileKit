@@ -15,10 +15,9 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.
-    public struct SyncClip: FCPXMLStoryElement, FCPXMLClipAttributes {
-        public var auditions: [Audition]
+    public struct SyncClip: FCPXMLClipAttributes {
         public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -33,7 +32,6 @@ extension FinalCutPro.FCPXML {
         // TODO: add missing attributes and protocols
         
         public init(
-            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -41,11 +39,10 @@ extension FinalCutPro.FCPXML {
             offset: Timecode,
             // FCPXMLClipAttributes
             name: String,
-            start: Timecode, // TODO: not used?
+            start: Timecode,
             duration: Timecode,
             enabled: Bool
         ) {
-            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -55,7 +52,7 @@ extension FinalCutPro.FCPXML {
             
             // FCPXMLClipAttributes
             self.name = name
-            self.start = start // TODO: not used?
+            self.start = start
             self.duration = duration
             self.enabled = enabled
         }
@@ -68,7 +65,6 @@ extension FinalCutPro.FCPXML.SyncClip {
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         
@@ -89,13 +85,24 @@ extension FinalCutPro.FCPXML.SyncClip {
     }
 }
 
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .syncClip }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .syncClip(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        markers.convertToExtractedMarkers(settings: settings, parent: .syncClip(self))
-            + auditions.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        extractMarkers(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            children: clips.asAnyStoryElements()
+        )
     }
 }
 

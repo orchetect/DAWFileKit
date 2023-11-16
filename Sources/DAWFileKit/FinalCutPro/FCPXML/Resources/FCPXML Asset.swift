@@ -147,4 +147,10 @@ extension FinalCutPro.FCPXML.Asset {
     }
 }
 
+extension FinalCutPro.FCPXML.Asset {
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
+        .asset(self)
+    }
+}
+
 #endif

@@ -47,6 +47,12 @@ extension FinalCutPro.FCPXML.Library {
     }
 }
 
+extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
+    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
+        .library
+    }
+}
+
 extension FinalCutPro.FCPXML.Library {
     /// Returns the library name.
     public var name: String {

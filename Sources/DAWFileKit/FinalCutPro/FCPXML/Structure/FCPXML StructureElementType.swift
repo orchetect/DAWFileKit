@@ -10,6 +10,9 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     public enum StructureElementType: String {
+        /// Library.
+        case library
+        
         /// Event.
         case event
         

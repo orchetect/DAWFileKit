@@ -62,19 +62,34 @@ extension FinalCutPro.FCPXML.Event {
     }
 }
 
+extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
+    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
+        .event
+    }
+}
+
 extension FinalCutPro.FCPXML.Event: FCPXMLMarkersExtractable {
-    /// Always returns an empty array since events cannot contain markers.
+    /// Always returns an empty array since an event cannot directly contain markers.
     public var markers: [FinalCutPro.FCPXML.Marker] {
-        [] // events themselves cannot contain markers
+        []
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         let settings = settings.updating(ancestorEventName: name)
         
-        return projects.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        // (can't include self as an ancestor since Event is not a story element)
+        
+        let projectsMarkers = projects.flatMap {
+            $0.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        }
+        
+        let clipsMarkers = clips.flatMap {
+            $0.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        }
+        return projectsMarkers + clipsMarkers
     }
 }
 

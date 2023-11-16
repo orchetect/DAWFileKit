@@ -44,4 +44,10 @@ extension FinalCutPro.FCPXML.ObjectTracker {
     }
 }
 
+extension FinalCutPro.FCPXML.ObjectTracker {
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
+        .objectTracker(self)
+    }
+}
+
 #endif

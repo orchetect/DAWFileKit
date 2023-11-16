@@ -10,19 +10,16 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // <title ref="r2" offset="0s" name="Basic Title" start="0s" duration="1920919/30000s">
-    
     /// Title clip.
     ///
     /// This is a FCP meta type and video is generated.
     /// Its frame rate is inferred from the sequence.
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
-    public struct Title: FCPXMLStoryElement, FCPXMLClipAttributes {
+    public struct Title: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
         public var role: String?
-        public var auditions: [Audition]
         public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -39,7 +36,6 @@ extension FinalCutPro.FCPXML {
         public init(
             ref: String,
             role: String?,
-            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -53,7 +49,6 @@ extension FinalCutPro.FCPXML {
         ) {
             self.ref = ref
             self.role = role
-            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -63,7 +58,7 @@ extension FinalCutPro.FCPXML {
             
             // FCPXMLClipAttributes
             self.name = name
-            self.start = start // TODO: not used?
+            self.start = start
             self.duration = duration
             self.enabled = enabled
         }
@@ -84,7 +79,6 @@ extension FinalCutPro.FCPXML.Title {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         
-        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
@@ -106,13 +100,24 @@ extension FinalCutPro.FCPXML.Title {
     }
 }
 
+extension FinalCutPro.FCPXML.Title: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .title }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .title(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Title: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        markers.convertToExtractedMarkers(settings: settings, parent: .title(self))
-            + auditions.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        extractMarkers(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            children: clips.asAnyStoryElements()
+        )
     }
 }
 

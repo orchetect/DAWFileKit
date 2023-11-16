@@ -21,11 +21,10 @@ extension FinalCutPro.FCPXML {
     /// > use the [Timing Attributes](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/mc-clip
     /// > ).
-    public struct MCClip: FCPXMLStoryElement, FCPXMLClipAttributes {
+    public struct MCClip: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
-        public var auditions: [Audition]
         public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -41,7 +40,6 @@ extension FinalCutPro.FCPXML {
         
         public init(
             ref: String,
-            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -54,7 +52,6 @@ extension FinalCutPro.FCPXML {
             enabled: Bool
         ) {
             self.ref = ref
-            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -64,7 +61,7 @@ extension FinalCutPro.FCPXML {
             
             // FCPXMLClipAttributes
             self.name = name
-            self.start = start // TODO: not used?
+            self.start = start
             self.duration = duration
             self.enabled = enabled
         }
@@ -84,7 +81,6 @@ extension FinalCutPro.FCPXML.MCClip {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
         
-        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         
@@ -105,13 +101,24 @@ extension FinalCutPro.FCPXML.MCClip {
     }
 }
 
+extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .mcClip }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .mcClip(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.MCClip: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        markers.convertToExtractedMarkers(settings: settings, parent: .mcClip(self))
-            + auditions.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        extractMarkers(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            children: clips.asAnyStoryElements()
+        )
     }
 }
 

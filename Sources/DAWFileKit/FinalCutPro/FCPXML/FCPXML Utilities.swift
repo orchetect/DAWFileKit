@@ -155,7 +155,7 @@ extension FinalCutPro.FCPXML {
         for xmlLeaf: XMLElement,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> TimecodeFrameRate? {
-        guard let format = format(forElementOrAncestors: xmlLeaf, in: resources),
+        guard let format = firstDefinedFormat(forElementOrAncestors: xmlLeaf, in: resources),
               let tcFormat = tcFormat(forElementOrAncestors: xmlLeaf)
         else { return nil }
         
@@ -164,15 +164,52 @@ extension FinalCutPro.FCPXML {
     
     /// Traverses the parents of the given XML leaf and returns the resource corresponding to the
     /// nearest `format` attribute if found.
-    static func format(
+    static func firstFormat(
         forElementOrAncestors xmlLeaf: XMLElement,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> FinalCutPro.FCPXML.Format? {
-        let keyName = "format" // TODO: assign to static string constant
-        guard let resourceID = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName)
-        else { return nil }
+        if let (resourceID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "format") {
+            return format(for: resourceID, in: resources)
+        }
+        // ref could point to any resource and not just format, ie: asset or effect. we need to
+        // continue drilling into it.
+        if let (refID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "ref") {
+            if let refResource = resources[refID] {
+                return format(for: refResource, in: resources)
+            }
+        }
+        return nil
+    }
+    
+    /// Traverses the parents of the given XML leaf and returns the nearest defined resource.
+    static func firstDefinedFormat(
+        forElementOrAncestors xmlLeaf: XMLElement,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> FinalCutPro.FCPXML.Format? {
+        // note that an audio clip may point to a resource with name `FFVideoFormatRateUndefined`.
+        // this should not be an error case; instead, continue traversing.
         
-        return format(for: resourceID, in: resources)
+        let result = xmlLeaf.walkAncestors(
+            includingSelf: true,
+            returning: FinalCutPro.FCPXML.Format.self
+        ) { element in
+            guard let foundFormat = firstFormat(forElementOrAncestors: element, in: resources)
+            else { return .failure }
+            
+            if foundFormat.name == "FFVideoFormatRateUndefined" {
+                return .continue
+            }
+            return .return(withValue: foundFormat)
+        }
+        
+        switch result {
+        case .exhaustedAncestors:
+            return nil
+        case .value(let r):
+            return r
+        case .failure:
+            return nil
+        }
     }
     
     static func format(
@@ -191,11 +228,14 @@ extension FinalCutPro.FCPXML {
     ) -> FinalCutPro.FCPXML.Format? {
         switch resource {
         case let .asset(asset):
+            // an asset should contain a format attribute that we can use to look up the actual
+            // format resource
             guard let assetFormatID = asset.format else { return nil }
             return format(for: assetFormatID, in: resources)
             
-        case let .media(media):
-            #warning("> TODO: finish this")
+        case .media(_):
+            // TODO: finish this
+            print("Error: 'media' resource parsing not yet implemented.")
             return nil
             
         case let .format(format):
@@ -205,15 +245,18 @@ extension FinalCutPro.FCPXML {
             return nil // effects don't carry format info
             
         case .locator(_):
-            #warning("> TODO: finish this")
+            // TODO: finish this
+            print("Error: 'locator' resource parsing not yet implemented.")
             return nil
             
         case .objectTracker(_):
-            #warning("> TODO: finish this")
+            // TODO: finish this
+            print("Error: 'objectTracker' resource parsing not yet implemented.")
             return nil
             
         case .trackingShape(_):
-            #warning("> TODO: finish this")
+            // TODO: finish this
+            print("Error: 'trackingShape' resource parsing not yet implemented.")
             return nil
         }
     }
@@ -223,7 +266,7 @@ extension FinalCutPro.FCPXML {
         forElementOrAncestors xmlLeaf: XMLElement
     ) -> FinalCutPro.FCPXML.TimecodeFormat? {
         let keyName = FinalCutPro.FCPXML.TimecodeFormat.Attributes.tcFormat.rawValue
-        guard let tcFormatValue = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName),
+        guard let (tcFormatValue, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName),
               let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: tcFormatValue)
         else { return nil }
         

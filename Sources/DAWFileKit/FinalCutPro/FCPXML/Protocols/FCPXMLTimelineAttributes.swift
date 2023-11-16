@@ -36,8 +36,8 @@ public protocol FCPXMLTimelineAttributes {
     var format: String { get }
     
     // `tcStart`, also parses `tcFormat`
-    /// The timecode origin represented as a time value.
-    var start: Timecode? { get }
+    /// The absolute timecode origin represented as a time value.
+    var startTimecode: Timecode? { get }
     
     /// The timeline's extent (length) in parent time.
     var duration: Timecode? { get }
@@ -71,7 +71,7 @@ extension FCPXMLTimelineAttributes {
     ) -> (
         format: String,
         timecodeFormat: FinalCutPro.FCPXML.TimecodeFormat?,
-        start: Timecode?,
+        startTimecode: Timecode?, // (absolute `tcStart` timecode, not relative `start`)
         duration: Timecode?
     )? {
         let rawValues = parseTimelineAttributesRawValues(from: xmlLeaf)
@@ -83,7 +83,7 @@ extension FCPXMLTimelineAttributes {
         let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: rawValues[.tcFormat] ?? "") ?? .nonDropFrame // TODO: ?
         
         // `tcStart`
-        let start = try? FinalCutPro.FCPXML.timecode(
+        let startTimecode = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.tcStart] ?? "",
             tcFormat: tcFormat,
             resourceID: format,
@@ -101,7 +101,7 @@ extension FCPXMLTimelineAttributes {
         return (
             format: format,
             timecodeFormat: tcFormat,
-            start: start,
+            startTimecode: startTimecode,
             duration: duration
         )
     }

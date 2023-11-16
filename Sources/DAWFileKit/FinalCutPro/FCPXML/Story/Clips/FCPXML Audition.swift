@@ -18,7 +18,7 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > When exported, the XML lists the currently active item as the first child in the audition
     /// > container.
-    public struct Audition: FCPXMLStoryElement {
+    public struct Audition {
         public var clips: [AnyClip]
         
         public var lane: Int?
@@ -76,6 +76,14 @@ extension FinalCutPro.FCPXML.Audition {
     }
 }
 
+extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .audition }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .audition(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Audition {
     /// Convenience to return the active audition clip.
     public var activeClip: FinalCutPro.FCPXML.AnyClip? {
@@ -89,22 +97,33 @@ extension FinalCutPro.FCPXML.Audition {
 }
 
 extension FinalCutPro.FCPXML.Audition: FCPXMLMarkersExtractable {
+    /// Always returns an empty array since an audition cannot directly contain markers.
     public var markers: [FinalCutPro.FCPXML.Marker] {
-        clips.first?.markers ?? []
+        []
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         switch settings.auditionMask {
         case .omitAuditions:
             return []
             
         case .activeAudition:
-            return activeClip?.extractMarkers(settings: settings) ?? []
+            let children = clips.prefix(1).asAnyStoryElements()
+            return extractMarkers(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                children: children
+            )
             
         case .allAuditions:
-            return clips.flatMap { $0.extractMarkers(settings: settings) }
+            return extractMarkers(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                children: clips.asAnyStoryElements()
+            )
         }
     }
     

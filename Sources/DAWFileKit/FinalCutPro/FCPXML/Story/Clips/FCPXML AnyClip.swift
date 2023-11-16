@@ -85,8 +85,7 @@ extension FinalCutPro.FCPXML.AnyClip {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyClip {
-    /// Returns the clip type enum case.
+extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
     public var clipType: FinalCutPro.FCPXML.ClipType {
         switch self {
         case .assetClip: return .assetClip
@@ -100,6 +99,11 @@ extension FinalCutPro.FCPXML.AnyClip {
         case .title: return .title
         case .video: return .video
         }
+    }
+    
+    /// Redundant, but required to fulfill `FCPXMLClip` protocol requirements.
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        self
     }
 }
 
@@ -121,6 +125,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     
     // FCPXMLAnchorableAttributes
     
+    /// Convenience to return the lane of the clip.
     public var lane: Int? {
         asFCPXMLClipAttributes.lane
     }
@@ -153,6 +158,12 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     }
 }
 
+extension Collection<FinalCutPro.FCPXML.AnyClip> {
+    public func asAnyStoryElements() -> [FinalCutPro.FCPXML.AnyStoryElement] {
+        map { $0.asAnyStoryElement() }
+    }
+}
+
 extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
     public var markers: [FinalCutPro.FCPXML.Marker] {
         switch self {
@@ -170,19 +181,30 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         switch self {
-        case let .assetClip(clip): return clip.extractMarkers(settings: settings)
-        case let .audio(clip): return clip.extractMarkers(settings: settings)
-        case let .audition(clip): return clip.extractMarkers(settings: settings)
-        case let .clip(clip): return clip.extractMarkers(settings: settings)
-        case let .gap(clip): return clip.extractMarkers(settings: settings)
-        case let .mcClip(clip): return clip.extractMarkers(settings: settings)
-        case let .refClip(clip): return clip.extractMarkers(settings: settings)
-        case let .syncClip(clip): return clip.extractMarkers(settings: settings)
-        case let .title(clip): return clip.extractMarkers(settings: settings)
-        case let .video(clip): return clip.extractMarkers(settings: settings)
+        case let .assetClip(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .audio(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .audition(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .clip(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .gap(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .mcClip(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .refClip(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .syncClip(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .title(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+        case let .video(clip):
+            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
         }
     }
 }

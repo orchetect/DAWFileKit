@@ -109,4 +109,10 @@ extension FinalCutPro.FCPXML.Format {
     }
 }
 
+extension FinalCutPro.FCPXML.Format {
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
+        .format(self)
+    }
+}
+
 #endif

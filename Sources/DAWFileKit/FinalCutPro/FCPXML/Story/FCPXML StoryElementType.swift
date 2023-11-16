@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    public enum StoryElementType {
+    public enum StoryElementType: Equatable, Hashable {
         /// A clip.
         case anyClip(ClipType)
         

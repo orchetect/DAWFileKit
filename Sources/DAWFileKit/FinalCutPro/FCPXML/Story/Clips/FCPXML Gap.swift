@@ -15,10 +15,9 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Defines a placeholder element that has no intrinsic audio or video data.
-    public struct Gap: FCPXMLStoryElement {
-        public var auditions: [Audition]
+    public struct Gap {
         public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as attributes
+        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
         // FCPXMLAnchorableAttributes
         public var lane: Int? // TODO: Gap doesn't have lane attribute?
@@ -33,7 +32,6 @@ extension FinalCutPro.FCPXML {
         // TODO: add missing attributes and protocols
         
         public init(
-            auditions: [Audition],
             clips: [AnyClip],
             markers: [FinalCutPro.FCPXML.Marker],
             // FCPXMLAnchorableAttributes
@@ -41,11 +39,10 @@ extension FinalCutPro.FCPXML {
             offset: Timecode,
             // FCPXMLClipAttributes
             name: String,
-            start: Timecode, // TODO: not used?
+            start: Timecode,
             duration: Timecode,
             enabled: Bool
         ) {
-            self.auditions = auditions
             self.clips = clips
             self.markers = markers
             
@@ -55,7 +52,7 @@ extension FinalCutPro.FCPXML {
             
             // FCPXMLClipAttributes
             self.name = name
-            self.start = start // TODO: not used?
+            self.start = start
             self.duration = duration
             self.enabled = enabled
         }
@@ -69,7 +66,6 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClipAttributes {
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        auditions = FinalCutPro.FCPXML.parseAuditions(in: xmlLeaf, resources: resources)
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
         markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
         
@@ -90,13 +86,24 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClipAttributes {
     }
 }
 
+extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
+    public var clipType: FinalCutPro.FCPXML.ClipType { .gap }
+    
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
+        .gap(self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Gap: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings
+        settings: FCPXMLMarkersExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        markers.convertToExtractedMarkers(settings: settings, parent: .gap(self))
-            + auditions.flatMap { $0.extractMarkers(settings: settings) }
-            + clips.flatMap { $0.extractMarkers(settings: settings) }
+        extractMarkers(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            children: clips.asAnyStoryElements()
+        )
     }
 }
 

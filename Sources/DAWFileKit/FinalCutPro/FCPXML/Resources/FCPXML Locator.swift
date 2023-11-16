@@ -42,4 +42,10 @@ extension FinalCutPro.FCPXML.Locator {
     }
 }
 
+extension FinalCutPro.FCPXML.Locator {
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
+        .locator(self)
+    }
+}
+
 #endif
