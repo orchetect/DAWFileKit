@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r2" name="Nature Makes You Happy" uid="53308E84E2E696489DF41ECEFBB51E41" start="0s" duration="142040/1000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="53308E84E2E696489DF41ECEFBB51E41" src="file:///Volumes/Workspace/Dropbox/_coding/MarkersExtractor/FCP/Media/Nature%20Makes%20You%20Happy.mp4">
+                <bookmark>Ym9va4wEAAAAAAQQMAAAAA9nZ86w8toDV1iRWhW7F3FnXf4R/JaQHTsjUwmr7RbnrAMAAAQAAAADAwAAABgAKAcAAAABAQAAVm9sdW1lcwAJAAAAAQEAAFdvcmtzcGFjZQAAAAcAAAABAQAARHJvcGJveAAHAAAAAQEAAF9jb2RpbmcAEAAAAAEBAABNYXJrZXJzRXh0cmFjdG9yAwAAAAEBAABGQ1AABQAAAAEBAABNZWRpYQAAABoAAAABAQAATmF0dXJlIE1ha2VzIFlvdSBIYXBweS5tcDQAACAAAAABBgAAEAAAACAAAAA0AAAARAAAAFQAAABsAAAAeAAAAIgAAAAIAAAABAMAACMAAAAAAAAACAAAAAQDAAACAAAAAAAAAAgAAAAEAwAA5AAAAAAAAAAIAAAABAMAAOgAAAAAAAAACAAAAAQDAADFTwEAAAAAAAgAAAAEAwAAdFABAAAAAAAIAAAABAMAAItQAQAAAAAACAAAAAQDAACYUwEAAAAAACAAAAABBgAA1AAAAOQAAAD0AAAABAEAABQBAAAkAQAANAEAAEQBAAAIAAAAAAQAAEHETWSSAAAAGAAAAAECAAABAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAaAAAAAQkAAGZpbGU6Ly8vVm9sdW1lcy9Xb3Jrc3BhY2UvAAAIAAAABAMAAADAWtToAAAACAAAAAAEAABBxM4sX0BmzCQAAAABAQAANEExM0JFOTUtRjdGNi00QUVGLUI1M0QtRUI3QzgxRkRENThEGAAAAAECAAABAQAAAQAAAO8TAAABAAAAAAAAAAAAAAASAAAAAQEAAC9Wb2x1bWVzL1dvcmtzcGFjZQAACAAAAAEJAABmaWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAA4AHj6AAAAAgAAAAABAAAQcV6LvQAAAAkAAAAAQEAADU2OEFFNUYxLTM4NTctNDNENC1CMjhDLTQ3MkVENUIzQzg2MBgAAAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAAAAEBAAAvAAAAYAAAAP7///8A8AAAAAAAAAcAAAACIAAA6AIAAAAAAAAFIAAAWAIAAAAAAAAQIAAAaAIAAAAAAAARIAAAnAIAAAAAAAASIAAAfAIAAAAAAAATIAAAjAIAAAAAAAAgIAAAyAIAAAAAAAAEAAAAAwMAAADwAAAEAAAAAwMAAAAAAAAEAAAAAwMAAAEAAAAkAAAAAQYAAFwDAABoAwAAdAMAAGgDAABoAwAAaAMAAGgDAABoAwAAaAMAAKgAAAD+////AQAAAPQCAAANAAAABBAAAKwAAAAAAAAABRAAAFQBAAAAAAAAEBAAAIwBAAAAAAAAQBAAAHwBAAAAAAAAACAAAIADAAAAAAAAAiAAADwCAAAAAAAABSAAAKwBAAAAAAAAECAAACAAAAAAAAAAESAAAPABAAAAAAAAEiAAANABAAAAAAAAEyAAAOABAAAAAAAAICAAABwCAAAAAAAAENAAAAQAAAAAAAAA</bookmark>
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-12-25 22:06:44 -0800"/>
+            </metadata>
+        </asset>
+        <asset id="r3" name="Interstellar Soundtrack - No Time for Caution" uid="7B6E7477652CFB3F66E2520EA95F18E2" start="0s" duration="10860590/44100s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="7B6E7477652CFB3F66E2520EA95F18E2" src="file:///Volumes/Workspace/Dropbox/_coding/MarkersExtractor/FCP/Media/Interstellar%20Soundtrack%20-%20No%20Time%20for%20Caution.wav">
+                <bookmark>Ym9va6QEAAAAAAQQMAAAAE6qgbBgG4byngsLQqoJGDtfjd2pAQE/Ck8H9jUa6XcAxAMAAAQAAAADAwAAABgAKAcAAAABAQAAVm9sdW1lcwAJAAAAAQEAAFdvcmtzcGFjZQAAAAcAAAABAQAARHJvcGJveAAHAAAAAQEAAF9jb2RpbmcAEAAAAAEBAABNYXJrZXJzRXh0cmFjdG9yAwAAAAEBAABGQ1AABQAAAAEBAABNZWRpYQAAADEAAAABAQAASW50ZXJzdGVsbGFyIFNvdW5kdHJhY2sgLSBObyBUaW1lIGZvciBDYXV0aW9uLndhdgAAACAAAAABBgAAEAAAACAAAAA0AAAARAAAAFQAAABsAAAAeAAAAIgAAAAIAAAABAMAACMAAAAAAAAACAAAAAQDAAACAAAAAAAAAAgAAAAEAwAA5AAAAAAAAAAIAAAABAMAAOgAAAAAAAAACAAAAAQDAADFTwEAAAAAAAgAAAAEAwAAdFABAAAAAAAIAAAABAMAAItQAQAAAAAACAAAAAQDAACZUwEAAAAAACAAAAABBgAA7AAAAPwAAAAMAQAAHAEAACwBAAA8AQAATAEAAFwBAAAIAAAAAAQAAEHEU1ZsAAAAGAAAAAECAAABAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAaAAAAAQkAAGZpbGU6Ly8vVm9sdW1lcy9Xb3Jrc3BhY2UvAAAIAAAABAMAAADAWtToAAAACAAAAAAEAABBxM4sX0BmzCQAAAABAQAANEExM0JFOTUtRjdGNi00QUVGLUI1M0QtRUI3QzgxRkRENThEGAAAAAECAAABAQAAAQAAAO8TAAABAAAAAAAAAAAAAAASAAAAAQEAAC9Wb2x1bWVzL1dvcmtzcGFjZQAACAAAAAEJAABmaWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAAAAQDAAAA4AHj6AAAAAgAAAAABAAAQcV6LvQAAAAkAAAAAQEAADU2OEFFNUYxLTM4NTctNDNENC1CMjhDLTQ3MkVENUIzQzg2MBgAAAABAgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAAAAEBAAAvAAAAYAAAAP7///8A8AAAAAAAAAcAAAACIAAAAAMAAAAAAAAFIAAAcAIAAAAAAAAQIAAAgAIAAAAAAAARIAAAtAIAAAAAAAASIAAAlAIAAAAAAAATIAAApAIAAAAAAAAgIAAA4AIAAAAAAAAEAAAAAwMAAADwAAAEAAAAAwMAAAAAAAAEAAAAAwMAAAEAAAAkAAAAAQYAAHQDAACAAwAAjAMAAIADAACAAwAAgAMAAIADAACAAwAAgAMAAKgAAAD+////AQAAAAwDAAANAAAABBAAAMQAAAAAAAAABRAAAGwBAAAAAAAAEBAAAKQBAAAAAAAAQBAAAJQBAAAAAAAAACAAAJgDAAAAAAAAAiAAAFQCAAAAAAAABSAAAMQBAAAAAAAAECAAACAAAAAAAAAAESAAAAgCAAAAAAAAEiAAAOgBAAAAAAAAEyAAAPgBAAAAAAAAICAAADQCAAAAAAAAENAAAAQAAAAAAAAA</bookmark>
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-12-25 22:06:44 -0800"/>
+            </metadata>
+        </asset>
+        <format id="r4" name="FFVideoFormatRateUndefined"/>
+        <asset id="r5" name="Is This The Land of Fire or Ice" uid="978BD3B254D68A6FA69E87D0D90544FD" start="0s" duration="205800/1000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="978BD3B254D68A6FA69E87D0D90544FD" src="file:///Volumes/Workspace/Dropbox/_coding/MarkersExtractor/FCP/Media/Is%20This%20The%20Land%20of%20Fire%20or%20Ice.mp4">
+                <bookmark>Ym9va5QEAAAAAAQQMAAAAFVzgSnK8/ycBhhs90R/FSAWmWSsEtn07NRJDmX1V9MVtAMAAAQAAAADAwAAABgAKAcAAAABAQAAVm9sdW1lcwAJAAAAAQEAAFdvcmtzcGFjZQAAAAcAAAABAQAARHJvcGJveAAHAAAAAQEAAF9jb2RpbmcAEAAAAAEBAABNYXJrZXJzRXh0cmFjdG9yAwAAAAEBAABGQ1AABQAAAAEBAABNZWRpYQAAACMAAAABAQAASXMgVGhpcyBUaGUgTGFuZCBvZiBGaXJlIG9yIEljZS5tcDQAIAAAAAEGAAAQAAAAIAAAADQAAABEAAAAVAAAAGwAAAB4AAAAiAAAAAgAAAAEAwAAIwAAAAAAAAAIAAAABAMAAAIAAAAAAAAACAAAAAQDAADkAAAAAAAAAAgAAAAEAwAA6AAAAAAAAAAIAAAABAMAAMVPAQAAAAAACAAAAAQDAAB0UAEAAAAAAAgAAAAEAwAAi1ABAAAAAAAIAAAABAMAAJxTAQAAAAAAIAAAAAEGAADcAAAA7AAAAPwAAAAMAQAAHAEAACwBAAA8AQAATAEAAAgAAAAABAAAQcRNZNcAAAAYAAAAAQIAAAEAAAAAAAAADwAAAAAAAAAAAAAAAAAAABoAAAABCQAAZmlsZTovLy9Wb2x1bWVzL1dvcmtzcGFjZS8AAAgAAAAEAwAAAMBa1OgAAAAIAAAAAAQAAEHEzixfQGbMJAAAAAEBAAA0QTEzQkU5NS1GN0Y2LTRBRUYtQjUzRC1FQjdDODFGREQ1OEQYAAAAAQIAAAEBAAABAAAA7xMAAAEAAAAAAAAAAAAAABIAAAABAQAAL1ZvbHVtZXMvV29ya3NwYWNlAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2ggSEQIAAAABAMAAADgAePoAAAACAAAAAAEAABBxXou9AAAACQAAAABAQAANTY4QUU1RjEtMzg1Ny00M0Q0LUIyOEMtNDcyRUQ1QjNDODYwGAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEAAC8AAABgAAAA/v///wDwAAAAAAAABwAAAAIgAADwAgAAAAAAAAUgAABgAgAAAAAAABAgAABwAgAAAAAAABEgAACkAgAAAAAAABIgAACEAgAAAAAAABMgAACUAgAAAAAAACAgAADQAgAAAAAAAAQAAAADAwAAAPAAAAQAAAADAwAAAAAAAAQAAAADAwAAAQAAACQAAAABBgAAZAMAAHADAAB8AwAAcAMAAHADAABwAwAAcAMAAHADAABwAwAAqAAAAP7///8BAAAA/AIAAA0AAAAEEAAAtAAAAAAAAAAFEAAAXAEAAAAAAAAQEAAAlAEAAAAAAABAEAAAhAEAAAAAAAAAIAAAiAMAAAAAAAACIAAARAIAAAAAAAAFIAAAtAEAAAAAAAAQIAAAIAAAAAAAAAARIAAA+AEAAAAAAAASIAAA2AEAAAAAAAATIAAA6AEAAAAAAAAgIAAAJAIAAAAAAAAQ0AAABAAAAAAAAAA=</bookmark>
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-12-25 22:06:44 -0800"/>
+            </metadata>
+        </asset>
+        <effect id="r6" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <effect id="r7" name="Clouds" uid=".../Generators.localized/Backgrounds.localized/Clouds.localized/Clouds.motn"/>
+    </resources>
+    <library location="file:///Users/user/Movies/MyLibrary.fcpbundle/">
+        <event name="Example A" uid="898E5A68-308B-4060-8548-2756F227BFC5">
+            <project name="Marker Data Demo_V2" uid="334EB84C-6B47-4054-A53D-BB653A60FF0E" modDate="2023-11-15 16:15:53 -0800">
+                <sequence format="r1" duration="1119900/2500s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" duration="355100/2500s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <adjust-volume amount="-96dB"/>
+                            <asset-clip ref="r3" lane="-1" offset="0s" name="Interstellar Soundtrack - No Time for Caution" duration="177315755/720000s" format="r4" audioRole="dialogue">
+                                <marker start="3736707/40000s" duration="1/48000s" value="Marker on Audio" note="Audio Fix"/>
+                                <marker start="149s" duration="1/48000s" value="It is necessary" completed="0"/>
+                                <marker start="125233067/720000s" duration="1/48000s" value="Cooper!" completed="1"/>
+                                <chapter-marker start="5308/25s" duration="1/48000s" value="Chapter 7" posterOffset="11/60s"/>
+                                <audio-channel-source srcCh="1, 2" role="music.music-1"/>
+                            </asset-clip>
+                            <marker start="516/25s" duration="100/2500s" value="(To-Do) Penguin" completed="0" note="Note Test 1"/>
+                            <marker start="126/5s" duration="100/2500s" value="(Standard) Flamingo Bird" note="Colour Fix"/>
+                            <chapter-marker start="898/25s" duration="100/2500s" value="Chapter 1" note="Note Test 2" posterOffset="11/25s"/>
+                            <marker start="55s" duration="100/2500s" value="(To-Do) Red Crabs" completed="0" note="Note Test 3"/>
+                            <marker start="389/5s" duration="100/2500s" value="(To-Do) Giraffe" completed="0" note="Note Test 4"/>
+                            <marker start="2616/25s" duration="100/2500s" value="(Standard) Mountains" note="VFX Shot"/>
+                            <marker start="2927/25s" duration="100/2500s" value="(Completed) Frog Jump" completed="1" note="Note Test 5"/>
+                            <audio-channel-source srcCh="1, 2" role="dialogue.dialogue-1"/>
+                        </asset-clip>
+                        <asset-clip ref="r5" offset="355100/2500s" name="Is This The Land of Fire or Ice" duration="514500/2500s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <adjust-volume amount="-96dB"/>
+                            <title ref="r6" lane="1" offset="1189/25s" name="Basic Title - Basic Title" start="3600s" duration="43000/2500s">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <param name="disableDRT" key="3733" value="1"/>
+                                <text>
+                                    <text-style ref="ts1">Basic Title</text-style>
+                                </text>
+                                <text-style-def id="ts1">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <marker start="18016/5s" duration="100/2500s" value="Marker on Title 1"/>
+                                <marker start="18064/5s" duration="100/2500s" value="Marker on Title 2" completed="0"/>
+                            </title>
+                            <title ref="r6" lane="1" offset="1757/25s" name="Basic Title 2 - Basic Title" start="3600s" duration="30900/2500s">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <param name="disableDRT" key="3733" value="1"/>
+                                <text>
+                                    <text-style ref="ts2">Basic Title 2</text-style>
+                                </text>
+                                <text-style-def id="ts2">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <marker start="18016/5s" duration="100/2500s" value="Marker on Title" completed="1"/>
+                                <chapter-marker start="90199/25s" duration="100/2500s" value="Chapter 5" posterOffset="11/25s"/>
+                                <marker start="18064/5s" duration="100/2500s" value="Marker on Title Out of Bounds" completed="0"/>
+                            </title>
+                            <asset-clip ref="r3" lane="-1" offset="67929201/720000s" name="Interstellar Soundtrack - No Time for Caution" start="24982556/720000s" duration="152333199/720000s" format="r4" audioRole="dialogue">
+                                <adjust-volume>
+                                    <param name="amount">
+                                        <fadeIn type="easeIn" duration="21334926/720000s"/>
+                                    </param>
+                                </adjust-volume>
+                                <marker start="8093251/120000s" duration="1/48000s" value="Sound FX 1"/>
+                                <marker start="88595653/720000s" duration="1/48000s" value="Sound FX 2" completed="0"/>
+                                <marker start="41702873/240000s" duration="1/48000s" value="SFX Completed" completed="1"/>
+                                <chapter-marker start="3157421/16000s" duration="1/48000s" value="Chapter 8" posterOffset="11/60s"/>
+                                <audio-channel-source srcCh="1, 2" role="effects.effects-1"/>
+                            </asset-clip>
+                            <marker start="441/25s" duration="100/2500s" value="(To-Do) Red Giant" completed="0" note="Note Test 6"/>
+                            <marker start="1038/25s" duration="100/2500s" value="(Standard) Kepler-36" note="Explosion Shot"/>
+                            <marker start="433/5s" duration="100/2500s" value="(Standard) Surface Temperatures" note="Too Bright"/>
+                            <marker start="2764/25s" duration="100/2500s" value="(Completed) Lava" completed="1" note="Nice Lava"/>
+                            <chapter-marker start="737/5s" duration="100/2500s" value="Chapter 2" note="Note Test 7" posterOffset="11/25s"/>
+                            <chapter-marker start="858/5s" duration="100/2500s" value="Chapter 3" note="Note Test 8" posterOffset="11/25s"/>
+                            <audio-channel-source srcCh="1, 2" role="dialogue.dialogue-1"/>
+                        </asset-clip>
+                        <video ref="r7" offset="869600/2500s" name="Clouds" start="3600s" duration="250300/2500s" role="Sample Role.Sample Role-1">
+                            <param name="disableDRT" key="3733" value="1"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="90356/25s" duration="100/2500s" value="Cloud 1"/>
+                            <marker start="91012/25s" duration="100/2500s" value="Cloud 2" completed="0"/>
+                            <marker start="91513/25s" duration="100/2500s" value="Cloud 3" completed="1"/>
+                            <chapter-marker start="92024/25s" duration="100/2500s" value="Chapter 6" posterOffset="11/25s"/>
+                        </video>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+        <smart-collection name="Projects" match="all">
+            <match-clip rule="is" type="project"/>
+        </smart-collection>
+        <smart-collection name="All Video" match="any">
+            <match-media rule="is" type="videoOnly"/>
+            <match-media rule="is" type="videoWithAudio"/>
+        </smart-collection>
+        <smart-collection name="Audio Only" match="all">
+            <match-media rule="is" type="audioOnly"/>
+        </smart-collection>
+        <smart-collection name="Stills" match="all">
+            <match-media rule="is" type="stills"/>
+        </smart-collection>
+        <smart-collection name="Favorites" match="all">
+            <match-ratings value="favorites"/>
+        </smart-collection>
+    </library>
+</fcpxml>

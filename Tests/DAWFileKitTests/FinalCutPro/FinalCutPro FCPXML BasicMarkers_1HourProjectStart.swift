@@ -1,5 +1,5 @@
 //
-//  FinalCutPro FCPXML BasicMarkers.swift
+//  FinalCutPro FCPXML BasicMarkers_1HourProjectStart.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
+class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: XCTestCase {
     override func setUp() { }
     override func tearDown() { }
     
@@ -19,7 +19,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         // load file
         
         let rawData = try XCTUnwrap(loadFileContents(
-            forResource: "BasicMarkers",
+            forResource: "BasicMarkers_1HourProjectStart",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
@@ -85,14 +85,14 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         let project = try XCTUnwrap(projects[safe: 0])
         XCTAssertEqual(project.name, "Test Project")
-        XCTAssertEqual(project.startTimecode, try Timecode(.rational(0, 1), at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(project.startTimecode, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
         
         // sequence
         
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.startTimecode, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(sequence.startTimecode, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps29_97)
         XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)
         XCTAssertEqual(sequence.duration, try Timecode(.components(h: 00, m: 01, s: 03, f: 29), at: .fps29_97, base: .max80SubFrames))
@@ -108,7 +108,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         guard case let .anyClip(.title(element1)) = spine.elements[0] else { XCTFail("Clip was not expected type.") ; return }
         
         XCTAssertEqual(element1.ref, "r2")
-        XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(element1.offset, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
         XCTAssertEqual(element1.offset?.frameRate, .fps29_97)
         XCTAssertEqual(element1.name, "Basic Title")
         XCTAssertEqual(element1.start, try Timecode(.components(m: 10), at: .fps29_97, base: .max80SubFrames))
