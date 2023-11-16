@@ -303,6 +303,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         (tc("00:03:32:08.00"), "Chapter 7", nil, .chapter(posterOffset: +tc(Fraction(11, 60))), .audio1),
         (tc("00:03:35:13.00"), "Marker on Title", nil, .toDo(completed: true), .title2),
         (tc("00:03:40:07.00"), "Chapter 5", nil, .chapter(posterOffset: tcInterval(frames: 11)), .title2),
+        (tc("00:03:45:03.00"), "Marker on Title Out of Bounds", nil, .toDo(completed: false), .title2),
         (tc("00:03:48:16.00"), "(Standard) Surface Temperatures", "Too Bright", .standard, .land),
         (tc("00:04:12:15.00"), "(Completed) Lava", "Nice Lava", .toDo(completed: true), .land),
         (tc("00:04:29:03.24"), "Sound FX 1", nil, .standard, .audio2),
