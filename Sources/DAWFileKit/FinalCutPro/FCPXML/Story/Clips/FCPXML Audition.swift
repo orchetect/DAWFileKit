@@ -57,14 +57,14 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClipAttributes {
     }
 }
 
-extension FinalCutPro.FCPXML.Audition {
+extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
     /// Attributes unique to ``Audition``.
     public enum Attributes: String {
         case lane
         case modDate
     }
     
-    init(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -74,14 +74,9 @@ extension FinalCutPro.FCPXML.Audition {
         
         clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
     }
-}
-
-extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .audition }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .audition(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .audition }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .audition(self) }
 }
 
 extension FinalCutPro.FCPXML.Audition {

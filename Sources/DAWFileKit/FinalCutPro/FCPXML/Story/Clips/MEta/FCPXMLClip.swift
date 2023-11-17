@@ -14,6 +14,11 @@ public protocol FCPXMLClip: FCPXMLStoryElement where Self: Equatable {
     
     /// Returns the clip as ``FinalCutPro/FCPXML/AnyClip``.
     func asAnyClip() -> FinalCutPro.FCPXML.AnyClip
+    
+    init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    )
 }
 
 extension FCPXMLClip {

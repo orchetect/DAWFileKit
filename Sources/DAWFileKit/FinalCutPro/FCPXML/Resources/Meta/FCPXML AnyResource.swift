@@ -55,15 +55,13 @@ extension FinalCutPro.FCPXML.AnyResource: FCPXMLResource {
         }
     }
     
-    public var resourceType: FinalCutPro.FCPXML.ResourceType {
-        wrapped.resourceType
-    }
+    public var resourceType: FinalCutPro.FCPXML.ResourceType { wrapped.resourceType }
     
     /// Redundant, but required to fulfill `FCPXMLResource` protocol requirements.
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
-        self
-    }
-    
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { self }
+}
+
+extension FinalCutPro.FCPXML.AnyResource {
     /// Returns the unwrapped resource typed as ``FCPXMLResource``.
     public var wrapped: any FCPXMLResource {
         switch self {

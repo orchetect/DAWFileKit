@@ -59,9 +59,9 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.SyncClip {
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
     // no ref, no role
-    init(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -83,14 +83,9 @@ extension FinalCutPro.FCPXML.SyncClip {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-}
-
-extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .syncClip }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .syncClip(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .syncClip }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .syncClip(self) }
 }
 
 extension FinalCutPro.FCPXML.SyncClip: _FCPXMLExtractableElement {

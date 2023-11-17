@@ -15,7 +15,7 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Defines a placeholder element that has no intrinsic audio or video data.
-    public struct Gap {
+    public struct Gap: FCPXMLClipAttributes {
         public var clips: [AnyClip]
         public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
         
@@ -59,10 +59,10 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLClipAttributes {
+extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
     // no ref, no role
     // no lane
-    init(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -84,14 +84,9 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClipAttributes {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-}
-
-extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .gap }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .gap(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .gap }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .gap(self) }
 }
 
 extension FinalCutPro.FCPXML.Gap: _FCPXMLExtractableElement {

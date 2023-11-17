@@ -77,14 +77,14 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.RefClip {
+extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
     /// Attributes unique to ``RefClip`` clip.
     public enum Attributes: String {
         case ref // resource ID
         case role
     }
     
-    init?(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -112,14 +112,9 @@ extension FinalCutPro.FCPXML.RefClip {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-}
-
-extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .refClip }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .refClip(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .refClip }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .refClip(self) }
 }
 
 extension FinalCutPro.FCPXML.RefClip: _FCPXMLExtractableElement {

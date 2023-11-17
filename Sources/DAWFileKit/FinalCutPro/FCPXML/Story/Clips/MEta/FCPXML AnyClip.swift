@@ -25,8 +25,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyClip {
-    init?(
+extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -46,15 +46,15 @@ extension FinalCutPro.FCPXML.AnyClip {
             self = .audio(clip)
             
         case .audition:
-            let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources)
+            guard let element = FinalCutPro.FCPXML.Audition(from: xmlLeaf, resources: resources) else { return nil }
             self = .audition(element)
             
         case .clip:
-            let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf, resources: resources)
+            guard let clip = FinalCutPro.FCPXML.Clip(from: xmlLeaf, resources: resources) else { return nil }
             self = .clip(clip)
             
         case .gap:
-            let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources)
+            guard let element = FinalCutPro.FCPXML.Gap(from: xmlLeaf, resources: resources) else { return nil }
             self = .gap(element)
             
         case .mcClip:
@@ -66,7 +66,7 @@ extension FinalCutPro.FCPXML.AnyClip {
             self = .refClip(clip)
             
         case .syncClip:
-            let clip = FinalCutPro.FCPXML.SyncClip(from: xmlLeaf, resources: resources)
+            guard let clip = FinalCutPro.FCPXML.SyncClip(from: xmlLeaf, resources: resources) else { return nil }
             self = .syncClip(clip)
             
         case .title:
@@ -83,9 +83,7 @@ extension FinalCutPro.FCPXML.AnyClip {
             return nil
         }
     }
-}
-
-extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
+    
     public var clipType: FinalCutPro.FCPXML.ClipType {
         wrapped.clipType
     }
@@ -94,7 +92,9 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
     public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
         self
     }
-    
+}
+
+extension FinalCutPro.FCPXML.AnyClip {
     /// Returns the unwrapped clip typed as ``FCPXMLClip``.
     public var wrapped: any FCPXMLClip {
         switch self {
@@ -163,12 +163,6 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     }
 }
 
-extension Collection<FinalCutPro.FCPXML.AnyClip> {
-    public func asAnyStoryElements() -> [FinalCutPro.FCPXML.AnyStoryElement] {
-        map { $0.asAnyStoryElement() }
-    }
-}
-
 extension FinalCutPro.FCPXML.AnyClip: _FCPXMLExtractableElement {
     var extractableStart: Timecode? { start }
     var extractableName: String? { name }
@@ -216,6 +210,12 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
         case let .video(clip):
             return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
         }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyClip> {
+    public func asAnyStoryElements() -> [FinalCutPro.FCPXML.AnyStoryElement] {
+        map { $0.asAnyStoryElement() }
     }
 }
 

@@ -65,14 +65,14 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Video {
+extension FinalCutPro.FCPXML.Video: FCPXMLClip {
     /// Attributes unique to ``Video`` clip.
     public enum Attributes: String {
         case ref // resource ID
         case role
     }
     
-    init?(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -98,14 +98,9 @@ extension FinalCutPro.FCPXML.Video {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-}
-
-extension FinalCutPro.FCPXML.Video: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .video }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .video(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .video }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .video(self) }
 }
 
 extension FinalCutPro.FCPXML.Video: _FCPXMLExtractableElement {

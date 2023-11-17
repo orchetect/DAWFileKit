@@ -68,13 +68,13 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.MCClip {
+extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
     /// Attributes unique to ``MCClip`` clip.
     public enum Attributes: String {
         case ref // resource ID
     }
     
-    init?(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -99,14 +99,9 @@ extension FinalCutPro.FCPXML.MCClip {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-}
-
-extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .mcClip }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .mcClip(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .mcClip }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .mcClip(self) }
 }
 
 extension FinalCutPro.FCPXML.MCClip: _FCPXMLExtractableElement {

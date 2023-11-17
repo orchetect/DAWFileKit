@@ -69,9 +69,9 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Clip {
+extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
     // no ref
-    init(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -93,14 +93,9 @@ extension FinalCutPro.FCPXML.Clip {
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
     }
-}
-
-extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
-    public var clipType: FinalCutPro.FCPXML.ClipType { .clip }
     
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
-        .clip(self)
-    }
+    public var clipType: FinalCutPro.FCPXML.ClipType { .clip }
+    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .clip(self) }
 }
 
 extension FinalCutPro.FCPXML.Clip: FCPXMLMarkersExtractable {
