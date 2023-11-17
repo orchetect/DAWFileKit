@@ -12,6 +12,9 @@ import Foundation
 public protocol FCPXMLStructureElement {
     /// Returns the structure element type enum case.
     var structureElementType: FinalCutPro.FCPXML.StructureElementType { get }
+    
+    /// Returns the element as ``FinalCutPro/FCPXML/AnyStructureElement``.
+    func asAnyStructureElement() -> FinalCutPro.FCPXML.AnyStructureElement
 }
 
 #endif
