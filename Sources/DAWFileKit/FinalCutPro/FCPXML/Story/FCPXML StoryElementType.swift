@@ -46,11 +46,8 @@ extension FinalCutPro.FCPXML.StoryElementType: RawRepresentable {
 
 extension FinalCutPro.FCPXML.StoryElementType: CaseIterable {
     public static var allCases: [FinalCutPro.FCPXML.StoryElementType] {
-        FinalCutPro.FCPXML.ClipType.allCases.map { .anyClip($0) }
-        + [
-            .sequence,
-            .spine
-        ]
+        [.sequence, .spine]
+            + FinalCutPro.FCPXML.ClipType.allCases.map { .anyClip($0) }
     }
 }
 
