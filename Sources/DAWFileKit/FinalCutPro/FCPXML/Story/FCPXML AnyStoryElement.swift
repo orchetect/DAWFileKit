@@ -19,6 +19,19 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.AnyStoryElement {
+    /// Clip XML Attributes.
+    public enum Attributes: String {
+        case ref // resource ID
+        case name
+        
+        // case offset // handled with FCPXMLClipAttributes
+        // case start // handled with FCPXMLClipAttributes
+        // case duration // handled with FCPXMLClipAttributes
+        
+        case audioRole
+        case role // TODO: video role; change name to `videoRole`?
+    }
+    
     init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]

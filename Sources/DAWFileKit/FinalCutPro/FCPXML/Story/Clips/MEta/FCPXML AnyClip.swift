@@ -87,23 +87,28 @@ extension FinalCutPro.FCPXML.AnyClip {
 
 extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
     public var clipType: FinalCutPro.FCPXML.ClipType {
-        switch self {
-        case .assetClip: return .assetClip
-        case .audio: return .audio
-        case .audition: return .audition
-        case .clip: return .clip
-        case .gap: return .gap
-        case .mcClip: return .mcClip
-        case .refClip: return .refClip
-        case .syncClip: return .syncClip
-        case .title: return .title
-        case .video: return .video
-        }
+        wrapped.clipType
     }
     
     /// Redundant, but required to fulfill `FCPXMLClip` protocol requirements.
     public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip {
         self
+    }
+    
+    /// Returns the unwrapped clip typed as ``FCPXMLClip``.
+    public var wrapped: any FCPXMLClip {
+        switch self {
+        case let .assetClip(clip): return clip
+        case let .audio(clip): return clip
+        case let .audition(clip): return clip
+        case let .clip(clip): return clip
+        case let .gap(clip): return clip
+        case let .mcClip(clip): return clip
+        case let .refClip(clip): return clip
+        case let .syncClip(clip): return clip
+        case let .title(clip): return clip
+        case let .video(clip): return clip
+        }
     }
 }
 

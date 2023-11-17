@@ -43,10 +43,9 @@ extension FinalCutPro.FCPXML.Media {
     }
 }
 
-extension FinalCutPro.FCPXML.Media {
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
-        .media(self)
-    }
+extension FinalCutPro.FCPXML.Media: FCPXMLResource {
+    public var resourceType: FinalCutPro.FCPXML.ResourceType { .media }
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .media(self) }
 }
 
 #endif

@@ -50,7 +50,7 @@ class FinalCutPro_FCPXML_FormatInfo: XCTestCase {
         )
         
         // make sure resource exists in parsed resources
-        XCTAssert(resources.contains(r1))
+        XCTAssert(resources.contains(value: r1))
         
         // format and tcFormat
         

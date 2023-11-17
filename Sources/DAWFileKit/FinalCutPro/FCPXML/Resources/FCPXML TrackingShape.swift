@@ -46,10 +46,9 @@ extension FinalCutPro.FCPXML.TrackingShape {
     }
 }
 
-extension FinalCutPro.FCPXML.TrackingShape {
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
-        .trackingShape(self)
-    }
+extension FinalCutPro.FCPXML.TrackingShape: FCPXMLResource {
+    public var resourceType: FinalCutPro.FCPXML.ResourceType { .trackingShape }
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .trackingShape(self) }
 }
 
 #endif

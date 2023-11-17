@@ -71,10 +71,9 @@ extension FinalCutPro.FCPXML.Effect {
     }
 }
 
-extension FinalCutPro.FCPXML.Effect {
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource {
-        .effect(self)
-    }
+extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
+    public var resourceType: FinalCutPro.FCPXML.ResourceType { .effect }
+    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .effect(self) }
 }
 
 #endif

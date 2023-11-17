@@ -44,12 +44,18 @@ import Foundation
 /// > using the elements listed under [Annotation and Note Elements](
 /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
 /// > ).
-public protocol FCPXMLStoryElement: FCPXMLExtractableElement {
+public protocol FCPXMLStoryElement: FCPXMLExtractableElement where Self: Equatable {
     /// Returns the story element type enum case.
     var storyElementType: FinalCutPro.FCPXML.StoryElementType { get }
     
     /// Returns the story element as ``FinalCutPro/FCPXML/AnyStoryElement``.
     func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement
+}
+
+extension FCPXMLStoryElement {
+    func isEqual(to other: some FCPXMLStoryElement) -> Bool {
+        self.asAnyStoryElement() == other.asAnyStoryElement()
+    }
 }
 
 #endif
