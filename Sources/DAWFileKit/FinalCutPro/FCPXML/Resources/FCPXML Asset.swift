@@ -94,7 +94,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Asset {
+extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
     /// Attributes unique to ``Asset``.
     public enum Attributes: String {
         // shared resource attributes
@@ -119,7 +119,7 @@ extension FinalCutPro.FCPXML.Asset {
         case auxVideoFlags
     }
     
-    init?(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         // shared resource attributes
         guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
         self.id = id
@@ -145,9 +145,7 @@ extension FinalCutPro.FCPXML.Asset {
         // TODO: refactor unfinished attributes to strong types
         xmlChildren = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
     }
-}
-
-extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .asset }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .asset(self) }
 }

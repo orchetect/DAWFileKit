@@ -26,25 +26,19 @@ extension FinalCutPro.FCPXML {
     /// > See [`object-tracker`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/object-tracker).
     public struct ObjectTracker: Equatable, Hashable {
         public var xml: XMLElement
-        
-        public init(xml: XMLElement) {
-            self.xml = xml
-        }
     }
 }
 
-extension FinalCutPro.FCPXML.ObjectTracker {
+extension FinalCutPro.FCPXML.ObjectTracker: FCPXMLResource {
     // /// Attributes unique to ``ObjectTracker``.
     // public enum Attributes: String {
     //     // ...
     // }
     
-    init(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
     }
-}
-
-extension FinalCutPro.FCPXML.ObjectTracker: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .objectTracker }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .objectTracker(self) }
 }

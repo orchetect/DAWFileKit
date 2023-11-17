@@ -22,10 +22,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyResource {
-    init?(
-        from xmlLeaf: XMLElement
-    ) {
+extension FinalCutPro.FCPXML.AnyResource: FCPXMLResource {
+    public init?(from xmlLeaf: XMLElement) {
         guard let name = xmlLeaf.name else { return nil }
         guard let resourceType = FinalCutPro.FCPXML.ResourceType(rawValue: name) else {
             print("Unrecognized FCPXML resource type: \(name)")
@@ -37,7 +35,7 @@ extension FinalCutPro.FCPXML.AnyResource {
             guard let res = FinalCutPro.FCPXML.Asset(from: xmlLeaf) else { return nil }
             self = .asset(res)
         case .media:
-            let res = FinalCutPro.FCPXML.Media(from: xmlLeaf)
+            guard let res = FinalCutPro.FCPXML.Media(from: xmlLeaf) else { return nil }
             self = .media(res)
         case .format:
             guard let res = FinalCutPro.FCPXML.Format(from: xmlLeaf) else { return nil }
@@ -46,19 +44,17 @@ extension FinalCutPro.FCPXML.AnyResource {
             guard let res = FinalCutPro.FCPXML.Effect(from: xmlLeaf) else { return nil }
             self = .effect(res)
         case .locator:
-            let res = FinalCutPro.FCPXML.Locator(from: xmlLeaf)
+            guard let res = FinalCutPro.FCPXML.Locator(from: xmlLeaf) else { return nil }
             self = .locator(res)
         case .objectTracker:
-            let res = FinalCutPro.FCPXML.ObjectTracker(from: xmlLeaf)
+            guard let res = FinalCutPro.FCPXML.ObjectTracker(from: xmlLeaf) else { return nil }
             self = .objectTracker(res)
         case .trackingShape:
-            let res = FinalCutPro.FCPXML.TrackingShape(from: xmlLeaf)
+            guard let res = FinalCutPro.FCPXML.TrackingShape(from: xmlLeaf) else { return nil }
             self = .trackingShape(res)
         }
     }
-}
-
-extension FinalCutPro.FCPXML.AnyResource: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType {
         wrapped.resourceType
     }

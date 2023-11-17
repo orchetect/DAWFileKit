@@ -25,25 +25,19 @@ extension FinalCutPro.FCPXML {
     /// > See [`media`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/media).
     public struct Media: Equatable, Hashable {
         public var xml: XMLElement
-        
-        public init(xml: XMLElement) {
-            self.xml = xml
-        }
     }
 }
 
-extension FinalCutPro.FCPXML.Media {
+extension FinalCutPro.FCPXML.Media: FCPXMLResource {
     // /// Attributes unique to ``Media``.
     // public enum Attributes: String {
     //     // ...
     // }
     
-    init(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
     }
-}
-
-extension FinalCutPro.FCPXML.Media: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .media }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .media(self) }
 }

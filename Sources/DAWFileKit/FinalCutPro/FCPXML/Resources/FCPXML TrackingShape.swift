@@ -25,28 +25,24 @@ extension FinalCutPro.FCPXML {
     /// > to match the movement of a moving object in a video clip. Each object-tracker element
     /// > consists of one or more tracking shapes.
     /// >
-    /// > See [`tracking-shape`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/tracking-shape).
+    /// > See [`tracking-shape`](
+    /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/tracking-shape
+    /// > ).
     public struct TrackingShape: Equatable, Hashable {
         public var xml: XMLElement
-        
-        public init(xml: XMLElement) {
-            self.xml = xml
-        }
     }
 }
 
-extension FinalCutPro.FCPXML.TrackingShape {
+extension FinalCutPro.FCPXML.TrackingShape: FCPXMLResource {
     // /// Attributes unique to ``TrackingShape``.
     // public enum Attributes: String {
     //     // ...
     // }
     
-    init(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
     }
-}
-
-extension FinalCutPro.FCPXML.TrackingShape: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .trackingShape }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .trackingShape(self) }
 }

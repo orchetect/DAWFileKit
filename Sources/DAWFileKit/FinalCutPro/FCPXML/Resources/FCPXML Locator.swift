@@ -24,25 +24,19 @@ extension FinalCutPro.FCPXML {
     /// > See [`locator`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/locator).
     public struct Locator: Equatable, Hashable {
         public var xml: XMLElement
-        
-        public init(xml: XMLElement) {
-            self.xml = xml
-        }
     }
 }
 
-extension FinalCutPro.FCPXML.Locator {
+extension FinalCutPro.FCPXML.Locator: FCPXMLResource {
     // /// Attributes unique to ``Locator``.
     // public enum Attributes: String {
     //     // ...
     // }
     
-    init(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
     }
-}
-
-extension FinalCutPro.FCPXML.Locator: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .locator }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .locator(self) }
 }

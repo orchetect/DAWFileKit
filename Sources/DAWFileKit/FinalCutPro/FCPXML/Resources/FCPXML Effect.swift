@@ -20,7 +20,9 @@ extension FinalCutPro.FCPXML {
     /// > an Audio Unit, or an audio effect bundle. Use a `filter-video`, `filter-video-mask`, or
     /// > `filter-audio` element to apply the effect to a story element.
     /// >
-    /// > See [`effect`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/effect).
+    /// > See [`effect`](
+    /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/effect
+    /// > ).
     public struct Effect: Equatable, Hashable {
         // shared resource attributes
         public var id: String // required
@@ -47,7 +49,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Effect {
+extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
     /// Attributes unique to ``Effect``.
     public enum Attributes: String {
         // shared resource attributes
@@ -59,7 +61,7 @@ extension FinalCutPro.FCPXML.Effect {
         case src
     }
     
-    init?(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
         self.id = id
         name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
@@ -69,9 +71,7 @@ extension FinalCutPro.FCPXML.Effect {
         self.uid = uid
         src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
     }
-}
-
-extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .effect }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .effect(self) }
 }

@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Format {
+extension FinalCutPro.FCPXML.Format: FCPXMLResource {
     /// Attributes unique to ``Format``.
     public enum Attributes: String {
         // shared resource attributes
@@ -90,7 +90,7 @@ extension FinalCutPro.FCPXML.Format {
         case stereoscopic // note that Apple docs misspell it as "sterioscopic"
     }
     
-    init?(from xmlLeaf: XMLElement) {
+    public init?(from xmlLeaf: XMLElement) {
         // shared resource attributes
         guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
         self.id = id
@@ -107,9 +107,7 @@ extension FinalCutPro.FCPXML.Format {
         projection = xmlLeaf.attributeStringValue(forName: Attributes.projection.rawValue)
         stereoscopic = xmlLeaf.attributeStringValue(forName: Attributes.stereoscopic.rawValue)
     }
-}
-
-extension FinalCutPro.FCPXML.Format: FCPXMLResource {
+    
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .format }
     public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .format(self) }
 }

@@ -6,6 +6,8 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
+import Foundation
+
 /// FCPXML resource elements.
 public protocol FCPXMLResource where Self: Equatable {
     /// Returns the resource type enum case.
@@ -13,6 +15,8 @@ public protocol FCPXMLResource where Self: Equatable {
     
     /// Returns the resource as ``FinalCutPro/FCPXML/AnyResource``.
     func asAnyResource() -> FinalCutPro.FCPXML.AnyResource
+    
+    init?(from xmlLeaf: XMLElement)
 }
 
 extension FCPXMLResource {
