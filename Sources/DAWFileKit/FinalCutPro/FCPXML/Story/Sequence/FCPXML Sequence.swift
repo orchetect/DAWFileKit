@@ -14,7 +14,7 @@ import CoreMedia
 extension FinalCutPro.FCPXML {
     /// A container that represents the top-level sequence for a Final Cut Pro project or compound
     /// clip.
-    public struct Sequence {
+    public struct Sequence: FCPXMLTimelineAttributes {
         // FCPXMLTimelineAttributes
         public let formatID: String
         public let startTimecode: Timecode? // (absolute `tcStart` timecode, not relative `start`)
@@ -58,8 +58,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
-    init?(
+extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -86,8 +86,10 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
         
         // spine
-        guard let spineLeaf = Self.parseSpine(from: xmlLeaf) else { return nil }
-        spine = FinalCutPro.FCPXML.Spine(from: spineLeaf, resources: resources)
+        guard let spineLeaf = Self.parseSpine(from: xmlLeaf),
+              let spine = FinalCutPro.FCPXML.Spine(from: spineLeaf, resources: resources)
+        else { return nil }
+        self.spine = spine
     }
     
     static func parseSpine(
@@ -105,25 +107,16 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
         }
         return spine
     }
-}
-
-extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
-    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .sequence }
     
-    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement {
-        .sequence(self)
-    }
+    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .sequence }
+    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement { .sequence(self) }
 }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLExtractable {
     // (`sequence` does not contain a relative `start`)
-    public var start: TimecodeKit.Timecode? {
-        nil
-    }
+    public var start: TimecodeKit.Timecode? { nil }
     
-    public var name: String? {
-        nil
-    }
+    public var name: String? { nil }
 }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLMarkersExtractable {

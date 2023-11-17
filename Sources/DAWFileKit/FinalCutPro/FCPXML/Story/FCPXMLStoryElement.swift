@@ -50,6 +50,11 @@ public protocol FCPXMLStoryElement: FCPXMLExtractableElement where Self: Equatab
     
     /// Returns the story element as ``FinalCutPro/FCPXML/AnyStoryElement``.
     func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement
+    
+    init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    )
 }
 
 extension FCPXMLStoryElement {

@@ -36,9 +36,9 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Spine {
+extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
     // no start
-    init(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -57,14 +57,9 @@ extension FinalCutPro.FCPXML.Spine {
         lane = anchorableAttributes.lane
         offset = anchorableAttributes.offset
     }
-}
-
-extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
-    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .spine }
     
-    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement {
-        .spine(self)
-    }
+    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .spine }
+    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement { .spine(self) }
 }
 
 extension FinalCutPro.FCPXML.Spine: _FCPXMLExtractableElement {

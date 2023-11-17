@@ -18,7 +18,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyStoryElement {
+extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
     /// Clip XML Attributes.
     public enum Attributes: String {
         case ref // resource ID
@@ -32,7 +32,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
         case role // TODO: video role; change name to `videoRole`?
     }
     
-    init?(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
@@ -57,13 +57,12 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
             self = .sequence(element)
                 
         case .spine:
-            let element = FinalCutPro.FCPXML.Spine(from: xmlLeaf, resources: resources)
+            guard let element = FinalCutPro.FCPXML.Spine(from: xmlLeaf, resources: resources)
+            else { return nil }
             self = .spine(element)
         }
     }
-}
-
-extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
+    
     public var storyElementType: FinalCutPro.FCPXML.StoryElementType {
         switch self {
         case let .anyClip(clip): return .anyClip(clip.clipType)
