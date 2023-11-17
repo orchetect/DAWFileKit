@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// "tcFormat" attribute.
+    /// `tcFormat` attribute value.
     public enum TimecodeFormat: String {
         case dropFrame = "DF"
         case nonDropFrame = "NDF"

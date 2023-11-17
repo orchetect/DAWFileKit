@@ -28,6 +28,7 @@ extension FinalCutPro.FCPXML.StoryElementType: RawRepresentable {
     public init?(rawValue: String) {
         guard let match = Self.allCases.first(where: { $0.rawValue == rawValue })
         else { return nil }
+        
         self = match
     }
     

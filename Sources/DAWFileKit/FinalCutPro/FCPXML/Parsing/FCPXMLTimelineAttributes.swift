@@ -33,7 +33,7 @@ import TimecodeKit
 public protocol FCPXMLTimelineAttributes {
     // a.k.a. resource ID
     /// A reference to the video format defined by the `format` element.
-    var format: String { get }
+    var formatID: String { get }
     
     // `tcStart`, also parses `tcFormat`
     /// The absolute timecode origin represented as a time value.
@@ -77,7 +77,7 @@ extension FCPXMLTimelineAttributes {
         let rawValues = parseTimelineAttributesRawValues(from: xmlLeaf)
         
         // `format`
-        guard let format = rawValues[.format] else { return nil }
+        guard let formatID = rawValues[.format] else { return nil }
         
         // `tcFormat`
         let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: rawValues[.tcFormat] ?? "") ?? .nonDropFrame // TODO: ?
@@ -86,7 +86,7 @@ extension FCPXMLTimelineAttributes {
         let startTimecode = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.tcStart] ?? "",
             tcFormat: tcFormat,
-            resourceID: format,
+            resourceID: formatID,
             resources: resources
         )
         
@@ -94,12 +94,12 @@ extension FCPXMLTimelineAttributes {
         let duration = try? FinalCutPro.FCPXML.timecode(
             fromRational: rawValues[.duration] ?? "",
             tcFormat: tcFormat,
-            resourceID: format,
+            resourceID: formatID,
             resources: resources
         )
         
         return (
-            format: format,
+            format: formatID,
             timecodeFormat: tcFormat,
             startTimecode: startTimecode,
             duration: duration

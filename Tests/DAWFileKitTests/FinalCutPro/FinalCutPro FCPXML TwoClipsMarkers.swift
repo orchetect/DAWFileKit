@@ -82,7 +82,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         let sequence = project.sequence
         
-        XCTAssertEqual(sequence.format, "r1")
+        XCTAssertEqual(sequence.formatID, "r1")
         XCTAssertEqual(sequence.startTimecode, try Timecode(.components(h: 1), at: .fps29_97, base: .max80SubFrames))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps29_97)
         XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)

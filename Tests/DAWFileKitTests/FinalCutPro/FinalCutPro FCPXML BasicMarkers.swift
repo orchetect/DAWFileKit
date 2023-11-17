@@ -91,7 +91,7 @@ class FinalCutPro_FCPXML_BasicMarkers: XCTestCase {
         
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         
-        XCTAssertEqual(sequence.format, "r1")
+        XCTAssertEqual(sequence.formatID, "r1")
         XCTAssertEqual(sequence.startTimecode, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps29_97)
         XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)

@@ -415,7 +415,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         // sequence
         
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
-        XCTAssertEqual(sequence.format, "r1")
+        XCTAssertEqual(sequence.formatID, "r1")
         XCTAssertEqual(sequence.startTimecode, Timecode(.zero, at: .fps25, base: .max80SubFrames))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps25)
         XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)
@@ -428,7 +428,8 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         let spine = sequence.spine
         XCTAssertEqual(spine.elements.count, 3)
                 
-        guard case let .anyClip(.assetClip(element1)) = spine.elements[0] else { XCTFail("Clip was not expected type.") ; return }
+        guard case let .anyClip(.assetClip(element1)) = spine.elements[0] 
+        else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps25, base: .max80SubFrames))
         XCTAssertEqual(element1.offset?.frameRate, .fps25)
@@ -438,7 +439,8 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         XCTAssertEqual(element1.duration?.frameRate, .fps25)
         XCTAssertEqual(element1.audioRole, "dialogue")
         
-        guard case let .anyClip(.assetClip(element2)) = spine.elements[1] else { XCTFail("Clip was not expected type.") ; return }
+        guard case let .anyClip(.assetClip(element2)) = spine.elements[1] 
+        else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element2.ref, "r5")
         XCTAssertEqual(element2.offset, Self.tc("00:02:22:01"))
         XCTAssertEqual(element2.offset?.frameRate, .fps25)
@@ -448,7 +450,8 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         XCTAssertEqual(element2.duration?.frameRate, .fps25)
         XCTAssertEqual(element2.audioRole, "dialogue")
         
-        guard case let .anyClip(.video(element3)) = spine.elements[2] else { XCTFail("Clip was not expected type.") ; return }
+        guard case let .anyClip(.video(element3)) = spine.elements[2] 
+        else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element3.ref, "r7")
         XCTAssertEqual(element3.offset, Self.tc("00:05:47:21"))
         XCTAssertEqual(element3.offset?.frameRate, .fps25)

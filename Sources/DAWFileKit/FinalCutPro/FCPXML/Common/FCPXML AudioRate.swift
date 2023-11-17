@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    /// "audioRate" attribute.
+    /// `audioRate` attribute value.
     /// These are all of the rates that are selectable within Final Cut Pro 10.6.10.
     public enum AudioRate: String {
         case rate32kHz = "32k"

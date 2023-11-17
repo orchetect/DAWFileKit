@@ -96,13 +96,13 @@ extension FinalCutPro.FCPXML {
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> VideoFrameRate? {
         guard case let .format(resource) = resources[id] else { return nil }
-        return videoFrameRate(forFormatResource: resource)
+        return videoFrameRate(for: resource)
     }
     
     // TODO: Refactor using AnyResource and/or resource protocol. I think more than just `format` resource can contain frame rate info?
     /// Convenience: returns the video frame rate for the given resource ID.
     static func videoFrameRate(
-        forFormatResource format: Format
+        for format: Format
     ) -> VideoFrameRate? {
         let interlaced = format.fieldOrder != nil
         guard let frameDuration = format.frameDuration,
@@ -140,10 +140,10 @@ extension FinalCutPro.FCPXML {
     
     /// Convenience: returns the timecode frame rate for the given resource ID & `tcFormat`.
     static func timecodeFrameRate(
-        forFormatResource format: Format,
+        for format: Format,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat
     ) -> TimecodeFrameRate? {
-        guard let videoRate = FinalCutPro.FCPXML.videoFrameRate(forFormatResource: format),
+        guard let videoRate = FinalCutPro.FCPXML.videoFrameRate(for: format),
               let frameRate = videoRate.timecodeFrameRate(drop: tcFormat.isDrop)
         else { return nil }
         return frameRate
@@ -159,7 +159,7 @@ extension FinalCutPro.FCPXML {
               let tcFormat = tcFormat(forElementOrAncestors: xmlLeaf)
         else { return nil }
         
-        return timecodeFrameRate(forFormatResource: format, tcFormat: tcFormat)
+        return timecodeFrameRate(for: format, tcFormat: tcFormat)
     }
     
     /// Traverses the parents of the given XML leaf and returns the resource corresponding to the
@@ -169,7 +169,7 @@ extension FinalCutPro.FCPXML {
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> FinalCutPro.FCPXML.Format? {
         if let (resourceID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "format") {
-            return format(for: resourceID, in: resources)
+            return format(forResourceID: resourceID, in: resources)
         }
         // ref could point to any resource and not just format, ie: asset or effect. we need to
         // continue drilling into it.
@@ -213,7 +213,7 @@ extension FinalCutPro.FCPXML {
     }
     
     static func format(
-        for resourceID: String,
+        forResourceID resourceID: String,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> FinalCutPro.FCPXML.Format? {
         guard let resource = resources[resourceID]
@@ -231,7 +231,7 @@ extension FinalCutPro.FCPXML {
             // an asset should contain a format attribute that we can use to look up the actual
             // format resource
             guard let assetFormatID = asset.format else { return nil }
-            return format(for: assetFormatID, in: resources)
+            return format(forResourceID: assetFormatID, in: resources)
             
         case .media(_):
             // TODO: finish this

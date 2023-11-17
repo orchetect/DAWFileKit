@@ -53,6 +53,6 @@ import Foundation
 /// > See [this topic](
 /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
 /// > ).
-public protocol FCPXMLEffectElement { }
+// public protocol FCPXMLEffectElement { }
 
 #endif

@@ -16,7 +16,7 @@ extension FinalCutPro.FCPXML {
     /// clip.
     public struct Sequence {
         // FCPXMLTimelineAttributes
-        public let format: String
+        public let formatID: String
         public let startTimecode: Timecode? // (absolute `tcStart` timecode, not relative `start`)
         public let duration: Timecode?
         
@@ -31,7 +31,7 @@ extension FinalCutPro.FCPXML {
         
         public init?(
             // FCPXMLTimelineAttributes
-            format: String,
+            formatID: String,
             startTimecode: Timecode?,
             duration: Timecode?,
             // sequence attributes
@@ -43,7 +43,7 @@ extension FinalCutPro.FCPXML {
             spine: Spine
         ) {
             // FCPXMLTimelineAttributes
-            self.format = format
+            self.formatID = formatID
             self.startTimecode = startTimecode
             self.duration = duration
             
@@ -69,7 +69,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLTimelineAttributes {
             resources: resources
         ) else { return nil }
         
-        format = timelineAttributes.format
+        formatID = timelineAttributes.format
         startTimecode = timelineAttributes.startTimecode
         duration = timelineAttributes.duration
         

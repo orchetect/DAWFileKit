@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    /// "audioLayout" attribute.
+    /// `audioLayout` attribute value.
     public enum AudioLayout: String {
         case mono
         case stereo
