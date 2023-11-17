@@ -103,7 +103,7 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLMarkersExtractable {
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings,
+        settings: FCPXMLExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         switch settings.auditionMask {

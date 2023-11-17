@@ -94,9 +94,14 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
     }
 }
 
+extension FinalCutPro.FCPXML.Gap: _FCPXMLExtractableElement {
+    var extractableStart: Timecode? { start }
+    var extractableName: String? { name }
+}
+
 extension FinalCutPro.FCPXML.Gap: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings,
+        settings: FCPXMLExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         extractMarkers(

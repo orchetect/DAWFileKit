@@ -164,6 +164,11 @@ extension Collection<FinalCutPro.FCPXML.AnyClip> {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyClip: _FCPXMLExtractableElement {
+    var extractableStart: Timecode? { start }
+    var extractableName: String? { name }
+}
+
 extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
     public var markers: [FinalCutPro.FCPXML.Marker] {
         switch self {
@@ -181,7 +186,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings,
+        settings: FCPXMLExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         switch self {

@@ -342,7 +342,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
     }
     
     func debugString(for em: FinalCutPro.FCPXML.ExtractedMarker) -> String {
-        let absTC = em.absoluteStart?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
+        let absTC = em.context.absoluteStart?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
         let name = em.marker.name.quoted
         let note = em.marker.note != nil ? " note:\(em.marker.note!.quoted)" : ""
         let durTC = em.marker.duration?.stringValue(format: [.showSubFrames]) ?? "?"
@@ -500,7 +500,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // extract markers
         let extractedMarkers = event.extractMarkers(
-            settings: FCPXMLMarkersExtractionSettings(
+            settings: FCPXMLExtractionSettings(
                 // deep: true,
                 excludeTypes: [],
                 auditionMask: .activeAudition
@@ -518,19 +518,19 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
                 XCTFail("Marker not extracted: \(tcString) \(nameString)")
                 continue
             }
-            XCTAssertEqual(extractedMarker.absoluteStart, md.timecode, md.name)
             XCTAssertEqual(extractedMarker.marker.name, md.name, md.name)
             XCTAssertEqual(extractedMarker.marker.metaData, md.md, md.name)
             XCTAssertEqual(extractedMarker.marker.note, md.note, md.name)
             XCTAssertEqual(extractedMarker.marker.duration, md.clip.markerDuration.duration, md.name)
             
-            XCTAssertEqual(extractedMarker.parentType, .anyClip(md.clip.clipType), md.name)
-            XCTAssertEqual(extractedMarker.parentName, md.clip.name, md.name)
-            XCTAssertEqual(extractedMarker.parentAbsoluteStart, md.clip.absoluteStart, md.name)
-            XCTAssertEqual(extractedMarker.parentDuration, md.clip.duration, md.name)
+            XCTAssertEqual(extractedMarker.context.absoluteStart, md.timecode, md.name)
+            XCTAssertEqual(extractedMarker.context.parentType, .anyClip(md.clip.clipType), md.name)
+            XCTAssertEqual(extractedMarker.context.parentName, md.clip.name, md.name)
+            XCTAssertEqual(extractedMarker.context.parentAbsoluteStart, md.clip.absoluteStart, md.name)
+            XCTAssertEqual(extractedMarker.context.parentDuration, md.clip.duration, md.name)
             
-            XCTAssertEqual(extractedMarker.ancestorEventName, "Example A")
-            XCTAssertEqual(extractedMarker.ancestorProjectName, "Marker Data Demo_V2")
+            XCTAssertEqual(extractedMarker.context.ancestorEventName, "Example A")
+            XCTAssertEqual(extractedMarker.context.ancestorProjectName, "Marker Data Demo_V2")
         }
         
          print(debugString(for: extractedMarkers))

@@ -127,6 +127,13 @@ extension FinalCutPro.FCPXML.Marker {
     }
 }
 
+extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement { }
+
+extension FinalCutPro.FCPXML.Marker: _FCPXMLExtractableElement {
+    var extractableStart: Timecode? { start }
+    var extractableName: String? { name }
+}
+
 extension FinalCutPro.FCPXML.Marker {
     /// Returns the marker type.
     public var markerType: MarkerType {

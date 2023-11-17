@@ -36,7 +36,7 @@ extension FinalCutPro.FCPXML {
         public var parentDuration: Timecode?
         
         /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-        init<Element: FCPXMLExtractableElement>(
+        init<Element: _FCPXMLExtractableElement>(
             element: Element,
             settings: FCPXMLExtractionSettings,
             parent: AnyStoryElement,
@@ -64,7 +64,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.ElementContext {
-    private static func calculateAbsoluteStart<Element: FCPXMLExtractableElement>(
+    private static func calculateAbsoluteStart<Element: _FCPXMLExtractableElement>(
         element: Element,
         parent: FinalCutPro.FCPXML.AnyStoryElement,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement],
@@ -72,14 +72,14 @@ extension FinalCutPro.FCPXML.ElementContext {
     ) -> Timecode? {
         let parentStart = nearestStart(parent: parent, ancestorsOfParent: ancestorsOfParent)
         
-        guard let elementStart = element.start,
+        guard let elementStart = element.extractableStart,
               let parentStart = parentStart,
               let parentAbsoluteStart = parentAbsoluteStart
         else {
             let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
             let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
             print(
-                "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
+                "Error calculating absolute timecode for element \(element.extractableName?.quoted ?? "")."
                     + " Parent absolute start: \(pas) Parent start: \(ps)"
             )
             return nil
@@ -91,7 +91,7 @@ extension FinalCutPro.FCPXML.ElementContext {
             by: .wrapping
         )
         else {
-            print("Error offsetting timecode for element \(element.name?.quoted ?? "").")
+            print("Error offsetting timecode for element \(element.extractableName?.quoted ?? "").")
             return nil
         }
         

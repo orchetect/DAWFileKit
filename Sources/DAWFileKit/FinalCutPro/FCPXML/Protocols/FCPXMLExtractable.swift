@@ -15,17 +15,22 @@ import TimecodeKit
 public protocol FCPXMLExtractable { // parent/container
     /// Extract elements from the element and optionally recursively from all sub-elements.
     /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-    func extractElements<Element: FCPXMLExtractableElement>(
-        settings: FCPXMLExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedElement<Element>]
+//    func extractElements<Element: _FCPXMLExtractableElement>(
+//        settings: FCPXMLExtractionSettings,
+//        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
+//    ) -> [FinalCutPro.FCPXML.ExtractedElement<Element>]
 }
 
 /// A FCPXML element that is capable of being extracted by a ``FCPXMLExtractable``-conforming parent
 /// element.
-public protocol FCPXMLExtractableElement: FCPXMLStoryElement {
-    var start: Timecode? { get }
-    var name: String? { get }
+public protocol FCPXMLExtractableElement { }
+
+protocol _FCPXMLExtractableElement: FCPXMLExtractableElement {
+    /// Return the `start` attribute value, otherwise `nil`. (Note: not `tcStart`).
+    var extractableStart: Timecode? { get }
+    
+    /// Return the `name` attribute value, otherwise `nil`.
+    var extractableName: String? { get }
 }
 
 public struct FCPXMLExtractionSettings {

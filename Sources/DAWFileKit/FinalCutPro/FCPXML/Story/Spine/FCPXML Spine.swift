@@ -67,13 +67,18 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
     }
 }
 
+extension FinalCutPro.FCPXML.Spine: _FCPXMLExtractableElement {
+    var extractableStart: Timecode? { nil }
+    var extractableName: String? { name }
+}
+
 extension FinalCutPro.FCPXML.Spine: FCPXMLMarkersExtractable {
     public var markers: [FinalCutPro.FCPXML.Marker] {
         elements.flatMap { $0.markers }
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings,
+        settings: FCPXMLExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         let childAncestors = ancestorsOfParent + [self.asAnyStoryElement()]

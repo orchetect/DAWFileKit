@@ -115,6 +115,17 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
     }
 }
 
+extension FinalCutPro.FCPXML.Sequence: FCPXMLExtractable {
+    // (`sequence` does not contain a relative `start`)
+    public var start: TimecodeKit.Timecode? {
+        nil
+    }
+    
+    public var name: String? {
+        nil
+    }
+}
+
 extension FinalCutPro.FCPXML.Sequence: FCPXMLMarkersExtractable {
     /// Always returns an empty array since a sequence cannot directly contain markers.
     public var markers: [FinalCutPro.FCPXML.Marker] {
@@ -122,7 +133,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLMarkersExtractable {
     }
     
     public func extractMarkers(
-        settings: FCPXMLMarkersExtractionSettings,
+        settings: FCPXMLExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         let childAncestors = ancestorsOfParent + [self.asAnyStoryElement()]

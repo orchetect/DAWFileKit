@@ -44,7 +44,7 @@ import Foundation
 /// > using the elements listed under [Annotation and Note Elements](
 /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
 /// > ).
-public protocol FCPXMLStoryElement {
+public protocol FCPXMLStoryElement: FCPXMLExtractableElement {
     /// Returns the story element type enum case.
     var storyElementType: FinalCutPro.FCPXML.StoryElementType { get }
     
