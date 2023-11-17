@@ -9,6 +9,8 @@
 import Foundation
 @_implementationOnly import OTCore
 
+// MARK: Generic XML Utilities
+
 extension XMLElement {
     var parentXMLElement: XMLElement? {
         parent as? XMLElement
@@ -18,7 +20,11 @@ extension XMLElement {
     func first(childNamed name: String) -> XMLElement? {
         children?.first(where: { $0.name == name }) as? XMLElement
     }
-    
+}
+
+// MARK: Ancestor Triage
+
+extension XMLElement {
     /// Returns the first non-nil value for the given attribute name,
     /// starting from the current XML element, then successively traversing ancestors.
     func attributeStringValueTraversingAncestors(
@@ -55,7 +61,11 @@ extension XMLElement {
         // recursively traverse ancestors
         return parent.first(ancestorNamed: name)
     }
-    
+}
+
+// MARK: Ancestor Walking
+
+extension XMLElement {
     func walkAncestors<T>(
         includingSelf: Bool,
         returning: T.Type,

@@ -133,7 +133,7 @@ extension FinalCutPro.FCPXML.AssetClip: _FCPXMLExtractableElement {
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLExtractionSettings,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         extractMarkers(

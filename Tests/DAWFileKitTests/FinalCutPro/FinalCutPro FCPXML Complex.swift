@@ -500,7 +500,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // extract markers
         let extractedMarkers = event.extractMarkers(
-            settings: FCPXMLExtractionSettings(
+            settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
                 excludeTypes: [],
                 auditionMask: .activeAudition

@@ -38,7 +38,7 @@ extension FinalCutPro.FCPXML {
         /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
         init<Element: _FCPXMLExtractableElement>(
             element: Element,
-            settings: FCPXMLExtractionSettings,
+            settings: ExtractionSettings,
             parent: AnyStoryElement,
             ancestorsOfParent: [AnyStoryElement]
         ) {

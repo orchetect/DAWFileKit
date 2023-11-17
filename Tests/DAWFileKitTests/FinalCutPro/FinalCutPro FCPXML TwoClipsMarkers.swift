@@ -74,9 +74,9 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         // project
         
         let projects = event.projects
-        XCTAssertEqual(event.projects.count, 1)
+        XCTAssertEqual(projects.count, 1)
         
-        let project = try XCTUnwrap(event.projects.first)
+        let project = try XCTUnwrap(projects.first)
         
         // sequence
         
@@ -176,7 +176,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
-            settings: FCPXMLExtractionSettings(
+            settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
                 excludeTypes: [],
                 auditionMask: .activeAudition
@@ -259,7 +259,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
-            settings: FCPXMLExtractionSettings(
+            settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
                 excludeTypes: [.anyClip(.title)],
                 auditionMask: .activeAudition
@@ -288,7 +288,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
-            settings: FCPXMLExtractionSettings(
+            settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
                 excludeTypes: [.anyClip(.gap)],
                 auditionMask: .activeAudition
@@ -320,7 +320,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
-            settings: FCPXMLExtractionSettings(
+            settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
                 excludeTypes: [.anyClip(.gap), .anyClip(.title)],
                 auditionMask: .activeAudition

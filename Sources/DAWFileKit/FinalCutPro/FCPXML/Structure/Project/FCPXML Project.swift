@@ -96,7 +96,7 @@ extension FinalCutPro.FCPXML.Project: FCPXMLMarkersExtractable {
     }
     
     public func extractMarkers(
-        settings: FCPXMLExtractionSettings,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         let settings = settings.updating(ancestorProjectName: name)

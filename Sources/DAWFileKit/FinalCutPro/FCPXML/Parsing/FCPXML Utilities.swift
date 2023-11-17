@@ -10,7 +10,7 @@ import Foundation
 @_implementationOnly import OTCore
 import TimecodeKit
 
-// MARK: - Generic XML Utils
+// MARK: - FCPXML Utils
 
 extension FinalCutPro.FCPXML {
     // TODO: refactor to new FCPXML protocol?

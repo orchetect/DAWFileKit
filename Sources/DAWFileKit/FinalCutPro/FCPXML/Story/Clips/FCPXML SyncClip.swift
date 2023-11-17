@@ -100,7 +100,7 @@ extension FinalCutPro.FCPXML.SyncClip: _FCPXMLExtractableElement {
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLMarkersExtractable {
     public func extractMarkers(
-        settings: FCPXMLExtractionSettings,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
         extractMarkers(

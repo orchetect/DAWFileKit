@@ -16,7 +16,7 @@ public protocol FCPXMLMarkersExtractable: FCPXMLExtractable {
     /// Extract markers from the element and optionally recursively from all sub-elements.
     /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
     func extractMarkers(
-        settings: FCPXMLExtractionSettings,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker]
 }
@@ -32,7 +32,7 @@ extension FinalCutPro.FCPXML {
 
 extension FCPXMLMarkersExtractable where Self: FCPXMLStoryElement {
     public func extractMarkers(
-        settings: FCPXMLExtractionSettings,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement],
         children: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
@@ -54,7 +54,7 @@ extension FCPXMLMarkersExtractable where Self: FCPXMLStoryElement {
 
 extension Collection<FinalCutPro.FCPXML.Marker> {
     func convertToExtractedMarkers(
-        settings: FCPXMLExtractionSettings,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
         parent: FinalCutPro.FCPXML.AnyStoryElement,
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
     ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
