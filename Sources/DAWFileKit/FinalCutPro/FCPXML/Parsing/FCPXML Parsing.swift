@@ -153,12 +153,19 @@ extension FinalCutPro.FCPXML {
               let parentStart = parentStart,
               let parentAbsoluteStart = parentAbsoluteStart
         else {
-            let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
-            let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
-            print(
-                "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
-                + " Parent absolute start: \(pas) Parent start: \(ps)"
-            )
+            // skip emitting an error for elements known to not have start information
+            // or known to not inherit absolute start information
+            if element.elementType != .structure(.library),
+               element.elementType != .structure(.event),
+               element.elementType != .structure(.project)
+            {
+                let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+                let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+                print(
+                    "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
+                    + " Parent absolute start: \(pas) Parent start: \(ps)"
+                )
+            }
             return nil
         }
         
