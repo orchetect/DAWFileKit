@@ -37,23 +37,29 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Audition: FCPXMLClipAttributes {
     public var name: String? {
-        clips.first?.name
+        activeClip?.name
     }
     
     public var start: TimecodeKit.Timecode? {
-        clips.first?.start
+        activeClip?.start
     }
     
     public var duration: TimecodeKit.Timecode? {
-        clips.first?.duration
+        activeClip?.duration
     }
     
     public var enabled: Bool {
-        clips.first?.enabled ?? true
+        activeClip?.enabled ?? true
     }
     
     public var offset: TimecodeKit.Timecode? {
-        clips.first?.offset
+        activeClip?.offset
+    }
+}
+
+extension FinalCutPro.FCPXML.Audition: FCPXMLElementContext {
+    public var context: FinalCutPro.FCPXML.ElementContext {
+        activeClip?.context ?? .init()
     }
 }
 
@@ -72,7 +78,14 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
             lane = Int(laneString)
         }
         
-        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
+        let storyElements = FinalCutPro.FCPXML.storyElements(in: xmlLeaf, resources: resources)
+        
+        // filter only clips, since auditions can only contain clips and not other story elements
+        clips = storyElements.clips()
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == clipType.rawValue else { return nil }
     }
     
     public var clipType: FinalCutPro.FCPXML.ClipType { .audition }
@@ -91,33 +104,38 @@ extension FinalCutPro.FCPXML.Audition {
     }
 }
 
-extension FinalCutPro.FCPXML.Audition: FCPXMLMarkersExtractable {
-    /// Always returns an empty array since an audition cannot directly contain markers.
-    public var markers: [FinalCutPro.FCPXML.Marker] {
+extension FinalCutPro.FCPXML.Audition: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
         []
     }
     
-    public func extractMarkers(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
         switch settings.auditionMask {
         case .omitAuditions:
             return []
             
         case .activeAudition:
-            let children = clips.prefix(1).asAnyStoryElements()
-            return extractMarkers(
+            guard let activeClip = activeClip else {
+                print("Note: No active audition in FCPXML audition clip.")
+                return []
+            }
+            return extractElements(
                 settings: settings,
                 ancestorsOfParent: ancestorsOfParent,
-                children: children
+                contents: [activeClip.asAnyElement()],
+                matching: predicate
             )
             
         case .allAuditions:
-            return extractMarkers(
+            return extractElements(
                 settings: settings,
                 ancestorsOfParent: ancestorsOfParent,
-                children: clips.asAnyStoryElements()
+                contents: clips.asAnyElements(),
+                matching: predicate
             )
         }
     }

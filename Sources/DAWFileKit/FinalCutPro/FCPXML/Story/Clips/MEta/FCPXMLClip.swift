@@ -21,12 +21,6 @@ public protocol FCPXMLClip: FCPXMLStoryElement where Self: Equatable {
     )
 }
 
-extension FCPXMLClip {
-    func isEqual(to other: some FCPXMLClip) -> Bool {
-        self.asAnyClip() == other.asAnyClip()
-    }
-}
-
 // MARK: - Sub-Protocol Implementations
 
 extension FCPXMLClip /* : FCPXMLStoryElement */ {
@@ -36,6 +30,40 @@ extension FCPXMLClip /* : FCPXMLStoryElement */ {
     
     public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement {
         .anyClip(self.asAnyClip())
+    }
+}
+
+// MARK: - Equatable
+
+extension FCPXMLClip {
+    func isEqual(to other: some FCPXMLClip) -> Bool {
+        self.asAnyClip() == other.asAnyClip()
+    }
+}
+
+// MARK: - Nested Type Erasure
+
+extension FCPXMLClip {
+    public func asAnyElement() -> FinalCutPro.FCPXML.AnyElement {
+        .story(asAnyStoryElement())
+    }
+}
+
+extension Collection where Element: FCPXMLClip {
+    public func asAnyElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        map { $0.asAnyElement() }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyClip> {
+    public func asAnyStoryElements() -> [FinalCutPro.FCPXML.AnyStoryElement] {
+        map { $0.asAnyStoryElement() }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyClip> {
+    public func asAnyElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        map { $0.asAnyElement() }
     }
 }
 
@@ -53,7 +81,7 @@ extension Dictionary where Value == FinalCutPro.FCPXML.AnyClip {
     }
 }
 
-extension Collection<FCPXMLClip> {
+extension Collection where Element: FCPXMLClip {
     public func contains(_ clip: FinalCutPro.FCPXML.AnyClip) -> Bool {
         contains(where: { $0.asAnyClip() == clip })
     }

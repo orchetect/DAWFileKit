@@ -112,6 +112,14 @@ extension FinalCutPro.FCPXML.AnyClip {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyClip: FCPXMLElementContext {
+    public var context: FinalCutPro.FCPXML.ElementContext {
+        wrapped.context
+    }
+}
+
+// MARK: Proxy Properties
+
 extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     public var asFCPXMLClipAttributes: FCPXMLClipAttributes {
         switch self {
@@ -163,59 +171,163 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClipAttributes {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyClip: _FCPXMLExtractableElement {
-    var extractableStart: Timecode? { start }
-    var extractableName: String? { name }
-}
-
-extension FinalCutPro.FCPXML.AnyClip: FCPXMLMarkersExtractable {
-    public var markers: [FinalCutPro.FCPXML.Marker] {
+extension FinalCutPro.FCPXML.AnyClip: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case let .assetClip(clip): return clip.markers
-        case let .audio(clip): return clip.markers
-        case let .audition(clip): return clip.markers
-        case let .clip(clip): return clip.markers
-        case let .gap(clip): return clip.markers
-        case let .mcClip(clip): return clip.markers
-        case let .refClip(clip): return clip.markers
-        case let .syncClip(clip): return clip.markers
-        case let .title(clip): return clip.markers
-        case let .video(clip): return clip.markers
+        case let .assetClip(clip): return clip.extractableElements()
+        case let .audio(clip): return clip.extractableElements()
+        case let .audition(clip): return clip.extractableElements()
+        case let .clip(clip): return clip.extractableElements()
+        case let .gap(clip): return clip.extractableElements()
+        case let .mcClip(clip): return clip.extractableElements()
+        case let .refClip(clip): return clip.extractableElements()
+        case let .syncClip(clip): return clip.extractableElements()
+        case let .title(clip): return clip.extractableElements()
+        case let .video(clip): return clip.extractableElements()
         }
     }
     
-    public func extractMarkers(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
         case let .assetClip(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .audio(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .audition(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .clip(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .gap(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .mcClip(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .refClip(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .syncClip(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .title(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .video(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         }
     }
 }
 
+// MARK: - Filtering
+
 extension Collection<FinalCutPro.FCPXML.AnyClip> {
-    public func asAnyStoryElements() -> [FinalCutPro.FCPXML.AnyStoryElement] {
-        map { $0.asAnyStoryElement() }
+    /// Convenience to filter the FCPXML clip collection and return only `asset-clip`s.
+    public func assetClips() -> [FinalCutPro.FCPXML.AssetClip] {
+        reduce(into: []) { elements, element in
+            if case let .assetClip(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only `audio` clips.
+    public func audios() -> [FinalCutPro.FCPXML.Audio] {
+        reduce(into: []) { elements, element in
+            if case let .audio(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only `audition` clips.
+    public func auditions() -> [FinalCutPro.FCPXML.Audition] {
+        reduce(into: []) { elements, element in
+            if case let .audition(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only plain `clip`s.
+    public func clips() -> [FinalCutPro.FCPXML.Clip] {
+        reduce(into: []) { elements, element in
+            if case let .clip(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only `gap` clips.
+    public func gaps() -> [FinalCutPro.FCPXML.Gap] {
+        reduce(into: []) { elements, element in
+            if case let .gap(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only multicam `mc-clip`s.
+    public func mcClips() -> [FinalCutPro.FCPXML.MCClip] {
+        reduce(into: []) { elements, element in
+            if case let .mcClip(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only reference `ref-clip`s.
+    public func refClips() -> [FinalCutPro.FCPXML.RefClip] {
+        reduce(into: []) { elements, element in
+            if case let .refClip(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only reference `sync-clip`s.
+    public func syncClips() -> [FinalCutPro.FCPXML.SyncClip] {
+        reduce(into: []) { elements, element in
+            if case let .syncClip(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only `title` clips.
+    public func titles() -> [FinalCutPro.FCPXML.Title] {
+        reduce(into: []) { elements, element in
+            if case let .title(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML clip collection and return only `video` clips.
+    public func videos() -> [FinalCutPro.FCPXML.Video] {
+        reduce(into: []) { elements, element in
+            if case let .video(element) = element { elements.append(element) }
+        }
     }
 }
 

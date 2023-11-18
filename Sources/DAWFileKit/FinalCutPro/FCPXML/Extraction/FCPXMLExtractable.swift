@@ -7,39 +7,85 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 @_implementationOnly import OTCore
+import TimecodeKit
 
 /// A FCPXML element that is capable of extracting its own contents as well as the contents of its
 /// children, if any.
 public protocol FCPXMLExtractable { // parent/container
+    /// Extractable elements contained immediately within the element. Do not include children.
+    func extractableElements() -> [FinalCutPro.FCPXML.AnyElement]
+    
     /// Extract elements from the element and optionally recursively from all sub-elements.
     /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-//    func extractElements<Element: _FCPXMLExtractableElement>(
-//        settings: FinalCutPro.FCPXML.ExtractionSettings,
-//        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-//    ) -> [FinalCutPro.FCPXML.ExtractedElement<Element>]
+    func extractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement]
 }
 
-/// A FCPXML element that is capable of being extracted by a ``FCPXMLExtractable``-conforming parent
-/// element.
-public protocol FCPXMLExtractableElement { }
+// MARK: - Extraction Logic
 
-protocol _FCPXMLExtractableElement: FCPXMLExtractableElement {
-    /// Proxy getter for ``FCPXMLExtractableElement``:
-    /// Return the `start` attribute value, otherwise `nil`. (Note: not `tcStart`).
-    var extractableStart: Timecode? { get }
+extension FCPXMLExtractable where Self: FCPXMLElement {
+    func extractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        contents: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        let isFiltered = settings.excludeTypes.contains(elementType)
+        guard !isFiltered else { return [] }
+        
+        let ownElements = [self.asAnyElement()] + extractableElements()
+        
+        let childAncestors = ancestorsOfParent + [self.asAnyElement()]
+        
+        let childElements = contents.flatMap {
+            $0.extractableElements()
+                + $0.extractElements(
+                    settings: settings,
+                    ancestorsOfParent: childAncestors,
+                    matching: predicate
+                )
+        }
+        
+        let matchingElements = (ownElements + childElements).filter(predicate)
+        
+        return matchingElements
+    }
+}
+
+// MARK: - Specialized Extraction
+
+extension FCPXMLExtractable {
+    /// Extract all nested markers.
+    public func extractMarkers(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement] = []
+    ) -> [FinalCutPro.FCPXML.Marker] {
+        let extracted = extractElements(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent) { element in
+                element.elementType == .story(.anyAnnotation(.marker)) ||
+                element.elementType == .story(.anyAnnotation(.chapterMarker))
+            }
+        let markers = extracted.storyElements().annotations().markers()
+        return markers
+    }
     
-    /// Proxy getter for ``FCPXMLExtractableElement``:
-    /// Return the `name` attribute value, otherwise `nil`.
-    var extractableName: String? { get }
-}
-
-extension FinalCutPro.FCPXML {
-    /// Contains an extracted element along with pertinent contextual metadata.
-    public struct ExtractedElement<Element: FCPXMLExtractableElement> {
-        public var element: Element
-        public var context: ElementContext
+    /// Extract all nested captions.
+    public func extractCaptions(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement] = []
+    ) -> [FinalCutPro.FCPXML.Caption] {
+        let extracted = extractElements(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent) { element in
+                element.elementType == .story(.anyAnnotation(.caption))
+            }
+        let captions = extracted.storyElements().annotations().captions()
+        return captions
     }
 }
 

@@ -36,6 +36,10 @@ extension FinalCutPro.FCPXML.Media: FCPXMLResource {
     
     public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == resourceType.rawValue else { return nil }
     }
     
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .media }

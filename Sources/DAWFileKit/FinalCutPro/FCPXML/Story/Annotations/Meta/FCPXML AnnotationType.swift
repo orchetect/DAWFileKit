@@ -10,17 +10,21 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // TODO: will likely factor this out, as it does not align with the DTD's structure.
+    // TODO: add `analysis-marker`?
     
     /// Items within clips.
     public enum AnnotationType: String, CaseIterable {
+        /// Closed caption.
+        case caption
+        
+        /// Keyword.
+        case keyword
+        
         /// Marker. Includes standard and to-do markers.
         case marker
         
         /// Chapter Marker.
         case chapterMarker = "chapter-marker"
-        
-        // TODO: add additional clip items
     }
 }
 

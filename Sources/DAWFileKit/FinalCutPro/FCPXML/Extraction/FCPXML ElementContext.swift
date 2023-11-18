@@ -13,7 +13,7 @@ extension FinalCutPro.FCPXML {
     /// Context for a model element.
     ///
     /// Adds context information for an element's parent, as well as absolute timecode information.
-    public struct ElementContext {
+    public struct ElementContext: Equatable, Hashable {
         /// The absolute start timecode of the element.
         public var absoluteStart: Timecode?
         
@@ -24,7 +24,7 @@ extension FinalCutPro.FCPXML {
         public var ancestorProjectName: String?
         
         /// The parent clip's type.
-        public var parentType: StoryElementType
+        public var parentType: ElementType?
         
         /// The parent clip's name.
         public var parentName: String?
@@ -35,116 +35,63 @@ extension FinalCutPro.FCPXML {
         /// The parent clip's duration.
         public var parentDuration: Timecode?
         
-        /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-        init<Element: _FCPXMLExtractableElement>(
-            element: Element,
-            settings: ExtractionSettings,
-            parent: AnyStoryElement,
-            ancestorsOfParent: [AnyStoryElement]
+        public init(
+            absoluteStart: Timecode? = nil,
+            ancestorEventName: String? = nil,
+            ancestorProjectName: String? = nil,
+            parentType: ElementType? = nil,
+            parentName: String? = nil,
+            parentAbsoluteStart: Timecode? = nil,
+            parentDuration: Timecode? = nil
         ) {
-            ancestorEventName = settings.ancestorEventName
-            ancestorProjectName = settings.ancestorProjectName
-            
-            parentType = parent.storyElementType
-            parentName = parent.name
-            parentAbsoluteStart = Self.aggregateOffset(
-                parent: parent,
-                ancestorsOfParent: ancestorsOfParent
-            )
-            parentDuration = parent.duration
-            
-            absoluteStart = Self.calculateAbsoluteStart(
-                element: element, 
-                parent: parent,
-                ancestorsOfParent: ancestorsOfParent,
-                parentAbsoluteStart: parentAbsoluteStart
-            )
+            self.absoluteStart = absoluteStart
+            self.ancestorEventName = ancestorEventName
+            self.ancestorProjectName = ancestorProjectName
+            self.parentType = parentType
+            self.parentName = parentName
+            self.parentAbsoluteStart = parentAbsoluteStart
+            self.parentDuration = parentDuration
         }
     }
 }
 
 extension FinalCutPro.FCPXML.ElementContext {
-    private static func calculateAbsoluteStart<Element: _FCPXMLExtractableElement>(
-        element: Element,
-        parent: FinalCutPro.FCPXML.AnyStoryElement,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement],
-        parentAbsoluteStart: Timecode?
-    ) -> Timecode? {
-        let parentStart = nearestStart(parent: parent, ancestorsOfParent: ancestorsOfParent)
-        
-        guard let elementStart = element.extractableStart,
-              let parentStart = parentStart,
-              let parentAbsoluteStart = parentAbsoluteStart
-        else {
-            let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
-            let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
-            print(
-                "Error calculating absolute timecode for element \(element.extractableName?.quoted ?? "")."
-                    + " Parent absolute start: \(pas) Parent start: \(ps)"
-            )
-            return nil
-        }
-        
-        let localElementStart = elementStart - parentStart
-        guard let elementAbsoluteStart = try? parentAbsoluteStart.adding(
-            localElementStart,
-            by: .wrapping
+    public init(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) {
+        absoluteStart = FinalCutPro.FCPXML.calculateAbsoluteStart(
+            element: xmlLeaf,
+            resources: resources
         )
-        else {
-            print("Error offsetting timecode for element \(element.extractableName?.quoted ?? "").")
-            return nil
-        }
         
-        return elementAbsoluteStart
-    }
-    
-    /// Return absolute timecode of innermost parent by calculating aggregate offset of ancestors.
-    /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-    private static func aggregateOffset(
-        parent: FinalCutPro.FCPXML.AnyStoryElement,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> Timecode? {
-        let ancestors = ancestorsOfParent + [parent] // topmost -> innermost
+        let ancestorEvent = xmlLeaf.first(
+            ancestorNamed: FinalCutPro.FCPXML.StructureElementType.event.rawValue
+        )
+        ancestorEventName = FinalCutPro.FCPXML.getNameAttribute(from: ancestorEvent)
         
-        var pos: Timecode?
+        let ancestorProject = xmlLeaf.first(
+            ancestorNamed: FinalCutPro.FCPXML.StructureElementType.project.rawValue
+        )
+        ancestorProjectName = FinalCutPro.FCPXML.getNameAttribute(from: ancestorProject)
         
-        func add(_ other: Timecode?) {
-            guard let other = other else { return }
-            let newTC = pos ?? Timecode(.zero, using: other.properties)
-            pos = try? newTC.adding(other, by: .wrapping)
-        }
-        
-        for ancestor in ancestors {
-            switch ancestor {
-            case let .anyClip(clip):
-                add(clip.offset)
-                
-            case .sequence(_ /* let sequence */ ):
-                // pos = sequence.startTimecode
-                break
-                
-            case let .spine(spine):
-                add(spine.offset)
+        if let parent = xmlLeaf.parentXMLElement {
+            if let nameValue = parent.name {
+                parentType = FinalCutPro.FCPXML.ElementType(rawValue: nameValue)
+            }
+            parentName = FinalCutPro.FCPXML.getNameAttribute(from: parent)
+            parentAbsoluteStart = FinalCutPro.FCPXML.aggregateOffset(
+                of: parent,
+                resources: resources
+            )
+            if let durationValue = parent.attributeStringValue(forName: "duration") {
+                parentDuration = try? FinalCutPro.FCPXML.timecode(
+                    fromRational: durationValue,
+                    xmlLeaf: parent,
+                    resources: resources
+                )
             }
         }
-        
-        return pos
-    }
-    
-    /// Return nearest `start` attribute value, starting from closest parent and traversing up
-    /// through ancestors.
-    /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-    private static func nearestStart(
-        parent: FinalCutPro.FCPXML.AnyStoryElement,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> Timecode? {
-        let ancestors = ancestorsOfParent + [parent] // topmost -> innermost
-        
-        for ancestor in ancestors.reversed() {
-            if let start = ancestor.start { return start }
-        }
-        
-        return nil
     }
 }
 

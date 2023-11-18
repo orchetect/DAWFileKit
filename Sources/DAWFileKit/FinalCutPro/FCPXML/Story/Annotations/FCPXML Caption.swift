@@ -1,5 +1,5 @@
 //
-//  FCPXML Gap.swift
+//  FCPXML Caption.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,16 +10,12 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Gap element.
-    ///
-    /// > Final Cut Pro FCPXML 1.11 Reference:
-    /// >
-    /// > Defines a placeholder element that has no intrinsic audio or video data.
-    public struct Gap: FCPXMLClipAttributes {
-        public var contents: [AnyStoryElement]
+    /// Represents a closed caption.
+    public struct Caption: Equatable, Hashable, FCPXMLClipAttributes {
+        public var note: String?
         
         // FCPXMLAnchorableAttributes
-        public var lane: Int? // TODO: Gap doesn't have lane attribute?
+        public var lane: Int?
         public var offset: Timecode?
         
         // FCPXMLClipAttributes
@@ -28,14 +24,14 @@ extension FinalCutPro.FCPXML {
         public var duration: Timecode?
         public var enabled: Bool
         
-        // TODO: add missing attributes and protocols
+        // TODO: parse children (`text` and `text-style-def` elements)
         
         // FCPXMLElementContext
         @EquatableAndHashableExempt
         public var context: FinalCutPro.FCPXML.ElementContext
         
         public init(
-            contents: [AnyStoryElement],
+            note: String?,
             // FCPXMLAnchorableAttributes
             lane: Int?,
             offset: Timecode,
@@ -47,16 +43,12 @@ extension FinalCutPro.FCPXML {
             // FCPXMLElementContext
             context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
-            self.contents = contents
-            
-            // FCPXMLAnchorableAttributes
-            self.lane = lane
-            self.offset = offset
-            
-            // FCPXMLClipAttributes
             self.name = name
+            self.offset = offset
             self.start = start
             self.duration = duration
+            self.lane = lane
+            self.note = note
             self.enabled = enabled
             
             // FCPXMLElementContext
@@ -65,15 +57,11 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
-    // no ref, no role
-    // no lane
+extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
     public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        contents = FinalCutPro.FCPXML.storyElements(in: xmlLeaf, resources: resources)
-        
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
             resources: resources
@@ -94,16 +82,16 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == clipType.rawValue else { return nil }
+        guard xmlLeaf.name == annotationType.rawValue else { return nil }
     }
     
-    public var clipType: FinalCutPro.FCPXML.ClipType { .gap }
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .gap(self) }
+    public var annotationType: FinalCutPro.FCPXML.AnnotationType { .caption }
+    public func asAnyAnnotation() -> FinalCutPro.FCPXML.AnyAnnotation { .caption(self) }
 }
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLExtractable {
+extension FinalCutPro.FCPXML.Caption: FCPXMLExtractable {
     public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+        [self.asAnyElement()]
     }
     
     public func extractElements(
@@ -111,12 +99,7 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLExtractable {
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
         matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
     ) -> [FinalCutPro.FCPXML.AnyElement] {
-        extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            contents: contents.asAnyElements(),
-            matching: predicate
-        )
+        []
     }
 }
 

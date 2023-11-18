@@ -70,7 +70,7 @@ class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: XCTestCase {
         
         // events
         
-        let events = fcpxml.events()
+        let events = fcpxml.allEvents()
         
         XCTAssertEqual(events.count, 1)
         
@@ -118,7 +118,7 @@ class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: XCTestCase {
         
         // markers
         
-        let markers = element1.markers
+        let markers = element1.contents.annotations().markers()
         
         XCTAssertEqual(markers.count, 4)
         

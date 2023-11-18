@@ -19,12 +19,18 @@ extension FinalCutPro.FCPXML {
         public var lane: Int?
         public var offset: Timecode?
         
+        // FCPXMLElementContext
+        @EquatableAndHashableExempt
+        public var context: FinalCutPro.FCPXML.ElementContext
+        
         public init(
             name: String?,
             elements: [FinalCutPro.FCPXML.AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
-            offset: Timecode?
+            offset: Timecode?,
+            // FCPXMLElementContext
+            context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
             self.name = name
             self.elements = elements
@@ -32,6 +38,9 @@ extension FinalCutPro.FCPXML {
             // FCPXMLAnchorableAttributes
             self.lane = lane
             self.offset = offset
+            
+            // FCPXMLElementContext
+            self.context = context
         }
     }
 }
@@ -43,7 +52,7 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
-        elements = FinalCutPro.FCPXML.parseStoryElements(
+        elements = FinalCutPro.FCPXML.storyElements(
             in: xmlLeaf,
             resources: resources
         )
@@ -56,30 +65,35 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         // FCPXMLAnchorableAttributes
         lane = anchorableAttributes.lane
         offset = anchorableAttributes.offset
+        
+        // FCPXMLElementContext
+        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == storyElementType.rawValue else { return nil }
     }
     
     public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .spine }
     public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement { .spine(self) }
 }
 
-extension FinalCutPro.FCPXML.Spine: _FCPXMLExtractableElement {
-    var extractableStart: Timecode? { nil }
-    var extractableName: String? { name }
-}
-
-extension FinalCutPro.FCPXML.Spine: FCPXMLMarkersExtractable {
-    public var markers: [FinalCutPro.FCPXML.Marker] {
-        elements.flatMap { $0.markers }
+extension FinalCutPro.FCPXML.Spine: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        []
     }
     
-    public func extractMarkers(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        let childAncestors = ancestorsOfParent + [self.asAnyStoryElement()]
-        return elements.flatMap {
-            $0.extractMarkers(settings: settings, ancestorsOfParent: childAncestors)
-        }
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        extractElements(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            contents: elements.asAnyElements(),
+            matching: predicate
+        )
     }
 }
 

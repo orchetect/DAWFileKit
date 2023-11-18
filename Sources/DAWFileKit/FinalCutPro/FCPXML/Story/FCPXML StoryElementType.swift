@@ -10,8 +10,11 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     public enum StoryElementType: Equatable, Hashable {
+        /// An annotation.
+        case anyAnnotation(_ annotationType: AnnotationType)
+        
         /// A clip.
-        case anyClip(ClipType)
+        case anyClip(_ clipType: ClipType)
         
         /// A container that represents the top-level sequence for a Final Cut Pro project or
         /// compound clip.
@@ -34,6 +37,8 @@ extension FinalCutPro.FCPXML.StoryElementType: RawRepresentable {
     
     public var rawValue: String {
         switch self {
+        case let .anyAnnotation(annotationType):
+            return annotationType.rawValue
         case let .anyClip(clipType):
             return clipType.rawValue
         case .sequence:
@@ -49,6 +54,7 @@ extension FinalCutPro.FCPXML.StoryElementType: CaseIterable {
     public static var allCases: [FinalCutPro.FCPXML.StoryElementType] {
         [.sequence, .spine]
             + FinalCutPro.FCPXML.ClipType.allCases.map { .anyClip($0) }
+            + FinalCutPro.FCPXML.AnnotationType.allCases.map { .anyAnnotation($0) }
     }
 }
 

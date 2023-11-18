@@ -66,6 +66,24 @@ extension XMLElement {
 // MARK: Ancestor Walking
 
 extension XMLElement {
+    func walkAncestors(
+        includingSelf: Bool,
+        _ block: (_ element: XMLElement) -> Bool
+    ) {
+        let block: (_ element: XMLElement) -> WalkAncestorsIntermediateResult<Void> = { element in
+            if block(element) {
+                return .continue
+            } else {
+                return .return(withValue: ())
+            }
+        }
+        _ = Self.walkAncestors(
+            startingWith: includingSelf ? self : parentXMLElement,
+            returning: Void.self,
+            block
+        )
+    }
+    
     func walkAncestors<T>(
         includingSelf: Bool,
         returning: T.Type,

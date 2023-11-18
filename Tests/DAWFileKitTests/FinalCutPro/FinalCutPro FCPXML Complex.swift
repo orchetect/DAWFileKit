@@ -341,15 +341,15 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         }
     }
     
-    func debugString(for em: FinalCutPro.FCPXML.ExtractedMarker) -> String {
+    func debugString(for em: FinalCutPro.FCPXML.Marker) -> String {
         let absTC = em.context.absoluteStart?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
-        let name = em.marker.name.quoted
-        let note = em.marker.note != nil ? " note:\(em.marker.note!.quoted)" : ""
-        let durTC = em.marker.duration?.stringValue(format: [.showSubFrames]) ?? "?"
+        let name = em.name.quoted
+        let note = em.note != nil ? " note:\(em.note!.quoted)" : ""
+        let durTC = em.duration?.stringValue(format: [.showSubFrames]) ?? "?"
         return "\(absTC) \(name)\(note) dur:\(durTC)"
     }
     
-    func debugString(for extractedMarkers: some Collection<FinalCutPro.FCPXML.ExtractedMarker>) -> String {
+    func debugString(for extractedMarkers: some Collection<FinalCutPro.FCPXML.Marker>) -> String {
         extractedMarkers.map { debugString(for: $0) }.joined(separator: "\n")
     }
     
@@ -397,7 +397,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // events
         
-        let events = fcpxml.events()
+        let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events[safe: 0])
@@ -463,7 +463,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // markers
         
-        let element1Markers = element1.markers
+        let element1Markers = element1.contents.annotations().markers()
         XCTAssertEqual(element1Markers.count, 7)
         
         let expectedE1Marker0 = FinalCutPro.FCPXML.Marker(
@@ -477,13 +477,13 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         
         
-        let element2Markers = element2.markers
+        let element2Markers = element2.contents.annotations().markers()
         XCTAssertEqual(element2Markers.count, 6) // shallow at clip level, there are more in nested title clips
         
         
         
         
-        let element3Markers = element3.markers
+        let element3Markers = element3.contents.annotations().markers()
         XCTAssertEqual(element3Markers.count, 4)
         
         
@@ -499,7 +499,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.events().first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         let extractedMarkers = event.extractMarkers(
@@ -514,20 +514,20 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // compare markers
         for md in Self.markerData {
-            guard let extractedMarker = extractedMarkers.first(where: { $0.marker.name == md.name })
+            guard let extractedMarker = extractedMarkers.first(where: { $0.name == md.name })
             else {
                 let tcString = md.timecode.stringValue(format: [.showSubFrames])
                 let nameString = md.name.quoted
                 XCTFail("Marker not extracted: \(tcString) \(nameString)")
                 continue
             }
-            XCTAssertEqual(extractedMarker.marker.name, md.name, md.name)
-            XCTAssertEqual(extractedMarker.marker.metaData, md.md, md.name)
-            XCTAssertEqual(extractedMarker.marker.note, md.note, md.name)
-            XCTAssertEqual(extractedMarker.marker.duration, md.clip.markerDuration.duration, md.name)
+            XCTAssertEqual(extractedMarker.name, md.name, md.name)
+            XCTAssertEqual(extractedMarker.metaData, md.md, md.name)
+            XCTAssertEqual(extractedMarker.note, md.note, md.name)
+            XCTAssertEqual(extractedMarker.duration, md.clip.markerDuration.duration, md.name)
             
             XCTAssertEqual(extractedMarker.context.absoluteStart, md.timecode, md.name)
-            XCTAssertEqual(extractedMarker.context.parentType, .anyClip(md.clip.clipType), md.name)
+            XCTAssertEqual(extractedMarker.context.parentType, .story(.anyClip(md.clip.clipType)), md.name)
             XCTAssertEqual(extractedMarker.context.parentName, md.clip.name, md.name)
             XCTAssertEqual(extractedMarker.context.parentAbsoluteStart, md.clip.absoluteStart, md.name)
             XCTAssertEqual(extractedMarker.context.parentDuration, md.clip.duration, md.name)
@@ -536,7 +536,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
             XCTAssertEqual(extractedMarker.context.ancestorProjectName, "Marker Data Demo_V2")
         }
         
-         print(debugString(for: extractedMarkers))
+         // print(debugString(for: extractedMarkers))
         
         #warning("> TODO: finish writing unit test")
     }

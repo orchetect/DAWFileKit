@@ -29,67 +29,87 @@ extension FinalCutPro.FCPXML {
         // TODO: public var keywordCollections: [KeywordCollection] = []
         // TODO: public var smartCollections: [SmartCollection] = []
         
+        // FCPXMLElementContext
+        @EquatableAndHashableExempt
+        public var context: FinalCutPro.FCPXML.ElementContext
+        
         public init(
             name: String? = nil,
             uid: String? = nil,
             projects: [Project] = [],
-            clips: [AnyClip] = []
+            clips: [AnyClip] = [],
+            // FCPXMLElementContext
+            context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
             self.name = name
             self.uid = uid
             self.projects = projects
             self.clips = clips
+            
+            // FCPXMLElementContext
+            self.context = context
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Event {
+extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
     /// Attributes unique to ``Event``.
     public enum Attributes: String {
         case name
         case uid
     }
     
-    init?(
+    public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
         uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
         
-        projects = FinalCutPro.FCPXML.projects(in: xmlLeaf, resources: resources)
-        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
+        projects = FinalCutPro.FCPXML
+            .structureElements(in: xmlLeaf, resources: resources)
+            .projects()
+        
+        clips = FinalCutPro.FCPXML
+            .storyElements(in: xmlLeaf, resources: resources)
+            .clips()
+        
+        // FCPXMLElementContext
+        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == structureElementType.rawValue else { return nil }
     }
-}
-
-extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
+    
     public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
         .event
     }
+    
+    public func asAnyStructureElement() -> FinalCutPro.FCPXML.AnyStructureElement {
+        .event(self)
+    }
 }
 
-extension FinalCutPro.FCPXML.Event: FCPXMLMarkersExtractable {
-    /// Always returns an empty array since an event cannot directly contain markers.
-    public var markers: [FinalCutPro.FCPXML.Marker] {
+extension FinalCutPro.FCPXML.Event: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
         []
     }
     
-    public func extractMarkers(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        let settings = settings.updating(ancestorEventName: name)
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        let p = projects.asAnyElements()
+        let c = clips.asAnyElements()
         
-        // (can't include self as an ancestor since Event is not a story element)
-        
-        let projectsMarkers = projects.flatMap {
-            $0.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
-        }
-        
-        let clipsMarkers = clips.flatMap {
-            $0.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
-        }
-        return projectsMarkers + clipsMarkers
+        return extractElements(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            contents: p + c,
+            matching: predicate
+        )
     }
 }
 

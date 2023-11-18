@@ -144,6 +144,10 @@ extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
         
         // TODO: refactor unfinished attributes to strong types
         xmlChildren = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == resourceType.rawValue else { return nil }
     }
     
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .asset }

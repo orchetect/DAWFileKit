@@ -18,12 +18,37 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLElement {
-    public var elementType: FinalCutPro.FCPXML.ElementType { .structure }
-    public func asAnyElement() -> FinalCutPro.FCPXML.AnyElement { .structure(self) }
-}
-
 extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
+    public init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) {
+        guard let name = xmlLeaf.name else { return nil }
+        
+        guard let structureElementType = FinalCutPro.FCPXML.StructureElementType(rawValue: name)
+        else { return nil }
+        
+        switch structureElementType {
+        case .library:
+            guard let library = FinalCutPro.FCPXML.Library(from: xmlLeaf, resources: resources)
+            else { return nil }
+            
+            self = .library(library)
+            
+        case .event:
+            guard let event = FinalCutPro.FCPXML.Event(from: xmlLeaf, resources: resources)
+            else { return nil }
+            
+            self = .event(event)
+            
+        case .project:
+            guard let project = FinalCutPro.FCPXML.Project(from: xmlLeaf, resources: resources)
+            else { return nil }
+            
+            self = .project(project)
+        }
+    }
+    
     public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
         switch self {
         case let .library(library): return library.structureElementType
@@ -35,6 +60,23 @@ extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
     /// Redundant, but required to fulfill `FCPXMLStructureElement` protocol requirements.
     public func asAnyStructureElement() -> FinalCutPro.FCPXML.AnyStructureElement {
         self
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyStructureElement {
+    /// Returns the unwrapped structure element typed as ``FCPXMLStructureElement``.
+    public var wrapped: any FCPXMLStructureElement {
+        switch self {
+        case let .library(structureElement): return structureElement
+        case let .event(structureElement): return structureElement
+        case let .project(structureElement): return structureElement
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLElementContext {
+    public var context: FinalCutPro.FCPXML.ElementContext {
+        wrapped.context
     }
 }
 
@@ -62,9 +104,62 @@ extension FinalCutPro.FCPXML.AnyStructureElement {
     }
 }
 
-extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLExtractableElement {
-    public func extractableStart() -> Timecode? { nil }
-    public func extractableName() -> String? { nil }
+extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        switch self {
+        case .library(_): return [] // TODO: implement on library
+        case let .event(event): return event.extractableElements()
+        case let .project(project): return project.extractableElements()
+        }
+    }
+    
+    public func extractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        switch self {
+        case .library(_):
+            return [] // TODO: implement on library
+        case let .event(event):
+            return event.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
+        case let .project(project):
+            return project.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
+        }
+    }
+}
+
+// MARK: - Filtering
+
+extension Collection<FinalCutPro.FCPXML.AnyStructureElement> {
+    /// Convenience to filter the FCPXML structure element collection and return only libraries.
+    public func libraries() -> [FinalCutPro.FCPXML.Library] {
+        reduce(into: []) { elements, element in
+            if case let .library(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML structure element collection and return only events.
+    public func events() -> [FinalCutPro.FCPXML.Event] {
+        reduce(into: []) { elements, element in
+            if case let .event(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML structure element collection and return only projects.
+    public func projects() -> [FinalCutPro.FCPXML.Project] {
+        reduce(into: []) { elements, element in
+            if case let .project(element) = element { elements.append(element) }
+        }
+    }
 }
 
 #endif

@@ -70,6 +70,10 @@ extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
         guard let uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) else { return nil }
         self.uid = uid
         src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == resourceType.rawValue else { return nil }
     }
     
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .effect }

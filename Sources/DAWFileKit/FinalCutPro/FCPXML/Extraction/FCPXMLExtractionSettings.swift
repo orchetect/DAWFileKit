@@ -20,49 +20,17 @@ extension FinalCutPro.FCPXML {
         public var auditionMask: FinalCutPro.FCPXML.Audition.Mask
         
         /// Element types to exclude during extraction.
-        public var excludeTypes: [FinalCutPro.FCPXML.StoryElementType]
-        
-        // internal
-        var ancestorEventName: String?
-        var ancestorProjectName: String?
+        public var excludeTypes: [FinalCutPro.FCPXML.ElementType]
         
         public init(
             // deep: Bool,
-            excludeTypes: [FinalCutPro.FCPXML.StoryElementType] = [],
+            excludeTypes: [FinalCutPro.FCPXML.ElementType] = [],
             auditionMask: FinalCutPro.FCPXML.Audition.Mask = .activeAudition
         ) {
             // self.deep = deep
             self.excludeTypes = excludeTypes
             self.auditionMask = auditionMask
         }
-        
-        @_disfavoredOverload
-        init(
-            // deep: Bool,
-            excludeTypes: [FinalCutPro.FCPXML.StoryElementType] = [],
-            auditionMask: FinalCutPro.FCPXML.Audition.Mask = .activeAudition,
-            ancestorEventName: String? = nil,
-            ancestorProjectName: String? = nil
-        ) {
-            // self.deep = deep
-            self.excludeTypes = excludeTypes
-            self.auditionMask = auditionMask
-            self.ancestorEventName = ancestorEventName
-            self.ancestorProjectName = ancestorProjectName
-        }
-    }
-}
-
-extension FinalCutPro.FCPXML.ExtractionSettings {
-    func updating(ancestorEventName: String? = nil, ancestorProjectName: String? = nil) -> Self {
-        var copy = self
-        if let ancestorEventName = ancestorEventName {
-            copy.ancestorEventName = ancestorEventName
-        }
-        if let ancestorProjectName = ancestorProjectName {
-            copy.ancestorProjectName = ancestorProjectName
-        }
-        return copy
     }
 }
 

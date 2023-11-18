@@ -106,6 +106,10 @@ extension FinalCutPro.FCPXML.Format: FCPXMLResource {
         colorSpace = xmlLeaf.attributeStringValue(forName: Attributes.colorSpace.rawValue)
         projection = xmlLeaf.attributeStringValue(forName: Attributes.projection.rawValue)
         stereoscopic = xmlLeaf.attributeStringValue(forName: Attributes.stereoscopic.rawValue)
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == resourceType.rawValue else { return nil }
     }
     
     public var resourceType: FinalCutPro.FCPXML.ResourceType { .format }

@@ -66,7 +66,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let events = try XCTUnwrap(fcpxml.events())
+        let events = try XCTUnwrap(fcpxml.allEvents())
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events.first)
@@ -135,28 +135,34 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // markers in title 1
         
+        let title1Markers = title1.contents.annotations().markers()
+        
         // start is 4 seconds 15 frames elapsed in the title's local timeline.
         // the gap's local timeline starts at 01:00:00:00 so the marker's start is 01:00:04:15.
-        XCTAssertEqual(title1.markers.count, 1)
-        let title1Marker = try XCTUnwrap(title1.markers[safe: 0])
+        XCTAssertEqual(title1Markers.count, 1)
+        let title1Marker = try XCTUnwrap(title1Markers[safe: 0])
         XCTAssertEqual(title1Marker, try expectedTitle1Marker)
         
         // markers in gap
+        
+        let gapMarkers = gap.contents.annotations().markers()
         
         // start is 5 seconds elapsed in the gap's local timeline.
         // the gap's local timeline starts at 00:59:56:12 so the marker's start is 01:00:01:12.
         // also, it seems that the duration is reduced to 1 audio sample at 48kHz - perhaps
         // in a gap, FCP reduces timing resolution to audio sample rate instead of video frame rate?
-        XCTAssertEqual(gap.markers.count, 1)
-        let gapMarker = try XCTUnwrap(gap.markers[safe: 0])
+        XCTAssertEqual(gapMarkers.count, 1)
+        let gapMarker = try XCTUnwrap(gapMarkers[safe: 0])
         XCTAssertEqual(gapMarker, try expectedGapMarker)
         
         // markers in title 2
         
+        let title2Markers = title2.contents.annotations().markers()
+        
         // start is 7 seconds elapsed in the title's local timeline.
         // the gap's local timeline starts at 01:00:00:00 so the marker's start is 01:00:07:00.
-        XCTAssertEqual(title2.markers.count, 1)
-        let title2Marker = try XCTUnwrap(title2.markers[safe: 0])
+        XCTAssertEqual(title2Markers.count, 1)
+        let title2Marker = try XCTUnwrap(title2Markers[safe: 0])
         XCTAssertEqual(title2Marker, try expectedTitle2Marker)
     }
     
@@ -171,7 +177,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.events().first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
@@ -186,14 +192,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         XCTAssertEqual(extractedMarkers.count, 3)
         
         let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
-        XCTAssertEqual(extractedTitle1Marker.marker, try expectedTitle1Marker)
+        XCTAssertEqual(extractedTitle1Marker, try expectedTitle1Marker)
         XCTAssertEqual(extractedTitle1Marker.context.ancestorEventName, "Test Event")
         XCTAssertEqual(extractedTitle1Marker.context.ancestorProjectName, "TwoClipsMarkers")
         XCTAssertEqual(
             extractedTitle1Marker.context.absoluteStart,
             try Timecode(.components(h: 01, m: 00, s: 04, f: 15), at: .fps29_97, base: .max80SubFrames)
         )
-        XCTAssertEqual(extractedTitle1Marker.context.parentType, .anyClip(.title))
+        XCTAssertEqual(extractedTitle1Marker.context.parentType, .story(.anyClip(.title)))
         XCTAssertEqual(extractedTitle1Marker.context.parentName, "Basic Title 1")
         XCTAssertEqual(
             extractedTitle1Marker.context.parentAbsoluteStart,
@@ -205,14 +211,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         )
         
         let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 1])
-        XCTAssertEqual(extractedGapMarker.marker, try expectedGapMarker)
+        XCTAssertEqual(extractedGapMarker, try expectedGapMarker)
         XCTAssertEqual(extractedGapMarker.context.ancestorEventName, "Test Event")
         XCTAssertEqual(extractedGapMarker.context.ancestorProjectName, "TwoClipsMarkers")
         XCTAssertEqual(
             extractedGapMarker.context.absoluteStart,
             try Timecode(.components(h: 01, m: 00, s: 15, f: 00), at: .fps29_97, base: .max80SubFrames)
         )
-        XCTAssertEqual(extractedGapMarker.context.parentType, .anyClip(.gap))
+        XCTAssertEqual(extractedGapMarker.context.parentType, .story(.anyClip(.gap)))
         XCTAssertEqual(extractedGapMarker.context.parentName, "Gap")
         XCTAssertEqual(
             extractedGapMarker.context.parentAbsoluteStart,
@@ -224,14 +230,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         )
         
         let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 2])
-        XCTAssertEqual(extractedTitle2Marker.marker, try expectedTitle2Marker)
+        XCTAssertEqual(extractedTitle2Marker, try expectedTitle2Marker)
         XCTAssertEqual(extractedTitle2Marker.context.ancestorEventName, "Test Event")
         XCTAssertEqual(extractedTitle2Marker.context.ancestorProjectName, "TwoClipsMarkers")
         XCTAssertEqual(
             extractedTitle2Marker.context.absoluteStart,
             try Timecode(.components(h: 01, m: 00, s: 27, f: 00), at: .fps29_97, base: .max80SubFrames)
         )
-        XCTAssertEqual(extractedTitle2Marker.context.parentType, .anyClip(.title))
+        XCTAssertEqual(extractedTitle2Marker.context.parentType, .story(.anyClip(.title)))
         XCTAssertEqual(extractedTitle2Marker.context.parentName, "Basic Title 2")
         XCTAssertEqual(
             extractedTitle2Marker.context.parentAbsoluteStart,
@@ -254,14 +260,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.events().first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
             settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
-                excludeTypes: [.anyClip(.title)],
+                excludeTypes: [.story(.anyClip(.title))],
                 auditionMask: .activeAudition
             ), 
             ancestorsOfParent: []
@@ -269,7 +275,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         XCTAssertEqual(extractedMarkers.count, 1)
         
         let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 0])
-        XCTAssertEqual(extractedGapMarker.marker, try expectedGapMarker)
+        XCTAssertEqual(extractedGapMarker, try expectedGapMarker)
     }
     
     func testExtractMarkers_ExcludeGap() throws {
@@ -283,14 +289,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.events().first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
             settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
-                excludeTypes: [.anyClip(.gap)],
+                excludeTypes: [.story(.anyClip(.gap))],
                 auditionMask: .activeAudition
             ),
             ancestorsOfParent: []
@@ -298,10 +304,10 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         XCTAssertEqual(extractedMarkers.count, 2)
         
         let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
-        XCTAssertEqual(extractedTitle1Marker.marker, try expectedTitle1Marker)
+        XCTAssertEqual(extractedTitle1Marker, try expectedTitle1Marker)
         
         let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 1])
-        XCTAssertEqual(extractedTitle2Marker.marker, try expectedTitle2Marker)
+        XCTAssertEqual(extractedTitle2Marker, try expectedTitle2Marker)
     }
     
     func testExtractMarkers_ExcludeGapAndTitle() throws {
@@ -315,14 +321,14 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.events().first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
         let extractedMarkers = event.extractMarkers(
             settings: FinalCutPro.FCPXML.ExtractionSettings(
                 // deep: true,
-                excludeTypes: [.anyClip(.gap), .anyClip(.title)],
+                excludeTypes: [.story(.anyClip(.gap)), .story(.anyClip(.title))],
                 auditionMask: .activeAudition
             ),
             ancestorsOfParent: []

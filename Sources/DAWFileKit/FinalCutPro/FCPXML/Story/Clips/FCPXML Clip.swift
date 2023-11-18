@@ -26,8 +26,7 @@ extension FinalCutPro.FCPXML {
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/clip
     /// > ) to specify its format, etc.
     public struct Clip: FCPXMLClipAttributes {
-        public var clips: [AnyClip]
-        public var markers: [FinalCutPro.FCPXML.Marker] // TODO: refactor as AnyAnnotation?
+        public var contents: [AnyStoryElement]
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -41,9 +40,12 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
+        // FCPXMLElementContext
+        @EquatableAndHashableExempt
+        public var context: FinalCutPro.FCPXML.ElementContext
+        
         public init(
-            clips: [AnyClip],
-            markers: [FinalCutPro.FCPXML.Marker],
+            contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
             offset: Timecode?,
@@ -51,10 +53,11 @@ extension FinalCutPro.FCPXML {
             name: String?,
             start: Timecode?,
             duration: Timecode?,
-            enabled: Bool
+            enabled: Bool,
+            // FCPXMLElementContext
+            context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
-            self.clips = clips
-            self.markers = markers
+            self.contents = contents
             
             // FCPXMLAnchorableAttributes
             self.lane = lane
@@ -65,6 +68,9 @@ extension FinalCutPro.FCPXML {
             self.start = start
             self.duration = duration
             self.enabled = enabled
+            
+            // FCPXMLElementContext
+            self.context = context
         }
     }
 }
@@ -75,8 +81,7 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        clips = FinalCutPro.FCPXML.parseClips(in: xmlLeaf, resources: resources)
-        markers = FinalCutPro.FCPXML.parseMarkers(in: xmlLeaf, resources: resources)
+        contents = FinalCutPro.FCPXML.storyElements(in: xmlLeaf, resources: resources)
         
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
@@ -92,21 +97,34 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled
+        
+        // FCPXMLElementContext
+        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == clipType.rawValue else { return nil }
     }
     
     public var clipType: FinalCutPro.FCPXML.ClipType { .clip }
     public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .clip(self) }
 }
 
-extension FinalCutPro.FCPXML.Clip: FCPXMLMarkersExtractable {
-    public func extractMarkers(
+extension FinalCutPro.FCPXML.Clip: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        []
+    }
+    
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        extractMarkers(
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        extractElements(
             settings: settings,
             ancestorsOfParent: ancestorsOfParent,
-            children: clips.asAnyStoryElements()
+            contents: contents.asAnyElements(),
+            matching: predicate
         )
     }
 }

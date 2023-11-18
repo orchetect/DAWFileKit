@@ -15,30 +15,30 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     // TODO: refactor to new FCPXML protocol?
     static func getIDAttribute(
-        from xmlLeaf: XMLElement
+        from xmlLeaf: XMLElement?
     ) -> String? {
-        xmlLeaf.attributeStringValue(forName: "id")
+        xmlLeaf?.attributeStringValue(forName: "id")
     }
     
     // TODO: refactor to new FCPXML protocol?
     static func getUIDAttribute(
-        from xmlLeaf: XMLElement
+        from xmlLeaf: XMLElement?
     ) -> String? {
-        xmlLeaf.attributeStringValue(forName: "uid")
+        xmlLeaf?.attributeStringValue(forName: "uid")
     }
     
     // TODO: refactor to new FCPXML protocol?
     static func getRefAttribute(
-        from xmlLeaf: XMLElement
+        from xmlLeaf: XMLElement?
     ) -> String? {
-        xmlLeaf.attributeStringValue(forName: "ref")
+        xmlLeaf?.attributeStringValue(forName: "ref")
     }
     
     // TODO: refactor to new FCPXML protocol?
     static func getNameAttribute(
-        from xmlLeaf: XMLElement
+        from xmlLeaf: XMLElement?
     ) -> String? {
-        xmlLeaf.attributeStringValue(forName: "name")
+        xmlLeaf?.attributeStringValue(forName: "name")
     }
 }
 
@@ -329,6 +329,27 @@ extension FinalCutPro.FCPXML {
             // this could also work using Timecode(.realTime(), at:)
             return try FinalCutPro.formTimecode(rational: Fraction(value, 1), at: frameRate)
         }
+    }
+}
+
+// MARK: - Timecode Interval Utils
+
+extension FinalCutPro.FCPXML {
+    /// Utility:
+    /// Convert raw attribute value string to `TimecodeInterval`.
+    /// Traverses the parents of the given XML leaf to determine frame rate.
+    static func timecodeInterval(
+        fromRational rawString: String,
+        xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) throws -> TimecodeInterval? {
+        guard let frameRate = timecodeFrameRate(
+            for: xmlLeaf,
+            in: resources
+        )
+        else { return nil }
+        
+        return try timecodeInterval(fromRational: rawString, frameRate: frameRate)
     }
     
     /// Utility:

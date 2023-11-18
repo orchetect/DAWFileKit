@@ -16,16 +16,20 @@ extension FinalCutPro.FCPXML {
     /// clip.
     public struct Sequence: FCPXMLTimelineAttributes {
         // FCPXMLTimelineAttributes
-        public let formatID: String
-        public let startTimecode: Timecode? // (absolute `tcStart` timecode, not relative `start`)
-        public let duration: Timecode?
+        public var formatID: String
+        public var startTimecode: Timecode? // (absolute `tcStart` timecode, not relative `start`)
+        public var duration: Timecode?
         
-        public let audioLayout: AudioLayout?
-        public let audioRate: AudioRate?
-        public let renderFormat: String?
-        public let note: String?
-        public let keywords: String?
-        public let spine: Spine
+        // FCPXMLElementContext
+        @EquatableAndHashableExempt
+        public var context: FinalCutPro.FCPXML.ElementContext
+        
+        public var audioLayout: AudioLayout?
+        public var audioRate: AudioRate?
+        public var renderFormat: String?
+        public var note: String?
+        public var keywords: String?
+        public var spine: Spine
         
         // TODO: add metadata
         
@@ -40,7 +44,9 @@ extension FinalCutPro.FCPXML {
             renderFormat: String?,
             note: String?,
             keywords: String?,
-            spine: Spine
+            spine: Spine,
+            // FCPXMLElementContext
+            context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
             // FCPXMLTimelineAttributes
             self.formatID = formatID
@@ -54,6 +60,9 @@ extension FinalCutPro.FCPXML {
             self.note = note
             self.keywords = keywords
             self.spine = spine
+            
+            // FCPXMLElementContext
+            self.context = context
         }
     }
 }
@@ -85,11 +94,18 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
         note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
         keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
         
+        // FCPXMLElementContext
+        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        
         // spine
         guard let spineLeaf = Self.parseSpine(from: xmlLeaf),
               let spine = FinalCutPro.FCPXML.Spine(from: spineLeaf, resources: resources)
         else { return nil }
         self.spine = spine
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == storyElementType.rawValue else { return nil }
     }
     
     static func parseSpine(
@@ -113,24 +129,22 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
 }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLExtractable {
-    // (`sequence` does not contain a relative `start`)
-    public var start: TimecodeKit.Timecode? { nil }
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        [] // not found in sequence, they're in the inner spine instead
+    }
     
-    public var name: String? { nil }
+    public func extractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        extractElements(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            contents: [spine.asAnyElement()],
+            matching: predicate
+        )
+    }
 }
 
-extension FinalCutPro.FCPXML.Sequence: FCPXMLMarkersExtractable {
-    /// Always returns an empty array since a sequence cannot directly contain markers.
-    public var markers: [FinalCutPro.FCPXML.Marker] {
-        []
-    }
-    
-    public func extractMarkers(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-        let childAncestors = ancestorsOfParent + [self.asAnyStoryElement()]
-        return spine.extractMarkers(settings: settings, ancestorsOfParent: childAncestors)
-    }
-}
 #endif

@@ -12,6 +12,7 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     /// Type-erased box containing a story element.
     public enum AnyStoryElement {
+        case anyAnnotation(AnyAnnotation)
         case anyClip(AnyClip)
         case sequence(Sequence)
         case spine(Spine)
@@ -42,6 +43,12 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
         else { return nil }
         
         switch storyElementType {
+        case .anyAnnotation:
+            guard let annotation = FinalCutPro.FCPXML.AnyAnnotation(from: xmlLeaf, resources: resources)
+            else { return nil }
+            
+            self = .anyAnnotation(annotation)
+            
         case .anyClip:
             guard let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, resources: resources)
             else { return nil }
@@ -65,7 +72,8 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
     
     public var storyElementType: FinalCutPro.FCPXML.StoryElementType {
         switch self {
-        case let .anyClip(clip): return .anyClip(clip.clipType)
+        case let .anyAnnotation(annotation): return annotation.storyElementType
+        case let .anyClip(clip): return clip.storyElementType
         case .sequence(_): return .sequence
         case .spine(_): return .spine
         }
@@ -77,7 +85,25 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
     }
 }
 
-// MARK: Convenience Properties
+extension FinalCutPro.FCPXML.AnyStoryElement {
+    /// Returns the unwrapped story element typed as ``FCPXMLStoryElement``.
+    public var wrapped: any FCPXMLStoryElement {
+        switch self {
+        case let .anyAnnotation(storyElement): return storyElement
+        case let .anyClip(storyElement): return storyElement
+        case let .sequence(storyElement): return storyElement
+        case let .spine(storyElement): return storyElement
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLElementContext {
+    public var context: FinalCutPro.FCPXML.ElementContext {
+        wrapped.context
+    }
+}
+
+// MARK: Proxy Properties
 
 extension FinalCutPro.FCPXML.AnyStoryElement {
     // FCPXMLAnchorableAttributes
@@ -86,6 +112,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     /// Returns `nil` if attribute is not present or not applicable.
     public var lane: Int? {
         switch self {
+        case let .anyAnnotation(clip): return clip.lane
         case let .anyClip(clip): return clip.lane
         case .sequence(_): return nil
         case let .spine(spine): return spine.lane
@@ -96,6 +123,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     /// Returns `nil` if attribute is not present or not applicable.
     public var offset: Timecode? {
         switch self {
+        case let .anyAnnotation(clip): return clip.offset
         case let .anyClip(clip): return clip.offset
         case .sequence(_): return nil
         case let .spine(spine): return spine.offset
@@ -108,6 +136,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     /// Returns `nil` if attribute is not present or not applicable.
     public var name: String? {
         switch self {
+        case let .anyAnnotation(clip): return clip.name
         case let .anyClip(clip): return clip.name
         case .sequence(_): return nil
         case let .spine(spine): return spine.name
@@ -119,6 +148,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     /// For `sequence`, returns its absolute `startTimecode`.
     public var start: Timecode? {
         switch self {
+        case let .anyAnnotation(clip): return clip.start
         case let .anyClip(clip): return clip.start
         case let .sequence(sequence): return sequence.startTimecode
         case .spine(_): return nil
@@ -129,6 +159,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     /// Returns `nil` if attribute is not present or not applicable.
     public var duration: Timecode? {
         switch self {
+        case let .anyAnnotation(clip): return clip.duration
         case let .anyClip(clip): return clip.duration
         case let .sequence(sequence): return sequence.duration
         case .spine(_): return nil
@@ -139,41 +170,86 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     /// Returns `nil` if attribute is not present or not applicable.
     public var enabled: Bool {
         switch self {
+        case let .anyAnnotation(clip): return clip.enabled
         case let .anyClip(clip): return clip.enabled
-        case .sequence(_): return true
-        case .spine(_): return true
+        case .sequence(_): return true // can't be disabled
+        case .spine(_): return true // can't be disabled
         }
     }
 }
 
-extension FinalCutPro.FCPXML.AnyStoryElement: _FCPXMLExtractableElement {
-    var extractableStart: Timecode? { start }
-    var extractableName: String? { name }
-}
-
-extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLMarkersExtractable {
-    public var markers: [FinalCutPro.FCPXML.Marker] {
+extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case let .anyClip(clip):
-            return clip.markers
-        case let .sequence(sequence):
-            return sequence.markers
-        case let .spine(spine):
-            return spine.markers
+        case let .anyAnnotation(clip): return clip.extractableElements()
+        case let .anyClip(clip): return clip.extractableElements()
+        case let .sequence(sequence): return sequence.extractableElements()
+        case let .spine(spine): return spine.extractableElements()
         }
     }
     
-    public func extractMarkers(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyStoryElement]
-    ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
+        case let .anyAnnotation(clip):
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .anyClip(clip):
-            return clip.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return clip.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .sequence(sequence):
-            return sequence.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return sequence.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
         case let .spine(spine):
-            return spine.extractMarkers(settings: settings, ancestorsOfParent: ancestorsOfParent)
+            return spine.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
+        }
+    }
+}
+
+// MARK: - Filtering
+
+extension Collection<FinalCutPro.FCPXML.AnyStoryElement> {
+    /// Convenience to filter the FCPXML story element collection and return only annotations.
+    public func annotations() -> [FinalCutPro.FCPXML.AnyAnnotation] {
+        reduce(into: []) { elements, element in
+            if case let .anyAnnotation(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML story element collection and return only clips.
+    public func clips() -> [FinalCutPro.FCPXML.AnyClip] {
+        reduce(into: []) { elements, element in
+            if case let .anyClip(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML story element collection and return only sequences.
+    public func sequences() -> [FinalCutPro.FCPXML.Sequence] {
+        reduce(into: []) { elements, element in
+            if case let .sequence(element) = element { elements.append(element) }
+        }
+    }
+    
+    /// Convenience to filter the FCPXML story element collection and return only sequences.
+    public func spines() -> [FinalCutPro.FCPXML.Spine] {
+        reduce(into: []) { elements, element in
+            if case let .spine(element) = element { elements.append(element) }
         }
     }
 }

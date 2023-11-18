@@ -31,124 +31,31 @@ extension FinalCutPro.FCPXML {
             } ?? [:]
     }
     
-    /// A fcpxml file may or may not contain one library.
-    public func library() -> Library? {
-        guard let xmlRoot = xmlRoot else { return nil }
-        return Library(fcpxmlXMLLeaf: xmlRoot)
-    }
-}
-
-// MARK: fcpxml/event or
-// MARK: fcpxml/library/event
-
-extension FinalCutPro.FCPXML {
-    /// Convenience to return all events.
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    ///
-    /// Events may exist within:
-    /// - the `fcpxml` element
-    /// - the `fcpxml/library` element if it exists
-    public func events() -> [Event] {
-        let resources = resources()
-        var gatheredEvents: [Event] = []
-        
-        if let xmlRoot = xmlRoot {
-            let events = events(in: xmlRoot, resources: resources)
-            gatheredEvents.append(contentsOf: events)
-        }
-        
-        if let xmlLibrary = xmlLibrary {
-            let events = events(in: xmlLibrary, resources: resources)
-            gatheredEvents.append(contentsOf: events)
-        }
-        
-        return gatheredEvents
+    static func elements(
+        in xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> [AnyElement] {
+        xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement }
+            .compactMap { AnyElement(from: $0, resources: resources) }
+        ?? []
     }
     
-    /// Internal:
-    /// Parses events from a leaf (usually from the `fcpxml` leaf or an `library` leaf).
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    func events(
+    static func structureElements(
         in xmlLeaf: XMLElement,
-        resources: [String: AnyResource]
-    ) -> [Event] {
-        let xmlElements = xmlLeaf.elements(forName: StructureElementType.event.rawValue)
-        let events = xmlElements.compactMap {
-            Event(from: $0, resources: resources)
-        }
-        return events
-    }
-}
-
-// MARK: fcpxml/project or
-// MARK: fcpxml/event/project or
-// MARK: fcpxml/library/event/project
-
-extension FinalCutPro.FCPXML {
-    /// Convenience to return all projects.
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    ///
-    /// Projects may exist within:
-    /// - the `fcpxml` element
-    /// - an `fcpxml/event` element
-    /// - an `fcpxml/library/event` element
-    public func projects() -> [Project] {
-        let resources = resources()
-        var gatheredProjects: [Project] = []
-        
-        if let xmlRoot = xmlRoot {
-            let projects = Self.projects(in: xmlRoot, resources: resources)
-            gatheredProjects.append(contentsOf: projects)
-        }
-        
-        let projectsInEvents: [Project] = events()
-            .reduce(into: []) { projectsInEvents, event in
-                projectsInEvents.append(contentsOf: event.projects)
-            }
-        gatheredProjects.append(contentsOf: projectsInEvents)
-        
-        return gatheredProjects
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> [AnyStructureElement] {
+        xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement }
+            .compactMap { AnyStructureElement(from: $0, resources: resources) }
+        ?? []
     }
     
-    /// Internal:
-    /// Parses projects from a leaf (usually from the `fcpxml` leaf or an `event` leaf).
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    static func projects(
-        in xmlLeaf: XMLElement,
-        resources: [String: AnyResource]
-    ) -> [Project] {
-        let xmlElements = xmlLeaf.elements(forName: StructureElementType.project.rawValue)
-        let projects: [Project] = xmlElements.compactMap { projectLeaf in
-            Project(from: projectLeaf, resources: resources)
-        }
-        return projects
-    }
-}
-
-// MARK: fcpxml/project/sequence or
-// MARK: fcpxml/event/project/sequence or
-// MARK: fcpxml/library/event/project/sequence
-
-extension FinalCutPro.FCPXML {
-    /// Internal:
-    /// Parse sequences from a leaf (usually from a `project` leaf).
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    static func parseSequences(
-        in xmlLeaf: XMLElement,
-        resources: [String: AnyResource]
-    ) -> [Sequence] {
-        let xmlElements = xmlLeaf.elements(forName: StoryElementType.sequence.rawValue)
-        let sequences = xmlElements.compactMap {
-            Sequence(from: $0, resources: resources)
-        }
-        return sequences
-    }
-}
-
-// MARK: - Story Elements
-
-extension FinalCutPro.FCPXML {
-    static func parseStoryElements(
+    static func storyElements(
         in xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> [AnyStoryElement] {
@@ -161,75 +68,288 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-// MARK: - Clips
-
 extension FinalCutPro.FCPXML {
-    static func parseClips(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> [AnyClip] {
-        xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .filter { xml in ClipType.allCases.contains(where: { ct in ct.rawValue == xml.name }) }
-            .compactMap { AnyClip(from: $0, resources: resources) }
-        ?? []
+    /// Convenience to return all elements.
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    public func allElements() -> [AnyElement] {
+        guard let xmlRoot = xmlRoot else { return [] }
+        return Self.elements(in: xmlRoot, resources: resources())
+    }
+    
+    /// Convenience to return all events.
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    ///
+    /// Events may exist within:
+    /// - the `fcpxml` element
+    /// - the `fcpxml/library` element if it exists
+    public func allEvents() -> [Event] {
+        let resources = resources()
+        let elements = allElements()
+        
+        let rootStructureElements = elements.structureElements()
+        
+        var events: [Event] = []
+        
+        // root events
+        events.append(contentsOf: rootStructureElements.events())
+        
+        // library events
+        if let xmlLibrary = xmlLibrary {
+            let libraryEvents = Self.structureElements(in: xmlLibrary, resources: resources)
+                .events()
+            events.append(contentsOf: libraryEvents)
+        }
+        
+        return events
+    }
+    
+    /// Convenience to return all projects.
+    /// This is computed, so it is best to avoid repeat calls to this method.
+    ///
+    /// Projects may exist within:
+    /// - the `fcpxml` element
+    /// - an `fcpxml/event` element
+    /// - an `fcpxml/library/event` element
+    public func allProjects() -> [Project] {
+        let resources = resources()
+        let elements = allElements()
+        
+        let rootStructureElements = elements.structureElements()
+        
+        var projects: [Project] = []
+        
+        // root projects
+        projects.append(contentsOf: rootStructureElements.projects())
+        
+        // projects within events (this fetches events from all possible locations)
+        let events = allEvents()
+        projects.append(contentsOf: events.flatMap(\.projects))
+        
+        return projects
+    }
+    
+    /// Convenience to return the library.
+    /// A fcpxml file may optionally contain only one library.
+    public func library() -> Library? {
+        guard let xmlRoot = xmlRoot else { return nil }
+        return Self.structureElements(in: xmlRoot, resources: resources())
+            .libraries()
+            .first
     }
 }
 
-// MARK: - Markers
+// MARK: - Calculate Absolute Timecode
 
 extension FinalCutPro.FCPXML {
-    // TODO: refactor this as a more generic annotation parser
-    /// Parses markers shallowly in the given XML element.
-    static func parseMarkers(
-        in xmlLeaf: XMLElement,
-        frameRate: TimecodeFrameRate
-    ) -> [Marker] {
-        let children = xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement } ?? []
+    static func calculateAbsoluteStart(
+        element: AnyElement,
+        parent: FinalCutPro.FCPXML.AnyElement,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        parentAbsoluteStart: Timecode?
+    ) -> Timecode? {
+        let parentStart = nearestStart(of: parent, ancestors: ancestorsOfParent)
         
-        var markers: [Marker] = []
-        
-        children.forEach {
-            let itemName = $0.name ?? ""
-            guard let item = AnnotationType(rawValue: itemName)
-            else {
-                // print("Info: skipping clip item \(itemName.quoted). Not handled.")
-                return // next forEach
-            }
-            
-            // TODO: we'll just parse markers for the time being. more items can be added in future.
-            switch item {
-            case .marker, .chapterMarker:
-                guard let marker = Marker(from: $0, frameRate: frameRate)
-                else {
-                    print("Error: failed to parse marker.")
-                    return // next forEach
-                }
-                markers.append(marker)
-            }
+        guard let elementStart = element.start,
+              let parentStart = parentStart,
+              let parentAbsoluteStart = parentAbsoluteStart
+        else {
+            let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+            let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+            print(
+                "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
+                + " Parent absolute start: \(pas) Parent start: \(ps)"
+            )
+            return nil
         }
         
-        return markers
+        let localElementStart = elementStart - parentStart
+        guard let elementAbsoluteStart = try? parentAbsoluteStart.adding(
+            localElementStart,
+            by: .wrapping
+        )
+        else {
+            print("Error offsetting timecode for element \(element.name?.quoted ?? "").")
+            return nil
+        }
+        
+        return elementAbsoluteStart
     }
     
-    // TODO: refactor this as a more generic annotation parser
-    /// Parses markers shallowly in the given XML element.
-    static func parseMarkers(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> [Marker] {
-        guard let frameRate = FinalCutPro.FCPXML.timecodeFrameRate(for: xmlLeaf, in: resources)
-        else {
-            let leafName = (xmlLeaf.name ?? "").quoted
-            print("Error: Could not determine frame rate while parsing markers in \(leafName).")
-            return []
+    /// Return absolute timecode of innermost parent by calculating aggregate offset of ancestors.
+    /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
+    static func aggregateOffset(
+        of element: FinalCutPro.FCPXML.AnyElement,
+        ancestors: [FinalCutPro.FCPXML.AnyElement]
+    ) -> Timecode? {
+        let ancestors = ancestors + [element] // topmost -> innermost
+        
+        var pos: Timecode?
+        
+        func add(_ other: Timecode?) {
+            guard let other = other else { return }
+            let newTC = pos ?? Timecode(.zero, using: other.properties)
+            pos = try? newTC.adding(other, by: .wrapping)
         }
-        return parseMarkers(in: xmlLeaf, frameRate: frameRate)
+        
+        for ancestor in ancestors {
+            switch ancestor {
+            case let .story(storyElement):
+                switch storyElement {
+                case let .anyAnnotation(annotation):
+                    add(annotation.offset)
+                    
+                case let .anyClip(clip):
+                    add(clip.offset)
+                    
+                case .sequence(_ /* let sequence */ ):
+                    // pos = sequence.startTimecode
+                    break
+                    
+                case let .spine(spine):
+                    add(spine.offset)
+                }
+                
+            case .structure(_):
+                break
+            }
+        }
+        
+        return pos
+    }
+    
+    /// Return nearest `start` attribute value, starting from closest parent and traversing up
+    /// through ancestors.
+    /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
+    static func nearestStart(
+        of element: FinalCutPro.FCPXML.AnyElement,
+        ancestors: [FinalCutPro.FCPXML.AnyElement]
+    ) -> Timecode? {
+        let ancestors = ancestors + [element] // topmost -> innermost
+        
+        for ancestor in ancestors.reversed() {
+            if let start = ancestor.start { return start }
+        }
+        
+        return nil
+    }
+}
+
+#warning("> TODO: use while parsing to include context struct for each element")
+// TODO: the below calculations are theoretical and not yet tested
+
+extension FinalCutPro.FCPXML {
+    static func calculateAbsoluteStart(
+        element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        if let tcStart = tcStart(of: element, resources: resources) {
+            return tcStart
+        }
+        
+        guard let parent = element.parentXMLElement else { return nil }
+        
+        let parentStart = nearestStart(of: parent, resources: resources)
+            ?? nearestTCStart(of: parent, resources: resources)
+        let parentAbsoluteStart = aggregateOffset(of: parent, resources: resources)
+        
+        guard let parentStart = parentStart,
+              let elementStart = nearestStart(of: element, resources: resources)
+                ?? nearestTCStart(of: parent, resources: resources)
+        else {
+            let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+            let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+            print(
+                "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
+                + " Parent start: \(ps) Parent absolute start: \(pas)"
+            )
+            return nil
+        }
+        
+        let localElementStart = elementStart - parentStart
+        
+        let elementAbsoluteStart: Timecode
+        do {
+            elementAbsoluteStart = try parentAbsoluteStart?.adding(
+                localElementStart,
+                by: .wrapping
+            ) ?? localElementStart
+        } catch {
+            print("Error offsetting timecode for element \(element.name?.quoted ?? "").")
+            return nil
+        }
+        
+        return elementAbsoluteStart
+    }
+    
+    /// Return absolute timecode of innermost parent by calculating aggregate offset of ancestors.
+    static func aggregateOffset(
+        of element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        var pos: Timecode?
+        
+        func add(_ other: Timecode?) {
+            guard let other = other else { return }
+            let newTC = pos ?? Timecode(.zero, using: other.properties)
+            pos = try? newTC.adding(other, by: .wrapping)
+        }
+        
+        element.walkAncestors(includingSelf: true) { ancestor in
+            if let offsetString = ancestor.attributeStringValue(forName: "offset") {
+                let offsetTC = try? timecode(fromRational: offsetString, xmlLeaf: ancestor, resources: resources)
+                add(offsetTC)
+            }
+            
+            return true
+        }
+        
+        return pos
+    }
+    
+    /// Return nearest `start` attribute value as `Timecode`, starting from the element and
+    /// traversing up through ancestors.
+    static func nearestStart(
+        of element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        guard let s = element.attributeStringValueTraversingAncestors(forName: "start")
+        else { return nil }
+        
+        return try? timecode(fromRational: s.value, xmlLeaf: s.inElement, resources: resources)
+    }
+    
+    /// Returns the `start` attribute value as `Timecode`.
+    static func start(
+        of element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        guard let startValue = element.attributeStringValue(forName: "start")
+        else { return nil }
+        
+        return try? timecode(fromRational: startValue, xmlLeaf: element, resources: resources)
+    }
+    
+    /// Return nearest `tcStart` attribute value as `Timecode`, starting from the element and
+    /// traversing up through ancestors.
+    static func nearestTCStart(
+        of element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        guard let s = element.attributeStringValueTraversingAncestors(forName: "tcStart")
+        else { return nil }
+        
+        return try? timecode(fromRational: s.value, xmlLeaf: s.inElement, resources: resources)
+    }
+    
+    /// Returns the `tcStart` attribute value as `Timecode`.
+    static func tcStart(
+        of element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        guard let startValue = element.attributeStringValue(forName: "tcStart")
+        else { return nil }
+        
+        return try? timecode(fromRational: startValue, xmlLeaf: element, resources: resources)
     }
 }
 

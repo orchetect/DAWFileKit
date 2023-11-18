@@ -16,26 +16,30 @@ extension FinalCutPro.FCPXML {
     public struct Library {
         public let location: URL
         
+        // FCPXMLElementContext
+        @EquatableAndHashableExempt
+        public var context: FinalCutPro.FCPXML.ElementContext
+        
         public init(location: URL) {
             self.location = location
+            
+            // library doesn't have context since it has no parents
+            context = .init()
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Library {
+extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
     /// Attributes unique to ``Library``.
     public enum Attributes: String {
         case location
     }
     
-    /// Extract library element (if present) from the passed root-level `fcpxml` element.
-    init?(fcpxmlXMLLeaf xmlLeaf: XMLElement) {
-        guard let xmlLibrary = xmlLeaf
-            .elements(forName: FinalCutPro.FCPXML.FoundationElementType.library.rawValue)
-            .first
-        else { return nil }
-        
-        let locationString = xmlLibrary.attributeStringValue(
+    public init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) {
+        let locationString = xmlLeaf.attributeStringValue(
             forName: Attributes.location.rawValue
         ) ?? ""
         
@@ -44,12 +48,21 @@ extension FinalCutPro.FCPXML.Library {
             return nil
         }
         location = locationURL
+        
+        // library doesn't have context since it has no parents
+        context = .init()
+        
+        // validate element name
+        // (we have to do this last, after all properties are initialized in order to access self)
+        guard xmlLeaf.name == structureElementType.rawValue else { return nil }
     }
-}
-
-extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
+    
     public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
         .library
+    }
+    
+    public func asAnyStructureElement() -> FinalCutPro.FCPXML.AnyStructureElement {
+        .library(self)
     }
 }
 

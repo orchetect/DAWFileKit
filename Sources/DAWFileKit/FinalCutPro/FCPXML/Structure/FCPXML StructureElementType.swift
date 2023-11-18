@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    public enum StructureElementType: String {
+    public enum StructureElementType: String, CaseIterable {
         /// Library.
         case library
         

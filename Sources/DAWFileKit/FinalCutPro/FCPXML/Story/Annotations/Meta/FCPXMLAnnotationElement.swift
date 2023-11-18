@@ -17,7 +17,7 @@ import Foundation
 /// - `chapter-marker`
 /// - `analysis-marker`
 /// - `rating`
-/// - `note`
+/// - `caption`
 ///
 /// > Final Cut Pro FCPXML 1.11 Reference:
 /// >
@@ -26,6 +26,89 @@ import Foundation
 /// > using the elements listed under [Annotation and Note Elements](
 /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
 /// > ).
-public protocol FCPXMLAnnotationElement { }
+public protocol FCPXMLAnnotationElement: FCPXMLStoryElement where Self: Equatable {
+    /// Returns the annotation type enum case.
+    var annotationType: FinalCutPro.FCPXML.AnnotationType { get }
+    
+    /// Returns the annotation as ``FinalCutPro/FCPXML/AnyAnnotation``.
+    func asAnyAnnotation() -> FinalCutPro.FCPXML.AnyAnnotation
+    
+    init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    )
+}
+
+// MARK: - Sub-Protocol Implementations
+
+extension FCPXMLAnnotationElement /* : FCPXMLStoryElement */ {
+    public var storyElementType: FinalCutPro.FCPXML.StoryElementType {
+        .anyAnnotation(annotationType)
+    }
+    
+    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement {
+        .anyAnnotation(self.asAnyAnnotation())
+    }
+}
+
+// MARK: - Equatable
+
+extension FCPXMLAnnotationElement {
+    func isEqual(to other: some FCPXMLAnnotationElement) -> Bool {
+        self.asAnyAnnotation() == other.asAnyAnnotation()
+    }
+}
+
+// MARK: - Nested Type Erasure
+
+extension FCPXMLAnnotationElement {
+    public func asAnyElement() -> FinalCutPro.FCPXML.AnyElement {
+        .story(asAnyStoryElement())
+    }
+}
+
+extension Collection where Element: FCPXMLAnnotationElement {
+    public func asAnyElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        map { $0.asAnyElement() }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyAnnotation> {
+    public func asAnyStoryElements() -> [FinalCutPro.FCPXML.AnyStoryElement] {
+        map { $0.asAnyStoryElement() }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyAnnotation> {
+    public func asAnyElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        map { $0.asAnyElement() }
+    }
+}
+
+// MARK: - Collection Methods
+
+extension Collection<FinalCutPro.FCPXML.AnyAnnotation> {
+    public func contains(_ annotation: any FCPXMLClip) -> Bool {
+        contains(where: { $0.wrapped.isEqual(to: annotation) })
+    }
+}
+
+extension Dictionary where Value == FinalCutPro.FCPXML.AnyAnnotation {
+    public func contains(value annotation: any FCPXMLClip) -> Bool {
+        values.contains(annotation)
+    }
+}
+
+extension Collection where Element: FCPXMLAnnotationElement {
+    public func contains(_ annotation: FinalCutPro.FCPXML.AnyAnnotation) -> Bool {
+        contains(where: { $0.asAnyAnnotation() == annotation })
+    }
+}
+
+extension Dictionary where Value: FCPXMLAnnotationElement {
+    public func contains(value annotation: FinalCutPro.FCPXML.AnyAnnotation) -> Bool {
+        values.contains(where: { $0.asAnyAnnotation() == annotation })
+    }
+}
 
 #endif

@@ -44,7 +44,7 @@ import Foundation
 /// > using the elements listed under [Annotation and Note Elements](
 /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements
 /// > ).
-public protocol FCPXMLStoryElement: FCPXMLExtractableElement where Self: Equatable {
+public protocol FCPXMLStoryElement: FCPXMLElement where Self: Equatable {
     /// Returns the story element type enum case.
     var storyElementType: FinalCutPro.FCPXML.StoryElementType { get }
     
@@ -57,9 +57,63 @@ public protocol FCPXMLStoryElement: FCPXMLExtractableElement where Self: Equatab
     )
 }
 
+// MARK: - Sub-Protocol Implementations
+
+extension FCPXMLStoryElement /* : FCPXMLElement */ {
+    public var elementType: FinalCutPro.FCPXML.ElementType { .story(storyElementType) }
+}
+
+// MARK: - Equatable
+
 extension FCPXMLStoryElement {
     func isEqual(to other: some FCPXMLStoryElement) -> Bool {
         self.asAnyStoryElement() == other.asAnyStoryElement()
+    }
+}
+
+// MARK: - Nested Type Erasure
+
+extension FCPXMLStoryElement {
+    public func asAnyElement() -> FinalCutPro.FCPXML.AnyElement {
+        .story(asAnyStoryElement())
+    }
+}
+
+extension Collection where Element: FCPXMLStoryElement {
+    public func asAnyElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        map { $0.asAnyElement() }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyStoryElement> {
+    public func asAnyElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        map { $0.asAnyElement() }
+    }
+}
+
+// MARK: - Collection Methods
+
+extension Collection<FinalCutPro.FCPXML.AnyStoryElement> {
+    public func contains(_ storyElement: any FCPXMLStoryElement) -> Bool {
+        contains(where: { $0.wrapped.isEqual(to: storyElement) })
+    }
+}
+
+extension Dictionary where Value == FinalCutPro.FCPXML.AnyStoryElement {
+    public func contains(value storyElement: any FCPXMLStoryElement) -> Bool {
+        values.contains(storyElement)
+    }
+}
+
+extension Collection where Element: FCPXMLStoryElement {
+    public func contains(_ storyElement: FinalCutPro.FCPXML.AnyStoryElement) -> Bool {
+        contains(where: { $0.asAnyStoryElement() == storyElement })
+    }
+}
+
+extension Dictionary where Value: FCPXMLStoryElement {
+    public func contains(value storyElement: FinalCutPro.FCPXML.AnyStoryElement) -> Bool {
+        values.contains(where: { $0.asAnyStoryElement() == storyElement })
     }
 }
 
