@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol XMLParsableAttributesKey: Hashable, RawRepresentable, CaseIterable
+protocol XMLParsableAttributesKey: Hashable, RawRepresentable, CaseIterable
 where RawValue == String { }
 
 extension XMLElement {
@@ -16,7 +16,7 @@ extension XMLElement {
     /// Parse an XML element's attributes and return a key-value dictionary,
     /// parsing only the keys contained in the `key` type passed.
     /// Any missing keys will simply be omitted from the returned dictionary.
-    public func parseAttributesRawValues<K>(
+    func parseAttributesRawValues<K>(
         key: K.Type
     ) -> [K: String] where K: XMLParsableAttributesKey {
         K.allCases.reduce(into: [:]) { dict, key in
