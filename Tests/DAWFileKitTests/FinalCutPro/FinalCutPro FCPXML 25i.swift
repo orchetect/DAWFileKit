@@ -58,12 +58,13 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         )
         XCTAssertEqual(resources["r1"], .format(r1))
         
-        let r2Child1 = try XMLElement(xmlString: """
-            <media-rep kind="original-media" sig="554B59605B289ECE8057E7FECBC3D3D0" src="file:///Users/user/Desktop/Marker_Interlaced.fcpbundle/11-9-22/Original%20Media/Test%20Video%20(29.97%20fps).mp4">
-            </media-rep>
-            """
+        let r2MediaRep = FinalCutPro.FCPXML.MediaRep(
+            kind: "original-media",
+            sig: "554B59605B289ECE8057E7FECBC3D3D0",
+            src: URL(string: "file:///Users/user/Desktop/Marker_Interlaced.fcpbundle/11-9-22/Original%20Media/Test%20Video%20(29.97%20fps).mp4")!,
+            bookmark: nil
         )
-        let r2Child2 = try XMLElement(xmlString: """
+        let r2MetadataXML = try XMLElement(xmlString: """
             <metadata>
                 <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
                 <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
@@ -79,6 +80,7 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
             </metadata>
             """
         )
+        let r2Metadata = FinalCutPro.FCPXML.Metadata(fromMetadataElement: r2MetadataXML)
         let r2 = FinalCutPro.FCPXML.Asset(
             id: "r2",
             name: "Test Video (29.97 fps)",
@@ -93,7 +95,8 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
             audioRate: 48000,
             videoSources: 1,
             auxVideoFlags: nil,
-            xmlChildren: [r2Child1, r2Child2]
+            mediaRep: r2MediaRep,
+            metadata: r2Metadata
         )
         XCTAssertEqual(resources["r2"], .asset(r2))
         

@@ -42,9 +42,8 @@ extension FinalCutPro.FCPXML {
         public var audioRate: Int?
         public var videoSources: Int
         public var auxVideoFlags: String?
-        
-        // TODO: refactor unfinished attributes to strong types
-        public var xmlChildren: [XMLElement]
+        public var mediaRep: MediaRep?
+        public var metadata: Metadata
         
         public init(
             // shared resource attributes
@@ -64,8 +63,8 @@ extension FinalCutPro.FCPXML {
             audioRate: Int?,
             videoSources: Int,
             auxVideoFlags: String?,
-            // TODO: refactor unfinished attributes to strong types
-            xmlChildren: [XMLElement]
+            mediaRep: MediaRep?,
+            metadata: Metadata
         ) {
             // shared resource attributes
             self.id = id
@@ -87,9 +86,8 @@ extension FinalCutPro.FCPXML {
             self.audioRate = audioRate
             self.videoSources = videoSources
             self.auxVideoFlags = auxVideoFlags
-            
-            // TODO: refactor unfinished attributes to strong types
-            self.xmlChildren = xmlChildren
+            self.mediaRep = mediaRep
+            self.metadata = metadata
         }
     }
 }
@@ -119,6 +117,12 @@ extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
         case auxVideoFlags
     }
     
+    /// Children unique to ``Asset``.
+    public enum Children: String {
+        case mediaRep = "media-rep"
+        case metadata
+    }
+    
     public init?(from xmlLeaf: XMLElement) {
         // shared resource attributes
         guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
@@ -142,8 +146,15 @@ extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
         videoSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.videoSources.rawValue) ?? "0") ?? 0
         auxVideoFlags = xmlLeaf.attributeStringValue(forName: Attributes.auxVideoFlags.rawValue)
         
-        // TODO: refactor unfinished attributes to strong types
-        xmlChildren = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
+        if let mediaRepXML = xmlLeaf.first(childNamed: Children.mediaRep.rawValue) {
+            mediaRep = FinalCutPro.FCPXML.MediaRep(from: mediaRepXML)
+        }
+        
+        if let metadataXML = xmlLeaf.first(childNamed: Children.metadata.rawValue) {
+            metadata = FinalCutPro.FCPXML.Metadata(fromMetadataElement: metadataXML)
+        } else {
+            metadata = FinalCutPro.FCPXML.Metadata(xml: [])
+        }
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)
