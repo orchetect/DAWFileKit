@@ -16,7 +16,7 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
     override func tearDown() { }
     
     /// Tests:
-    /// - `media` resources
+    /// - `media` resources containing a compound clip
     /// - `ref-clip` clips
     /// - mixed frame rates
     /// - that fraction time values that have subframes correctly convert to Timecode.
@@ -213,6 +213,35 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         XCTAssertEqual(markers[safe: 0], expectedMarker0)
         
         #warning("> TODO: finish unit test to check ref-clip contents")
+    }
+    
+    /// Spot-check extracted markers for correct absolute timecode.
+    func testExtractMarkers() throws {
+        // load file
+        let rawData = try XCTUnwrap(loadFileContents(
+            forResource: "25i",
+            withExtension: "fcpxml",
+            subFolder: .fcpxmlExports
+        ))
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let markers = project
+            .extractMarkers(settings: FinalCutPro.FCPXML.ExtractionSettings())
+            .sortedByAbsoluteStart()
+        
+        XCTAssertEqual(markers.count, 22)
+        
+        // spot check
+        let lastMarker = try XCTUnwrap(markers.last)
+        XCTAssertEqual(
+            lastMarker.context[.absoluteStart]?.stringValue(format: [.showSubFrames]),
+            "00:00:28:19.25" // confirmed in FCP
+        )
     }
 }
 
