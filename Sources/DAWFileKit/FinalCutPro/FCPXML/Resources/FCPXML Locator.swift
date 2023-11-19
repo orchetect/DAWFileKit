@@ -23,18 +23,35 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > See [`locator`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/locator).
     public struct Locator: Equatable, Hashable {
-        public var xml: XMLElement
+        public var id: String
+        
+        /// A string that specifies the location of the resource as an absolute or relative URL. For
+        /// details about the URL, see the Location of Media Files section of `media-rep`.
+        public var url: URL
+        
+        public init(id: String, url: URL) {
+            self.id = id
+            self.url = url
+        }
     }
 }
 
 extension FinalCutPro.FCPXML.Locator: FCPXMLResource {
-    // /// Attributes unique to ``Locator``.
-    // public enum Attributes: String {
-    //     // ...
-    // }
+    /// Attributes unique to ``Locator``.
+    public enum Attributes: String {
+        case url
+    }
     
     public init?(from xmlLeaf: XMLElement) {
-        xml = xmlLeaf
+        guard let id = FinalCutPro.FCPXML.getIDAttribute(from: xmlLeaf)
+        else { return nil }
+        self.id = id
+        
+        // TODO: handle relative file URLs - probably needs library path passed into this init.
+        guard let urlString = xmlLeaf.attributeStringValue(forName: Attributes.url.rawValue),
+              let url = URL(string: urlString)
+        else { return nil }
+        self.url = url
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)
