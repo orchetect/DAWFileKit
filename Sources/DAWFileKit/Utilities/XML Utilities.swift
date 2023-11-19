@@ -61,6 +61,19 @@ extension XMLElement {
         // recursively traverse ancestors
         return parent.first(ancestorNamed: name)
     }
+    
+    /// Starting with the current XML element's parent, traverse ancestors and return
+    /// the first ancestor whose element name matches any of the given strings.
+    func first(ancestorNamed names: [String]) -> XMLElement? {
+        // recursively traverse ancestors
+        guard let parent = parent as? XMLElement else {
+            return nil
+        }
+        if let parentName = parent.name, names.contains(parentName) { return parent }
+        
+        // recursively traverse ancestors
+        return parent.first(ancestorNamed: names)
+    }
 }
 
 // MARK: Ancestor Walking

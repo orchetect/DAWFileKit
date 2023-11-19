@@ -168,6 +168,28 @@ extension FinalCutPro.FCPXML {
             }
             return xmlLeaf.first(ancestorNamed: ofType.rawValue)
         }
+        
+        /// Returns the first parent element with the given name.
+        public func firstParent(named name: String, includeSelf: Bool) -> XMLElement? {
+            if includeSelf {
+                if xmlLeaf.name == name { return xmlLeaf }
+            }
+            return xmlLeaf.first(ancestorNamed: name)
+        }
+        
+        /// Returns the first parent element with the given name.
+        public func firstParent(named names: [String], includeSelf: Bool) -> XMLElement? {
+            if includeSelf {
+                if let selfName = xmlLeaf.name, names.contains(selfName) { return xmlLeaf }
+            }
+            return xmlLeaf.first(ancestorNamed: names)
+        }
+        
+        /// Returns the first parent clip, if the element is contained within a clip.
+        public func parentClip(includeSelf: Bool) -> XMLElement? {
+            let clipTypeStrings = ClipType.allCases.map(\.rawValue)
+            return firstParent(named: clipTypeStrings, includeSelf: includeSelf)
+        }
     }
 }
 
