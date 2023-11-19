@@ -72,16 +72,16 @@ extension FinalCutPro.FCPXML {
         
         /// Returns an event name if the current element is a descendent of an event.
         public var ancestorEventName: String? {
-            let ancestorEvent = xmlLeaf.first(
-                ancestorNamed: FinalCutPro.FCPXML.StructureElementType.event.rawValue
+            let ancestorEvent = xmlLeaf.firstAncestor(
+                named: FinalCutPro.FCPXML.StructureElementType.event.rawValue
             )
             return FinalCutPro.FCPXML.getNameAttribute(from: ancestorEvent)
         }
         
         /// Returns a project name if the current element is a descendent of a project.
         public var ancestorProjectName: String? {
-            let ancestorProject = xmlLeaf.first(
-                ancestorNamed: FinalCutPro.FCPXML.StructureElementType.project.rawValue
+            let ancestorProject = xmlLeaf.firstAncestor(
+                named: FinalCutPro.FCPXML.StructureElementType.project.rawValue
             )
             return FinalCutPro.FCPXML.getNameAttribute(from: ancestorProject)
         }
@@ -166,7 +166,7 @@ extension FinalCutPro.FCPXML {
             if includeSelf {
                 if xmlLeaf.name == ofType.rawValue { return xmlLeaf }
             }
-            return xmlLeaf.first(ancestorNamed: ofType.rawValue)
+            return xmlLeaf.firstAncestor(named: ofType.rawValue)
         }
         
         /// Returns the first parent element with the given name.
@@ -174,7 +174,7 @@ extension FinalCutPro.FCPXML {
             if includeSelf {
                 if xmlLeaf.name == name { return xmlLeaf }
             }
-            return xmlLeaf.first(ancestorNamed: name)
+            return xmlLeaf.firstAncestor(named: name)
         }
         
         /// Returns the first parent element with the given name.
@@ -182,7 +182,30 @@ extension FinalCutPro.FCPXML {
             if includeSelf {
                 if let selfName = xmlLeaf.name, names.contains(selfName) { return xmlLeaf }
             }
-            return xmlLeaf.first(ancestorNamed: names)
+            return xmlLeaf.firstAncestor(named: names)
+        }
+        
+        /// Returns the first parent element containing an attribute with the given name.
+        public func firstParent(withAttribute attrName: String, includeSelf: Bool) -> XMLElement? {
+            if includeSelf {
+                if xmlLeaf.attribute(forName: attrName) != nil { return xmlLeaf }
+            }
+            return xmlLeaf.firstAncestor(withAttribute: attrName)
+        }
+        
+        /// Returns the parent event, if the element is contained within a event.
+        public func parentEvent() -> XMLElement? {
+            return firstParent(ofType: .structure(.event), includeSelf: true)
+        }
+        
+        /// Returns the parent project, if the element is contained within a project.
+        public func parentProject() -> XMLElement? {
+            return firstParent(ofType: .structure(.project), includeSelf: true)
+        }
+        
+        /// Returns the parent sequence, if the element is contained within a sequence.
+        public func parentSequence() -> XMLElement? {
+            return firstParent(ofType: .story(.sequence), includeSelf: true)
         }
         
         /// Returns the first parent clip, if the element is contained within a clip.

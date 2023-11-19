@@ -51,7 +51,7 @@ extension XMLElement {
     
     /// Starting with the current XML element's parent, traverse ancestors and return
     /// the first ancestor whose element name matches the given string.
-    func first(ancestorNamed name: String) -> XMLElement? {
+    func firstAncestor(named name: String) -> XMLElement? {
         // recursively traverse ancestors
         guard let parent = parent as? XMLElement else {
             return nil
@@ -59,12 +59,12 @@ extension XMLElement {
         if parent.name == name { return parent }
         
         // recursively traverse ancestors
-        return parent.first(ancestorNamed: name)
+        return parent.firstAncestor(named: name)
     }
     
     /// Starting with the current XML element's parent, traverse ancestors and return
     /// the first ancestor whose element name matches any of the given strings.
-    func first(ancestorNamed names: [String]) -> XMLElement? {
+    func firstAncestor(named names: [String]) -> XMLElement? {
         // recursively traverse ancestors
         guard let parent = parent as? XMLElement else {
             return nil
@@ -72,7 +72,21 @@ extension XMLElement {
         if let parentName = parent.name, names.contains(parentName) { return parent }
         
         // recursively traverse ancestors
-        return parent.first(ancestorNamed: names)
+        return parent.firstAncestor(named: names)
+    }
+    
+    /// Starting with the current XML element's parent, traverse ancestors and return
+    /// the first ancestor which contains an attribute with the given name.
+    func firstAncestor(withAttribute name: String) -> XMLElement? {
+        // recursively traverse ancestors
+        guard let parent = parent as? XMLElement else {
+            return nil
+        }
+        
+        if parent.attribute(forName: name) != nil { return parent }
+        
+        // recursively traverse ancestors
+        return parent.firstAncestor(withAttribute: name)
     }
 }
 
