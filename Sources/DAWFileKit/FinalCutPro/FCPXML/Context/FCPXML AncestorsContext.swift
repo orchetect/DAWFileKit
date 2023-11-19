@@ -12,79 +12,21 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     /// Ancestors context for a model element.
     /// Adds context information for an element's parent, as well as absolute timecode information.
-    public struct AncestorsContext: Equatable, Hashable {
-        /// The absolute start timecode of the element.
-        public var absoluteStart: Timecode?
+    public struct AncestorsContext: FCPXMLElementContextBuilder {
+        public init() { }
         
-        /// Contains an event name if the element is a descendent of an event.
-        public var ancestorEventName: String?
-        
-        /// Contains a project name if the element is a descendent of a project.
-        public var ancestorProjectName: String?
-        
-        /// The parent clip's type.
-        public var parentType: ElementType?
-        
-        /// The parent clip's name.
-        public var parentName: String?
-        
-        /// The parent clip's absolute start time.
-        public var parentAbsoluteStart: Timecode?
-        
-        /// The parent clip's duration.
-        public var parentDuration: Timecode?
-        
-        public init(
-            absoluteStart: Timecode? = nil,
-            ancestorEventName: String? = nil,
-            ancestorProjectName: String? = nil,
-            parentType: ElementType? = nil,
-            parentName: String? = nil,
-            parentAbsoluteStart: Timecode? = nil,
-            parentDuration: Timecode? = nil
-        ) {
-            self.absoluteStart = absoluteStart
-            self.ancestorEventName = ancestorEventName
-            self.ancestorProjectName = ancestorProjectName
-            self.parentType = parentType
-            self.parentName = parentName
-            self.parentAbsoluteStart = parentAbsoluteStart
-            self.parentDuration = parentDuration
-        }
-    }
-}
-
-extension FinalCutPro.FCPXML.AncestorsContext {
-    public init() { }
-    
-    public init(
-        from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) {
-        let tools = FinalCutPro.FCPXML.ContextTools(xmlLeaf: xmlLeaf, resources: resources)
-        self.init(tools: tools)
-    }
-    
-    public init(
-        // from xmlLeaf: XMLElement,
-        // resources: [String: FinalCutPro.FCPXML.AnyResource],
-        tools: FinalCutPro.FCPXML.ContextTools
-    ) {
-        absoluteStart = tools.absoluteStart
-        ancestorEventName = tools.ancestorEventName
-        ancestorProjectName = tools.ancestorProjectName
-        
-        parentType = tools.parentType
-        parentName = tools.parentName
-        parentAbsoluteStart = tools.parentAbsoluteStart
-        parentDuration = tools.parentDuration
-    }
-}
-
-extension FinalCutPro.FCPXML.AncestorsContext: FCPXMLElementContextBuilder {
-    public var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure {
-        { element, resources, tools in
-            ["ancestors": Self(tools: tools)]
+        public var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure {
+            { element, resources, tools in
+                var dict: FinalCutPro.FCPXML.ElementContext = [:]
+                dict[.absoluteStart] = tools.absoluteStart
+                dict[.ancestorEventName] = tools.ancestorEventName
+                dict[.ancestorProjectName] = tools.ancestorProjectName
+                dict[.parentType] = tools.parentType
+                dict[.parentName] = tools.parentName
+                dict[.parentAbsoluteStart] = tools.parentAbsoluteStart
+                dict[.parentDuration] = tools.parentDuration
+                return dict
+            }
         }
     }
 }
@@ -96,6 +38,55 @@ extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.Ancestors
     /// Adds context information for an element's parent, as well as absolute timecode information.
     public static var ancestors: FinalCutPro.FCPXML.AncestorsContext {
         FinalCutPro.FCPXML.AncestorsContext()
+    }
+}
+
+// MARK: - Dictionary Keys
+
+extension FinalCutPro.FCPXML.ContextKey {
+    fileprivate enum Key: String {
+        case absoluteStart
+        case ancestorEventName
+        case ancestorProjectName
+        case parentType
+        case parentName
+        case parentAbsoluteStart
+        case parentDuration
+    }
+    
+    /// The absolute start timecode of the element.
+    public static var absoluteStart: FinalCutPro.FCPXML.ContextKey<Timecode> {
+        .init(key: Key.absoluteStart)
+    }
+    
+    /// Contains an event name if the element is a descendent of an event.
+    public static var ancestorEventName: FinalCutPro.FCPXML.ContextKey<String> {
+        .init(key: Key.ancestorEventName)
+    }
+    
+    /// Contains a project name if the element is a descendent of a project.
+    public static var ancestorProjectName: FinalCutPro.FCPXML.ContextKey<String> {
+        .init(key: Key.ancestorProjectName)
+    }
+    
+    /// The parent clip's type.
+    public static var parentType: FinalCutPro.FCPXML.ContextKey<FinalCutPro.FCPXML.ElementType> {
+        .init(key: Key.parentType)
+    }
+    
+    /// The parent clip's name.
+    public static var parentName: FinalCutPro.FCPXML.ContextKey<String> {
+        .init(key: Key.parentName)
+    }
+    
+    /// The parent clip's absolute start time.
+    public static var parentAbsoluteStart: FinalCutPro.FCPXML.ContextKey<Timecode> {
+        .init(key: Key.parentAbsoluteStart)
+    }
+    
+    /// The parent clip's duration.
+    public static var parentDuration: FinalCutPro.FCPXML.ContextKey<Timecode> {
+        .init(key: Key.parentDuration)
     }
 }
 

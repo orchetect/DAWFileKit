@@ -342,8 +342,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
     }
     
     func debugString(for em: FinalCutPro.FCPXML.Marker) -> String {
-        let context = em.context["ancestors"] as? FinalCutPro.FCPXML.AncestorsContext
-        let absTC = context?.absoluteStart?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
+        let absTC = em.context[.absoluteStart]?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
         let name = em.name.quoted
         let note = em.note != nil ? " note:\(em.note!.quoted)" : ""
         let durTC = em.duration?.stringValue(format: [.showSubFrames]) ?? "?"
@@ -527,17 +526,14 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
             XCTAssertEqual(extractedMarker.note, md.note, md.name)
             XCTAssertEqual(extractedMarker.duration, md.clip.markerDuration.duration, md.name)
             
-            let extractedMarkerContext = try XCTUnwrap(
-                extractedMarker.context["ancestors"] as? FinalCutPro.FCPXML.AncestorsContext
-            )
-            XCTAssertEqual(extractedMarkerContext.absoluteStart, md.timecode, md.name)
-            XCTAssertEqual(extractedMarkerContext.parentType, .story(.anyClip(md.clip.clipType)), md.name)
-            XCTAssertEqual(extractedMarkerContext.parentName, md.clip.name, md.name)
-            XCTAssertEqual(extractedMarkerContext.parentAbsoluteStart, md.clip.absoluteStart, md.name)
-            XCTAssertEqual(extractedMarkerContext.parentDuration, md.clip.duration, md.name)
+            XCTAssertEqual(extractedMarker.context[.absoluteStart], md.timecode, md.name)
+            XCTAssertEqual(extractedMarker.context[.parentType], .story(.anyClip(md.clip.clipType)), md.name)
+            XCTAssertEqual(extractedMarker.context[.parentName], md.clip.name, md.name)
+            XCTAssertEqual(extractedMarker.context[.parentAbsoluteStart], md.clip.absoluteStart, md.name)
+            XCTAssertEqual(extractedMarker.context[.parentDuration], md.clip.duration, md.name)
             
-            XCTAssertEqual(extractedMarkerContext.ancestorEventName, "Example A")
-            XCTAssertEqual(extractedMarkerContext.ancestorProjectName, "Marker Data Demo_V2")
+            XCTAssertEqual(extractedMarker.context[.ancestorEventName], "Example A")
+            XCTAssertEqual(extractedMarker.context[.ancestorProjectName], "Marker Data Demo_V2")
         }
         
          // print(debugString(for: extractedMarkers))
@@ -564,13 +560,10 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         )
         // XCTAssertEqual(extractedElements.count, ???)
         
-        // check each element
+        // check that each element has at least one context entry
         for element in extractedElements {
             let elementDescription = element.name ?? ""
             XCTAssertGreaterThan(element.context.count, 0, elementDescription)
-            
-            let context = element.context["ancestors"] as? FinalCutPro.FCPXML.AncestorsContext
-            XCTAssertNotNil(context, elementDescription)
         }
     }
 }
