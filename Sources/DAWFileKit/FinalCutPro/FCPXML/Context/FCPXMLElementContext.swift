@@ -221,6 +221,16 @@ extension FinalCutPro.FCPXML {
             let clipTypeStrings = ClipType.allCases.map(\.rawValue)
             return firstParent(named: clipTypeStrings, includeSelf: includeSelf)
         }
+        
+        /// Looks up the resource for the element and returns its ``MediaRep`` instance, if any.
+        public var mediaRep: FinalCutPro.FCPXML.MediaRep? {
+            FinalCutPro.FCPXML.mediaRep(for: xmlLeaf, in: resources)
+        }
+        
+        /// Looks up the resource for the element and returns its media url, if any.
+        public var mediaURL: URL? {
+            FinalCutPro.FCPXML.mediaURL(for: xmlLeaf, in: resources)
+        }
     }
 }
 

@@ -190,6 +190,51 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Resource Utils
+
+extension FinalCutPro.FCPXML {
+    /// Utility:
+    /// Looks up the resource for the element and returns its ``MediaRep`` instance, if any.
+    static func mediaRep(
+        for xmlLeaf: XMLElement,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> MediaRep? {
+        guard let resource = firstResource(forElementOrAncestors: xmlLeaf, in: resources)
+        else { return nil }
+        
+        switch resource {
+        case let .asset(asset): return asset.mediaRep
+        case .effect(_): return nil
+        case .format(_): return nil
+        case .locator(_): return nil // contains a URL but not a MediaRep
+        case .media(_): return nil // TODO: media can link to other resources
+        case .objectTracker(_): return nil
+        case .trackingShape(_): return nil
+        }
+    }
+    
+    /// Utility:
+    /// Looks up the resource for the element and returns its media url, if any.
+    static func mediaURL(
+        for xmlLeaf: XMLElement,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> URL? {
+        guard let resource = firstResource(forElementOrAncestors: xmlLeaf, in: resources)
+        else { return nil }
+        
+        switch resource {
+        case let .asset(asset): return asset.mediaRep?.src
+        case .effect(_): return nil
+        case .format(_): return nil
+        case let .locator(locator): return locator.url
+        case .media(_): return nil // TODO: media can link to other resources
+        case .objectTracker(_): return nil
+        case .trackingShape(_): return nil
+        }
+    }
+    
+}
+
 // MARK: - Format Resource Utils
 
 extension FinalCutPro.FCPXML {

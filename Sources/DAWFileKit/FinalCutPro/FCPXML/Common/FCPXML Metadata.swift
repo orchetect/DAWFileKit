@@ -29,9 +29,9 @@ extension FinalCutPro.FCPXML.Metadata {
             .compactMap { $0 as? XMLElement }
     }
     
-     public init(from metadataChildren: [XMLElement]) {
-         xml = metadataChildren
-     }
+    public init(from metadataChildren: [XMLElement]) {
+        xml = metadataChildren
+    }
 }
 
 #endif
