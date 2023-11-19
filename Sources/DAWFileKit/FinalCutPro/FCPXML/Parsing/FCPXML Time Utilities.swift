@@ -126,6 +126,7 @@ extension FinalCutPro.FCPXML {
         }
         
         guard let parent = element.parentXMLElement else { return nil }
+        let parentType = ElementType(from: parent)
         
         let parentStart = nearestStart(of: parent, resources: resources)
             ?? nearestTCStart(of: parent, resources: resources)
@@ -135,12 +136,19 @@ extension FinalCutPro.FCPXML {
               let elementStart = nearestStart(of: element, resources: resources)
                 ?? nearestTCStart(of: parent, resources: resources)
         else {
-            let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
-            let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
-            print(
-                "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
-                + " Parent start: \(ps) Parent absolute start: \(pas)"
-            )
+            // skip emitting an error for elements known to not have start information
+            // or known to not inherit absolute start information
+            if parentType != .structure(.library),
+               parentType != .structure(.event),
+               parentType != .structure(.project)
+            {
+                let ps = parentStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+                let pas = parentAbsoluteStart?.stringValue(format: [.showSubFrames]) ?? "missing"
+                print(
+                    "Error calculating absolute timecode for element \(element.name?.quoted ?? "")."
+                    + " Parent start: \(ps) Parent absolute start: \(pas)"
+                )
+            }
             return nil
         }
         
