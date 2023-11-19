@@ -14,6 +14,7 @@ import TimecodeKit
 // TODO: (these methods are not used but they work)
 
 extension FinalCutPro.FCPXML {
+    /// Return the absolute start timecode of the element.
     static func calculateAbsoluteStart(
         element: AnyElement,
         parent: FinalCutPro.FCPXML.AnyElement,
@@ -99,6 +100,9 @@ extension FinalCutPro.FCPXML {
     
     /// Return nearest `start` attribute value, starting from closest parent and traversing up
     /// through ancestors.
+    /// Note that this is relative to the element's parent's timeline and may not be absolute
+    /// timecode.
+    ///
     /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
     static func nearestStart(
         of element: FinalCutPro.FCPXML.AnyElement,
@@ -195,6 +199,8 @@ extension FinalCutPro.FCPXML {
     
     /// Return nearest `start` attribute value as `Timecode`, starting from the element and
     /// traversing up through ancestors.
+    /// Note that this is relative to the element's parent's timeline and may not be absolute
+    /// timecode.
     static func nearestStart(
         of element: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
@@ -206,6 +212,8 @@ extension FinalCutPro.FCPXML {
     }
     
     /// Returns the `start` attribute value as `Timecode`.
+    /// Note that this is relative to the element's parent's timeline and may not be absolute
+    /// timecode.
     static func start(
         of element: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
