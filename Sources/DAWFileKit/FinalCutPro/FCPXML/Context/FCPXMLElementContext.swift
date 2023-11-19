@@ -122,9 +122,14 @@ extension FinalCutPro.FCPXML {
         
         // MARK: - Parsing
         
-        /// Returns the value of the given attribute key name.
+        /// Returns the value of the given attribute key name for the current element.
         public func attributeValue(key: String) -> String? {
             xmlLeaf.attributeStringValue(forName: key)
+        }
+        
+        /// Returns the value of the given attribute key name for the given element.
+        public func attributeValue(key: String, of element: XMLElement) -> String? {
+            element.attributeStringValue(forName: key)
         }
         
         /// The absolute start timecode of the element.
@@ -154,6 +159,14 @@ extension FinalCutPro.FCPXML {
         /// Otherwise, references are followed until a format is found.
         public func format(for resource: AnyResource) -> Format? {
             FinalCutPro.FCPXML.format(for: resource, in: resources)
+        }
+        
+        /// Returns the first parent element of the given type.
+        public func firstParent(ofType: ElementType, includeSelf: Bool) -> XMLElement? {
+            if includeSelf {
+                if xmlLeaf.name == ofType.rawValue { return xmlLeaf }
+            }
+            return xmlLeaf.first(ancestorNamed: ofType.rawValue)
         }
     }
 }
