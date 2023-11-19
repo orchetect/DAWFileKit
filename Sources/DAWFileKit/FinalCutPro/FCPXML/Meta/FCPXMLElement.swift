@@ -16,6 +16,7 @@ public protocol FCPXMLElement where Self: Equatable, Self: FCPXMLElementContext 
     /// Returns the element as ``FinalCutPro/FCPXML/AnyElement``.
     func asAnyElement() -> FinalCutPro.FCPXML.AnyElement
     
+    /// Initialize from an XML leaf (element) using a context builder instance.
     init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
@@ -24,6 +25,7 @@ public protocol FCPXMLElement where Self: Equatable, Self: FCPXMLElementContext 
 }
 
 extension FCPXMLElement {
+    /// Initialize from an XML leaf (element) using a closure as context builder.
     public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
@@ -36,6 +38,7 @@ extension FCPXMLElement {
         )
     }
     
+    /// Initialize from an XML leaf (element) using default context builder.
     public init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]

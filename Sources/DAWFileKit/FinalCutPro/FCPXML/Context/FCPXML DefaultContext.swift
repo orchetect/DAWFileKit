@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Default context for model elements.
+    /// Default (empty) context for model elements.
     public struct DefaultContext: FCPXMLElementContextBuilder {
         public var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure {
             { _, _, _ in
@@ -25,7 +25,7 @@ extension FinalCutPro.FCPXML {
 // MARK: - Static Constructor
 
 extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.DefaultContext {
-    /// Default context for model elements.
+    /// Default (empty) context for model elements.
     public static var `default`: FinalCutPro.FCPXML.DefaultContext {
         FinalCutPro.FCPXML.DefaultContext()
     }

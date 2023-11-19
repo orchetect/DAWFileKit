@@ -16,6 +16,7 @@ public protocol FCPXMLStructureElement: FCPXMLElement where Self: Equatable {
     /// Returns the element as ``FinalCutPro/FCPXML/AnyStructureElement``.
     func asAnyStructureElement() -> FinalCutPro.FCPXML.AnyStructureElement
     
+    /// Initialize from an XML leaf (element) using a context builder instance.
     init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],

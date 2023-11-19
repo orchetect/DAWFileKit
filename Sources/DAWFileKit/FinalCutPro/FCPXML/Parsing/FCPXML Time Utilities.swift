@@ -1,5 +1,5 @@
 //
-//  FCPXML Parsing.swift
+//  FCPXML Time Utilities.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,151 +10,7 @@ import Foundation
 import TimecodeKit
 @_implementationOnly import OTCore
 
-// MARK: - XMLRoot/fcpxml/*
-
-extension FinalCutPro.FCPXML {
-    /// Returns resources contained in the XML, keyed by the resource ID.
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    ///
-    /// - Returns: `[ID: AnyResource]`
-    public func resources() -> [String: AnyResource] {
-        xmlResources?
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .reduce(into: [String: AnyResource]()) { dict, element in
-                guard let id = element.attributeStringValue(forName: "id"),
-                      let resource = AnyResource(from: element)
-                else { return }
-                
-                dict[id] = resource
-            } ?? [:]
-    }
-    
-    static func elements(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder /*= .default*/
-    ) -> [AnyElement] {
-        xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .compactMap {
-                AnyElement(from: $0, resources: resources, contextBuilder: contextBuilder)
-            }
-        ?? []
-    }
-    
-    static func structureElements(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder /*= .default*/
-    ) -> [AnyStructureElement] {
-        xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .compactMap { 
-                AnyStructureElement(from: $0, resources: resources, contextBuilder: contextBuilder)
-            }
-        ?? []
-    }
-    
-    static func storyElements(
-        in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder /*= .default*/
-    ) -> [AnyStoryElement] {
-        xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .compactMap {
-                AnyStoryElement(from: $0, resources: resources, contextBuilder: contextBuilder)
-            }
-        ?? []
-    }
-}
-
-extension FinalCutPro.FCPXML {
-    /// Convenience to return all elements.
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    public func allElements(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> [AnyElement] {
-        guard let xmlRoot = xmlRoot else { return [] }
-        return Self.elements(in: xmlRoot, resources: resources(), contextBuilder: contextBuilder)
-    }
-    
-    /// Convenience to return all events.
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    ///
-    /// Events may exist within:
-    /// - the `fcpxml` element
-    /// - the `fcpxml/library` element if it exists
-    public func allEvents(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> [Event] {
-        let resources = resources()
-        let elements = allElements(contextBuilder: contextBuilder)
-        
-        let rootStructureElements = elements.structureElements()
-        
-        var events: [Event] = []
-        
-        // root events
-        events.append(contentsOf: rootStructureElements.events())
-        
-        // library events
-        if let xmlLibrary = xmlLibrary {
-            let libraryEvents = Self.structureElements(
-                in: xmlLibrary, 
-                resources: resources,
-                contextBuilder: contextBuilder
-            )
-            .events()
-            events.append(contentsOf: libraryEvents)
-        }
-        
-        return events
-    }
-    
-    /// Convenience to return all projects.
-    /// This is computed, so it is best to avoid repeat calls to this method.
-    ///
-    /// Projects may exist within:
-    /// - the `fcpxml` element
-    /// - an `fcpxml/event` element
-    /// - an `fcpxml/library/event` element
-    public func allProjects(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> [Project] {
-        let elements = allElements(contextBuilder: contextBuilder)
-        
-        let rootStructureElements = elements.structureElements()
-        
-        var projects: [Project] = []
-        
-        // root projects
-        projects.append(contentsOf: rootStructureElements.projects())
-        
-        // projects within events (this fetches events from all possible locations)
-        let events = allEvents(contextBuilder: contextBuilder)
-        projects.append(contentsOf: events.flatMap(\.projects))
-        
-        return projects
-    }
-    
-    /// Convenience to return the library.
-    /// A fcpxml file may optionally contain only one library.
-    public func library(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> Library? {
-        guard let xmlRoot = xmlRoot else { return nil }
-        return Self.structureElements(
-            in: xmlRoot,
-            resources: resources(),
-            contextBuilder: contextBuilder
-        )
-        .libraries()
-        .first
-    }
-}
-
-// MARK: - Calculate Absolute Timecode
+// MARK: - Time Parsing & Calculations (Model)
 // TODO: (these methods are not used but they work)
 
 extension FinalCutPro.FCPXML {
@@ -257,6 +113,8 @@ extension FinalCutPro.FCPXML {
         return nil
     }
 }
+
+// MARK: - Time Parsing & Calculations (XML)
 
 extension FinalCutPro.FCPXML {
     static func calculateAbsoluteStart(

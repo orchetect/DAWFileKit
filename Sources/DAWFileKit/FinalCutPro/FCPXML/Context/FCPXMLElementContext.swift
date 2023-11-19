@@ -20,6 +20,7 @@ public protocol FCPXMLElementContextBuilder {
 }
 
 extension FCPXMLElementContextBuilder {
+    /// Internal: builds the context for the element.
     func buildContext(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
@@ -41,7 +42,7 @@ extension FinalCutPro.FCPXML {
     ) -> [String: Any]
     
     /// Class instance that provides useful context for a FCPXML element.
-    public class ContextTools {
+    public struct ContextTools {
         var xmlLeaf: XMLElement
         var resources: [String: FinalCutPro.FCPXML.AnyResource]
         

@@ -12,7 +12,8 @@ public protocol XMLParsableAttributesKey: Hashable, RawRepresentable, CaseIterab
 where RawValue == String { }
 
 extension XMLElement {
-    /// Utility to parse an XML element's attributes and return a key-value dictionary,
+    /// Utility:
+    /// Parse an XML element's attributes and return a key-value dictionary,
     /// parsing only the keys contained in the `key` type passed.
     /// Any missing keys will simply be omitted from the returned dictionary.
     public func parseAttributesRawValues<K>(

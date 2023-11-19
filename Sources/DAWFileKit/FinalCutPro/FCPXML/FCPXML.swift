@@ -64,43 +64,8 @@ extension FinalCutPro {
     /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/
     /// )
     public struct FCPXML {
-        /// Direct access to the FCP XML file.
+        /// Direct access to the XML file.
         public var xml: XMLDocument
-    }
-}
-
-// MARK: - XMLRoot/*
-
-extension FinalCutPro.FCPXML {
-    /// Utility:
-    /// The root `fcpxml` XML element.
-    public var xmlRoot: XMLElement? {
-        xml.children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
-            .first(where: { $0.name == FoundationElementType.fcpxml.rawValue })
-    }
-    
-    enum FCPXMLAttributesKey: String {
-        case version
-    }
-}
-
-// MARK: - XMLRoot/fcpxml/*
-
-extension FinalCutPro.FCPXML {
-    /// Utility:
-    /// The `resources` XML element.
-    /// Exactly one of these elements is always required, regardless of the version of the FCPXML.
-    var xmlResources: XMLElement? {
-        xmlRoot?.elements(forName: FoundationElementType.resources.rawValue).first
-    }
-    
-    /// Utility:
-    /// The `library` XML element, if it exists.
-    /// One or zero of these elements may be present within the `fcpxml` element.
-    public var xmlLibrary: XMLElement? {
-        xmlRoot?.elements(forName: FoundationElementType.library.rawValue).first
     }
 }
 

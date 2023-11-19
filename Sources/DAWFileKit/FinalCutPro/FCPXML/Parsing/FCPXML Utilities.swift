@@ -89,7 +89,8 @@ extension FinalCutPro.FCPXML {
 // MARK: - Frame Rate Utils
 
 extension FinalCutPro.FCPXML {
-    // TODO: Refactor using AnyResource and/or resource protocol. I think more than just `format` resource can contain frame rate info?
+    // TODO: I think more than just `format` resource can contain frame rate info?
+    /// Utility:
     /// Convenience: returns the video frame rate for the given resource ID.
     static func videoFrameRate(
         forResourceID id: String,
@@ -99,7 +100,7 @@ extension FinalCutPro.FCPXML {
         return videoFrameRate(for: resource)
     }
     
-    // TODO: Refactor using AnyResource and/or resource protocol. I think more than just `format` resource can contain frame rate info?
+    /// Utility:
     /// Convenience: returns the video frame rate for the given resource ID.
     static func videoFrameRate(
         for format: Format
@@ -113,6 +114,7 @@ extension FinalCutPro.FCPXML {
         return fRate
     }
     
+    /// Utility:
     /// Convenience: returns the timecode frame rate for the given resource ID.
     /// Traverses parents to determine `tcFormat`.
     static func timecodeFrameRate(
@@ -126,6 +128,7 @@ extension FinalCutPro.FCPXML {
         return timecodeFrameRate(forResourceID: id, tcFormat: tcFormat, in: resources)
     }
     
+    /// Utility:
     /// Convenience: returns the timecode frame rate for the given resource ID & `tcFormat`.
     static func timecodeFrameRate(
         forResourceID id: String,
@@ -138,6 +141,7 @@ extension FinalCutPro.FCPXML {
         return frameRate
     }
     
+    /// Utility:
     /// Convenience: returns the timecode frame rate for the given resource ID & `tcFormat`.
     static func timecodeFrameRate(
         for format: Format,
@@ -149,6 +153,7 @@ extension FinalCutPro.FCPXML {
         return frameRate
     }
     
+    /// Utility:
     /// Convenience: returns the timecode frame rate for the given resource ID.
     /// Traverses parents to determine `format` (resource ID) and `tcFormat`.
     static func timecodeFrameRate(
@@ -161,7 +166,12 @@ extension FinalCutPro.FCPXML {
         
         return timecodeFrameRate(for: format, tcFormat: tcFormat)
     }
-    
+}
+
+// MARK: - Format Resource Utils
+
+extension FinalCutPro.FCPXML {
+    /// Utility:
     /// Traverses the parents of the given XML leaf and returns the resource corresponding to the
     /// nearest `format` attribute if found.
     static func firstFormat(
@@ -181,6 +191,7 @@ extension FinalCutPro.FCPXML {
         return nil
     }
     
+    /// Utility:
     /// Traverses the parents of the given XML leaf and returns the nearest defined resource.
     static func firstDefinedFormat(
         forElementOrAncestors xmlLeaf: XMLElement,
@@ -212,6 +223,9 @@ extension FinalCutPro.FCPXML {
         }
     }
     
+    /// Utility:
+    /// If the resource with the given ID is a format, it is returned.
+    /// Otherwise, references are followed until a format is found.
     static func format(
         forResourceID resourceID: String,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
@@ -222,6 +236,9 @@ extension FinalCutPro.FCPXML {
         return format(for: resource, in: resources)
     }
     
+    /// Utility:
+    /// If the resource is a format, it is returned.
+    /// Otherwise, references are followed until a format is found.
     static func format(
         for resource: AnyResource,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
@@ -261,6 +278,7 @@ extension FinalCutPro.FCPXML {
         }
     }
     
+    /// Utility:
     /// Traverses the parents of the given XML leaf and returns the nearest `tcFormat` attribute if found.
     static func tcFormat(
         forElementOrAncestors xmlLeaf: XMLElement

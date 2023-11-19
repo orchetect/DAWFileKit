@@ -16,6 +16,7 @@ public protocol FCPXMLResource where Self: Equatable {
     /// Returns the resource as ``FinalCutPro/FCPXML/AnyResource``.
     func asAnyResource() -> FinalCutPro.FCPXML.AnyResource
     
+    /// Initialize from an XML leaf (element).
     init?(from xmlLeaf: XMLElement)
 }
 

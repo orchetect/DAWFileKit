@@ -33,6 +33,7 @@ public protocol FCPXMLAnnotationElement: FCPXMLStoryElement where Self: Equatabl
     /// Returns the annotation as ``FinalCutPro/FCPXML/AnyAnnotation``.
     func asAnyAnnotation() -> FinalCutPro.FCPXML.AnyAnnotation
     
+    /// Initialize from an XML leaf (element) using a context builder instance.
     init?(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],

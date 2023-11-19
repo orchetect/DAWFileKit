@@ -138,4 +138,23 @@ extension Collection<FinalCutPro.FCPXML.AnyElement> {
     }
 }
 
+// MARK: - FCPXML Parsing
+
+extension FinalCutPro.FCPXML {
+    static func elements(
+        in xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
+    ) -> [AnyElement] {
+        xmlLeaf
+            .children?
+            .lazy
+            .compactMap { $0 as? XMLElement }
+            .compactMap {
+                AnyElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+            }
+        ?? []
+    }
+}
+
 #endif
