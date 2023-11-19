@@ -66,7 +66,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let events = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors))
+        let events = try XCTUnwrap(fcpxml.allEvents())
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events.first)
@@ -177,7 +177,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
@@ -260,7 +260,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
@@ -289,7 +289,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         
@@ -321,7 +321,7 @@ class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
         
         // event
         
-        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         

@@ -390,14 +390,14 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.library(contextBuilder: .default))
+        let library = try XCTUnwrap(fcpxml.library())
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.location, libraryURL)
         
         // events
         
-        let events = fcpxml.allEvents(contextBuilder: .ancestors)
+        let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events[safe: 0])
@@ -499,7 +499,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         let extractedMarkers = event.extractMarkers(
@@ -550,7 +550,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract all elements
         let extractedElements = event.extractElements(

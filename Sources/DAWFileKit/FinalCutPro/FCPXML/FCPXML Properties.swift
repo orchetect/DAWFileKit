@@ -32,9 +32,9 @@ extension FinalCutPro.FCPXML {
     
     /// Returns all elements comprising the entire structure within the `fcpxml` element.
     /// This is computed, so it is best to avoid repeat calls to this method.
-    public func allElements(contextBuilder: FCPXMLElementContextBuilder = .default) -> [AnyElement] {
+    public func allElements(context: FCPXMLElementContextBuilder = .default) -> [AnyElement] {
         guard let xmlRoot = xmlRoot else { return [] }
-        return Self.elements(in: xmlRoot, resources: resources(), contextBuilder: contextBuilder)
+        return Self.elements(in: xmlRoot, resources: resources(), contextBuilder: context)
     }
     
     /// Returns all events that exist anywhere within the XML hierarchy.
@@ -43,9 +43,9 @@ extension FinalCutPro.FCPXML {
     /// Events may exist within:
     /// - the `fcpxml` element
     /// - the `fcpxml/library` element if it exists
-    public func allEvents(contextBuilder: FCPXMLElementContextBuilder = .default) -> [Event] {
+    public func allEvents(context: FCPXMLElementContextBuilder = .default) -> [Event] {
         let resources = resources()
-        let elements = allElements(contextBuilder: contextBuilder)
+        let elements = allElements(context: context)
         
         let rootStructureElements = elements.structureElements()
         
@@ -59,7 +59,7 @@ extension FinalCutPro.FCPXML {
             let libraryEvents = Self.structureElements(
                 in: xmlLibrary,
                 resources: resources,
-                contextBuilder: contextBuilder
+                contextBuilder: context
             )
                 .events()
             events.append(contentsOf: libraryEvents)
@@ -75,8 +75,8 @@ extension FinalCutPro.FCPXML {
     /// - the `fcpxml` element
     /// - an `fcpxml/event` element
     /// - an `fcpxml/library/event` element
-    public func allProjects(contextBuilder: FCPXMLElementContextBuilder = .default) -> [Project] {
-        let elements = allElements(contextBuilder: contextBuilder)
+    public func allProjects(context: FCPXMLElementContextBuilder = .default) -> [Project] {
+        let elements = allElements(context: context)
         
         let rootStructureElements = elements.structureElements()
         
@@ -86,7 +86,7 @@ extension FinalCutPro.FCPXML {
         projects.append(contentsOf: rootStructureElements.projects())
         
         // projects within events (this fetches events from all possible locations)
-        let events = allEvents(contextBuilder: contextBuilder)
+        let events = allEvents(context: context)
         projects.append(contentsOf: events.flatMap(\.projects))
         
         return projects
@@ -95,12 +95,12 @@ extension FinalCutPro.FCPXML {
     /// Returns the library, if any.
     /// A fcpxml file may optionally contain only one library.
     /// This is computed, so it is best to avoid repeat calls to this method.
-    public func library(contextBuilder: FCPXMLElementContextBuilder = .default) -> Library? {
+    public func library(context: FCPXMLElementContextBuilder = .default) -> Library? {
         guard let xmlRoot = xmlRoot else { return nil }
         return Self.structureElements(
             in: xmlRoot,
             resources: resources(),
-            contextBuilder: contextBuilder
+            contextBuilder: context
         )
         .libraries()
         .first
