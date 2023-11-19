@@ -20,15 +20,22 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyElement: FCPXMLElement {
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
-        if let storyElement = FinalCutPro.FCPXML.AnyStoryElement(from: xmlLeaf, resources: resources) {
+        if let storyElement = FinalCutPro.FCPXML.AnyStoryElement(
+            from: xmlLeaf,
+            resources: resources,
+            contextBuilder: contextBuilder
+        ) {
             self = .story(storyElement)
-        }
-        else if let structureElement = FinalCutPro.FCPXML.AnyStructureElement(from: xmlLeaf, resources: resources) {
+        } else if let structureElement = FinalCutPro.FCPXML.AnyStructureElement(
+            from: xmlLeaf,
+            resources: resources,
+            contextBuilder: contextBuilder
+        ) {
             self = .structure(structureElement)
-        }
-        else {
+        } else {
             return nil
         }
     }

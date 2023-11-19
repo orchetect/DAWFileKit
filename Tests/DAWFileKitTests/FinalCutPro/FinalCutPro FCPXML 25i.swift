@@ -134,14 +134,14 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.library())
+        let library = try XCTUnwrap(fcpxml.library(contextBuilder: .default))
         
         let libraryURL = URL(string: "file:///Users/user/Desktop/Marker_Interlaced.fcpbundle/")
         XCTAssertEqual(library.location, libraryURL)
         
         // events
         
-        let events = fcpxml.allEvents()
+        let events = fcpxml.allEvents(contextBuilder: .ancestors)
         
         XCTAssertEqual(events.count, 1)
         

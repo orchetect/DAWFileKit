@@ -33,37 +33,46 @@ extension FinalCutPro.FCPXML {
     
     static func elements(
         in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder /*= .default*/
     ) -> [AnyElement] {
         xmlLeaf
             .children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .compactMap { AnyElement(from: $0, resources: resources) }
+            .compactMap {
+                AnyElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+            }
         ?? []
     }
     
     static func structureElements(
         in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder /*= .default*/
     ) -> [AnyStructureElement] {
         xmlLeaf
             .children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .compactMap { AnyStructureElement(from: $0, resources: resources) }
+            .compactMap { 
+                AnyStructureElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+            }
         ?? []
     }
     
     static func storyElements(
         in xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder /*= .default*/
     ) -> [AnyStoryElement] {
         xmlLeaf
             .children?
             .lazy
             .compactMap { $0 as? XMLElement }
-            .compactMap { AnyStoryElement(from: $0, resources: resources) }
+            .compactMap {
+                AnyStoryElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+            }
         ?? []
     }
 }
@@ -71,9 +80,9 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML {
     /// Convenience to return all elements.
     /// This is computed, so it is best to avoid repeat calls to this method.
-    public func allElements() -> [AnyElement] {
+    public func allElements(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> [AnyElement] {
         guard let xmlRoot = xmlRoot else { return [] }
-        return Self.elements(in: xmlRoot, resources: resources())
+        return Self.elements(in: xmlRoot, resources: resources(), contextBuilder: contextBuilder)
     }
     
     /// Convenience to return all events.
@@ -82,9 +91,9 @@ extension FinalCutPro.FCPXML {
     /// Events may exist within:
     /// - the `fcpxml` element
     /// - the `fcpxml/library` element if it exists
-    public func allEvents() -> [Event] {
+    public func allEvents(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> [Event] {
         let resources = resources()
-        let elements = allElements()
+        let elements = allElements(contextBuilder: contextBuilder)
         
         let rootStructureElements = elements.structureElements()
         
@@ -95,8 +104,12 @@ extension FinalCutPro.FCPXML {
         
         // library events
         if let xmlLibrary = xmlLibrary {
-            let libraryEvents = Self.structureElements(in: xmlLibrary, resources: resources)
-                .events()
+            let libraryEvents = Self.structureElements(
+                in: xmlLibrary, 
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
+            .events()
             events.append(contentsOf: libraryEvents)
         }
         
@@ -110,9 +123,8 @@ extension FinalCutPro.FCPXML {
     /// - the `fcpxml` element
     /// - an `fcpxml/event` element
     /// - an `fcpxml/library/event` element
-    public func allProjects() -> [Project] {
-        let resources = resources()
-        let elements = allElements()
+    public func allProjects(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> [Project] {
+        let elements = allElements(contextBuilder: contextBuilder)
         
         let rootStructureElements = elements.structureElements()
         
@@ -122,7 +134,7 @@ extension FinalCutPro.FCPXML {
         projects.append(contentsOf: rootStructureElements.projects())
         
         // projects within events (this fetches events from all possible locations)
-        let events = allEvents()
+        let events = allEvents(contextBuilder: contextBuilder)
         projects.append(contentsOf: events.flatMap(\.projects))
         
         return projects
@@ -130,15 +142,20 @@ extension FinalCutPro.FCPXML {
     
     /// Convenience to return the library.
     /// A fcpxml file may optionally contain only one library.
-    public func library() -> Library? {
+    public func library(contextBuilder: FCPXMLElementContextBuilder /*= .default*/) -> Library? {
         guard let xmlRoot = xmlRoot else { return nil }
-        return Self.structureElements(in: xmlRoot, resources: resources())
-            .libraries()
-            .first
+        return Self.structureElements(
+            in: xmlRoot,
+            resources: resources(),
+            contextBuilder: contextBuilder
+        )
+        .libraries()
+        .first
     }
 }
 
 // MARK: - Calculate Absolute Timecode
+// TODO: (these methods are not used but they work)
 
 extension FinalCutPro.FCPXML {
     static func calculateAbsoluteStart(
@@ -240,9 +257,6 @@ extension FinalCutPro.FCPXML {
         return nil
     }
 }
-
-#warning("> TODO: use while parsing to include context struct for each element")
-// TODO: the below calculations are theoretical and not yet tested
 
 extension FinalCutPro.FCPXML {
     static func calculateAbsoluteStart(

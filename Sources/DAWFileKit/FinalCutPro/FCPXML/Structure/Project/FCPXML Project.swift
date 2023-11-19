@@ -53,18 +53,19 @@ extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
     
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
         id = FinalCutPro.FCPXML.getIDAttribute(from: xmlLeaf)
         uid = FinalCutPro.FCPXML.getUIDAttribute(from: xmlLeaf)
         modDate = xmlLeaf.attributeStringValue(forName: Attributes.modDate.rawValue)
         
-        guard let seq = Self.parseSequence(from: xmlLeaf, resources: resources) else { return nil }
+        guard let seq = Self.parseSequence(from: xmlLeaf, resources: resources, contextBuilder: contextBuilder) else { return nil }
         sequence = seq
         
         // FCPXMLElementContext
-        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)
@@ -73,9 +74,14 @@ extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
     
     internal static func parseSequence(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) -> FinalCutPro.FCPXML.Sequence? {
-        let storyElements = FinalCutPro.FCPXML.storyElements(in: xmlLeaf, resources: resources)
+        let storyElements = FinalCutPro.FCPXML.storyElements(
+            in: xmlLeaf,
+            resources: resources,
+            contextBuilder: contextBuilder
+        )
         let sequences = storyElements.sequences()
         guard let sequence = sequences.first else {
             print("Expected one sequence within project but found none.")

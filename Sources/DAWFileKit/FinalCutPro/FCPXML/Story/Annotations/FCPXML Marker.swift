@@ -62,7 +62,8 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
     
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         let rawValues = xmlLeaf.parseAttributesRawValues(key: Attributes.self)
         
@@ -128,7 +129,7 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
         }
         
         // FCPXMLElementContext
-        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
     }
     
     public var annotationType: FinalCutPro.FCPXML.AnnotationType {

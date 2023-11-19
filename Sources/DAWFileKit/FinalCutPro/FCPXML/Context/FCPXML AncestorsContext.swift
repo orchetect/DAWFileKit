@@ -1,5 +1,5 @@
 //
-//  FCPXML ElementContext.swift
+//  FCPXML AncestorsContext.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,10 +10,9 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Context for a model element.
-    ///
+    /// Ancestors context for a model element.
     /// Adds context information for an element's parent, as well as absolute timecode information.
-    public struct ElementContext: Equatable, Hashable {
+    public struct AncestorsContext: Equatable, Hashable {
         /// The absolute start timecode of the element.
         public var absoluteStart: Timecode?
         
@@ -55,43 +54,48 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.ElementContext {
+extension FinalCutPro.FCPXML.AncestorsContext {
+    public init() { }
+    
     public init(
         from xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
-        absoluteStart = FinalCutPro.FCPXML.calculateAbsoluteStart(
-            element: xmlLeaf,
-            resources: resources
-        )
+        let tools = FinalCutPro.FCPXML.ContextTools(xmlLeaf: xmlLeaf, resources: resources)
+        self.init(tools: tools)
+    }
+    
+    public init(
+        // from xmlLeaf: XMLElement,
+        // resources: [String: FinalCutPro.FCPXML.AnyResource],
+        tools: FinalCutPro.FCPXML.ContextTools
+    ) {
+        absoluteStart = tools.absoluteStart
+        ancestorEventName = tools.ancestorEventName
+        ancestorProjectName = tools.ancestorProjectName
         
-        let ancestorEvent = xmlLeaf.first(
-            ancestorNamed: FinalCutPro.FCPXML.StructureElementType.event.rawValue
-        )
-        ancestorEventName = FinalCutPro.FCPXML.getNameAttribute(from: ancestorEvent)
-        
-        let ancestorProject = xmlLeaf.first(
-            ancestorNamed: FinalCutPro.FCPXML.StructureElementType.project.rawValue
-        )
-        ancestorProjectName = FinalCutPro.FCPXML.getNameAttribute(from: ancestorProject)
-        
-        if let parent = xmlLeaf.parentXMLElement {
-            if let nameValue = parent.name {
-                parentType = FinalCutPro.FCPXML.ElementType(rawValue: nameValue)
-            }
-            parentName = FinalCutPro.FCPXML.getNameAttribute(from: parent)
-            parentAbsoluteStart = FinalCutPro.FCPXML.aggregateOffset(
-                of: parent,
-                resources: resources
-            )
-            if let durationValue = parent.attributeStringValue(forName: "duration") {
-                parentDuration = try? FinalCutPro.FCPXML.timecode(
-                    fromRational: durationValue,
-                    xmlLeaf: parent,
-                    resources: resources
-                )
-            }
+        parentType = tools.parentType
+        parentName = tools.parentName
+        parentAbsoluteStart = tools.parentAbsoluteStart
+        parentDuration = tools.parentDuration
+    }
+}
+
+extension FinalCutPro.FCPXML.AncestorsContext: FCPXMLElementContextBuilder {
+    public var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure {
+        { element, resources, tools in
+            ["ancestors": Self(tools: tools)]
         }
+    }
+}
+
+// MARK: - Static Constructor
+
+extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.AncestorsContext {
+    /// Ancestors context for a model element.
+    /// Adds context information for an element's parent, as well as absolute timecode information.
+    public static var ancestors: FinalCutPro.FCPXML.AncestorsContext {
+        FinalCutPro.FCPXML.AncestorsContext()
     }
 }
 

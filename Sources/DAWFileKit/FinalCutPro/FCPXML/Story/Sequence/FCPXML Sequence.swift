@@ -70,7 +70,8 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         // parses `format`, `tcStart`, `tcFormat`, `duration`
         guard let timelineAttributes = Self.parseTimelineAttributes(
@@ -95,11 +96,11 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
         keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
         
         // FCPXMLElementContext
-        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
         
         // spine
         guard let spineLeaf = Self.parseSpine(from: xmlLeaf),
-              let spine = FinalCutPro.FCPXML.Spine(from: spineLeaf, resources: resources)
+              let spine = FinalCutPro.FCPXML.Spine(from: spineLeaf, resources: resources, contextBuilder: contextBuilder)
         else { return nil }
         self.spine = spine
         

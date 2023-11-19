@@ -21,7 +21,8 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         guard let name = xmlLeaf.name else { return nil }
         
@@ -30,19 +31,31 @@ extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
         
         switch structureElementType {
         case .library:
-            guard let library = FinalCutPro.FCPXML.Library(from: xmlLeaf, resources: resources)
+            guard let library = FinalCutPro.FCPXML.Library(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else { return nil }
             
             self = .library(library)
             
         case .event:
-            guard let event = FinalCutPro.FCPXML.Event(from: xmlLeaf, resources: resources)
+            guard let event = FinalCutPro.FCPXML.Event(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else { return nil }
             
             self = .event(event)
             
         case .project:
-            guard let project = FinalCutPro.FCPXML.Project(from: xmlLeaf, resources: resources)
+            guard let project = FinalCutPro.FCPXML.Project(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else { return nil }
             
             self = .project(project)

@@ -21,7 +21,8 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLAnnotationElement {
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         guard let name = xmlLeaf.name else { return nil }
         guard let annotationType = FinalCutPro.FCPXML.AnnotationType(rawValue: name) else {
@@ -31,15 +32,27 @@ extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLAnnotationElement {
         
         switch annotationType {
         case .caption:
-            guard let caption = FinalCutPro.FCPXML.Caption(from: xmlLeaf, resources: resources) else { return nil }
+            guard let caption = FinalCutPro.FCPXML.Caption(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            ) else { return nil }
             self = .caption(caption)
             
         case .keyword:
-            guard let keyword = FinalCutPro.FCPXML.Keyword(from: xmlLeaf, resources: resources) else { return nil }
+            guard let keyword = FinalCutPro.FCPXML.Keyword(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            ) else { return nil }
             self = .keyword(keyword)
             
         case .marker, .chapterMarker:
-            guard let marker = FinalCutPro.FCPXML.Marker(from: xmlLeaf, resources: resources) else { return nil }
+            guard let marker = FinalCutPro.FCPXML.Marker(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            ) else { return nil }
             self = .marker(marker)
         }
     }

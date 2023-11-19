@@ -37,7 +37,8 @@ extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
     
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         let locationString = xmlLeaf.attributeStringValue(
             forName: Attributes.location.rawValue

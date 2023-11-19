@@ -35,7 +35,8 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
     
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         guard let name = xmlLeaf.name else { return nil }
         
@@ -44,19 +45,31 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
         
         switch storyElementType {
         case .anyAnnotation:
-            guard let annotation = FinalCutPro.FCPXML.AnyAnnotation(from: xmlLeaf, resources: resources)
+            guard let annotation = FinalCutPro.FCPXML.AnyAnnotation(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else { return nil }
             
             self = .anyAnnotation(annotation)
             
         case .anyClip:
-            guard let clip = FinalCutPro.FCPXML.AnyClip(from: xmlLeaf, resources: resources)
+            guard let clip = FinalCutPro.FCPXML.AnyClip(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else { return nil }
             
             self = .anyClip(clip)
                 
         case .sequence:
-            guard let element = FinalCutPro.FCPXML.Sequence(from: xmlLeaf, resources: resources)
+            guard let element = FinalCutPro.FCPXML.Sequence(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else {
                 print("Failed to parse FCPXML sequence.")
                 return nil
@@ -64,7 +77,11 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
             self = .sequence(element)
                 
         case .spine:
-            guard let element = FinalCutPro.FCPXML.Spine(from: xmlLeaf, resources: resources)
+            guard let element = FinalCutPro.FCPXML.Spine(
+                from: xmlLeaf,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             else { return nil }
             self = .spine(element)
         }

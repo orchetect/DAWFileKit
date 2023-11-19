@@ -72,13 +72,18 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
     
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         if let laneString = xmlLeaf.attributeStringValue(forName: Attributes.lane.rawValue) {
             lane = Int(laneString)
         }
         
-        let storyElements = FinalCutPro.FCPXML.storyElements(in: xmlLeaf, resources: resources)
+        let storyElements = FinalCutPro.FCPXML.storyElements(
+            in: xmlLeaf, 
+            resources: resources,
+            contextBuilder: contextBuilder
+        )
         
         // filter only clips, since auditions can only contain clips and not other story elements
         clips = storyElements.clips()

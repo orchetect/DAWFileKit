@@ -53,7 +53,8 @@ public protocol FCPXMLStoryElement: FCPXMLElement where Self: Equatable {
     
     init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     )
 }
 

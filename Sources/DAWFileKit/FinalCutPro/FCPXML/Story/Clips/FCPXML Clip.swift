@@ -79,9 +79,14 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
     // no ref
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
-        contents = FinalCutPro.FCPXML.storyElements(in: xmlLeaf, resources: resources)
+        contents = FinalCutPro.FCPXML.storyElements(
+            in: xmlLeaf,
+            resources: resources,
+            contextBuilder: contextBuilder
+        )
         
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
@@ -99,7 +104,7 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
         enabled = clipAttributes.enabled
         
         // FCPXMLElementContext
-        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

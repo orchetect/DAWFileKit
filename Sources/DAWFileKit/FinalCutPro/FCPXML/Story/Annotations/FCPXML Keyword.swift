@@ -50,7 +50,8 @@ extension FinalCutPro.FCPXML.Keyword: FCPXMLAnnotationElement {
     
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         let rawValues = xmlLeaf.parseAttributesRawValues(key: Attributes.self)
         
@@ -76,7 +77,7 @@ extension FinalCutPro.FCPXML.Keyword: FCPXMLAnnotationElement {
         note = rawValues[.note]
         
         // FCPXMLElementContext
-        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

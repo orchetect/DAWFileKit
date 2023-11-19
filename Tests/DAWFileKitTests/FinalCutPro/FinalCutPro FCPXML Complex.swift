@@ -342,7 +342,8 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
     }
     
     func debugString(for em: FinalCutPro.FCPXML.Marker) -> String {
-        let absTC = em.context.absoluteStart?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
+        let context = em.context["ancestors"] as? FinalCutPro.FCPXML.AncestorsContext
+        let absTC = context?.absoluteStart?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
         let name = em.name.quoted
         let note = em.note != nil ? " note:\(em.note!.quoted)" : ""
         let durTC = em.duration?.stringValue(format: [.showSubFrames]) ?? "?"
@@ -390,14 +391,14 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.library())
+        let library = try XCTUnwrap(fcpxml.library(contextBuilder: .default))
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.location, libraryURL)
         
         // events
         
-        let events = fcpxml.allEvents()
+        let events = fcpxml.allEvents(contextBuilder: .ancestors)
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events[safe: 0])
@@ -499,7 +500,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
         
         // extract markers
         let extractedMarkers = event.extractMarkers(
@@ -526,19 +527,51 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
             XCTAssertEqual(extractedMarker.note, md.note, md.name)
             XCTAssertEqual(extractedMarker.duration, md.clip.markerDuration.duration, md.name)
             
-            XCTAssertEqual(extractedMarker.context.absoluteStart, md.timecode, md.name)
-            XCTAssertEqual(extractedMarker.context.parentType, .story(.anyClip(md.clip.clipType)), md.name)
-            XCTAssertEqual(extractedMarker.context.parentName, md.clip.name, md.name)
-            XCTAssertEqual(extractedMarker.context.parentAbsoluteStart, md.clip.absoluteStart, md.name)
-            XCTAssertEqual(extractedMarker.context.parentDuration, md.clip.duration, md.name)
+            let extractedMarkerContext = try XCTUnwrap(
+                extractedMarker.context["ancestors"] as? FinalCutPro.FCPXML.AncestorsContext
+            )
+            XCTAssertEqual(extractedMarkerContext.absoluteStart, md.timecode, md.name)
+            XCTAssertEqual(extractedMarkerContext.parentType, .story(.anyClip(md.clip.clipType)), md.name)
+            XCTAssertEqual(extractedMarkerContext.parentName, md.clip.name, md.name)
+            XCTAssertEqual(extractedMarkerContext.parentAbsoluteStart, md.clip.absoluteStart, md.name)
+            XCTAssertEqual(extractedMarkerContext.parentDuration, md.clip.duration, md.name)
             
-            XCTAssertEqual(extractedMarker.context.ancestorEventName, "Example A")
-            XCTAssertEqual(extractedMarker.context.ancestorProjectName, "Marker Data Demo_V2")
+            XCTAssertEqual(extractedMarkerContext.ancestorEventName, "Example A")
+            XCTAssertEqual(extractedMarkerContext.ancestorProjectName, "Marker Data Demo_V2")
         }
         
          // print(debugString(for: extractedMarkers))
         
         #warning("> TODO: finish writing unit test")
+    }
+    
+    /// Just ensure that context exists as expected for every element.
+    func testExtractMarkers_Context() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // parse file
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        let event = try XCTUnwrap(fcpxml.allEvents(contextBuilder: .ancestors).first)
+        
+        // extract all elements
+        let extractedElements = event.extractElements(
+            settings: FinalCutPro.FCPXML.ExtractionSettings(),
+            ancestorsOfParent: [],
+            matching: { _ in true }
+        )
+        // XCTAssertEqual(extractedElements.count, ???)
+        
+        // check each element
+        for element in extractedElements {
+            let elementDescription = element.name ?? ""
+            XCTAssertGreaterThan(element.context.count, 0, elementDescription)
+            
+            let context = element.context["ancestors"] as? FinalCutPro.FCPXML.AncestorsContext
+            XCTAssertNotNil(context, elementDescription)
+        }
     }
 }
 

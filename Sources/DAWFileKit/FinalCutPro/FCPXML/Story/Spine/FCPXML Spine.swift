@@ -49,12 +49,14 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
     // no start
     public init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     ) {
         name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
         elements = FinalCutPro.FCPXML.storyElements(
             in: xmlLeaf,
-            resources: resources
+            resources: resources,
+            contextBuilder: contextBuilder
         )
         
         let anchorableAttributes = Self.parseAnchorableAttributes(
@@ -67,7 +69,7 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         offset = anchorableAttributes.offset
         
         // FCPXMLElementContext
-        context = FinalCutPro.FCPXML.ElementContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

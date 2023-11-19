@@ -31,12 +31,12 @@ class FinalCutPro_FCPXML_Structure: XCTestCase {
         
         // events
         
-        let events = Set(fcpxml.allEvents().map(\.name))
+        let events = Set(fcpxml.allEvents(contextBuilder: .default).map(\.name))
         XCTAssertEqual(events, ["Test Event", "Test Event 2"])
                 
         // projects
         
-        let projects = Set(fcpxml.allProjects().map(\.name))
+        let projects = Set(fcpxml.allProjects(contextBuilder: .default).map(\.name))
         XCTAssertEqual(projects, ["Test Project", "Test Project 2", "Test Project 3"])
         
         // TODO: test sequences? not sure if they can show up in more than one location in the hierarchy.

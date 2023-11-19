@@ -18,8 +18,34 @@ public protocol FCPXMLElement where Self: Equatable, Self: FCPXMLElementContext 
     
     init?(
         from xmlLeaf: XMLElement,
-        resources: [String: FinalCutPro.FCPXML.AnyResource]
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
     )
+}
+
+extension FCPXMLElement {
+    public init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: @escaping FinalCutPro.FCPXML.ElementContextClosure
+    ) {
+        self.init(
+            from: xmlLeaf,
+            resources: resources,
+            contextBuilder: FinalCutPro.FCPXML.CustomContext(contextBuilder: contextBuilder)
+        )
+    }
+    
+    public init?(
+        from xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) {
+        self.init(
+            from: xmlLeaf,
+            resources: resources,
+            contextBuilder: .default
+        )
+    }
 }
 
 // MARK: - Equatable
