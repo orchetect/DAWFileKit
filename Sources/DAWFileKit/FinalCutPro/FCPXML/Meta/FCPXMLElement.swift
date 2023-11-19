@@ -9,7 +9,7 @@
 import Foundation
 
 /// FCPXML elements.
-public protocol FCPXMLElement where Self: Equatable, Self: FCPXMLElementContext {
+public protocol FCPXMLElement where Self: Equatable, Self: Hashable, Self: FCPXMLElementContext {
     /// Returns the element type enum case.
     var elementType: FinalCutPro.FCPXML.ElementType { get }
     
