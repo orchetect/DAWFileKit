@@ -158,6 +158,28 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLExtractable {
     }
 }
 
+extension Collection<FinalCutPro.FCPXML.Marker> {
+    /// Sorts collection by marker's `start` attribute.
+    public func sortedByStart() -> [FinalCutPro.FCPXML.Marker] {
+        sorted { lhs, rhs in
+            lhs.start < rhs.start
+        }
+    }
+    
+    /// Sorts collection by marker's absolute start timecode.
+    public func sortedByAbsoluteStart() -> [FinalCutPro.FCPXML.Marker] {
+        sorted { lhs, rhs in
+            guard let lhsAbsoluteStart = lhs.context[.absoluteStart],
+                  let rhsAbsoluteStart = rhs.context[.absoluteStart]
+            else {
+                // sort by `start` attribute as fallback
+                return lhs.start < rhs.start
+            }
+            return lhsAbsoluteStart < rhsAbsoluteStart
+        }
+    }
+}
+
 // MARK: - Marker Type
 
 extension FinalCutPro.FCPXML.Marker {
