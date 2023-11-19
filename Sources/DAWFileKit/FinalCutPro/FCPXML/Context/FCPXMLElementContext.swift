@@ -161,6 +161,14 @@ extension FinalCutPro.FCPXML {
             FinalCutPro.FCPXML.format(for: resource, in: resources)
         }
         
+        /// Returns the resource for the element.
+        public var resource: AnyResource? {
+            FinalCutPro.FCPXML.firstResource(
+                forElementOrAncestors: xmlLeaf,
+                in: resources
+            )
+        }
+        
         /// Returns the first parent element of the given type.
         public func firstParent(ofType: ElementType, includeSelf: Bool) -> XMLElement? {
             if includeSelf {

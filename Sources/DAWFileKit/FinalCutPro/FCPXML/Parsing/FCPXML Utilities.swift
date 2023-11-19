@@ -174,17 +174,39 @@ extension FinalCutPro.FCPXML {
     /// Utility:
     /// Traverses the parents of the given XML leaf and returns the resource corresponding to the
     /// nearest `format` attribute if found.
+    static func firstResource(
+        forElementOrAncestors xmlLeaf: XMLElement,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> AnyResource? {
+        if let (resourceID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "ref") {
+            return resources[resourceID]
+        }
+        // ref could point to any resource and not just format, ie: asset or effect. we need to
+        // continue drilling into it.
+        if let (resourceID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "format") {
+            return resources[resourceID]
+        }
+        return nil
+    }
+}
+
+// MARK: - Format Resource Utils
+
+extension FinalCutPro.FCPXML {
+    /// Utility:
+    /// Traverses the parents of the given XML leaf and returns the resource corresponding to the
+    /// nearest `format` attribute if found.
     static func firstFormat(
         forElementOrAncestors xmlLeaf: XMLElement,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> FinalCutPro.FCPXML.Format? {
+    ) -> Format? {
         if let (resourceID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "format") {
             return format(forResourceID: resourceID, in: resources)
         }
         // ref could point to any resource and not just format, ie: asset or effect. we need to
         // continue drilling into it.
-        if let (refID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "ref") {
-            if let refResource = resources[refID] {
+        if let (resourceID, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: "ref") {
+            if let refResource = resources[resourceID] {
                 return format(for: refResource, in: resources)
             }
         }
@@ -196,7 +218,7 @@ extension FinalCutPro.FCPXML {
     static func firstDefinedFormat(
         forElementOrAncestors xmlLeaf: XMLElement,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> FinalCutPro.FCPXML.Format? {
+    ) -> Format? {
         // note that an audio clip may point to a resource with name `FFVideoFormatRateUndefined`.
         // this should not be an error case; instead, continue traversing.
         
@@ -229,7 +251,7 @@ extension FinalCutPro.FCPXML {
     static func format(
         forResourceID resourceID: String,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> FinalCutPro.FCPXML.Format? {
+    ) -> Format? {
         guard let resource = resources[resourceID]
         else { return nil }
         
@@ -242,7 +264,7 @@ extension FinalCutPro.FCPXML {
     static func format(
         for resource: AnyResource,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]
-    ) -> FinalCutPro.FCPXML.Format? {
+    ) -> Format? {
         switch resource {
         case let .asset(asset):
             // an asset should contain a format attribute that we can use to look up the actual
@@ -282,7 +304,7 @@ extension FinalCutPro.FCPXML {
     /// Traverses the parents of the given XML leaf and returns the nearest `tcFormat` attribute if found.
     static func tcFormat(
         forElementOrAncestors xmlLeaf: XMLElement
-    ) -> FinalCutPro.FCPXML.TimecodeFormat? {
+    ) -> TimecodeFormat? {
         let keyName = FinalCutPro.FCPXML.TimecodeFormat.Attributes.tcFormat.rawValue
         guard let (tcFormatValue, _) = xmlLeaf.attributeStringValueTraversingAncestors(forName: keyName),
               let tcFormat = FinalCutPro.FCPXML.TimecodeFormat(rawValue: tcFormatValue)
