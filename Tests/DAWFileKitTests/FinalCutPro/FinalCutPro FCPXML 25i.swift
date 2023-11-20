@@ -207,10 +207,10 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         
         XCTAssertEqual(sequence.formatID, "r1")
-        XCTAssertEqual(sequence.startTimecode, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(sequence.startTimecode, Self.tc("00:00:00:00", .fps29_97))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps25)
         XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.duration, try Timecode(.components(h: 00, m: 00, s: 29, f: 13), at: .fps25, base: .max80SubFrames))
+        XCTAssertEqual(sequence.duration, Self.tc("00:00:29:13", .fps25))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -233,7 +233,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual( // compare to parent's frame rate
             try element1.duration?
                 .converted(to: .fps25)
-                .adding(.frames(0, subFrames: 1)), // TODO: TimecodeKit rounds up to next subframe sometimes?
+                .adding(.frames(0, subFrames: 1)), // for cumulative subframe aliasing
             Self.tc("00:00:03:10", .fps25) // confirmed in FCP
         )
         XCTAssertEqual(element1.audioRole, "dialogue")
@@ -247,7 +247,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         let expectedMarker0 = FinalCutPro.FCPXML.Marker(
             start: try Self.tc("00:00:01:11.56", .fps25) // confirmed in FCP
                 .converted(to: .fps29_97)
-                .adding(.frames(0, subFrames: 1)), // TODO: TimecodeKit rounds up to next subframe sometimes?
+                .adding(.frames(0, subFrames: 1)), // for cumulative subframe aliasing
             duration: Self.tc("00:00:00:01", .fps29_97),
             name: "Marker 2",
             metaData: .standard,

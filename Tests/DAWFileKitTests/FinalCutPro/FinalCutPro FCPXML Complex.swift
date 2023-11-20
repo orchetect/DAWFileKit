@@ -282,12 +282,9 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         clip: ClipInfo
     )
     
-    // NOTE:
-    // markers with "***" trialing comment are 1 subframe higher than what Final Cut Pro shows in
-    // the marker list. this is due to intra-subframe rounding.
-    // TimecodeKit currently rounds subframes differently than FCP does.
-    // for our purposes, this 1 subframe rounding issue is not ideal but it's not crucial to be perfect
-    // in this instance.
+    // TODO: markers with "***" trialing comment off by 1 subframe from what Final Cut Pro shows
+    // this is due to intra-subframe aliasing in the model objects since they are stored
+    // as Timecode instead of CMTime (rational time). Timecode may introduce minute cumulative aliasing of subframes.
     
     // swiftformat:options --maxwidth none
     static var markerData: [MarkerDatum] = [
@@ -311,10 +308,10 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         (tc("00:03:45:03.00", .fps25), "Marker on Title Out of Bounds", nil, .toDo(completed: false), .title2),
         (tc("00:03:48:16.00", .fps25), "(Standard) Surface Temperatures", "Too Bright", .standard, .land),
         (tc("00:04:12:15.00", .fps25), "(Completed) Lava", "Nice Lava", .toDo(completed: true), .land),
-        (tc("00:04:29:03.24", .fps25), "Sound FX 1", nil, .standard, .audio2),
+        (tc("00:04:29:03.24", .fps25), "Sound FX 1", nil, .standard, .audio2), // ***
         (tc("00:04:49:11.00", .fps25), "Chapter 2", "Note Test 7", .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .land),
         (tc("00:05:13:16.00", .fps25), "Chapter 3", "Note Test 8", .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .land),
-        (tc("00:05:24:18.36", .fps25), "Sound FX 2", nil, .toDo(completed: false), .audio2),
+        (tc("00:05:24:18.36", .fps25), "Sound FX 2", nil, .toDo(completed: false), .audio2), // ***
         (tc("00:06:02:02.00", .fps25), "Cloud 1", nil, .standard, .clouds),
         (tc("00:06:15:11.20", .fps25), "SFX Completed", nil, .toDo(completed: true), .audio2),
         (tc("00:06:28:08.00", .fps25), "Cloud 2", nil, .toDo(completed: false), .clouds),

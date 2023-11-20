@@ -115,7 +115,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let marker = try XCTUnwrap(title.first(childNamed: "marker"))
         XCTAssertEqual(
             FinalCutPro.FCPXML.nearestStart(of: marker, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 29, f: 14), at: .fps29_97, base: .max80SubFrames)
+            Self.tc("01:00:29:14", .fps29_97)
         )
     }
     
@@ -147,7 +147,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let sequence = try XCTUnwrap(project.first(childNamed: "sequence"))
         XCTAssertEqual(
             FinalCutPro.FCPXML.tcStart(of: sequence, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
+            Self.tc("01:00:00:00", .fps29_97)
         )
         
         // spine
@@ -191,28 +191,28 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let sequence = try XCTUnwrap(project.first(childNamed: "sequence"))
         XCTAssertEqual(
             FinalCutPro.FCPXML.nearestTCStart(of: sequence, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
+            Self.tc("01:00:00:00", .fps29_97)
         )
         
         // spine
         let spine = try XCTUnwrap(sequence.first(childNamed: "spine"))
         XCTAssertEqual(
             FinalCutPro.FCPXML.nearestTCStart(of: spine, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
+            Self.tc("01:00:00:00", .fps29_97)
         )
         
         // title
         let title = try XCTUnwrap(spine.first(childNamed: "title"))
         XCTAssertEqual(
             FinalCutPro.FCPXML.nearestTCStart(of: title, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
+            Self.tc("01:00:00:00", .fps29_97)
         )
         
         // marker
         let marker = try XCTUnwrap(title.first(childNamed: "marker"))
         XCTAssertEqual(
             FinalCutPro.FCPXML.nearestTCStart(of: marker, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
+            Self.tc("01:00:00:00", .fps29_97)
         )
     }
 }

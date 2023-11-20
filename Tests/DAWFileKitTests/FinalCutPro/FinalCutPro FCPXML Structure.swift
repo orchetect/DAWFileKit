@@ -39,7 +39,9 @@ final class FinalCutPro_FCPXML_Structure: FCPXMLTestCase {
         let projects = Set(fcpxml.allProjects().map(\.name))
         XCTAssertEqual(projects, ["Test Project", "Test Project 2", "Test Project 3"])
         
-        // TODO: test sequences? not sure if they can show up in more than one location in the hierarchy.
+        // TODO: it may be possible for story elements (sequence, clips, etc.) to be in the root `fcpxml` element
+        // the docs say that they can be there as browser elements
+        // test parsing them? might need a new method to get them specifically like `FinalCutPro.FCPXML.parseStoryElementsInRoot()`
     }
 }
 
