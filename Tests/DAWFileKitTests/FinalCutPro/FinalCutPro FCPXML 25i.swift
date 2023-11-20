@@ -97,21 +97,30 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
     )
     
     let r4SequenceXML = try! XMLElement(xmlString: """
-            <sequence format="r3" duration="174174/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
-            <spine>
-                <asset-clip ref="r2" offset="0s" name="Test Video (29.97 fps)" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
-                    <marker start="247247/15000s" duration="1001/30000s" value="Marker 5"/>
-                    <marker start="181181/10000s" duration="1001/30000s" value="Marker 6"/>
-                    <marker start="49049/2500s" duration="1001/30000s" value="Marker 7"/>
-                </asset-clip>
-            </spine>
-            </sequence>
-            """
+        <sequence format="r3" duration="174174/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+        <spine>
+            <asset-clip ref="r2" offset="0s" name="Media Clip" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
+                <marker start="247247/15000s" duration="1001/30000s" value="Marker 5"/>
+                <marker start="181181/10000s" duration="1001/30000s" value="Marker 6"/>
+                <marker start="49049/2500s" duration="1001/30000s" value="Marker 7"/>
+            </asset-clip>
+        </spine>
+        </sequence>
+        """
     )
+    lazy var r4MediaXML: XMLElement = {
+        let m = try! XMLElement(xmlString: """
+        <media id="r4" name="29.97_CC" uid="GYR/OKBAQ/2tErV+GGXCuA" modDate="2022-09-10 23:08:42 -0700">
+        </media>
+        """
+        )
+        m.addChild(r4SequenceXML)
+        return m
+    }()
     lazy var r4 = FinalCutPro.FCPXML.Media(
         id: "r4",
         name: "29.97_CC",
-        contents: .sequence(fromXML: r4SequenceXML)
+        contents: .sequence(fromXML: r4SequenceXML, parentMediaXML: r4MediaXML)
     )
     
     let r5 = FinalCutPro.FCPXML.Effect(
@@ -217,7 +226,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offset, Self.tc("00:00:00:00", .fps29_97))
         XCTAssertEqual(element1.offset?.frameRate, .fps29_97)
-        XCTAssertEqual(element1.name, "Test Video (29.97 fps)")
+        XCTAssertEqual(element1.name, "Clip 1")
         XCTAssertEqual(element1.start, nil)
         XCTAssertEqual(element1.duration, Self.tc("00:00:03:11.71", .fps29_97))
         XCTAssertEqual(element1.duration?.frameRate, .fps29_97)
@@ -261,20 +270,171 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         // project
         let project = try XCTUnwrap(fcpxml.allProjects().first)
         
-        let markers = project
+        let extractedMarkers = project
             .extractMarkers(settings: FinalCutPro.FCPXML.ExtractionSettings())
+        
+        let markers = try extractedMarkers
+            .map { try Self.convert(absoluteStartOf: $0, to: .fps25) }
             .sortedByAbsoluteStart()
         
         XCTAssertEqual(markers.count, 18 + (2 * 3))
         
-        // spot check
-        let lastMarker = try XCTUnwrap(markers.last)
+        print("Sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
+        
+        // print("Sorted by name:")
+        // print(Self.debugString(for: markers.sortedByName()))
+        
+        // TODO: subframe rounding issues could be possibly eliminated if model used CMTime instead of Timecode for fractional time values, since the aggregate math involved between one or more Timecode instances could introduce very small amounts of cumulative subframes aliasing
+        
+        // Clip 1
+        XCTAssertEqual(markers[0].name, "Marker 2")
+        XCTAssertEqual(markers[0].context[.absoluteStart], Self.tc("00:00:01:11.56", .fps25))
+        
+        // Clip 2
+        XCTAssertEqual(markers[1].name, "Marker 3")
+        XCTAssertEqual(markers[1].context[.absoluteStart], Self.tc("00:00:04:05.68", .fps25))
+        
+        // Clip 2
+        XCTAssertEqual(markers[2].name, "Marker 4")
+        XCTAssertEqual(markers[2].context[.absoluteStart], Self.tc("00:00:05:20.71", .fps25))
+        
+        // Media Clip
+        XCTAssertEqual(markers[3].name, "Marker 5")
         XCTAssertEqual(
-            lastMarker.context[.absoluteStart],
-            try Timecode(.components(h: 00, m: 00, s: 28, f: 19, sf: 25), at: .fps25, base: .max80SubFrames) // confirmed in FCP
-                .converted(to: .fps29_97)
-                .adding(.frames(0, subFrames: 1)) // TODO: TimecodeKit rounds up to next subframe sometimes?
+            markers[3].context[.absoluteStart],
+            Self.tc("00:00:06:23", .fps25) + Self.tc("00:00:01:12", .fps29_97)
         )
+        
+        // Media Clip
+        XCTAssertEqual(markers[4].name, "Marker 6")
+        XCTAssertEqual(
+            markers[4].context[.absoluteStart],
+            Self.tc("00:00:06:23", .fps25) + Self.tc("00:00:03:01", .fps29_97)
+        )
+        
+        // Media Clip - technically out of bounds of the ref-clip
+        XCTAssertEqual(markers[5].name, "Marker 7")
+        XCTAssertEqual(
+            markers[5].context[.absoluteStart],
+            Self.tc("00:00:06:23", .fps25) + Self.tc("00:00:04:16", .fps29_97)
+        )
+        
+        // Clip 4
+        XCTAssertEqual(markers[6].name, "Marker 8")
+        XCTAssertEqual(
+            markers[6].context[.absoluteStart],
+            try Self.tc("00:00:11:18.19", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 4
+        XCTAssertEqual(markers[7].name, "Marker 9")
+        XCTAssertEqual(
+            markers[7].context[.absoluteStart],
+            try Self.tc("00:00:12:24.75", .fps25)
+                .subtracting(.frames(0, subFrames: 2)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 5
+        XCTAssertEqual(markers[8].name, "Marker 1")
+        XCTAssertEqual(
+            markers[8].context[.absoluteStart],
+            try Self.tc("00:00:14:03.54", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 5
+        XCTAssertEqual(markers[9].name, "Marker 10")
+        XCTAssertEqual(markers[9].context[.absoluteStart], Self.tc("00:00:14:07.67", .fps25))
+        
+        // Clip 5
+        XCTAssertEqual(markers[10].name, "Marker 11")
+        XCTAssertEqual(markers[10].context[.absoluteStart], Self.tc("00:00:14:13.54", .fps25))
+        
+        // Clip 5 - FCP shows 00:00:14:19.42
+        XCTAssertEqual(markers[11].name, "Marker 12")
+        XCTAssertEqual(
+            markers[11].context[.absoluteStart],
+            try Self.tc("00:00:14:19.42", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 5.2
+        XCTAssertEqual(markers[12].name, "Marker 14")
+        XCTAssertEqual(
+            markers[12].context[.absoluteStart],
+            try Self.tc("00:00:14:23.53", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 5.2
+        XCTAssertEqual(markers[13].name, "Marker 15")
+        XCTAssertEqual(
+            markers[13].context[.absoluteStart],
+            try Self.tc("00:00:15:02.00", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 5
+        XCTAssertEqual(markers[14].name, "Marker 16")
+        XCTAssertEqual(markers[14].context[.absoluteStart], Self.tc("00:00:15:10.29", .fps25))
+        
+        // Clip 5.2
+        XCTAssertEqual(markers[15].name, "Marker 17")
+        XCTAssertEqual(
+            markers[15].context[.absoluteStart],
+            try Self.tc("00:00:15:14.27", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 6
+        XCTAssertEqual(markers[16].name, "Marker 18")
+        XCTAssertEqual(markers[16].context[.absoluteStart], Self.tc("00:00:19:20.20", .fps25))
+        
+        // Clip 6
+        XCTAssertEqual(markers[17].name, "Marker 19")
+        XCTAssertEqual(markers[17].context[.absoluteStart], Self.tc("00:00:21:16.77", .fps25))
+        
+        // Clip 7
+        XCTAssertEqual(markers[18].name, "Marker 20")
+        XCTAssertEqual(markers[18].context[.absoluteStart], Self.tc("00:00:24:06.56", .fps25))
+        
+        // Media Clip - FCP shows 00:00:24:19.03 @ 25 fps
+        XCTAssertEqual(markers[19].name, "Marker 5")
+        XCTAssertEqual(
+            markers[19].context[.absoluteStart],
+            try (Self.tc("00:00:23:09", .fps25) + Self.tc("00:00:01:12", .fps29_97))
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Media Clip - FCP shows 00:00:26:09.90 @ 25 fps, technically out of bounds of the ref-clip
+        XCTAssertEqual(markers[20].name, "Marker 6")
+        XCTAssertEqual(
+            markers[20].context[.absoluteStart],
+            try Self.tc("00:00:23:09", .fps25) + Self.tc("00:00:03:01", .fps29_97)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 7
+        XCTAssertEqual(markers[21].name, "Marker 21")
+        XCTAssertEqual(
+            markers[21].context[.absoluteStart],
+            try Self.tc("00:00:26:24.22", .fps25)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Media Clip - FCP shows 00:00:27:22.44 @ 25 fps, technically out of bounds of the ref-clip
+        XCTAssertEqual(markers[22].name, "Marker 7")
+        XCTAssertEqual(
+            markers[22].context[.absoluteStart],
+           try  Self.tc("00:00:23:09", .fps25) + Self.tc("00:00:04:16", .fps29_97)
+                .subtracting(.frames(0, subFrames: 1)) // for cumulative subframe aliasing
+        )
+        
+        // Clip 7
+        XCTAssertEqual(markers[23].name, "Marker 22")
+        XCTAssertEqual(markers[23].context[.absoluteStart], Self.tc("00:00:28:19.25", .fps25))
     }
     
     /// Check markers within `ref-clip`s.
@@ -300,8 +460,8 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         
         XCTAssertEqual(markers.count, 18)
         
-         print("Sorted by absolute timecode:")
-         print(Self.debugString(for: markers))
+        print("Sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
         
         // print("Sorted by name:")
         // print(Self.debugString(for: markers.sortedByName()))

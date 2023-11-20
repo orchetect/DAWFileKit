@@ -20,17 +20,20 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyElement: FCPXMLElement {
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
         if let storyElement = FinalCutPro.FCPXML.AnyStoryElement(
             from: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: contextBuilder
         ) {
             self = .story(storyElement)
         } else if let structureElement = FinalCutPro.FCPXML.AnyStructureElement(
             from: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: contextBuilder
         ) {
@@ -143,6 +146,7 @@ extension Collection<FinalCutPro.FCPXML.AnyElement> {
 extension FinalCutPro.FCPXML {
     static func elements(
         in xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) -> [AnyElement] {
@@ -151,9 +155,14 @@ extension FinalCutPro.FCPXML {
             .lazy
             .compactMap { $0 as? XMLElement }
             .compactMap {
-                AnyElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+                AnyElement(
+                    from: $0,
+                    breadcrumbs: breadcrumbs + [xmlLeaf],
+                    resources: resources,
+                    contextBuilder: contextBuilder
+                )
             }
-        ?? []
+            ?? []
     }
 }
 

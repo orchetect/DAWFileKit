@@ -21,6 +21,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLAnnotationElement {
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -34,6 +35,7 @@ extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLAnnotationElement {
         case .caption:
             guard let caption = FinalCutPro.FCPXML.Caption(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -42,6 +44,7 @@ extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLAnnotationElement {
         case .keyword:
             guard let keyword = FinalCutPro.FCPXML.Keyword(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -50,6 +53,7 @@ extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLAnnotationElement {
         case .marker, .chapterMarker:
             guard let marker = FinalCutPro.FCPXML.Marker(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }

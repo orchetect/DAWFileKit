@@ -25,7 +25,7 @@
     <media id="r4" name="29.97_CC" uid="GYR/OKBAQ/2tErV+GGXCuA" modDate="2022-09-10 23:08:42 -0700">
         <sequence format="r3" duration="174174/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
             <spine>
-                <asset-clip ref="r2" offset="0s" name="Test Video (29.97 fps)" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
+                <asset-clip ref="r2" offset="0s" name="Media Clip" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
                     <marker start="247247/15000s" duration="1001/30000s" value="Marker 5"/>
                     <marker start="181181/10000s" duration="1001/30000s" value="Marker 6"/>
                     <marker start="49049/2500s" duration="1001/30000s" value="Marker 7"/>
@@ -41,19 +41,19 @@
         <project name="25i_V1" uid="136139D9-8DDC-4593-B09E-570FBE55A761" modDate="2022-12-30 20:47:39 -0800">
             <sequence format="r1" duration="147600/5000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
                 <spine>
-                    <asset-clip ref="r2" offset="0s" name="Test Video (29.97 fps)" duration="17000/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                    <asset-clip ref="r2" offset="0s" name="Clip 1" duration="17000/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                         <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                         <marker start="11011/7500s" duration="1001/30000s" value="Marker 2"/>
                     </asset-clip>
-                    <asset-clip ref="r2" offset="17000/5000s" name="Test Video (29.97 fps)" start="35702/5000s" duration="17600/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                    <asset-clip ref="r2" offset="17000/5000s" name="Clip 2" start="35702/5000s" duration="17600/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                         <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                         <marker start="239239/30000s" duration="1001/30000s" value="Marker 3"/>
                         <marker start="287287/30000s" duration="1001/30000s" value="Marker 4"/>
                     </asset-clip>
-                    <ref-clip ref="r4" offset="34600/5000s" name="29.97_CC" duration="18000/5000s">
+                    <ref-clip ref="r4" offset="34600/5000s" name="Clip 3" duration="18000/5000s">
                         <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                     </ref-clip>
-                    <asset-clip ref="r2" offset="52600/5000s" name="Test Video (29.97 fps)" start="71238/5000s" duration="16800/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                    <asset-clip ref="r2" offset="52600/5000s" name="Clip 4" start="71238/5000s" duration="16800/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                         <timeMap>
                             <timept time="0s" value="0s" interp="smooth2"/>
                             <timept time="4436211/90000s" value="9168210/90000s" interp="smooth2"/>
@@ -61,24 +61,24 @@
                         <marker start="154573/10000s" duration="1001/30000s" value="Marker 8"/>
                         <marker start="501757/30000s" duration="1001/30000s" value="Marker 9"/>
                     </asset-clip>
-                    <asset-clip ref="r2" offset="69400/5000s" name="Test Video (29.97 fps)" start="216883/5000s" duration="22800/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                    <asset-clip ref="r2" offset="69400/5000s" name="Clip 5" start="216883/5000s" duration="22800/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                         <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                         <spine lane="1" offset="220883/5000s" format="r1">
-                            <asset-clip ref="r2" offset="0s" name="Test Video (29.97 fps)" start="281782/5000s" duration="1000/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                            <asset-clip ref="r2" offset="0s" name="Clip 5.1" start="281782/5000s" duration="1000/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                                 <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                                 <filter-video ref="r5" name="Black &amp; White"/>
                             </asset-clip>
-                            <asset-clip ref="r2" offset="1000/5000s" name="Test Video (29.97 fps)" start="283617/5000s" duration="1400/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                            <asset-clip ref="r2" offset="1000/5000s" name="Clip 5.2" start="283617/5000s" duration="1400/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                                 <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                                 <marker start="851851/15000s" duration="1001/30000s" value="Marker 14"/>
                                 <marker start="853853/15000s" duration="1001/30000s" value="Marker 15"/>
                                 <filter-video ref="r5" name="Black &amp; White"/>
                             </asset-clip>
-                            <asset-clip ref="r2" offset="2400/5000s" name="Test Video (29.97 fps)" start="286787/5000s" duration="1400/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                            <asset-clip ref="r2" offset="2400/5000s" name="Clip 5.3" start="286787/5000s" duration="1400/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                                 <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                                 <filter-video ref="r5" name="Black &amp; White"/>
                             </asset-clip>
-                            <asset-clip ref="r2" offset="3800/5000s" name="Test Video (29.97 fps)" start="289956/5000s" duration="1200/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                            <asset-clip ref="r2" offset="3800/5000s" name="Clip 5.4" start="289956/5000s" duration="1200/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                                 <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                                 <marker start="871871/15000s" duration="1001/30000s" value="Marker 17"/>
                                 <filter-video ref="r5" name="Black &amp; White"/>
@@ -90,7 +90,7 @@
                         <marker start="1328327/30000s" duration="1001/30000s" value="Marker 12"/>
                         <marker start="673673/15000s" duration="1001/30000s" value="Marker 16"/>
                     </asset-clip>
-                    <asset-clip ref="r2" offset="92200/5000s" name="Test Video (29.97 fps)" start="184851/5000s" duration="20800/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                    <asset-clip ref="r2" offset="92200/5000s" name="Clip 6" start="184851/5000s" duration="20800/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                         <timeMap>
                             <timept time="0s" value="0s" interp="smooth2"/>
                             <timept time="4681557/90000s" value="9168210/90000s" interp="smooth2"/>
@@ -98,9 +98,9 @@
                         <marker start="76681/2000s" duration="1001/30000s" value="Marker 18"/>
                         <marker start="1206271/30000s" duration="1001/30000s" value="Marker 19"/>
                     </asset-clip>
-                    <asset-clip ref="r2" offset="113000/5000s" name="Test Video (29.97 fps)" start="446112/5000s" duration="34600/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                    <asset-clip ref="r2" offset="113000/5000s" name="Clip 7" start="446112/5000s" duration="34600/5000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                         <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
-                        <ref-clip ref="r4" lane="1" offset="56239/625s" name="29.97_CC" duration="2s">
+                        <ref-clip ref="r4" lane="1" offset="56239/625s" name="Clip 7.1" duration="2s">
                             <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
                             <filter-video ref="r6" name="Colorize"/>
                         </ref-clip>

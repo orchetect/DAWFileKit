@@ -60,7 +60,7 @@ extension FinalCutPro.FCPXML.Media: FCPXMLResource {
         }
         else if let sequenceXML = xmlLeaf.first(childNamed: Children.sequence.rawValue)
         {
-            contents = .sequence(fromXML: sequenceXML)
+            contents = .sequence(fromXML: sequenceXML, parentMediaXML: xmlLeaf)
         }
         
         // validate element name
@@ -79,7 +79,7 @@ extension FinalCutPro.FCPXML.Media {
         // can't store FinalCutPro.FCPXML.Sequence because it requires resources to already have
         // been parsed to construct. so as a workaround we'll store raw XML here so we can
         // parse it later after the complete collection of resources have been parsed.
-        case sequence(fromXML: XMLElement)
+        case sequence(fromXML: XMLElement, parentMediaXML: XMLElement)
     }
 }
 
@@ -90,6 +90,7 @@ extension FinalCutPro.FCPXML.Media {
     }
     
     func generateMediaType(
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) -> MediaType? {
@@ -99,9 +100,10 @@ extension FinalCutPro.FCPXML.Media {
         case let .multicam(multicam): // TODO: AFAIK RefClip can never contain a `multicam` element
             return .multicam(multicam)
             
-        case let .sequence(fromXML: xmlElement):
+        case let .sequence(sequenceXML, parentMediaXML):
             guard let sequence = FinalCutPro.FCPXML.Sequence(
-                from: xmlElement,
+                from: sequenceXML,
+                breadcrumbs: breadcrumbs + [parentMediaXML],
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }

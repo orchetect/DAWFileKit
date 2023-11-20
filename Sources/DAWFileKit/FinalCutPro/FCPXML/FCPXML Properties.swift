@@ -34,7 +34,12 @@ extension FinalCutPro.FCPXML {
     /// This is computed, so it is best to avoid repeat calls to this method.
     public func allElements(context: FCPXMLElementContextBuilder = .default) -> [AnyElement] {
         guard let xmlRoot = xmlRoot else { return [] }
-        return Self.elements(in: xmlRoot, resources: resources(), contextBuilder: context)
+        return Self.elements( // adds xmlRoot as breadcrumb
+            in: xmlRoot,
+            breadcrumbs: [],
+            resources: resources(),
+            contextBuilder: context
+        )
     }
     
     /// Returns all events that exist anywhere within the XML hierarchy.
@@ -56,12 +61,13 @@ extension FinalCutPro.FCPXML {
         
         // library events
         if let xmlLibrary = xmlLibrary {
-            let libraryEvents = Self.structureElements(
+            let libraryEvents = Self.structureElements( // adds xmlLibrary as breadcrumb
                 in: xmlLibrary,
+                breadcrumbs: [],
                 resources: resources,
                 contextBuilder: context
             )
-                .events()
+            .events()
             events.append(contentsOf: libraryEvents)
         }
         
@@ -97,8 +103,9 @@ extension FinalCutPro.FCPXML {
     /// This is computed, so it is best to avoid repeat calls to this method.
     public func library(context: FCPXMLElementContextBuilder = .default) -> Library? {
         guard let xmlRoot = xmlRoot else { return nil }
-        return Self.structureElements(
+        return Self.structureElements( // adds xmlRoot as breadcrumb
             in: xmlRoot,
+            breadcrumbs: [],
             resources: resources(),
             contextBuilder: context
         )

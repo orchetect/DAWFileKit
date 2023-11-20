@@ -49,12 +49,14 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
     // no start
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
         name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
-        elements = FinalCutPro.FCPXML.storyElements(
+        elements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: contextBuilder
         )
@@ -69,7 +71,7 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         offset = anchorableAttributes.offset
         
         // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

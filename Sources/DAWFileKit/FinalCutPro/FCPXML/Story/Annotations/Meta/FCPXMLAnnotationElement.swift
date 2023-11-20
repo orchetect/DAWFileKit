@@ -36,6 +36,7 @@ public protocol FCPXMLAnnotationElement: FCPXMLStoryElement where Self: Equatabl
     /// Initialize from an XML leaf (element) using a context builder instance.
     init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     )

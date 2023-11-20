@@ -19,6 +19,7 @@ public protocol FCPXMLElement where Self: Equatable, Self: Hashable, Self: FCPXM
     /// Initialize from an XML leaf (element) using a context builder instance.
     init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     )
@@ -28,11 +29,13 @@ extension FCPXMLElement {
     /// Initialize from an XML leaf (element) using a closure as context builder.
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: @escaping FinalCutPro.FCPXML.ElementContextClosure
     ) {
         self.init(
             from: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: FinalCutPro.FCPXML.CustomContext(contextBuilder: contextBuilder)
         )
@@ -41,10 +44,12 @@ extension FCPXMLElement {
     /// Initialize from an XML leaf (element) using default context builder.
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) {
         self.init(
             from: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: .default
         )

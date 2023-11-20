@@ -25,7 +25,7 @@ extension FinalCutPro.FCPXML {
         public init() { }
         
         public var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure {
-            { element, resources, tools in
+            { element, breadcrumbs, resources, tools in
                 var dict: FinalCutPro.FCPXML.ElementContext = [:]
                 dict[.absoluteStart] = tools.absoluteStart
                 dict[.ancestorEventName] = tools.ancestorEventName

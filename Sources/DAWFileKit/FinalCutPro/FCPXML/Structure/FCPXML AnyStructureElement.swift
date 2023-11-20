@@ -21,6 +21,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -33,6 +34,7 @@ extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
         case .library:
             guard let library = FinalCutPro.FCPXML.Library(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -43,6 +45,7 @@ extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
         case .event:
             guard let event = FinalCutPro.FCPXML.Event(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -53,6 +56,7 @@ extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLStructureElement {
         case .project:
             guard let project = FinalCutPro.FCPXML.Project(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -180,6 +184,7 @@ extension Collection<FinalCutPro.FCPXML.AnyStructureElement> {
 extension FinalCutPro.FCPXML {
     static func structureElements(
         in xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) -> [AnyStructureElement] {
@@ -188,7 +193,12 @@ extension FinalCutPro.FCPXML {
             .lazy
             .compactMap { $0 as? XMLElement }
             .compactMap {
-                AnyStructureElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+                AnyStructureElement(
+                    from: $0,
+                    breadcrumbs: breadcrumbs + [xmlLeaf],
+                    resources: resources,
+                    contextBuilder: contextBuilder
+                )
             }
         ?? []
     }

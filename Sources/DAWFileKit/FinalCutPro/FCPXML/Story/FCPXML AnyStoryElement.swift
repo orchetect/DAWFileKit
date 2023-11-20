@@ -35,6 +35,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
     
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -47,6 +48,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
         case .anyAnnotation:
             guard let annotation = FinalCutPro.FCPXML.AnyAnnotation(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -57,6 +59,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
         case .anyClip:
             guard let clip = FinalCutPro.FCPXML.AnyClip(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -67,6 +70,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
         case .sequence:
             guard let element = FinalCutPro.FCPXML.Sequence(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -79,6 +83,7 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLStoryElement {
         case .spine:
             guard let element = FinalCutPro.FCPXML.Spine(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             )
@@ -162,12 +167,11 @@ extension FinalCutPro.FCPXML.AnyStoryElement {
     
     /// Convenience to return the start of the story element.
     /// Returns `nil` if attribute is not present or not applicable.
-    /// For `sequence`, returns its absolute `startTimecode`.
     public var start: Timecode? {
         switch self {
         case let .anyAnnotation(clip): return clip.start
         case let .anyClip(clip): return clip.start
-        case let .sequence(sequence): return sequence.startTimecode
+        case .sequence(_): return nil // sequence.startTimecode
         case .spine(_): return nil
         }
     }
@@ -276,6 +280,7 @@ extension Collection<FinalCutPro.FCPXML.AnyStoryElement> {
 extension FinalCutPro.FCPXML {
     static func storyElements(
         in xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) -> [AnyStoryElement] {
@@ -284,9 +289,14 @@ extension FinalCutPro.FCPXML {
             .lazy
             .compactMap { $0 as? XMLElement }
             .compactMap {
-                AnyStoryElement(from: $0, resources: resources, contextBuilder: contextBuilder)
+                AnyStoryElement(
+                    from: $0,
+                    breadcrumbs: breadcrumbs + [xmlLeaf],
+                    resources: resources,
+                    contextBuilder: contextBuilder
+                )
             }
-        ?? []
+            ?? []
     }
 }
 

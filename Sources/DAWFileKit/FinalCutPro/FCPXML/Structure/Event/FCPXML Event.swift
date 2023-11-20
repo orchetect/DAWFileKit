@@ -61,6 +61,7 @@ extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
     
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -68,15 +69,25 @@ extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
         uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
         
         projects = FinalCutPro.FCPXML
-            .structureElements(in: xmlLeaf, resources: resources, contextBuilder: contextBuilder)
+            .structureElements( // adds xmlLeaf as breadcrumb
+                in: xmlLeaf,
+                breadcrumbs: breadcrumbs,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             .projects()
         
         clips = FinalCutPro.FCPXML
-            .storyElements(in: xmlLeaf, resources: resources, contextBuilder: contextBuilder)
+            .storyElements( // adds xmlLeaf as breadcrumb
+                in: xmlLeaf,
+                breadcrumbs: breadcrumbs,
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
             .clips()
         
         // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

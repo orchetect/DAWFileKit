@@ -72,6 +72,7 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
     
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -79,8 +80,9 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
             lane = Int(laneString)
         }
         
-        let storyElements = FinalCutPro.FCPXML.storyElements(
-            in: xmlLeaf, 
+        let storyElements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
+            in: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: contextBuilder
         )

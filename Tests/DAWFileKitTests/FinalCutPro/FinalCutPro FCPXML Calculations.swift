@@ -215,53 +215,6 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
             try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
         )
     }
-    
-    func testAggregateOffset() throws {
-        // load file
-        let rawData = try fileContents
-        
-        // parse file
-        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-        let resources = fcpxml.resources()
-        
-        // root
-        let xmlRoot = try XCTUnwrap(fcpxml.xmlRoot)
-        XCTAssertEqual(FinalCutPro.FCPXML.aggregateOffset(of: xmlRoot, resources: resources), nil)
-        
-        // library
-        let library = try XCTUnwrap(xmlRoot.first(childNamed: "library"))
-        XCTAssertEqual(FinalCutPro.FCPXML.aggregateOffset(of: library, resources: resources), nil)
-        
-        // event
-        let event = try XCTUnwrap(library.first(childNamed: "event"))
-        XCTAssertEqual(FinalCutPro.FCPXML.aggregateOffset(of: event, resources: resources), nil)
-        
-        // project
-        let project = try XCTUnwrap(event.first(childNamed: "project"))
-        XCTAssertEqual(FinalCutPro.FCPXML.aggregateOffset(of: project, resources: resources), nil)
-        
-        // sequence
-        let sequence = try XCTUnwrap(project.first(childNamed: "sequence"))
-        XCTAssertEqual(FinalCutPro.FCPXML.aggregateOffset(of: sequence, resources: resources), nil)
-        
-        // spine
-        let spine = try XCTUnwrap(sequence.first(childNamed: "spine"))
-        XCTAssertEqual(FinalCutPro.FCPXML.aggregateOffset(of: spine, resources: resources), nil)
-        
-        // title
-        let title = try XCTUnwrap(spine.first(childNamed: "title"))
-        XCTAssertEqual(
-            FinalCutPro.FCPXML.aggregateOffset(of: title, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
-        )
-        
-        // marker
-        let marker = try XCTUnwrap(title.first(childNamed: "marker"))
-        XCTAssertEqual(
-            FinalCutPro.FCPXML.aggregateOffset(of: marker, resources: resources),
-            try Timecode(.components(h: 01, m: 00, s: 00, f: 00), at: .fps29_97, base: .max80SubFrames)
-        )
-    }
 }
 
 #endif

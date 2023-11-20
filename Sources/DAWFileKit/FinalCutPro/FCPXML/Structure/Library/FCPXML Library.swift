@@ -37,6 +37,7 @@ extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
     
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {

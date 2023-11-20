@@ -53,6 +53,7 @@ extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
     
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -61,11 +62,17 @@ extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
         uid = FinalCutPro.FCPXML.getUIDAttribute(from: xmlLeaf)
         modDate = xmlLeaf.attributeStringValue(forName: Attributes.modDate.rawValue)
         
-        guard let seq = Self.parseSequence(from: xmlLeaf, resources: resources, contextBuilder: contextBuilder) else { return nil }
+        guard let seq = Self.parseSequence( // adds xmlLeaf as breadcrumb
+            from: xmlLeaf,
+            breadcrumbs: breadcrumbs,
+            resources: resources,
+            contextBuilder: contextBuilder
+        )
+        else { return nil }
         sequence = seq
         
         // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)
@@ -74,11 +81,13 @@ extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
     
     internal static func parseSequence(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) -> FinalCutPro.FCPXML.Sequence? {
-        let storyElements = FinalCutPro.FCPXML.storyElements(
+        let storyElements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: contextBuilder
         )

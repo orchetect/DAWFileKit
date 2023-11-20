@@ -45,7 +45,9 @@ extension FCPXMLUtilities {
         let name = em.name.quoted
         let note = em.note != nil ? " note:\(em.note!.quoted)" : ""
         let durTC = em.duration?.stringValue(format: [.showSubFrames]) ?? "?"
-        return "\(absTC): \(name)\(note) dur:\(durTC)"
+        
+        let parentName = em.context[.parentName]?.quoted ?? "<<missing>>"
+        return "\(absTC): \(name)\(note) dur:\(durTC) parent:\(parentName)"
     }
     
     static func debugString(for extractedMarkers: some Collection<FinalCutPro.FCPXML.Marker>) -> String {

@@ -69,11 +69,13 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
     // no ref, no role
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        contents = FinalCutPro.FCPXML.storyElements(
+        contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
+            breadcrumbs: breadcrumbs,
             resources: resources,
             contextBuilder: contextBuilder
         )
@@ -94,7 +96,7 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
         enabled = clipAttributes.enabled
         
         // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

@@ -17,9 +17,9 @@ extension FinalCutPro.FCPXML {
         public var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure
         
         public init(_ builders: [FCPXMLElementContextBuilder]) {
-            contextBuilder = { xmlLeaf, resources, tools in
+            contextBuilder = { xmlLeaf, breadcrumbs, resources, tools in
                 builders.reduce(into: [:]) { dict, builder in
-                    let context = builder.contextBuilder(xmlLeaf, resources, tools)
+                    let context = builder.contextBuilder(xmlLeaf, breadcrumbs, resources, tools)
                     dict.merge(context) { _, _ in true }
                 }
             }

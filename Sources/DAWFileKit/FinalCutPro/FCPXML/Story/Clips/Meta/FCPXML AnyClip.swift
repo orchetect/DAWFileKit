@@ -28,6 +28,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -41,6 +42,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .assetClip:
             guard let clip = FinalCutPro.FCPXML.AssetClip(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -49,6 +51,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .audio:
             guard let clip = FinalCutPro.FCPXML.Audio(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -57,6 +60,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .audition:
             guard let element = FinalCutPro.FCPXML.Audition(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -65,6 +69,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .clip:
             guard let clip = FinalCutPro.FCPXML.Clip(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -73,6 +78,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .gap:
             guard let element = FinalCutPro.FCPXML.Gap(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -81,6 +87,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .mcClip:
             guard let clip = FinalCutPro.FCPXML.MCClip(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -89,6 +96,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .refClip:
             guard let clip = FinalCutPro.FCPXML.RefClip(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -97,6 +105,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .syncClip:
             guard let clip = FinalCutPro.FCPXML.SyncClip(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -105,6 +114,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .title:
             guard let clip = FinalCutPro.FCPXML.Title(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }
@@ -113,6 +123,7 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLClip {
         case .video:
             guard let clip = FinalCutPro.FCPXML.Video(
                 from: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources,
                 contextBuilder: contextBuilder
             ) else { return nil }

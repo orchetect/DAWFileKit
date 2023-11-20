@@ -62,6 +62,7 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
     
     public init?(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
@@ -129,7 +130,7 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
         }
         
         // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, resources: resources)
+        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
     }
     
     public var annotationType: FinalCutPro.FCPXML.AnnotationType {
@@ -181,9 +182,9 @@ extension Collection<FinalCutPro.FCPXML.Marker> {
     
     /// Sorts collection by marker's name.
     public func sortedByName() -> [FinalCutPro.FCPXML.Marker] {
-        sorted(by: { lhs, rhs in
+        sorted { lhs, rhs in
             lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
-        })
+        }
     }
 }
 

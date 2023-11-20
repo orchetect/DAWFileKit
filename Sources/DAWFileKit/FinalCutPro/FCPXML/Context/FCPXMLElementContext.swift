@@ -23,10 +23,11 @@ extension FCPXMLElementContextBuilder {
     /// Internal: builds the context for the element.
     func buildContext(
         from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource]
     ) -> FinalCutPro.FCPXML.ElementContext {
-        let tools = FinalCutPro.FCPXML.ContextTools(xmlLeaf: xmlLeaf, resources: resources)
-        return contextBuilder(xmlLeaf, resources, tools)
+        let tools = FinalCutPro.FCPXML.ContextTools(xmlLeaf: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
+        return contextBuilder(xmlLeaf, breadcrumbs, resources, tools)
     }
 }
 
@@ -37,6 +38,7 @@ extension FinalCutPro.FCPXML {
     /// Context builder closure for a model element.
     public typealias ElementContextClosure = (
         _ element: XMLElement,
+        _ breadcrumbs: [XMLElement],
         _ resources: [String: FinalCutPro.FCPXML.AnyResource],
         _ tools: FinalCutPro.FCPXML.ContextTools
     ) -> ElementContext
@@ -44,13 +46,16 @@ extension FinalCutPro.FCPXML {
     /// Class instance that provides useful context for a FCPXML element.
     public struct ContextTools {
         var xmlLeaf: XMLElement
+        var breadcrumbs: [XMLElement]
         var resources: [String: FinalCutPro.FCPXML.AnyResource]
         
         init(
             xmlLeaf: XMLElement,
+            breadcrumbs: [XMLElement],
             resources: [String: FinalCutPro.FCPXML.AnyResource]
         ) {
             self.xmlLeaf = xmlLeaf
+            self.breadcrumbs = breadcrumbs
             self.resources = resources
         }
         
@@ -60,7 +65,8 @@ extension FinalCutPro.FCPXML {
         /// This is calculated based on ancestor elements.
         public var absoluteStart: Timecode? {
             FinalCutPro.FCPXML.calculateAbsoluteStart(
-                element: xmlLeaf,
+                of: xmlLeaf,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }
@@ -103,8 +109,10 @@ extension FinalCutPro.FCPXML {
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteStart: Timecode? {
             guard let parent = xmlLeaf.parentXMLElement else { return nil }
-            return FinalCutPro.FCPXML.aggregateOffset(
+            assert(parent == breadcrumbs.last)
+            return FinalCutPro.FCPXML.calculateAbsoluteStart(
                 of: parent,
+                breadcrumbs: breadcrumbs.dropLast(),
                 resources: resources
             )
         }
@@ -136,7 +144,8 @@ extension FinalCutPro.FCPXML {
         /// This is calculated based on ancestor elements.
         public func absoluteStart(of element: XMLElement) -> Timecode? {
             FinalCutPro.FCPXML.calculateAbsoluteStart(
-                element: element,
+                of: element,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }
