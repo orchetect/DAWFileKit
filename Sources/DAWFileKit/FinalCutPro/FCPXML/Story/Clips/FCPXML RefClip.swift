@@ -31,6 +31,11 @@ extension FinalCutPro.FCPXML {
         public var ref: String // resource ID, required
         public var audioRoleSources: [String] // TODO: could refactor as struct with additional attributes
         
+        @EquatableAndHashableExempt
+        public var refMedia: Media
+        @EquatableAndHashableExempt
+        public var mediaType: FinalCutPro.FCPXML.Media.MediaType
+        
         public var contents: [AnyStoryElement]
         
         // FCPXMLAnchorableAttributes
@@ -52,6 +57,8 @@ extension FinalCutPro.FCPXML {
         public init(
             ref: String,
             audioRoleSources: [String],
+            refMedia: Media,
+            mediaType: FinalCutPro.FCPXML.Media.MediaType,
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -66,6 +73,8 @@ extension FinalCutPro.FCPXML {
         ) {
             self.ref = ref
             self.audioRoleSources = audioRoleSources
+            self.refMedia = refMedia
+            self.mediaType = mediaType
             self.contents = contents
             
             // FCPXMLAnchorableAttributes
@@ -98,6 +107,16 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
     ) {
         guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
         self.ref = ref
+        
+        // AFAIK `media` is the only resource type usable by a `ref-clip`
+        guard case let .media(refMedia) = resources[ref] else { return nil }
+        self.refMedia = refMedia
+        
+        guard let mediaType = refMedia.generateMediaType(
+            resources: resources,
+            contextBuilder: contextBuilder
+        ) else { return nil }
+        self.mediaType = mediaType
         
         contents = FinalCutPro.FCPXML.storyElements(
             in: xmlLeaf,
@@ -145,10 +164,17 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLExtractable {
         ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
         matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
     ) -> [FinalCutPro.FCPXML.AnyElement] {
-        extractElements(
+        // resource may contain story elements
+        let mediaRefElements = mediaType.extractElements(
             settings: settings,
             ancestorsOfParent: ancestorsOfParent,
-            contents: contents.asAnyElements(),
+            matching: predicate
+        )
+        
+        return extractElements(
+            settings: settings,
+            ancestorsOfParent: ancestorsOfParent,
+            contents: mediaRefElements + contents.asAnyElements(),
             matching: predicate
         )
     }

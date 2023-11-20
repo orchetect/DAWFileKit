@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-final class FinalCutPro_FCPXML_Complex: XCTestCase {
+final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
@@ -194,7 +194,7 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
     
     // MARK: Clip info
     
-    struct ClipInfo: Equatable, Hashable {
+    struct ClipInfo: Equatable, Hashable, FCPXMLUtilities {
         var clipType: FinalCutPro.FCPXML.ClipType
         var name: String?
         var absoluteStart: Timecode?
@@ -204,56 +204,56 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         static let nature = ClipInfo(
             clipType: .assetClip,
             name: "Nature Makes You Happy",
-            absoluteStart: tc("00:00:00:00"),
-            duration: tc("00:02:22:01"),
+            absoluteStart: tc("00:00:00:00", .fps25),
+            duration: tc("00:02:22:01", .fps25),
             markerDuration: .frame
         )
         
         static let land = ClipInfo(
             clipType: .assetClip,
             name: "Is This The Land of Fire or Ice",
-            absoluteStart: tc("00:02:22:01"),
-            duration: tc("00:03:25:20"),
+            absoluteStart: tc("00:02:22:01", .fps25),
+            duration: tc("00:03:25:20", .fps25),
             markerDuration: .frame
         )
         
         static let clouds = ClipInfo(
             clipType: .video,
             name: "Clouds",
-            absoluteStart: tc("00:05:47:21"),
-            duration: tc("00:01:40:03"),
+            absoluteStart: tc("00:05:47:21", .fps25),
+            duration: tc("00:01:40:03", .fps25),
             markerDuration: .frame
         )
         
         static let title1 = ClipInfo(
             clipType: .title,
             name: "Basic Title - Basic Title",
-            absoluteStart: tc("00:03:09:15"),
-            duration: tc("00:00:17:05"),
+            absoluteStart: tc("00:03:09:15", .fps25),
+            duration: tc("00:00:17:05", .fps25),
             markerDuration: .frame
         )
         
         static let title2 = ClipInfo(
             clipType: .title,
             name: "Basic Title 2 - Basic Title",
-            absoluteStart: tc("00:03:32:08"),
-            duration: tc("00:00:12:09"),
+            absoluteStart: tc("00:03:32:08", .fps25),
+            duration: tc("00:00:12:09", .fps25),
             markerDuration: .frame
         )
         
         static let audio1 = ClipInfo(
             clipType: .assetClip,
             name: "Interstellar Soundtrack - No Time for Caution",
-            absoluteStart: tc("00:00:00:00"),
-            duration: tc("00:04:06:06.63"),
+            absoluteStart: tc("00:00:00:00", .fps25),
+            duration: tc("00:04:06:06.63", .fps25),
             markerDuration: .audioSample
         )
         
         static let audio2 = ClipInfo(
             clipType: .assetClip,
             name: "Interstellar Soundtrack - No Time for Caution",
-            absoluteStart: tc("00:03:56:09.52"),
-            duration: tc("00:03:31:14.27"),
+            absoluteStart: tc("00:03:56:09.52", .fps25),
+            duration: tc("00:03:31:14.27", .fps25),
             markerDuration: .audioSample
         )
     }
@@ -265,11 +265,11 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         var duration: Timecode {
             switch self {
             case .frame: 
-                return tc("00:00:00:01")
+                return tc("00:00:00:01", .fps25)
             case .audioSample:
                 // even though Final Cut Pro shows 44.1kHz as the audio sample rate for these clips,
                 // the XML is using 48kHz as the rational fraction denominator to define the marker length
-                return try! Timecode(.samples(1, sampleRate: 48000), at: frameRate, base: .max80SubFrames)
+                return try! Timecode(.samples(1, sampleRate: 48000), at: .fps25, base: .max80SubFrames)
             }
         }
     }
@@ -284,80 +284,45 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
     
     // NOTE:
     // markers with "***" trialing comment are 1 subframe higher than what Final Cut Pro shows in
-    // the marker list. this may be due to intra-subframe rounding when Final Cut Pro exports the XML.
-    // a potential cause of this is if Final Cut Pro projects with mismatched frame rates are merged and
-    // time positions have to be converted between frame rates.
+    // the marker list. this is due to intra-subframe rounding.
+    // TimecodeKit currently rounds subframes differently than FCP does.
     // for our purposes, this 1 subframe rounding issue is not ideal but it's not crucial to be perfect
     // in this instance.
     
     // swiftformat:options --maxwidth none
     static var markerData: [MarkerDatum] = [
-        (tc("00:00:20:16.00"), "(To-Do) Penguin", "Note Test 1", .toDo(completed: false), .nature),
-        (tc("00:00:25:05.00"), "(Standard) Flamingo Bird", "Colour Fix", .standard, .nature),
-        (tc("00:00:35:23.00"), "Chapter 1", "Note Test 2", .chapter(posterOffset: tcInterval(frames: 11)), .nature),
-        (tc("00:00:55:00.00"), "(To-Do) Red Crabs", "Note Test 3", .toDo(completed: false), .nature),
-        (tc("00:01:17:20.00"), "(To-Do) Giraffe", "Note Test 4", .toDo(completed: false), .nature),
-        (tc("00:01:33:10.35"), "Marker on Audio", "Audio Fix", .standard, .audio1),
-        (tc("00:01:44:16.00"), "(Standard) Mountains", "VFX Shot", .standard, .nature),
-        (tc("00:01:57:02.00"), "(Completed) Frog Jump", "Note Test 5", .toDo(completed: true), .nature),
-        (tc("00:02:29:00.00"), "It is necessary", nil, .toDo(completed: false), .audio1),
-        (tc("00:02:39:17.00"), "(To-Do) Red Giant", "Note Test 6", .toDo(completed: false), .land),
-        (tc("00:02:53:23.29"), "Cooper!", nil, .toDo(completed: true), .audio1),
-        (tc("00:03:03:14.00"), "(Standard) Kepler-36", "Explosion Shot", .standard, .land),
-        (tc("00:03:12:20.00"), "Marker on Title 1", nil, .standard, .title1),
-        (tc("00:03:22:10.00"), "Marker on Title 2", nil, .toDo(completed: false), .title1),
-        (tc("00:03:32:08.00"), "Chapter 7", nil, .chapter(posterOffset: +tc(Fraction(11, 60))), .audio1),
-        (tc("00:03:35:13.00"), "Marker on Title", nil, .toDo(completed: true), .title2),
-        (tc("00:03:40:07.00"), "Chapter 5", nil, .chapter(posterOffset: tcInterval(frames: 11)), .title2),
-        (tc("00:03:45:03.00"), "Marker on Title Out of Bounds", nil, .toDo(completed: false), .title2),
-        (tc("00:03:48:16.00"), "(Standard) Surface Temperatures", "Too Bright", .standard, .land),
-        (tc("00:04:12:15.00"), "(Completed) Lava", "Nice Lava", .toDo(completed: true), .land),
-        (tc("00:04:29:03.24"), "Sound FX 1", nil, .standard, .audio2),
-        (tc("00:04:49:11.00"), "Chapter 2", "Note Test 7", .chapter(posterOffset: tcInterval(frames: 11)), .land),
-        (tc("00:05:13:16.00"), "Chapter 3", "Note Test 8", .chapter(posterOffset: tcInterval(frames: 11)), .land),
-        (tc("00:05:24:18.36"), "Sound FX 2", nil, .toDo(completed: false), .audio2),
-        (tc("00:06:02:02.00"), "Cloud 1", nil, .standard, .clouds),
-        (tc("00:06:15:11.20"), "SFX Completed", nil, .toDo(completed: true), .audio2),
-        (tc("00:06:28:08.00"), "Cloud 2", nil, .toDo(completed: false), .clouds),
-        (tc("00:06:39:00.54"), "Chapter 8", nil, .chapter(posterOffset: +tc(Fraction(11, 60))), .audio2), // ***
-        (tc("00:06:48:09.00"), "Cloud 3", nil, .toDo(completed: true), .clouds),
-        (tc("00:07:08:20.00"), "Chapter 6", nil, .chapter(posterOffset: tcInterval(frames: 11)), .clouds)
+        (tc("00:00:20:16.00", .fps25), "(To-Do) Penguin", "Note Test 1", .toDo(completed: false), .nature),
+        (tc("00:00:25:05.00", .fps25), "(Standard) Flamingo Bird", "Colour Fix", .standard, .nature),
+        (tc("00:00:35:23.00", .fps25), "Chapter 1", "Note Test 2", .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .nature),
+        (tc("00:00:55:00.00", .fps25), "(To-Do) Red Crabs", "Note Test 3", .toDo(completed: false), .nature),
+        (tc("00:01:17:20.00", .fps25), "(To-Do) Giraffe", "Note Test 4", .toDo(completed: false), .nature),
+        (tc("00:01:33:10.35", .fps25), "Marker on Audio", "Audio Fix", .standard, .audio1),
+        (tc("00:01:44:16.00", .fps25), "(Standard) Mountains", "VFX Shot", .standard, .nature),
+        (tc("00:01:57:02.00", .fps25), "(Completed) Frog Jump", "Note Test 5", .toDo(completed: true), .nature),
+        (tc("00:02:29:00.00", .fps25), "It is necessary", nil, .toDo(completed: false), .audio1),
+        (tc("00:02:39:17.00", .fps25), "(To-Do) Red Giant", "Note Test 6", .toDo(completed: false), .land),
+        (tc("00:02:53:23.29", .fps25), "Cooper!", nil, .toDo(completed: true), .audio1),
+        (tc("00:03:03:14.00", .fps25), "(Standard) Kepler-36", "Explosion Shot", .standard, .land),
+        (tc("00:03:12:20.00", .fps25), "Marker on Title 1", nil, .standard, .title1),
+        (tc("00:03:22:10.00", .fps25), "Marker on Title 2", nil, .toDo(completed: false), .title1),
+        (tc("00:03:32:08.00", .fps25), "Chapter 7", nil, .chapter(posterOffset: +tc(Fraction(11, 60), .fps25)), .audio1),
+        (tc("00:03:35:13.00", .fps25), "Marker on Title", nil, .toDo(completed: true), .title2),
+        (tc("00:03:40:07.00", .fps25), "Chapter 5", nil, .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .title2),
+        (tc("00:03:45:03.00", .fps25), "Marker on Title Out of Bounds", nil, .toDo(completed: false), .title2),
+        (tc("00:03:48:16.00", .fps25), "(Standard) Surface Temperatures", "Too Bright", .standard, .land),
+        (tc("00:04:12:15.00", .fps25), "(Completed) Lava", "Nice Lava", .toDo(completed: true), .land),
+        (tc("00:04:29:03.24", .fps25), "Sound FX 1", nil, .standard, .audio2),
+        (tc("00:04:49:11.00", .fps25), "Chapter 2", "Note Test 7", .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .land),
+        (tc("00:05:13:16.00", .fps25), "Chapter 3", "Note Test 8", .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .land),
+        (tc("00:05:24:18.36", .fps25), "Sound FX 2", nil, .toDo(completed: false), .audio2),
+        (tc("00:06:02:02.00", .fps25), "Cloud 1", nil, .standard, .clouds),
+        (tc("00:06:15:11.20", .fps25), "SFX Completed", nil, .toDo(completed: true), .audio2),
+        (tc("00:06:28:08.00", .fps25), "Cloud 2", nil, .toDo(completed: false), .clouds),
+        (tc("00:06:39:00.54", .fps25), "Chapter 8", nil, .chapter(posterOffset: +tc(Fraction(11, 60), .fps25)), .audio2), // ***
+        (tc("00:06:48:09.00", .fps25), "Cloud 3", nil, .toDo(completed: true), .clouds),
+        (tc("00:07:08:20.00", .fps25), "Chapter 6", nil, .chapter(posterOffset: tcInterval(frames: 11, .fps25)), .clouds)
     ]
     // swiftformat:options --maxwidth 100
-    
-    static let frameRate: TimecodeFrameRate = .fps25
-    
-    static func tc(_ timecodeString: String) -> Timecode {
-        try! Timecode(.string(timecodeString), at: frameRate, base: .max80SubFrames)
-    }
-    
-    static func tc(frames: Int) -> Timecode {
-        try! Timecode(.frames(frames), at: frameRate, base: .max80SubFrames)
-    }
-    
-    static func tc(_ rational: Fraction) -> Timecode {
-        try! Timecode(.rational(rational), at: frameRate, base: .max80SubFrames)
-    }
-    
-    static func tcInterval(frames: Int) -> TimecodeInterval {
-        if frames < 0 {
-            return .negative(tc(frames: abs(frames)))
-        } else {
-            return .positive(tc(frames: frames))
-        }
-    }
-    
-    func debugString(for em: FinalCutPro.FCPXML.Marker) -> String {
-        let absTC = em.context[.absoluteStart]?.stringValue(format: [.showSubFrames]) ?? "??:??:??:??.??"
-        let name = em.name.quoted
-        let note = em.note != nil ? " note:\(em.note!.quoted)" : ""
-        let durTC = em.duration?.stringValue(format: [.showSubFrames]) ?? "?"
-        return "\(absTC) \(name)\(note) dur:\(durTC)"
-    }
-    
-    func debugString(for extractedMarkers: some Collection<FinalCutPro.FCPXML.Marker>) -> String {
-        extractedMarkers.map { debugString(for: $0) }.joined(separator: "\n")
-    }
     
     // MARK: - Tests
     
@@ -416,16 +381,16 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         
         let project = try XCTUnwrap(projects[safe: 0])
         XCTAssertEqual(project.name, "Marker Data Demo_V2")
-        XCTAssertEqual(project.startTimecode, Timecode(.zero, at: .fps25, base: .max80SubFrames))
+        XCTAssertEqual(project.startTimecode, Self.tc("00:00:00:00", .fps25))
         
         // sequence
         
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         XCTAssertEqual(sequence.formatID, "r1")
-        XCTAssertEqual(sequence.startTimecode, Timecode(.zero, at: .fps25, base: .max80SubFrames))
+        XCTAssertEqual(sequence.startTimecode, Self.tc("00:00:00:00", .fps25))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps25)
         XCTAssertEqual(sequence.startTimecode?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.duration, Self.tc("00:07:27:24"))
+        XCTAssertEqual(sequence.duration, Self.tc("00:07:27:24", .fps25))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -437,33 +402,33 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         guard case let .anyClip(.assetClip(element1)) = spine.elements[0] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element1.ref, "r2")
-        XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps25, base: .max80SubFrames))
+        XCTAssertEqual(element1.offset, Self.tc("00:00:00:00", .fps25))
         XCTAssertEqual(element1.offset?.frameRate, .fps25)
         XCTAssertEqual(element1.name, "Nature Makes You Happy")
         XCTAssertEqual(element1.start, nil)
-        XCTAssertEqual(element1.duration, Self.tc("00:02:22:01"))
+        XCTAssertEqual(element1.duration, Self.tc("00:02:22:01", .fps25))
         XCTAssertEqual(element1.duration?.frameRate, .fps25)
         XCTAssertEqual(element1.audioRole, "dialogue")
         
         guard case let .anyClip(.assetClip(element2)) = spine.elements[1] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element2.ref, "r5")
-        XCTAssertEqual(element2.offset, Self.tc("00:02:22:01"))
+        XCTAssertEqual(element2.offset, Self.tc("00:02:22:01", .fps25))
         XCTAssertEqual(element2.offset?.frameRate, .fps25)
         XCTAssertEqual(element2.name, "Is This The Land of Fire or Ice")
         XCTAssertEqual(element2.start, nil)
-        XCTAssertEqual(element2.duration, Self.tc("00:03:25:20"))
+        XCTAssertEqual(element2.duration, Self.tc("00:03:25:20", .fps25))
         XCTAssertEqual(element2.duration?.frameRate, .fps25)
         XCTAssertEqual(element2.audioRole, "dialogue")
         
         guard case let .anyClip(.video(element3)) = spine.elements[2] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element3.ref, "r7")
-        XCTAssertEqual(element3.offset, Self.tc("00:05:47:21"))
+        XCTAssertEqual(element3.offset, Self.tc("00:05:47:21", .fps25))
         XCTAssertEqual(element3.offset?.frameRate, .fps25)
-        XCTAssertEqual(element3.start, Self.tc("01:00:00:00"))
+        XCTAssertEqual(element3.start, Self.tc("01:00:00:00", .fps25))
         XCTAssertEqual(element3.start?.frameRate, .fps25)
-        XCTAssertEqual(element3.duration, Self.tc("00:01:40:03"))
+        XCTAssertEqual(element3.duration, Self.tc("00:01:40:03", .fps25))
         XCTAssertEqual(element3.duration?.frameRate, .fps25)
         XCTAssertEqual(element3.role, "Sample Role.Sample Role-1")
         
@@ -473,8 +438,8 @@ final class FinalCutPro_FCPXML_Complex: XCTestCase {
         XCTAssertEqual(element1Markers.count, 7)
         
         let expectedE1Marker0 = FinalCutPro.FCPXML.Marker(
-            start: Self.tc("00:00:20:16"),
-            duration: Self.tc("00:00:00:01"),
+            start: Self.tc("00:00:20:16", .fps25),
+            duration: Self.tc("00:00:00:01", .fps25),
             name: "(To-Do) Penguin",
             metaData: .toDo(completed: false),
             note: "Note Test 1"

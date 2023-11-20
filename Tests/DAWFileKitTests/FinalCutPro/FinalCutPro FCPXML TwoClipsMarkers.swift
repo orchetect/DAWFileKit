@@ -11,7 +11,7 @@ import OTCore
 import TimecodeKit
 import XCTest
 
-class FinalCutPro_FCPXML_TwoClipsMarkers: XCTestCase {
+final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     

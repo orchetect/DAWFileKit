@@ -27,12 +27,12 @@ extension FinalCutPro.FCPXML {
         public var id: String?
         public var name: String?
         
-        public var contents: MediaType?
+        public var contents: IntermediateMediaType?
         
         public init(
             id: String,
             name: String?,
-            contents: MediaType? = nil
+            contents: IntermediateMediaType? = nil
         ) {
             self.id = id
             self.name = name
@@ -73,13 +73,62 @@ extension FinalCutPro.FCPXML.Media: FCPXMLResource {
 }
 
 extension FinalCutPro.FCPXML.Media {
-    public enum MediaType: Equatable, Hashable {
-        case multicam(Multicam)
+    public enum IntermediateMediaType: Equatable, Hashable {
+        case multicam(_ multicam: Multicam)
         
         // can't store FinalCutPro.FCPXML.Sequence because it requires resources to already have
         // been parsed to construct. so as a workaround we'll store raw XML here so we can
         // parse it later after the complete collection of resources have been parsed.
         case sequence(fromXML: XMLElement)
+    }
+}
+
+extension FinalCutPro.FCPXML.Media {
+    public enum MediaType: Equatable, Hashable {
+        case multicam(_ multicam: FinalCutPro.FCPXML.Media.Multicam)
+        case sequence(_ sequence: FinalCutPro.FCPXML.Sequence)
+    }
+    
+    func generateMediaType(
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
+    ) -> MediaType? {
+        guard let mediaContents = contents else { return nil }
+        
+        switch mediaContents {
+        case let .multicam(multicam): // TODO: AFAIK RefClip can never contain a `multicam` element
+            return .multicam(multicam)
+            
+        case let .sequence(fromXML: xmlElement):
+            guard let sequence = FinalCutPro.FCPXML.Sequence(
+                from: xmlElement,
+                resources: resources,
+                contextBuilder: contextBuilder
+            ) else { return nil }
+            return .sequence(sequence)
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Media.MediaType: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        []
+    }
+    public func extractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
+        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        switch self {
+        case .multicam(_):
+            return [] // TODO: AFAIK RefClip can never contain a `multicam` element
+        case let .sequence(sequence):
+            return sequence.extractElements(
+                settings: settings,
+                ancestorsOfParent: ancestorsOfParent,
+                matching: predicate
+            )
+        }
     }
 }
 
@@ -116,9 +165,7 @@ extension FinalCutPro.FCPXML.Media {
             
             // angles
             let angleChildren = xmlLeaf.children?
-                .filter {
-                    $0.name == Children.mcAngle.rawValue
-                }
+                .filter { $0.name == Children.mcAngle.rawValue }
                 .compactMap { $0 as? XMLElement }
             ?? []
             angles = angleChildren.compactMap { Angle(from: $0) }

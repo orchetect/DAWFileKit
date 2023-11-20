@@ -207,7 +207,7 @@ extension FinalCutPro.FCPXML {
         case .effect(_): return nil
         case .format(_): return nil
         case .locator(_): return nil // contains a URL but not a MediaRep
-        case .media(_): return nil // TODO: media can link to other resources
+        case .media(_): return nil // TODO: can contain sequence or multicam
         case .objectTracker(_): return nil
         case .trackingShape(_): return nil
         }
@@ -227,7 +227,7 @@ extension FinalCutPro.FCPXML {
         case .effect(_): return nil
         case .format(_): return nil
         case let .locator(locator): return locator.url
-        case .media(_): return nil // TODO: media can link to other resources
+        case .media(_): return nil // TODO: can contain sequence or multicam
         case .objectTracker(_): return nil
         case .trackingShape(_): return nil
         }

@@ -11,23 +11,135 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-class FinalCutPro_FCPXML_25i: XCTestCase {
+final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
-    /// Tests:
-    /// - `media` resources containing a compound clip
-    /// - `ref-clip` clips
-    /// - mixed frame rates
-    /// - that fraction time values that have subframes correctly convert to Timecode.
-    func testParse() throws {
-        // load file
-        
-        let rawData = try XCTUnwrap(loadFileContents(
+    // MARK: - Test Data
+    
+    var fileContents: Data { get throws {
+        try XCTUnwrap(loadFileContents(
             forResource: "25i",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
+    } }
+    
+    // MARK: Resources
+    
+    let r1 = FinalCutPro.FCPXML.Format(
+        id: "r1",
+        name: "FFVideoFormatDV720x576i50",
+        frameDuration: "200/5000s",
+        fieldOrder: "lower first",
+        width: 720,
+        height: 576,
+        paspH: "59",
+        paspV: "54",
+        colorSpace: "5-1-6 (Rec. 601 (PAL))",
+        projection: nil,
+        stereoscopic: nil
+    )
+    
+    let r2MediaRep = FinalCutPro.FCPXML.MediaRep(
+        kind: "original-media",
+        sig: "554B59605B289ECE8057E7FECBC3D3D0",
+        src: URL(string: "file:///Users/user/Desktop/Marker_Interlaced.fcpbundle/11-9-22/Original%20Media/Test%20Video%20(29.97%20fps).mp4")!,
+        bookmark: nil
+    )
+    lazy var r2MetadataXML = try! XMLElement(xmlString: """
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-10 19:25:11 -0700"/>
+            </metadata>
+            """
+    )
+    lazy var r2Metadata = FinalCutPro.FCPXML.Metadata(fromMetadataElement: r2MetadataXML)
+    lazy var r2 = FinalCutPro.FCPXML.Asset(
+        id: "r2",
+        name: "Test Video (29.97 fps)",
+        start: "0s",
+        duration: "101869/1000s",
+        format: "r3",
+        uid: "554B59605B289ECE8057E7FECBC3D3D0",
+        hasVideo: true,
+        hasAudio: true,
+        audioSources: 1,
+        audioChannels: 2,
+        audioRate: 48000,
+        videoSources: 1,
+        auxVideoFlags: nil,
+        mediaRep: r2MediaRep,
+        metadata: r2Metadata
+    )
+    
+    let r3 = FinalCutPro.FCPXML.Format(
+        id: "r3",
+        name: "FFVideoFormat1080p2997",
+        frameDuration: "1001/30000s",
+        fieldOrder: nil,
+        width: 1920,
+        height: 1080,
+        paspH: nil,
+        paspV: nil,
+        colorSpace: "1-1-1 (Rec. 709)",
+        projection: nil,
+        stereoscopic: nil
+    )
+    
+    let r4SequenceXML = try! XMLElement(xmlString: """
+            <sequence format="r3" duration="174174/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+            <spine>
+                <asset-clip ref="r2" offset="0s" name="Test Video (29.97 fps)" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
+                    <marker start="247247/15000s" duration="1001/30000s" value="Marker 5"/>
+                    <marker start="181181/10000s" duration="1001/30000s" value="Marker 6"/>
+                    <marker start="49049/2500s" duration="1001/30000s" value="Marker 7"/>
+                </asset-clip>
+            </spine>
+            </sequence>
+            """
+    )
+    lazy var r4 = FinalCutPro.FCPXML.Media(
+        id: "r4",
+        name: "29.97_CC",
+        contents: .sequence(fromXML: r4SequenceXML)
+    )
+    
+    let r5 = FinalCutPro.FCPXML.Effect(
+        id: "r5",
+        name: "Black & White",
+        uid: ".../Effects.localized/Color.localized/Black & White.localized/Black & White.moef",
+        src: nil
+    )
+    
+    let r6 = FinalCutPro.FCPXML.Effect(
+        id: "r6",
+        name: "Colorize",
+        uid: ".../Effects.localized/Color.localized/Colorize.localized/Colorize.moef",
+        src: nil
+    )
+    
+    // MARK: - Tests
+    
+    /// Tests:
+    /// - nested `spine`s
+    /// - `media` resources containing a compound clip
+    /// - `ref-clip` clips
+    /// - mixed frame rates
+    /// - that fraction time values that have subframes correctly convert to Timecode
+    func testParse() throws {
+        // load file
+        
+        let rawData = try fileContents
         
         // load
         
@@ -43,96 +155,16 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         
         XCTAssertEqual(resources.count, 6)
         
-        let r1 = FinalCutPro.FCPXML.Format(
-            id: "r1",
-            name: "FFVideoFormatDV720x576i50",
-            frameDuration: "200/5000s",
-            fieldOrder: "lower first",
-            width: 720,
-            height: 576,
-            paspH: "59",
-            paspV: "54",
-            colorSpace: "5-1-6 (Rec. 601 (PAL))",
-            projection: nil,
-            stereoscopic: nil
-        )
         XCTAssertEqual(resources["r1"], .format(r1))
         
-        let r2MediaRep = FinalCutPro.FCPXML.MediaRep(
-            kind: "original-media",
-            sig: "554B59605B289ECE8057E7FECBC3D3D0",
-            src: URL(string: "file:///Users/user/Desktop/Marker_Interlaced.fcpbundle/11-9-22/Original%20Media/Test%20Video%20(29.97%20fps).mp4")!,
-            bookmark: nil
-        )
-        let r2MetadataXML = try XMLElement(xmlString: """
-            <metadata>
-                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
-                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
-                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
-                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
-                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
-                    <array>
-                        <string>'avc1'</string>
-                        <string>MPEG-4 AAC</string>
-                    </array>
-                </md>
-                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-10 19:25:11 -0700"/>
-            </metadata>
-            """
-        )
-        let r2Metadata = FinalCutPro.FCPXML.Metadata(fromMetadataElement: r2MetadataXML)
-        let r2 = FinalCutPro.FCPXML.Asset(
-            id: "r2",
-            name: "Test Video (29.97 fps)",
-            start: "0s",
-            duration: "101869/1000s",
-            format: "r3",
-            uid: "554B59605B289ECE8057E7FECBC3D3D0",
-            hasVideo: true,
-            hasAudio: true,
-            audioSources: 1,
-            audioChannels: 2,
-            audioRate: 48000,
-            videoSources: 1,
-            auxVideoFlags: nil,
-            mediaRep: r2MediaRep,
-            metadata: r2Metadata
-        )
         XCTAssertEqual(resources["r2"], .asset(r2))
         
-        let r3 = FinalCutPro.FCPXML.Format(
-            id: "r3",
-            name: "FFVideoFormat1080p2997",
-            frameDuration: "1001/30000s",
-            fieldOrder: nil,
-            width: 1920,
-            height: 1080,
-            paspH: nil,
-            paspV: nil,
-            colorSpace: "1-1-1 (Rec. 709)",
-            projection: nil,
-            stereoscopic: nil
-        )
         XCTAssertEqual(resources["r3"], .format(r3))
         
-        #warning("> TODO: implement media resource")
-//        let r4 = FinalCutPro.FCPXML.Media
-//        XCTAssertEqual(resources["r4"], .format(r4))
+        XCTAssertEqual(resources["r4"], .media(r4))
         
-        let r5 = FinalCutPro.FCPXML.Effect(
-            id: "r5",
-            name: "Black & White",
-            uid: ".../Effects.localized/Color.localized/Black & White.localized/Black & White.moef",
-            src: nil
-        )
         XCTAssertEqual(resources["r5"], .effect(r5))
         
-        let r6 = FinalCutPro.FCPXML.Effect(
-            id: "r6",
-            name: "Colorize",
-            uid: ".../Effects.localized/Color.localized/Colorize.localized/Colorize.moef",
-            src: nil
-        )
         XCTAssertEqual(resources["r6"], .effect(r6))
         
         // library
@@ -183,15 +215,17 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         // TODO: contains a `conform-rate` child - do we need to do math based on its attributes?
         
         XCTAssertEqual(element1.ref, "r2")
-        XCTAssertEqual(element1.offset, Timecode(.zero, at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(element1.offset, Self.tc("00:00:00:00", .fps29_97))
         XCTAssertEqual(element1.offset?.frameRate, .fps29_97)
         XCTAssertEqual(element1.name, "Test Video (29.97 fps)")
         XCTAssertEqual(element1.start, nil)
-        XCTAssertEqual(element1.duration, try Timecode(.components(h: 00, m: 00, s: 03, f: 11, sf: 71), at: .fps29_97, base: .max80SubFrames))
+        XCTAssertEqual(element1.duration, Self.tc("00:00:03:11.71", .fps29_97))
         XCTAssertEqual(element1.duration?.frameRate, .fps29_97)
         XCTAssertEqual( // compare to parent's frame rate
-            try element1.duration?.converted(to: .fps25).adding(.frames(0, subFrames: 1)), // FCP rounds up to next subframe
-            try Timecode(.components(h: 00, m: 00, s: 03, f: 10), at: .fps25, base: .max80SubFrames) // confirmed in FCP
+            try element1.duration?
+                .converted(to: .fps25)
+                .adding(.frames(0, subFrames: 1)), // TODO: TimecodeKit rounds up to next subframe sometimes?
+            Self.tc("00:00:03:10", .fps25) // confirmed in FCP
         )
         XCTAssertEqual(element1.audioRole, "dialogue")
         
@@ -202,10 +236,10 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         XCTAssertEqual(markers.count, 1)
         
         let expectedMarker0 = FinalCutPro.FCPXML.Marker(
-            start: try Timecode(.components(h: 00, m: 00, s: 01, f: 11, sf: 56), at: .fps25, base: .max80SubFrames) // confirmed in FCP
+            start: try Self.tc("00:00:01:11.56", .fps25) // confirmed in FCP
                 .converted(to: .fps29_97)
-                .adding(.frames(0, subFrames: 1)), // FCP rounds up to next subframe
-            duration: try Timecode(.components(f: 1), at: .fps29_97, base: .max80SubFrames),
+                .adding(.frames(0, subFrames: 1)), // TODO: TimecodeKit rounds up to next subframe sometimes?
+            duration: Self.tc("00:00:00:01", .fps29_97),
             name: "Marker 2",
             metaData: .standard,
             note: nil
@@ -215,14 +249,11 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
         #warning("> TODO: finish unit test to check ref-clip contents")
     }
     
-    /// Spot-check extracted markers for correct absolute timecode.
-    func testExtractMarkers() throws {
+    /// Check markers within `ref-clip`s.
+    /// The clips within the `ref-clip` can contain markers but they don't show on the FCP timeline.
+    func testExtractMarkers_IncludeMarkersWithinRefClips() throws {
         // load file
-        let rawData = try XCTUnwrap(loadFileContents(
-            forResource: "25i",
-            withExtension: "fcpxml",
-            subFolder: .fcpxmlExports
-        ))
+        let rawData = try fileContents
         
         // load
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
@@ -234,14 +265,46 @@ class FinalCutPro_FCPXML_25i: XCTestCase {
             .extractMarkers(settings: FinalCutPro.FCPXML.ExtractionSettings())
             .sortedByAbsoluteStart()
         
-        XCTAssertEqual(markers.count, 22)
+        XCTAssertEqual(markers.count, 18 + (2 * 3))
         
         // spot check
         let lastMarker = try XCTUnwrap(markers.last)
         XCTAssertEqual(
-            lastMarker.context[.absoluteStart]?.stringValue(format: [.showSubFrames]),
-            "00:00:28:19.25" // confirmed in FCP
+            lastMarker.context[.absoluteStart],
+            try Timecode(.components(h: 00, m: 00, s: 28, f: 19, sf: 25), at: .fps25, base: .max80SubFrames) // confirmed in FCP
+                .converted(to: .fps29_97)
+                .adding(.frames(0, subFrames: 1)) // TODO: TimecodeKit rounds up to next subframe sometimes?
         )
+    }
+    
+    /// Check markers within `ref-clip`s.
+    /// The clips within the `ref-clip` can contain markers but they don't show on the FCP timeline.
+    func testExtractMarkers_ExcludeMarkersWithinRefClips() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludeTypes: [.story(.anyClip(.refClip))], 
+            auditionMask: .activeAudition
+        )
+        let markers = try project
+            .extractMarkers(settings: settings)
+            .map { try Self.convert(absoluteStartOf: $0, to: .fps25) }
+            .sortedByAbsoluteStart()
+        
+        XCTAssertEqual(markers.count, 18)
+        
+         print("Sorted by absolute timecode:")
+         print(Self.debugString(for: markers))
+        
+        // print("Sorted by name:")
+        // print(Self.debugString(for: markers.sortedByName()))
     }
 }
 

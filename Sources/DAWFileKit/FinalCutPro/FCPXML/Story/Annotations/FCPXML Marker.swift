@@ -178,6 +178,13 @@ extension Collection<FinalCutPro.FCPXML.Marker> {
             return lhsAbsoluteStart < rhsAbsoluteStart
         }
     }
+    
+    /// Sorts collection by marker's name.
+    public func sortedByName() -> [FinalCutPro.FCPXML.Marker] {
+        sorted(by: { lhs, rhs in
+            lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
+        })
+    }
 }
 
 // MARK: - Marker Type

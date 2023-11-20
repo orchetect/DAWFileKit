@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: XCTestCase {
+final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     

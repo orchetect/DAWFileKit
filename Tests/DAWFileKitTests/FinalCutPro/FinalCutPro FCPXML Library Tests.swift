@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-final class FinalCutPro_FCPXML_Library: XCTestCase {
+final class FinalCutPro_FCPXML_Library: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
