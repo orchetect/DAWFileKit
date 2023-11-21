@@ -18,6 +18,8 @@ extension FinalCutPro.FCPXML {
     public struct Audio: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
         public var role: String?
+        public var sourceChannels: String?
+        public var outputChannels: String?
         
         public var contents: [AnyStoryElement]
         
@@ -77,6 +79,8 @@ extension FinalCutPro.FCPXML.Audio: FCPXMLClip {
     public enum Attributes: String, XMLParsableAttributesKey {
         case ref // resource ID
         case role
+        case srcCh
+        case outCh
     }
     
     public init?(
@@ -89,7 +93,9 @@ extension FinalCutPro.FCPXML.Audio: FCPXMLClip {
         
         guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
-        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
+        role = rawValues[.role]
+        sourceChannels = rawValues[.srcCh]
+        outputChannels = rawValues[.outCh]
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
