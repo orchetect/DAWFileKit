@@ -13,6 +13,9 @@ extension FinalCutPro.FCPXML {
     /// Represents a closed caption.
     public struct Caption: Equatable, Hashable, FCPXMLClipAttributes {
         public var note: String?
+        public var role: String?
+        public var texts: [Text]
+        public var textStyleDefinitions: [XMLElement]
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -32,6 +35,9 @@ extension FinalCutPro.FCPXML {
         
         public init(
             note: String?,
+            role: String?,
+            texts: [Text],
+            textStyleDefinitions: [XMLElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
             offset: Timecode,
@@ -43,12 +49,19 @@ extension FinalCutPro.FCPXML {
             // FCPXMLElementContext
             context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
-            self.name = name
+            self.note = note
+            self.role = role
+            self.texts = texts
+            self.textStyleDefinitions = textStyleDefinitions
+            
+            // FCPXMLAnchorableAttributes
+            self.lane = lane
             self.offset = offset
+            
+            // FCPXMLClipAttributes
+            self.name = name
             self.start = start
             self.duration = duration
-            self.lane = lane
-            self.note = note
             self.enabled = enabled
             
             // FCPXMLElementContext
@@ -58,8 +71,16 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
+    /// Attributes unique to ``Caption``.
     public enum Attributes: String, XMLParsableAttributesKey {
         case note
+        case role
+    }
+    
+    /// Children of ``Caption``.
+    public enum Children: String {
+        case text
+        case textStyleDef = "text-style-def"
     }
     
     public init?(
@@ -71,6 +92,9 @@ extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         note = rawValues[.note]
+        role = rawValues[.role]
+        texts = Self.parseTexts(from: xmlLeaf)
+        textStyleDefinitions = Self.parseTextStyleDefinitions(from: xmlLeaf)
         
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
@@ -93,6 +117,20 @@ extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)
         guard xmlLeaf.name == annotationType.rawValue else { return nil }
+    }
+    
+    static func parseTexts(from xmlLeaf: XMLElement) -> [FinalCutPro.FCPXML.Text] {
+        let elements = (xmlLeaf.children ?? [])
+            .filter { $0.name == Children.text.rawValue }
+            .compactMap { $0 as? XMLElement }
+        return elements.compactMap { FinalCutPro.FCPXML.Text(from: $0) }
+    }
+    
+    // TODO: parse XML into strongly typed structs
+    static func parseTextStyleDefinitions(from xmlLeaf: XMLElement) -> [XMLElement] {
+        (xmlLeaf.children ?? [])
+            .filter { $0.name == Children.textStyleDef.rawValue }
+            .compactMap { $0 as? XMLElement }
     }
     
     public var annotationType: FinalCutPro.FCPXML.AnnotationType { .caption }

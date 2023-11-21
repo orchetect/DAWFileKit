@@ -90,6 +90,7 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
         case ref // resource ID
     }
     
+    // no role
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],

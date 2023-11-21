@@ -60,6 +60,7 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
         case completed
     }
     
+    // no role
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],

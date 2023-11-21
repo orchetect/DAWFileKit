@@ -73,6 +73,9 @@ extension FinalCutPro.FCPXML.MediaRep {
     }
     
     public init?(from xmlLeaf: XMLElement) {
+        // validate element name
+        guard xmlLeaf.name == "media-rep" else { return nil }
+        
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         kind = rawValues[.kind]

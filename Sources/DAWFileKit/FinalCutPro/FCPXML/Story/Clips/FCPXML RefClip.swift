@@ -29,7 +29,8 @@ extension FinalCutPro.FCPXML {
     /// > ) to specify its format and other attributes.
     public struct RefClip: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
-        public var audioRoleSources: [String] // TODO: could refactor as struct with additional attributes
+        public var useAudioSubroles: Bool
+        public var audioRoleSources: [AudioRoleSource]
         
         @EquatableAndHashableExempt
         public var refMedia: Media
@@ -56,7 +57,8 @@ extension FinalCutPro.FCPXML {
         
         public init(
             ref: String,
-            audioRoleSources: [String],
+            useAudioSubroles: Bool,
+            audioRoleSources: [AudioRoleSource],
             refMedia: Media,
             mediaType: FinalCutPro.FCPXML.Media.MediaType,
             contents: [AnyStoryElement],
@@ -72,6 +74,7 @@ extension FinalCutPro.FCPXML {
             context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
             self.ref = ref
+            self.useAudioSubroles = useAudioSubroles
             self.audioRoleSources = audioRoleSources
             self.refMedia = refMedia
             self.mediaType = mediaType
@@ -98,6 +101,12 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
     public enum Attributes: String, XMLParsableAttributesKey {
         case ref // resource ID
         case role
+        case useAudioSubroles
+    }
+    
+    /// Children of ``RefClip`` clip.
+    public enum Children: String {
+        case audioRoleSource = "audio-role-source"
     }
     
     public init?(
@@ -129,8 +138,9 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
             contextBuilder: contextBuilder
         )
         
+        useAudioSubroles = rawValues[.useAudioSubroles] == "1"
         // TODO: parse audioRoleSources
-        audioRoleSources = []
+        audioRoleSources = Self.parseAudioRoleSources(from: xmlLeaf)
         
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
@@ -182,6 +192,30 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLExtractable {
             contents: mediaRefElements + contents.asAnyElements(),
             matching: predicate
         )
+    }
+}
+
+extension FinalCutPro.FCPXML.RefClip {
+    public struct AudioRoleSource: Equatable, Hashable {
+        public var role: String
+        public var contents: [XMLElement]
+        
+        /// Attributes unique to ``AudioRoleSource``.
+        public enum Attributes: String, XMLParsableAttributesKey {
+            case role
+        }
+    }
+    
+    static func parseAudioRoleSources(from xmlLeaf: XMLElement) -> [AudioRoleSource] {
+        let elements = (xmlLeaf.children ?? [])
+            .filter { $0.name == Children.audioRoleSource.rawValue }
+            .compactMap { $0 as? XMLElement }
+        
+        return elements.map {
+            let rawValues = $0.parseRawAttributeValues(key: AudioRoleSource.Attributes.self)
+            let children = $0.children?.compactMap { $0 as? XMLElement } ?? []
+            return AudioRoleSource(role: rawValues[.role] ?? "", contents: children)
+        }
     }
 }
 

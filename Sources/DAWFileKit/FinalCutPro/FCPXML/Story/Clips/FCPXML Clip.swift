@@ -76,7 +76,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
-    // no ref
+    // no ref, no role
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],

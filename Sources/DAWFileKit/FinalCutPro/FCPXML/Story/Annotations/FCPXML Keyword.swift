@@ -48,6 +48,7 @@ extension FinalCutPro.FCPXML.Keyword: FCPXMLAnnotationElement {
         case note
     }
     
+    // no role
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
