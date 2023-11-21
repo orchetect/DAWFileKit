@@ -18,8 +18,6 @@ extension DAWMarker {
     ) -> Timecode? {
         switch timeStorage?.value {
         case let .realTime(secondsRelativeToStart):
-            // if storage is real time, we can form timecode without any additional information
-            
             guard let realTimeDurationAsTimecode = try? Timecode(
                 .realTime(seconds: secondsRelativeToStart),
                 at: newFrameRate,
@@ -60,6 +58,18 @@ extension DAWMarker {
             
             return timecode
             
+        case let .rational(fraction):
+            guard let realTimeDurationAsTimecode = try? Timecode(
+                .rational(fraction),
+                at: newFrameRate,
+                base: base,
+                limit: limit
+            ),
+                let offsetTimecode = try? startTimecode.adding(realTimeDurationAsTimecode)
+            else { return nil }
+            
+            return offsetTimecode
+            
         case .none:
             return nil
         }
@@ -75,24 +85,28 @@ extension DAWMarker {
         
         switch timeStorage.value {
         case let .realTime(secondsRelativeToStart):
-            let timecode = try? Timecode(
+            return try? Timecode(
                 .realTime(seconds: secondsRelativeToStart),
                 at: timeStorage.frameRate,
                 base: base,
                 limit: limit
             )
             
-            return timecode
-            
         case let .timecodeString(string):
-            let timecode = try? Timecode(
+            return try? Timecode(
                 .string(string),
                 at: timeStorage.frameRate,
                 base: base,
                 limit: limit
             )
             
-            return timecode
+        case let .rational(fraction):
+            return try? Timecode(
+                .rational(fraction),
+                at: timeStorage.frameRate,
+                base: base,
+                limit: limit
+            )
         }
     }
 }

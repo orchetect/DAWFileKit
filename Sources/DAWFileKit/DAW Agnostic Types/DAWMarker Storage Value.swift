@@ -8,12 +8,14 @@ import Foundation
 import TimecodeKit
 
 extension DAWMarker.Storage {
-    public enum Value {
+    public enum Value: Equatable, Hashable {
         /// Real time in seconds, relative to the start time.
         case realTime(relativeToStart: TimeInterval)
         
         /// Timecode string, absolute timestamp (not an interval from start time).
         case timecodeString(absolute: String)
+        
+        case rational(relativeToStart: Fraction)
         
         /// Returns the backing storage formatted as a string, for use in writing to the document
         /// file.
@@ -24,15 +26,19 @@ extension DAWMarker.Storage {
                 
             case let .timecodeString(string):
                 return string
+                
+            case let .rational(fraction):
+                return fraction.fcpxmlStringValue
             }
         }
         
         /// Returns whether persistent storage of the marker's associated original frame rate is
-        /// required
+        /// required to convert to real time.
         public var requiresOriginalFrameRate: Bool {
             switch self {
             case .realTime: return false
             case .timecodeString: return true
+            case .rational: return false
             }
         }
     }
@@ -42,6 +48,7 @@ extension DAWMarker.Storage.Value: Codable {
     enum CodingKeys: CodingKey {
         case realTime
         case timecodeString
+        case rational
     }
     
     public init(from decoder: Decoder) throws {
@@ -59,7 +66,30 @@ extension DAWMarker.Storage.Value: Codable {
         
         do {
             let value = try container.decode(String.self, forKey: .timecodeString)
+            // framerate is inconsequential for testing string format, so arbitrary 30fps is fine
+            let isTimecode = (try? Timecode(.string(value), at: .fps30, by: .allowingInvalid)) != nil
+            guard isTimecode else {
+                throw DecodingError
+                    .dataCorrupted(.init(
+                        codingPath: container.codingPath,
+                        debugDescription: "Timecode string was stored but could not be parsed. The string may not be formatted as valid timecode."
+                    ))
+            }
             self = .timecodeString(absolute: value)
+            return
+        } catch { lastError = error }
+        
+        do {
+            let value = try container.decode(String.self, forKey: .rational)
+            guard let fraction = Fraction(fcpxmlString: value) else {
+                throw DecodingError
+                    .dataCorrupted(.init(
+                        codingPath: container.codingPath,
+                        debugDescription: "Rational fraction value was stored but could not be parsed. The string may not be encoded correctly."
+                    ))
+            }
+            
+            self = .rational(relativeToStart: fraction)
             return
         } catch { lastError = error }
         
@@ -81,17 +111,11 @@ extension DAWMarker.Storage.Value: Codable {
         
         switch self {
         case let .realTime(value):
-            do {
-                try container.encode(value, forKey: .realTime)
-            } catch {
-                throw error
-            }
+            try container.encode(value, forKey: .realTime)
         case let .timecodeString(value):
-            do {
-                try container.encode(value, forKey: .timecodeString)
-            } catch {
-                throw error
-            }
+            try container.encode(value, forKey: .timecodeString)
+        case let .rational(fraction):
+            try container.encode(fraction.fcpxmlStringValue, forKey: .rational)
         }
     }
 }
