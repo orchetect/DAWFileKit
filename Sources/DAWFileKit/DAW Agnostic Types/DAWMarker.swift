@@ -24,12 +24,11 @@ public struct DAWMarker: Codable {
     public init() { }
     
     public init(
-        storage: Storage,
+        storage: Storage? = nil,
         name: String = "",
         comment: String? = nil
     ) {
         timeStorage = storage
-        
         self.name = name
         self.comment = comment
     }
