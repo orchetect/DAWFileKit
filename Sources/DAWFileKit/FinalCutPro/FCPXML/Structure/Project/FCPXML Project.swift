@@ -46,7 +46,10 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
     /// Attributes unique to ``Project``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case name
+        case id
+        case uid
         case modDate
         case sequence
     }
@@ -57,10 +60,12 @@ extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
-        id = FinalCutPro.FCPXML.getIDAttribute(from: xmlLeaf)
-        uid = FinalCutPro.FCPXML.getUIDAttribute(from: xmlLeaf)
-        modDate = xmlLeaf.attributeStringValue(forName: Attributes.modDate.rawValue)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        name = rawValues[.name]
+        id = rawValues[.id]
+        uid = rawValues[.uid]
+        modDate = rawValues[.modDate]
         
         guard let seq = Self.parseSequence( // adds xmlLeaf as breadcrumb
             from: xmlLeaf,

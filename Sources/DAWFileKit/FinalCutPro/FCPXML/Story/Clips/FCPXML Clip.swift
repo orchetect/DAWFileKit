@@ -100,7 +100,7 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLClip {
         offset = clipAttributes.offset
         
         // FCPXMLClipAttributes
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        name = clipAttributes.name
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled

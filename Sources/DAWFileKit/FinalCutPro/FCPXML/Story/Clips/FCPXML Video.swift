@@ -74,7 +74,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Video: FCPXMLClip {
     /// Attributes unique to ``Video`` clip.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         case ref // resource ID
         case role
     }
@@ -85,9 +85,11 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClip {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
-        role = xmlLeaf.attributeStringValue(forName: Attributes.role.rawValue)
+        role = rawValues[.role]
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
@@ -106,7 +108,7 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClip {
         offset = clipAttributes.offset
         
         // FCPXMLClipAttributes
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        name = clipAttributes.name
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled

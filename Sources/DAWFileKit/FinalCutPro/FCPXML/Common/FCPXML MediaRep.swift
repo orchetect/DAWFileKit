@@ -60,26 +60,34 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.MediaRep {
     /// Attributes unique to ``MediaRep``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         case kind
         case sig
         case src
         case suggestedFilename
+    }
+    
+    /// Children of ``MediaRep``.
+    public enum Children: String {
         case bookmark
     }
     
     public init?(from xmlLeaf: XMLElement) {
-        kind = xmlLeaf.attributeStringValue(forName: Attributes.kind.rawValue)
-        sig = xmlLeaf.attributeStringValue(forName: Attributes.sig.rawValue)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        kind = rawValues[.kind]
+        sig = rawValues[.sig]
         
         // TODO: handle relative file URLs - probably needs library path passed into this init.
-        guard let urlString = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue),
+        guard let urlString = rawValues[.src],
               let src = URL(string: urlString)
         else { return nil }
         self.src = src
         
+        suggestedFilename = rawValues[.suggestedFilename]
+        
         // bookmark is a child string, not an attribute
-        bookmark = xmlLeaf.first(childNamed: "bookmark")?.stringValue
+        bookmark = xmlLeaf.first(childNamed: Children.bookmark.rawValue)?.stringValue
     }
 }
 

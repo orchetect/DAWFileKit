@@ -10,8 +10,6 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // TODO: xml variable is temporary; finish parsing the xml
-    
     /// Object tracker shared resource.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
@@ -25,16 +23,12 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > See [`object-tracker`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/object-tracker).
     public struct ObjectTracker: Equatable, Hashable {
+        // TODO: xml variable is temporary; finish parsing the xml
         public var xml: XMLElement
     }
 }
 
 extension FinalCutPro.FCPXML.ObjectTracker: FCPXMLResource {
-    // /// Attributes unique to ``ObjectTracker``.
-    // public enum Attributes: String {
-    //     // ...
-    // }
-    
     public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
         

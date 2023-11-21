@@ -66,7 +66,7 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        let rawValues = xmlLeaf.parseAttributesRawValues(key: Attributes.self)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         // validate element name and determine marker type
         guard let leafName = xmlLeaf.name,

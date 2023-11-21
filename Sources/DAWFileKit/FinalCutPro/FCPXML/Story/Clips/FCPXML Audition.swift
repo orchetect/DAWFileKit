@@ -20,7 +20,6 @@ extension FinalCutPro.FCPXML {
     /// > container.
     public struct Audition {
         public var clips: [AnyClip]
-        
         public var lane: Int?
         
         // TODO: public var dateModified: Date?
@@ -65,7 +64,7 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLElementContext {
 
 extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
     /// Attributes unique to ``Audition``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         case lane
         case modDate
     }
@@ -76,7 +75,9 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        if let laneString = xmlLeaf.attributeStringValue(forName: Attributes.lane.rawValue) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        if let laneString = rawValues[.lane] {
             lane = Int(laneString)
         }
         

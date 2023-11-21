@@ -37,7 +37,7 @@ extension FCPXMLAnchorableAttributes {
     static func parseAnchorableAttributesRawValues(
         from xmlLeaf: XMLElement
     ) -> [FCPXMLAnchorableAttributesKey: String] {
-        xmlLeaf.parseAttributesRawValues(key: Key.self)
+        xmlLeaf.parseRawAttributeValues(key: Key.self)
     }
     
     /// Parse attributes if present, and return typed values.

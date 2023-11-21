@@ -91,7 +91,7 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
         offset = clipAttributes.offset
         
         // FCPXMLClipAttributes
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        name = clipAttributes.name
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled

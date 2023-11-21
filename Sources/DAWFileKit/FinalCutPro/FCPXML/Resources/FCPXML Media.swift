@@ -43,14 +43,22 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Media: FCPXMLResource {
     /// Attributes unique to ``Media``.
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case id
+        case name
+    }
+    
+    /// Children of ``Media``.
     public enum Children: String {
         case multicam
         case sequence
     }
     
     public init?(from xmlLeaf: XMLElement) {
-        id = FinalCutPro.FCPXML.getIDAttribute(from: xmlLeaf)
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        id = rawValues[.id]
+        name = rawValues[.name]
         
         // contents
         if let multicamXML = xmlLeaf.first(childNamed: Children.multicam.rawValue),
@@ -149,29 +157,33 @@ extension FinalCutPro.FCPXML.Media {
             self.format = format
             self.angles = angles
         }
+    }
+}
+
+extension FinalCutPro.FCPXML.Media.Multicam {
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case format
+    }
+    
+    public enum Children: String {
+        case mcAngle = "mc-angle"
+    }
+    
+    public init?(from xmlLeaf: XMLElement) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
-        public enum Attributes: String {
-            case format
-        }
+        // validate element name
+        guard xmlLeaf.name == FinalCutPro.FCPXML.Media.Children.multicam.rawValue
+        else { return nil }
         
-        public enum Children: String {
-            case mcAngle = "mc-angle"
-        }
+        format = rawValues[.format]
         
-        public init?(from xmlLeaf: XMLElement) {
-            // validate element name
-            guard xmlLeaf.name == FinalCutPro.FCPXML.Media.Children.multicam.rawValue
-            else { return nil }
-            
-            format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue)
-            
-            // angles
-            let angleChildren = xmlLeaf.children?
-                .filter { $0.name == Children.mcAngle.rawValue }
-                .compactMap { $0 as? XMLElement }
-            ?? []
-            angles = angleChildren.compactMap { Angle(from: $0) }
-        }
+        // angles
+        let angleChildren = xmlLeaf.children?
+            .filter { $0.name == Children.mcAngle.rawValue }
+            .compactMap { $0 as? XMLElement }
+        ?? []
+        angles = angleChildren.compactMap { Angle(from: $0) }
     }
 }
 
@@ -205,24 +217,29 @@ extension FinalCutPro.FCPXML.Media.Multicam {
             self.contents = contents
             self.srcEnable = srcEnable
         }
+    }
+}
+
+extension FinalCutPro.FCPXML.Media.Multicam.Angle {
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case name
+        case angleID
+        case srcEnable
+    }
+    
+    public init?(from xmlLeaf: XMLElement) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
-        public enum Attributes: String {
-            case name
-            case angleID
-            case srcEnable
-        }
+        // validate element name
+        guard xmlLeaf.name == FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue
+        else { return nil }
         
-        public init?(from xmlLeaf: XMLElement) {
-            // validate element name
-            guard xmlLeaf.name == FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue
-            else { return nil }
-            
-            name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
-            angleID = xmlLeaf.attributeStringValue(forName: Attributes.angleID.rawValue)
-            srcEnable = xmlLeaf.attributeStringValue(forName: Attributes.srcEnable.rawValue)
-            
-            contents = (xmlLeaf.children ?? []).compactMap { $0 as? XMLElement }
-        }
+        name = rawValues[.name]
+        angleID = rawValues[.angleID]
+        srcEnable = rawValues[.srcEnable]
+        
+        contents = (xmlLeaf.children ?? [])
+            .compactMap { $0 as? XMLElement }
     }
 }
 

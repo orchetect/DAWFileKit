@@ -51,7 +51,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
     /// Attributes unique to ``Effect``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         // shared resource attributes
         case id
         case name
@@ -62,14 +62,16 @@ extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
     }
     
     public init?(from xmlLeaf: XMLElement) {
-        guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        guard let id = rawValues[.id] else { return nil }
         self.id = id
-        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+        name = rawValues[.name]
         
         // effect attributes
-        guard let uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue) else { return nil }
+        guard let uid = rawValues[.uid] else { return nil }
         self.uid = uid
-        src = xmlLeaf.attributeStringValue(forName: Attributes.src.rawValue)
+        src = rawValues[.src]
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

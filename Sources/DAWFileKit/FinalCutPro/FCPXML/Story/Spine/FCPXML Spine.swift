@@ -46,6 +46,11 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
+    /// Attributes unique to ``Spine``.
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case name
+    }
+    
     // no start
     public init?(
         from xmlLeaf: XMLElement,
@@ -53,7 +58,10 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        name = rawValues[.name]
+        
         elements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
             breadcrumbs: breadcrumbs,

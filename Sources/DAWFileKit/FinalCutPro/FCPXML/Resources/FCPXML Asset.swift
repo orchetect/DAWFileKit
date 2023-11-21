@@ -94,7 +94,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
     /// Attributes unique to ``Asset``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         // shared resource attributes
         case id
         case name
@@ -124,27 +124,29 @@ extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
     }
     
     public init?(from xmlLeaf: XMLElement) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
         // shared resource attributes
-        guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+        guard let id = rawValues[.id] else { return nil }
         self.id = id
-        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+        name = rawValues[.name]
         
         // base attributes
-        start = xmlLeaf.attributeStringValue(forName: Attributes.start.rawValue)
-        duration = xmlLeaf.attributeStringValue(forName: Attributes.duration.rawValue)
-        format = xmlLeaf.attributeStringValue(forName: Attributes.format.rawValue)
+        start = rawValues[.start]
+        duration = rawValues[.duration]
+        format = rawValues[.format]
         
         // asset attributes
-        uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
+        uid = rawValues[.uid]
         
         // implied asset attributes
-        hasVideo = xmlLeaf.attributeStringValue(forName: Attributes.hasVideo.rawValue) ?? "0" == "1"
-        hasAudio = xmlLeaf.attributeStringValue(forName: Attributes.hasAudio.rawValue) ?? "0" == "1"
-        audioSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.audioSources.rawValue) ?? "0") ?? 0
-        audioChannels = Int(xmlLeaf.attributeStringValue(forName: Attributes.audioChannels.rawValue) ?? "0") ?? 0
-        audioRate = xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue)?.int
-        videoSources = Int(xmlLeaf.attributeStringValue(forName: Attributes.videoSources.rawValue) ?? "0") ?? 0
-        auxVideoFlags = xmlLeaf.attributeStringValue(forName: Attributes.auxVideoFlags.rawValue)
+        hasVideo = rawValues[.hasVideo] ?? "0" == "1"
+        hasAudio = rawValues[.hasAudio] ?? "0" == "1"
+        audioSources = Int(rawValues[.audioSources] ?? "0") ?? 0
+        audioChannels = Int(rawValues[.audioChannels] ?? "0") ?? 0
+        audioRate = rawValues[.audioRate]?.int
+        videoSources = Int(rawValues[.videoSources] ?? "0") ?? 0
+        auxVideoFlags = rawValues[.auxVideoFlags]
         
         if let mediaRepXML = xmlLeaf.first(childNamed: Children.mediaRep.rawValue) {
             mediaRep = FinalCutPro.FCPXML.MediaRep(from: mediaRepXML)

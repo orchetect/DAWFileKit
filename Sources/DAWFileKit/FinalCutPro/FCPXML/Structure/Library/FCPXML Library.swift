@@ -31,7 +31,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
     /// Attributes unique to ``Library``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         case location
     }
     
@@ -41,10 +41,9 @@ extension FinalCutPro.FCPXML.Library: FCPXMLStructureElement {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        let locationString = xmlLeaf.attributeStringValue(
-            forName: Attributes.location.rawValue
-        ) ?? ""
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
+        let locationString = rawValues[.location] ?? ""
         guard let locationURL = URL(string: locationString) else {
             print("Invalid fcpxml library URL: \(locationString.quoted)")
             return nil

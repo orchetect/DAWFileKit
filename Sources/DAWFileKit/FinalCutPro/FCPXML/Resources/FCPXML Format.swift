@@ -73,7 +73,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Format: FCPXMLResource {
     /// Attributes unique to ``Format``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         // shared resource attributes
         case id
         case name
@@ -91,21 +91,23 @@ extension FinalCutPro.FCPXML.Format: FCPXMLResource {
     }
     
     public init?(from xmlLeaf: XMLElement) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
         // shared resource attributes
-        guard let id = xmlLeaf.attributeStringValue(forName: Attributes.id.rawValue) else { return nil }
+        guard let id = rawValues[.id] else { return nil }
         self.id = id
-        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
+        name = rawValues[.name]
         
         // format attributes
-        frameDuration = xmlLeaf.attributeStringValue(forName: Attributes.frameDuration.rawValue)
-        fieldOrder = xmlLeaf.attributeStringValue(forName: Attributes.fieldOrder.rawValue)
-        width = Int(xmlLeaf.attributeStringValue(forName: Attributes.width.rawValue) ?? "")
-        height = Int(xmlLeaf.attributeStringValue(forName: Attributes.height.rawValue) ?? "")
-        paspH = xmlLeaf.attributeStringValue(forName: Attributes.paspH.rawValue)
-        paspV = xmlLeaf.attributeStringValue(forName: Attributes.paspV.rawValue)
-        colorSpace = xmlLeaf.attributeStringValue(forName: Attributes.colorSpace.rawValue)
-        projection = xmlLeaf.attributeStringValue(forName: Attributes.projection.rawValue)
-        stereoscopic = xmlLeaf.attributeStringValue(forName: Attributes.stereoscopic.rawValue)
+        frameDuration = rawValues[.frameDuration]
+        fieldOrder = rawValues[.fieldOrder]
+        width = Int(rawValues[.width] ?? "")
+        height = Int(rawValues[.height] ?? "")
+        paspH = rawValues[.paspH]
+        paspV = rawValues[.paspV]
+        colorSpace = rawValues[.colorSpace]
+        projection = rawValues[.projection]
+        stereoscopic = rawValues[.stereoscopic]
         
         // validate element name
         // (we have to do this last, after all properties are initialized in order to access self)

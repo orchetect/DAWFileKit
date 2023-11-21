@@ -63,7 +63,7 @@ extension FCPXMLClipAttributes {
     static func parseClipAttributesRawValues(
         from xmlLeaf: XMLElement
     ) -> [FCPXMLClipAttributesKey: String] {
-        xmlLeaf.parseAttributesRawValues(key: Key.self)
+        xmlLeaf.parseRawAttributeValues(key: Key.self)
     }
     
     // MARK: - Typed Values

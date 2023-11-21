@@ -38,17 +38,20 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Locator: FCPXMLResource {
     /// Attributes unique to ``Locator``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case id
         case url
     }
     
     public init?(from xmlLeaf: XMLElement) {
-        guard let id = FinalCutPro.FCPXML.getIDAttribute(from: xmlLeaf)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        guard let id = rawValues[.id]
         else { return nil }
         self.id = id
         
         // TODO: handle relative file URLs - probably needs library path passed into this init.
-        guard let urlString = xmlLeaf.attributeStringValue(forName: Attributes.url.rawValue),
+        guard let urlString = rawValues[.url],
               let url = URL(string: urlString)
         else { return nil }
         self.url = url

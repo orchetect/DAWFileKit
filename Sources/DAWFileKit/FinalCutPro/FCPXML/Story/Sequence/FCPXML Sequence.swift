@@ -68,12 +68,26 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
+    /// Attributes unique to ``Sequence``.
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case audioLayout
+        case audioRate
+        case note
+        case renderFormat
+        case keywords
+        case spine
+        
+        case metadata
+    }
+    
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
         // parses `format`, `tcStart`, `tcFormat`, `duration`
         guard let timelineAttributes = Self.parseTimelineAttributes(
             from: xmlLeaf,
@@ -84,17 +98,12 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
         startTimecode = timelineAttributes.startTimecode
         duration = timelineAttributes.duration
         
-        audioLayout = FinalCutPro.FCPXML.AudioLayout(
-            rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioLayout.rawValue) ?? ""
-        )
+        audioLayout = FinalCutPro.FCPXML.AudioLayout(rawValue: rawValues[.audioLayout] ?? "")
+        audioRate = FinalCutPro.FCPXML.AudioRate(rawValue: rawValues[.audioRate] ?? "")
         
-        audioRate = FinalCutPro.FCPXML.AudioRate(
-            rawValue: xmlLeaf.attributeStringValue(forName: Attributes.audioRate.rawValue) ?? ""
-        )
-        
-        renderFormat = xmlLeaf.attributeStringValue(forName: Attributes.renderFormat.rawValue)
-        note = xmlLeaf.attributeStringValue(forName: Attributes.note.rawValue)
-        keywords = xmlLeaf.attributeStringValue(forName: Attributes.keywords.rawValue)
+        renderFormat = rawValues[.renderFormat]
+        note = rawValues[.note]
+        keywords = rawValues[.keywords]
         
         // FCPXMLElementContext
         context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)

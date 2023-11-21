@@ -58,7 +58,7 @@ extension FCPXMLTimelineAttributes {
     static func parseTimelineAttributesRawValues(
         from xmlLeaf: XMLElement
     ) -> [FCPXMLTimelineAttributesKey: String] {
-        xmlLeaf.parseAttributesRawValues(key: Key.self)
+        xmlLeaf.parseRawAttributeValues(key: Key.self)
     }
     
     // MARK: - Typed Values

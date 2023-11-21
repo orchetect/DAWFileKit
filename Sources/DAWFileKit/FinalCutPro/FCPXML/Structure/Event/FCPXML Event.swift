@@ -54,7 +54,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
     /// Attributes unique to ``Event``.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         case name
         case uid
     }
@@ -65,8 +65,10 @@ extension FinalCutPro.FCPXML.Event: FCPXMLStructureElement {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        name = xmlLeaf.attributeStringValue(forName: Attributes.name.rawValue)
-        uid = xmlLeaf.attributeStringValue(forName: Attributes.uid.rawValue)
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        name = rawValues[.name]
+        uid = rawValues[.uid]
         
         projects = FinalCutPro.FCPXML
             .structureElements( // adds xmlLeaf as breadcrumb

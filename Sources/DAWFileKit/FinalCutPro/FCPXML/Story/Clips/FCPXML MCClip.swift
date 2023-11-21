@@ -86,7 +86,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
     /// Attributes unique to ``MCClip`` clip.
-    public enum Attributes: String {
+    public enum Attributes: String, XMLParsableAttributesKey {
         case ref // resource ID
     }
     
@@ -96,7 +96,9 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        guard let ref = FinalCutPro.FCPXML.getRefAttribute(from: xmlLeaf) else { return nil }
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
         
         // AFAIK `media` is the only resource type usable by a `mc-clip`
@@ -127,7 +129,7 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLClip {
         offset = clipAttributes.offset
         
         // FCPXMLClipAttributes
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        name = clipAttributes.name
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled

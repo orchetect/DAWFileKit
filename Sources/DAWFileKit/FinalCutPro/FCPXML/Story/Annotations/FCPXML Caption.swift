@@ -58,12 +58,20 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case note
+    }
+    
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        note = rawValues[.note]
+        
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
             resources: resources
@@ -74,7 +82,7 @@ extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
         offset = clipAttributes.offset
         
         // FCPXMLClipAttributes
-        name = FinalCutPro.FCPXML.getNameAttribute(from: xmlLeaf)
+        name = clipAttributes.name
         start = clipAttributes.start
         duration = clipAttributes.duration
         enabled = clipAttributes.enabled

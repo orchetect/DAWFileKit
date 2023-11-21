@@ -10,8 +10,6 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // TODO: xml variable is temporary; finish parsing the xml
-    
     /// Tracking shape shared resource.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
@@ -29,16 +27,12 @@ extension FinalCutPro.FCPXML {
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/tracking-shape
     /// > ).
     public struct TrackingShape: Equatable, Hashable {
+        // TODO: xml variable is temporary; finish parsing the xml
         public var xml: XMLElement
     }
 }
 
 extension FinalCutPro.FCPXML.TrackingShape: FCPXMLResource {
-    // /// Attributes unique to ``TrackingShape``.
-    // public enum Attributes: String {
-    //     // ...
-    // }
-    
     public init?(from xmlLeaf: XMLElement) {
         xml = xmlLeaf
         
