@@ -399,7 +399,7 @@ extension FinalCutPro.FCPXML {
     ) -> AncestorRoles {
         var ancestorRoles = AncestorRoles()
         
-        for breadcrumb in breadcrumbs {
+        for breadcrumb in breadcrumbs + [xmlLeaf] {
             let bcRoles = roles(
                 of: breadcrumb,
                 resources: resources,
@@ -407,7 +407,7 @@ extension FinalCutPro.FCPXML {
             )
             guard let bcType = ElementType(from: breadcrumb) else { continue }
             let defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)
-            if !bcRoles.isEmpty {
+            if !defaultedRoles.isEmpty {
                 let elementRoles = AncestorRoles.ElementRoles(elementType: bcType, roles: defaultedRoles)
                 ancestorRoles.elements.append(elementRoles)
             }
