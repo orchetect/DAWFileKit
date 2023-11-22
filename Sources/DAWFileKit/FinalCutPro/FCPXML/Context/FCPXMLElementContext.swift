@@ -137,15 +137,16 @@ extension FinalCutPro.FCPXML {
             )
         }
         
-        /// Roles collected from all ancestors of the element.
-        public func ancestorsRoles(includeDefaultRoles: Bool) -> Set<Role> {
+        /// Returns the effective roles of the element inherited from ancestors.
+        public func inheritedRoles(includeDefaultRoles: Bool) -> Set<Role> {
             FinalCutPro.FCPXML.rolesOfElementAndAncestors(
                 of: xmlLeaf,
                 breadcrumbs: breadcrumbs,
                 resources: resources,
                 auditionMask: .activeAudition, 
                 includeDefaultRoles: includeDefaultRoles
-            ).flattened()
+            )
+            .flattened()
         }
         
         // MARK: - Parsing Tools

@@ -513,7 +513,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
             // `marker` can't contain roles
             XCTAssertEqual(extractedMarker.context[.roles], [])
             // every marker should have a role inhertied from an ancestor
-            XCTAssertNotEqual(extractedMarker.context[.ancestorsRoles], [])
+            XCTAssertNotEqual(extractedMarker.context[.inheritedRoles], [])
             
             // print(extractedMarker.name, extractedMarker.context[.ancestorsRoles] ?? [])
         }

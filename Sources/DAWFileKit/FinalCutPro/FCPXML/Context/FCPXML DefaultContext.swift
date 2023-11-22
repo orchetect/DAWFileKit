@@ -16,7 +16,7 @@ extension FinalCutPro.FCPXML {
     ///
     /// - ``FinalCutPro/FCPXML/ContextKey/absoluteStart``
     /// - ``FinalCutPro/FCPXML/ContextKey/roles``
-    /// - ``FinalCutPro/FCPXML/ContextKey/ancestorsRoles``
+    /// - ``FinalCutPro/FCPXML/ContextKey/inheritedRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorEventName``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorProjectName``
     /// - ``FinalCutPro/FCPXML/ContextKey/parentType``
@@ -31,7 +31,7 @@ extension FinalCutPro.FCPXML {
                 var dict: FinalCutPro.FCPXML.ElementContext = [:]
                 dict[.absoluteStart] = tools.absoluteStart
                 dict[.roles] = tools.roles(includeDefaultRoles: true)
-                dict[.ancestorsRoles] = tools.ancestorsRoles(includeDefaultRoles: true)
+                dict[.inheritedRoles] = tools.inheritedRoles(includeDefaultRoles: true)
                 dict[.ancestorEventName] = tools.ancestorEventName
                 dict[.ancestorProjectName] = tools.ancestorProjectName
                 dict[.parentType] = tools.parentType
@@ -53,7 +53,7 @@ extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.DefaultCo
     ///
     /// - ``FinalCutPro/FCPXML/ContextKey/absoluteStart``
     /// - ``FinalCutPro/FCPXML/ContextKey/roles``
-    /// - ``FinalCutPro/FCPXML/ContextKey/ancestorsRoles``
+    /// - ``FinalCutPro/FCPXML/ContextKey/inheritedRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorEventName``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorProjectName``
     /// - ``FinalCutPro/FCPXML/ContextKey/parentType``
@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML.ContextKey {
     fileprivate enum Key: String {
         case absoluteStart
         case roles
-        case ancestorsRoles
+        case inheritedRoles
         case ancestorEventName
         case ancestorProjectName
         case parentType
@@ -85,16 +85,16 @@ extension FinalCutPro.FCPXML.ContextKey {
         .init(key: Key.absoluteStart)
     }
     
-    /// Convenience: The element's own roles, if applicable or present.
+    /// The element's own roles, if applicable or present.
     /// Includes default roles if none are specified and if applicable.
     public static var roles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.Role>> {
         .init(key: Key.roles)
     }
     
-    /// Roles collected from all ancestors of the element.
+    /// Returns the effective roles of the element inherited from ancestors.
     /// Includes default roles if none are specified and if applicable.
-    public static var ancestorsRoles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.Role>> {
-        .init(key: Key.ancestorsRoles)
+    public static var inheritedRoles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.Role>> {
+        .init(key: Key.inheritedRoles)
     }
     
     /// Contains an event name if the element is a descendent of an event.
