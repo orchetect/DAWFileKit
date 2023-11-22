@@ -496,6 +496,7 @@ extension FinalCutPro.FCPXML {
             case let .anyClip(clipType):
                 switch clipType {
                 case .assetClip:
+                    // can contain sub-roles in `audio-channel-source` children
                     var roles: [Role] = []
                     if let audioRole = xmlLeaf.attributeStringValue(forName: AssetClip.Attributes.audioRole.rawValue) {
                         roles.insert(.audio(audioRole))
@@ -577,7 +578,7 @@ extension FinalCutPro.FCPXML {
         auditionMask: Audition.Mask // = .activeAudition
     ) -> Set<Role> {
         Set(
-            breadcrumbs.flatMap {
+            (breadcrumbs + [xmlLeaf]).flatMap {
                 roles(of: $0, resources: resources, auditionMask: auditionMask)
             }
         )
