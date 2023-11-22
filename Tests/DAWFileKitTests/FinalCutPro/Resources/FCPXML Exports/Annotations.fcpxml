@@ -4,9 +4,8 @@
 <fcpxml version="1.11">
     <resources>
         <format id="r1" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
-        <asset id="r2" name="Chapter Marker PosterOffset Test" uid="30C3729DCEE936129873D803DC13B623" start="0s" duration="738000/25000s" hasVideo="1" format="r3" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
-            <media-rep kind="original-media" sig="30C3729DCEE936129873D803DC13B623" src="file:///Users/stef/Movies/MyLibrary.fcpbundle/Test%20Event/Original%20Media/Chapter%20Marker%20PosterOffset%20Test.m4v">
-                <bookmark>Ym9va1wDAAAAAAQQMAAAAAM3jIQPSREIzHag6B2XOoYbmH+ifMhoVnzwn86+kxzmWAIAAAQAAAADAwAAABgAKAUAAAABAQAAVXNlcnMAAAAEAAAAAQEAAHN0ZWYGAAAAAQEAAE1vdmllcwAAEwAAAAEBAABNeUxpYnJhcnkuZmNwYnVuZGxlAAoAAAABAQAAVGVzdCBFdmVudAAADgAAAAEBAABPcmlnaW5hbCBNZWRpYQAAJAAAAAEBAABDaGFwdGVyIE1hcmtlciBQb3N0ZXJPZmZzZXQgVGVzdC5tNHYcAAAAAQYAABAAAAAgAAAALAAAADwAAABYAAAAbAAAAIQAAAAIAAAABAMAACUAAAAAAAAACAAAAAQDAABuyxwAAAAAAAgAAAAEAwAAk4AiAAAAAAAIAAAABAMAAEaQhz4AAAAACAAAAAQDAAAWk4c+AAAAAAgAAAAEAwAAO5SHPgAAAAAIAAAABAMAADyUhz4AAAAAHAAAAAEGAADUAAAA5AAAAPQAAAAEAQAAFAEAACQBAAA0AQAACAAAAAAEAABBxLAC0A8UMhgAAAABAgAAAQAAAAAAAAAPAAAAAAAAAAAAAAAAAAAACAAAAAQDAAAFAAAAAAAAAAQAAAADAwAA9QEAAAgAAAABCQAAZmlsZTovLy8MAAAAAQEAAE1hY2ludG9zaCBIRAgAAAAEAwAAAOAB4+gAAAAIAAAAAAQAAEHFei70AAAAJAAAAAEBAAA1NjhBRTVGMS0zODU3LTQzRDQtQjI4Qy00NzJFRDVCM0M4NjAYAAAAAQIAAIEAAAABAAAA7xMAAAEAAAAAAAAAAAAAAAEAAAABAQAALwAAAAAAAAABBQAAzAAAAP7///8BAAAAAAAAABAAAAAEEAAAsAAAAAAAAAAFEAAARAEAAAAAAAAQEAAAeAEAAAAAAABAEAAAaAEAAAAAAAACIAAARAIAAAAAAAAFIAAAtAEAAAAAAAAQIAAAxAEAAAAAAAARIAAA+AEAAAAAAAASIAAA2AEAAAAAAAATIAAA6AEAAAAAAAAgIAAAJAIAAAAAAAAwIAAAUAIAAAAAAAABwAAAmAEAAAAAAAARwAAAIAAAAAAAAAASwAAAqAEAAAAAAAAQ0AAABAAAAAAAAAA=</bookmark>
+        <asset id="r2" name="TestVideo" uid="30C3729DCEE936129873D803DC13B623" start="0s" duration="738000/25000s" hasVideo="1" format="r3" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="30C3729DCEE936129873D803DC13B623" src="file:///Users/user/Movies/MyLibrary.fcpbundle/Test%20Event/Original%20Media/TestVideo.m4v">
             </media-rep>
             <metadata>
                 <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
@@ -24,17 +23,17 @@
         </asset>
         <format id="r3" name="FFVideoFormat640x480p25" frameDuration="100/2500s" width="640" height="480" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
     </resources>
-    <library location="file:///Users/stef/Movies/MyLibrary.fcpbundle/">
+    <library location="file:///Users/user/Movies/MyLibrary.fcpbundle/">
         <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
             <project name="Annotations" uid="9FE87153-B0B8-4095-AABB-A92EADA46CAA" modDate="2023-11-17 15:37:05 -0800">
                 <sequence format="r1" duration="35424000/1200000s" tcStart="3600s" tcFormat="NDF" audioLayout="stereo" audioRate="48k" keywords="keyword1">
                     <spine>
-                        <asset-clip ref="r2" offset="3600s" name="TestVideo" duration="35424000/1200000s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                        <asset-clip ref="r2" offset="3600s" name="TestVideo Clip" duration="35424000/1200000s" format="r3" tcFormat="NDF" audioRole="dialogue">
                             <note>c1 notes</note>
                             <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
                             <caption lane="1" offset="3s" name="caption1" start="3600s" duration="4s" enabled="0" role="iTT?captionFormat=ITT.en">
                                 <text placement="bottom">
-                                    <text-style ref="ts1">caption1</text-style>
+                                    <text-style ref="ts1">caption1 text</text-style>
                                 </text>
                                 <text-style-def id="ts1">
                                     <text-style font=".AppleSystemUIFont" fontSize="13" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>
@@ -42,7 +41,7 @@
                             </caption>
                             <caption lane="1" offset="23500/2500s" name="caption2" start="3600s" duration="2s" role="iTT?captionFormat=ITT.en">
                                 <text placement="bottom">
-                                    <text-style ref="ts2">caption2</text-style>
+                                    <text-style ref="ts2">caption2 text</text-style>
                                 </text>
                                 <text-style-def id="ts2">
                                     <text-style font=".AppleSystemUIFont" fontSize="13" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>

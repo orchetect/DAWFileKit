@@ -466,6 +466,7 @@ extension FinalCutPro.FCPXML {
         case nonSpecific(_ role: String)
     }
     
+    // TODO: include func parameter `includeDefaultRoles: Bool` to synthesize FCP's default audio and video roles when they don't exist?
     static func roles(
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
@@ -568,6 +569,7 @@ extension FinalCutPro.FCPXML {
         return []
     }
     
+    // TODO: include func parameter `includeDefaultRoles: Bool` to synthesize FCP's default audio and video roles when they don't exist?
     static func rolesOfElementAndAncestors(
         of xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],

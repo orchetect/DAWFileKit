@@ -42,7 +42,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Keyword: FCPXMLAnnotationElement {
     public enum Attributes: String, XMLParsableAttributesKey {
-        case name
+        case value // a.k.a name
         case start
         case duration
         case note
@@ -58,7 +58,7 @@ extension FinalCutPro.FCPXML.Keyword: FCPXMLAnnotationElement {
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         // `name`
-        guard let nameValue = rawValues[.name] else { return nil }
+        guard let nameValue = rawValues[.value] else { return nil }
         name = nameValue
         
         // `start`

@@ -10,12 +10,25 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     public struct Text: Equatable, Hashable {
-        public var string: String
         public var rollUpHeight: String?
         public var position: String?
         public var placement: String?
         public var alignment: String?
-        public var textStyles: [XMLElement]
+        public var textStrings: [TextString]
+        
+        public init(
+            rollUpHeight: String? = nil,
+            position: String? = nil,
+            placement: String? = nil,
+            alignment: String? = nil,
+            textStrings: [TextString]
+        ) {
+            self.rollUpHeight = rollUpHeight
+            self.position = position
+            self.placement = placement
+            self.alignment = alignment
+            self.textStrings = textStrings
+        }
     }
 }
 
@@ -41,22 +54,50 @@ extension FinalCutPro.FCPXML.Text {
         
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
-        // caption text is the string value of the element, not an attribute
-        string = xmlLeaf.stringValue ?? ""
-        
         rollUpHeight = rawValues[.rollUpHeight]
         position = rawValues[.position]
         placement = rawValues[.placement]
         alignment = rawValues[.alignment]
         
-        textStyles = Self.parseTextStyles(from: xmlLeaf)
+        textStrings = Self.parseTextStyles(from: xmlLeaf)
     }
     
-    // TODO: parse XML into strongly typed structs
-    static func parseTextStyles(from xmlLeaf: XMLElement) -> [XMLElement] {
+    static func parseTextStyles(from xmlLeaf: XMLElement) -> [TextString] {
         (xmlLeaf.children ?? [])
             .filter { $0.name == Children.textStyle.rawValue }
             .compactMap { $0 as? XMLElement }
+            .compactMap { TextString(from: $0) }
+    }
+}
+
+extension FinalCutPro.FCPXML.Text {
+    public struct TextString: Equatable, Hashable {
+        public var ref: String?
+        public var string: String
+        
+        // TODO: parse potential additional attributes
+        
+        public init(ref: String? = nil, string: String) {
+            self.ref = ref
+            self.string = string
+        }
+        
+        /// Attributes unique to ``Text``.
+        public enum Attributes: String, XMLParsableAttributesKey {
+            case ref
+        }
+        
+        public init?(from xmlLeaf: XMLElement) {
+            // validate element name
+            guard xmlLeaf.name == FinalCutPro.FCPXML.Text.Children.textStyle.rawValue else { return nil }
+            
+            let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+            
+            ref = rawValues[.ref]
+            
+            // caption text is the string value of the element, not an attribute
+            string = xmlLeaf.stringValue ?? ""
+        }
     }
 }
 
