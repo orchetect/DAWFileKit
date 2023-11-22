@@ -66,6 +66,10 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
+    public enum Children: String {
+        case syncSource = "sync-source"
+    }
+    
     // no ref, no role
     public init?(
         from xmlLeaf: XMLElement,

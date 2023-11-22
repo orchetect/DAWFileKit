@@ -94,22 +94,21 @@ extension FinalCutPro.FCPXML {
         
         /// The parent element's type.
         public var parentType: ElementType? {
-            guard let parent = xmlLeaf.parentXMLElement else { return nil }
+            guard let parent = parent else { return nil }
             guard let nameValue = parent.name else { return nil }
             return FinalCutPro.FCPXML.ElementType(rawValue: nameValue)
         }
         
         /// The parent element's name.
         public var parentName: String? {
-            guard let parent = xmlLeaf.parentXMLElement else { return nil }
+            guard let parent = parent else { return nil }
             return FinalCutPro.FCPXML.getNameAttribute(from: parent)
         }
         
         /// The parent element's absolute start time.
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteStart: Timecode? {
-            guard let parent = xmlLeaf.parentXMLElement else { return nil }
-            assert(parent == breadcrumbs.last)
+            guard let parent = parent else { return nil }
             return FinalCutPro.FCPXML.calculateAbsoluteStart(
                 of: parent,
                 breadcrumbs: breadcrumbs.dropLast(),
@@ -119,7 +118,7 @@ extension FinalCutPro.FCPXML {
         
         /// The parent element's duration.
         public var parentDuration: Timecode? {
-            guard let parent = xmlLeaf.parentXMLElement else { return nil }
+            guard let parent = parent else { return nil }
             guard let durationValue = parent.attributeStringValue(forName: "duration") else { return nil }
             return try? FinalCutPro.FCPXML.timecode(
                 fromRational: durationValue,
@@ -128,7 +127,22 @@ extension FinalCutPro.FCPXML {
             )
         }
         
-        // MARK: - Parsing
+        /// The element's own roles, if applicable or present.
+        public var roles: Set<Role> {
+            FinalCutPro.FCPXML.roles(of: xmlLeaf, resources: resources, auditionMask: .activeAudition)
+        }
+        
+        /// Roles collected from all ancestors of the element.
+        public var ancestorsRoles: Set<Role> {
+            FinalCutPro.FCPXML.rolesOfElementAndAncestors(
+                of: xmlLeaf,
+                breadcrumbs: breadcrumbs,
+                resources: resources,
+                auditionMask: .activeAudition
+            )
+        }
+        
+        // MARK: - Parsing Tools
         
         /// Returns the value of the given attribute key name for the current element.
         public func attributeValue(key: String) -> String? {
@@ -178,57 +192,67 @@ extension FinalCutPro.FCPXML {
             )
         }
         
-        /// Returns the first parent element of the given type.
-        public func firstParent(ofType: ElementType, includeSelf: Bool) -> XMLElement? {
+        /// The element's immediate parent, if any.
+        /// Will usually be the same as the last element of `breadcrumbs` except when
+        /// the current element is media sourced from the root `resources` XML element,
+        /// in which case the last breadcrumb should be used instead.
+        public var parent: XMLElement? {
+            guard let parent = xmlLeaf.parentXMLElement else { return nil }
+            // assert(parent == breadcrumbs.last)
+            return parent
+        }
+        
+        /// Returns the first ancestor element of the given type.
+        public func firstAncestor(ofType: ElementType, includeSelf: Bool) -> XMLElement? {
             if includeSelf {
                 if xmlLeaf.name == ofType.rawValue { return xmlLeaf }
             }
             return xmlLeaf.firstAncestor(named: ofType.rawValue)
         }
         
-        /// Returns the first parent element with the given name.
-        public func firstParent(named name: String, includeSelf: Bool) -> XMLElement? {
+        /// Returns the first ancestor element with the given name.
+        public func firstAncestor(named name: String, includeSelf: Bool) -> XMLElement? {
             if includeSelf {
                 if xmlLeaf.name == name { return xmlLeaf }
             }
             return xmlLeaf.firstAncestor(named: name)
         }
         
-        /// Returns the first parent element with the given name.
-        public func firstParent(named names: [String], includeSelf: Bool) -> XMLElement? {
+        /// Returns the first ancestor element with the given name.
+        public func firstAncestor(named names: [String], includeSelf: Bool) -> XMLElement? {
             if includeSelf {
                 if let selfName = xmlLeaf.name, names.contains(selfName) { return xmlLeaf }
             }
             return xmlLeaf.firstAncestor(named: names)
         }
         
-        /// Returns the first parent element containing an attribute with the given name.
-        public func firstParent(withAttribute attrName: String, includeSelf: Bool) -> XMLElement? {
+        /// Returns the first ancestor element containing an attribute with the given name.
+        public func firstAncestor(withAttribute attrName: String, includeSelf: Bool) -> XMLElement? {
             if includeSelf {
                 if xmlLeaf.attribute(forName: attrName) != nil { return xmlLeaf }
             }
             return xmlLeaf.firstAncestor(withAttribute: attrName)
         }
         
-        /// Returns the parent event, if the element is contained within a event.
-        public func parentEvent() -> XMLElement? {
-            return firstParent(ofType: .structure(.event), includeSelf: true)
+        /// Returns the ancestor event, if the element is contained within a event.
+        public func ancestorEvent() -> XMLElement? {
+            return firstAncestor(ofType: .structure(.event), includeSelf: true)
         }
         
-        /// Returns the parent project, if the element is contained within a project.
-        public func parentProject() -> XMLElement? {
-            return firstParent(ofType: .structure(.project), includeSelf: true)
+        /// Returns the ancestor project, if the element is contained within a project.
+        public func ancestorProject() -> XMLElement? {
+            return firstAncestor(ofType: .structure(.project), includeSelf: true)
         }
         
-        /// Returns the parent sequence, if the element is contained within a sequence.
-        public func parentSequence() -> XMLElement? {
-            return firstParent(ofType: .story(.sequence), includeSelf: true)
+        /// Returns the ancestor sequence, if the element is contained within a sequence.
+        public func ancestorSequence() -> XMLElement? {
+            return firstAncestor(ofType: .story(.sequence), includeSelf: true)
         }
         
-        /// Returns the first parent clip, if the element is contained within a clip.
-        public func parentClip(includeSelf: Bool) -> XMLElement? {
+        /// Returns the first ancestor clip, if the element is contained within a clip.
+        public func ancestorClip(includeSelf: Bool) -> XMLElement? {
             let clipTypeStrings = ClipType.allCases.map(\.rawValue)
-            return firstParent(named: clipTypeStrings, includeSelf: includeSelf)
+            return firstAncestor(named: clipTypeStrings, includeSelf: includeSelf)
         }
         
         /// Looks up the resource for the element and returns its ``MediaRep`` instance, if any.
