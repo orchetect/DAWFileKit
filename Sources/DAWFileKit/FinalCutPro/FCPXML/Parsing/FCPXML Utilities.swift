@@ -457,4 +457,129 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Roles
+
+extension FinalCutPro.FCPXML {
+    public enum Role: Equatable, Hashable {
+        case audio(_ role: String)
+        case video(_ role: String)
+        case nonSpecific(_ role: String)
+    }
+    
+    static func roles(
+        of xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        auditionMask: Audition.Mask // = .activeAudition
+    ) -> Set<Role> {
+        guard let elementType = ElementType(from: xmlLeaf) else { return [] }
+        
+        var roles: Set<Role> = []
+        
+        switch elementType {
+        case let .story(storyElementType):
+            switch storyElementType {
+            case let .anyAnnotation(annotationType):
+                switch annotationType {
+                case .caption:
+                    if let role = xmlLeaf.attributeStringValue(forName: Caption.Attributes.role.rawValue) {
+                        roles.insert(.nonSpecific(role))
+                    }
+                    
+                case .keyword:
+                    break
+                    
+                case .marker, .chapterMarker:
+                    break
+                }
+                
+            case let .anyClip(clipType):
+                switch clipType {
+                case .assetClip:
+                    var roles: [Role] = []
+                    if let audioRole = xmlLeaf.attributeStringValue(forName: AssetClip.Attributes.audioRole.rawValue) {
+                        roles.insert(.audio(audioRole))
+                    }
+                    if let videoRole = xmlLeaf.attributeStringValue(forName: AssetClip.Attributes.videoRole.rawValue) {
+                        roles.insert(.video(videoRole))
+                    }
+                    
+                case .audio:
+                    if let audioRole = xmlLeaf.attributeStringValue(forName: Audio.Attributes.role.rawValue) {
+                        return [.audio(audioRole)]
+                    }
+                    
+                case .audition:
+                    // contains clip(s) that may have their own roles but they are their own elements
+                    // so we won't parse them here
+                    break
+                    
+                case .clip:
+                    break
+                    
+                case .gap:
+                    break
+                    
+                case .liveDrawing:
+                    // TODO: has role(s)?
+                    break
+                    
+                case .mcClip:
+                    // does not have roles itself. references multicam clip(s).
+                    break
+                    
+                case .refClip:
+                    // does not have video role itself. it references a sequence that may contain clips with their own roles.
+                    // has audio subroles that are enable-able.
+                    
+                    let useAudioSubroles = xmlLeaf.attributeStringValue(forName: RefClip.Attributes.useAudioSubroles.rawValue) == "1"
+                    if useAudioSubroles {
+                        let audioRoleSources = FinalCutPro.FCPXML.RefClip.parseAudioRoleSources(from: xmlLeaf)
+                        let audioRoles = audioRoleSources.map { $0.role }.map { Role.audio($0) }
+                        roles.formUnion(audioRoles)
+                    }
+                    
+                case .syncClip:
+                    // does not have roles itself. contains story elements that may contain their own roles.
+                    break
+                    
+                case .title:
+                    if let videoRole = xmlLeaf.attributeStringValue(forName: Title.Attributes.role.rawValue) {
+                        roles.insert(.video(videoRole))
+                    }
+                    
+                case .video:
+                    if let videoRole = xmlLeaf.attributeStringValue(forName: Video.Attributes.role.rawValue) {
+                        roles.insert(.video(videoRole))
+                    }
+                }
+                
+            case .sequence:
+                break
+                
+            case .spine:
+                break
+            }
+            
+        case .structure:
+            // structure elements don't have roles
+            break
+        }
+        
+        return []
+    }
+    
+    static func rolesOfElementAndAncestors(
+        of xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        auditionMask: Audition.Mask // = .activeAudition
+    ) -> Set<Role> {
+        Set(
+            breadcrumbs.flatMap {
+                roles(of: $0, resources: resources, auditionMask: auditionMask)
+            }
+        )
+    }
+}
+
 #endif

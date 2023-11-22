@@ -13,6 +13,8 @@ extension FinalCutPro.FCPXML {
     /// Represents a closed caption.
     public struct Caption: Equatable, Hashable, FCPXMLClipAttributes {
         public var note: String?
+        /// The format is `role-name?captionFormat=captionFormat.subrole`.
+        /// ie: `iTT?captionFormat=ITT.en`.
         public var role: String?
         public var texts: [Text]
         public var textStyleDefinitions: [XMLElement]

@@ -51,7 +51,7 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         case name
     }
     
-    // no start
+    // no start, no role
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],

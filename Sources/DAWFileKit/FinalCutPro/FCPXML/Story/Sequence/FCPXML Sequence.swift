@@ -80,6 +80,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
         case metadata
     }
     
+    // no role
     public init?(
         from xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
