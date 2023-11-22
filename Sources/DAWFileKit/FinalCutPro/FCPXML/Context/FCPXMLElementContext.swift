@@ -61,6 +61,11 @@ extension FinalCutPro.FCPXML {
         
         // MARK: - Properties
         
+        /// The current element type.
+        public var elementType: ElementType? {
+            ElementType(from: xmlLeaf)
+        }
+        
         /// The absolute start timecode of the current element.
         /// This is calculated based on ancestor elements.
         public var absoluteStart: Timecode? {
@@ -129,24 +134,28 @@ extension FinalCutPro.FCPXML {
         
         /// The element's own roles, if applicable or present.
         public func roles(includeDefaultRoles: Bool) -> Set<Role> {
-            FinalCutPro.FCPXML.roles(
+            let elementRoles = FinalCutPro.FCPXML.roles(
                 of: xmlLeaf,
                 resources: resources,
-                auditionMask: .activeAudition,
-                includeDefaultRoles: includeDefaultRoles
+                auditionMask: .activeAudition
             )
+            if includeDefaultRoles, let elementType = elementType {
+                let defaultedRoles = FinalCutPro.FCPXML.addDefaultRoles(for: elementType, to: elementRoles)
+                return Set(defaultedRoles.map(\.wrapped))
+            } else {
+                return elementRoles
+            }
         }
         
         /// Returns the effective roles of the element inherited from ancestors.
-        public func inheritedRoles(includeDefaultRoles: Bool) -> Set<Role> {
-            FinalCutPro.FCPXML.rolesOfElementAndAncestors(
+        public func inheritedRoles() -> Set<InterpolatedRole> {
+            FinalCutPro.FCPXML.inheritedRoles(
                 of: xmlLeaf,
                 breadcrumbs: breadcrumbs,
                 resources: resources,
-                auditionMask: .activeAudition, 
-                includeDefaultRoles: includeDefaultRoles
+                auditionMask: .activeAudition
             )
-            .flattened()
+            .flattenedInterpolatedRoles()
         }
         
         // MARK: - Parsing Tools

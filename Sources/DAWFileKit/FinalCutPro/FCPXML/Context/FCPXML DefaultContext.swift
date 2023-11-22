@@ -31,7 +31,7 @@ extension FinalCutPro.FCPXML {
                 var dict: FinalCutPro.FCPXML.ElementContext = [:]
                 dict[.absoluteStart] = tools.absoluteStart
                 dict[.roles] = tools.roles(includeDefaultRoles: true)
-                dict[.inheritedRoles] = tools.inheritedRoles(includeDefaultRoles: true)
+                dict[.inheritedRoles] = tools.inheritedRoles()
                 dict[.ancestorEventName] = tools.ancestorEventName
                 dict[.ancestorProjectName] = tools.ancestorProjectName
                 dict[.parentType] = tools.parentType
@@ -93,7 +93,7 @@ extension FinalCutPro.FCPXML.ContextKey {
     
     /// Returns the effective roles of the element inherited from ancestors.
     /// Includes default roles if none are specified and if applicable.
-    public static var inheritedRoles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.Role>> {
+    public static var inheritedRoles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.InterpolatedRole>> {
         .init(key: Key.inheritedRoles)
     }
     

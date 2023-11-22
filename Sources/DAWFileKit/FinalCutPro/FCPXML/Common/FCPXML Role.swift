@@ -20,9 +20,20 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Role: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case let .audio(role): "audio(\(role))"
-        case let .video(role): "video(\(role))"
-        case let .caption(role): "caption(\(role))"
+        case let .audio(role): return "audio(\(role))"
+        case let .video(role): return "video(\(role))"
+        case let .caption(role): return "caption(\(role))"
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Role {
+    /// Unwraps the role and returns the name of the role.
+    public var name: String {
+        switch self {
+        case let .audio(role): return role
+        case let .video(role): return role
+        case let .caption(role): return role
         }
     }
 }
@@ -44,14 +55,84 @@ extension FinalCutPro.FCPXML.Role {
     }
 }
 
+extension Collection<FinalCutPro.FCPXML.Role> {
+    public var containsAudioRoles: Bool {
+        contains(where: { $0.isAudio })
+    }
+    
+    public var containsVideoRoles: Bool {
+        contains(where: { $0.isVideo })
+    }
+    
+    public var containsCaptionRoles: Bool {
+        contains(where: { $0.isCaption })
+    }
+    
+    public var audioRoles: Set<Element> {
+        Set(filter(\.isAudio))
+    }
+    
+    public var videoRoles: Set<Element> {
+        Set(filter(\.isVideo))
+    }
+    
+    public var captionRoles: Set<Element> {
+        Set(filter(\.isCaption))
+    }
+}
+
+extension FinalCutPro.FCPXML {
+    public enum InterpolatedRole: Equatable, Hashable {
+        /// Role is a custom role assigned by the user.
+        case assigned(Role)
+        
+        /// Role is a defaulted role.
+        case defaulted(Role)
+    }
+}
+
+extension FinalCutPro.FCPXML.InterpolatedRole {
+    public var wrapped: FinalCutPro.FCPXML.Role {
+        switch self {
+        case let .assigned(role): return role
+        case let .defaulted(role): return role
+        }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.InterpolatedRole> {
+    public var containsAudioRoles: Bool {
+        contains(where: { $0.wrapped.isAudio })
+    }
+    
+    public var containsVideoRoles: Bool {
+        contains(where: { $0.wrapped.isVideo })
+    }
+    
+    public var containsCaptionRoles: Bool {
+        contains(where: { $0.wrapped.isCaption })
+    }
+    
+    public var audioRoles: [Element] {
+        filter { $0.wrapped.isAudio }
+    }
+    
+    public var videoRoles: [Element] {
+        filter { $0.wrapped.isVideo }
+    }
+    
+    public var captionRoles: [Element] {
+        filter { $0.wrapped.isCaption }
+    }
+}
+
 // MARK: - Roles Parsing
 
 extension FinalCutPro.FCPXML {
     static func roles(
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
-        auditionMask: Audition.Mask, // = .activeAudition
-        includeDefaultRoles: Bool // = true
+        auditionMask: Audition.Mask // = .activeAudition
     ) -> Set<Role> {
         guard let elementType = ElementType(from: xmlLeaf) else { return [] }
         
@@ -147,16 +228,25 @@ extension FinalCutPro.FCPXML {
             break
         }
         
+        return roles
+    }
+    
+    static func addDefaultRoles(
+        for elementType: ElementType,
+        to roles: Set<Role>
+    ) -> Set<InterpolatedRole> {
+        var roles: Set<InterpolatedRole> = Set(roles.map { .assigned($0) })
+        
         // insert default roles if needed
         let defaultRoles = defaultRoles(for: elementType)
-        if roles.filter(\.isAudio).isEmpty {
-            roles.formUnion(defaultRoles.filter(\.isAudio))
+        if !roles.containsAudioRoles {
+            roles.formUnion(defaultRoles.audioRoles.map { .defaulted($0) })
         }
-        if roles.filter(\.isVideo).isEmpty {
-            roles.formUnion(defaultRoles.filter(\.isVideo))
+        if !roles.containsVideoRoles {
+            roles.formUnion(defaultRoles.videoRoles.map { .defaulted($0) })
         }
-        if roles.filter(\.isCaption).isEmpty {
-            roles.formUnion(defaultRoles.filter(\.isCaption))
+        if !roles.containsCaptionRoles {
+            roles.formUnion(defaultRoles.captionRoles.map { .defaulted($0) })
         }
         
         return roles
@@ -233,17 +323,17 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML {
     public struct AncestorRoles: Equatable, Hashable {
-        public var elementRoles: [ElementRoles]
+        public var elements: [ElementRoles]
         
-        public init(elementRoles: [ElementRoles] = []) {
-            self.elementRoles = elementRoles
+        public init(elements: [ElementRoles] = []) {
+            self.elements = elements
         }
         
         public struct ElementRoles: Equatable, Hashable {
             public var elementType: ElementType
-            public var roles: Set<Role>
+            public var roles: Set<InterpolatedRole>
             
-            public init(elementType: ElementType, roles: Set<Role> = []) {
+            public init(elementType: ElementType, roles: Set<InterpolatedRole> = []) {
                 self.elementType = elementType
                 self.roles = roles
             }
@@ -253,39 +343,59 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.AncestorRoles {
     /// Flattens all ancestor roles to produce a set of effective inherited roles for an element.
-    public func flattened() -> Set<FinalCutPro.FCPXML.Role> {
-        elementRoles.reduce(into: Set<FinalCutPro.FCPXML.Role>()) { finalRoles, elementRoles in
-            let elementAudioRoles = elementRoles.roles.filter(\.isAudio)
-            let elementVideoRoles = elementRoles.roles.filter(\.isVideo)
-            let elementCaptionRoles = elementRoles.roles.filter(\.isCaption)
-            
-            // replace audio role(s) with new role(s)
-            if !elementAudioRoles.isEmpty {
-                finalRoles = finalRoles.filter { !$0.isAudio }
-                finalRoles.formUnion(elementAudioRoles)
-            }
-            
-            // replace vide role(s) with new role(s)
-            if !elementVideoRoles.isEmpty {
-                finalRoles = finalRoles.filter { !$0.isVideo }
-                finalRoles.formUnion(elementVideoRoles)
-            }
-            // replace caption role(s) with new role(s)
-            if !elementCaptionRoles.isEmpty {
-                finalRoles = finalRoles.filter { !$0.isCaption }
-                finalRoles.formUnion(elementCaptionRoles)
+    /// Includes the source of the role inheritance interpolation.
+    public func flattenedInterpolatedRoles() -> Set<FinalCutPro.FCPXML.InterpolatedRole> {
+        var outputRoles: Set<FinalCutPro.FCPXML.InterpolatedRole> = []
+        
+        let elementAudioRoles = elements.flatMap { $0.roles.audioRoles }
+        if let audioRole = flatten(singleRoleType: elementAudioRoles) {
+            outputRoles.insert(audioRole)
+        }
+        
+        let elementVideoRoles = elements.flatMap { $0.roles.videoRoles }
+        if let videoRole = flatten(singleRoleType: elementVideoRoles) {
+            outputRoles.insert(videoRole)
+        }
+        
+        let elementCaptionRoles = elements.flatMap { $0.roles.captionRoles }
+        if let captionRole = flatten(singleRoleType: elementCaptionRoles) {
+            outputRoles.insert(captionRole)
+        }
+        
+        return outputRoles
+    }
+    
+    /// Flattens all ancestor roles to produce a set of effective inherited roles for an element.
+    public func flattenedRoles() -> Set<FinalCutPro.FCPXML.Role> {
+        Set(flattenedInterpolatedRoles().map(\.wrapped))
+    }
+    
+    /// Only supply a collection containing roles of the same type, ie: only `.audio()` roles.
+    /// This favors assigned roles and prevents defaulted roles from overriding them.
+    func flatten(singleRoleType roles: [FinalCutPro.FCPXML.InterpolatedRole]) -> FinalCutPro.FCPXML.InterpolatedRole? {
+        var effectiveRole: FinalCutPro.FCPXML.InterpolatedRole?
+        var foundAssigned: Bool = false
+        
+        for role in roles {
+            switch role {
+            case .assigned:
+                effectiveRole = role
+                foundAssigned = true
+            case .defaulted:
+                if !foundAssigned { effectiveRole = role }
             }
         }
+        
+        return effectiveRole
     }
 }
 
 extension FinalCutPro.FCPXML {
-    static func rolesOfElementAndAncestors(
+    static func inheritedRoles(
         of xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
-        auditionMask: Audition.Mask, // = .activeAudition
-        includeDefaultRoles: Bool // = true
+        auditionMask: Audition.Mask // = .activeAudition
     ) -> AncestorRoles {
         var ancestorRoles = AncestorRoles()
         
@@ -293,12 +403,13 @@ extension FinalCutPro.FCPXML {
             let bcRoles = roles(
                 of: breadcrumb,
                 resources: resources,
-                auditionMask: auditionMask,
-                includeDefaultRoles: includeDefaultRoles
+                auditionMask: auditionMask
             )
-            if !bcRoles.isEmpty, let bcType = ElementType(from: breadcrumb) {
-                let elementRoles = AncestorRoles.ElementRoles(elementType: bcType, roles: bcRoles)
-                ancestorRoles.elementRoles.append(elementRoles)
+            guard let bcType = ElementType(from: breadcrumb) else { continue }
+            let defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)
+            if !bcRoles.isEmpty {
+                let elementRoles = AncestorRoles.ElementRoles(elementType: bcType, roles: defaultedRoles)
+                ancestorRoles.elements.append(elementRoles)
             }
         }
         
