@@ -280,7 +280,12 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         note: String?,
         md: FinalCutPro.FCPXML.Marker.MarkerMetaData,
         clip: ClipInfo
+        // inheritedRoles: Set<FinalCutPro.FCPXML.Role>
     )
+    
+    static let titlesRole: FinalCutPro.FCPXML.Role = .video("Titles")
+    static let videoRole: FinalCutPro.FCPXML.Role = .video("Video")
+    static let customRole: FinalCutPro.FCPXML.Role = .video("Video")
     
     // TODO: markers with "***" trialing comment off by 1 subframe from what Final Cut Pro shows
     // this is due to intra-subframe aliasing in the model objects since they are stored
@@ -480,6 +485,8 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         )
         XCTAssertEqual(extractedMarkers.count, Self.markerData.count)
         
+        // print(debugString(for: extractedMarkers))
+        
         // compare markers
         for md in Self.markerData {
             guard let extractedMarker = extractedMarkers.first(where: { $0.name == md.name })
@@ -502,9 +509,14 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
             
             XCTAssertEqual(extractedMarker.context[.ancestorEventName], "Example A")
             XCTAssertEqual(extractedMarker.context[.ancestorProjectName], "Marker Data Demo_V2")
+            
+            // `marker` can't contain roles
+            XCTAssertEqual(extractedMarker.context[.roles], [])
+            // every marker should have a role inhertied from an ancestor
+            XCTAssertNotEqual(extractedMarker.context[.ancestorsRoles], [])
+            
+            // print(extractedMarker.name, extractedMarker.context[.ancestorsRoles] ?? [])
         }
-        
-         // print(debugString(for: extractedMarkers))
         
         #warning("> TODO: finish writing unit test")
     }

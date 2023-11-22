@@ -30,8 +30,8 @@ extension FinalCutPro.FCPXML {
             { element, breadcrumbs, resources, tools in
                 var dict: FinalCutPro.FCPXML.ElementContext = [:]
                 dict[.absoluteStart] = tools.absoluteStart
-                dict[.roles] = tools.roles
-                dict[.ancestorsRoles] = tools.ancestorsRoles
+                dict[.roles] = tools.roles(includeDefaultRoles: true)
+                dict[.ancestorsRoles] = tools.ancestorsRoles(includeDefaultRoles: true)
                 dict[.ancestorEventName] = tools.ancestorEventName
                 dict[.ancestorProjectName] = tools.ancestorProjectName
                 dict[.parentType] = tools.parentType
@@ -86,11 +86,13 @@ extension FinalCutPro.FCPXML.ContextKey {
     }
     
     /// Convenience: The element's own roles, if applicable or present.
+    /// Includes default roles if none are specified and if applicable.
     public static var roles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.Role>> {
         .init(key: Key.roles)
     }
     
     /// Roles collected from all ancestors of the element.
+    /// Includes default roles if none are specified and if applicable.
     public static var ancestorsRoles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.Role>> {
         .init(key: Key.ancestorsRoles)
     }

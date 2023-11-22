@@ -128,18 +128,24 @@ extension FinalCutPro.FCPXML {
         }
         
         /// The element's own roles, if applicable or present.
-        public var roles: Set<Role> {
-            FinalCutPro.FCPXML.roles(of: xmlLeaf, resources: resources, auditionMask: .activeAudition)
+        public func roles(includeDefaultRoles: Bool) -> Set<Role> {
+            FinalCutPro.FCPXML.roles(
+                of: xmlLeaf,
+                resources: resources,
+                auditionMask: .activeAudition,
+                includeDefaultRoles: includeDefaultRoles
+            )
         }
         
         /// Roles collected from all ancestors of the element.
-        public var ancestorsRoles: Set<Role> {
+        public func ancestorsRoles(includeDefaultRoles: Bool) -> Set<Role> {
             FinalCutPro.FCPXML.rolesOfElementAndAncestors(
                 of: xmlLeaf,
                 breadcrumbs: breadcrumbs,
                 resources: resources,
-                auditionMask: .activeAudition
-            )
+                auditionMask: .activeAudition, 
+                includeDefaultRoles: includeDefaultRoles
+            ).flattened()
         }
         
         // MARK: - Parsing Tools
