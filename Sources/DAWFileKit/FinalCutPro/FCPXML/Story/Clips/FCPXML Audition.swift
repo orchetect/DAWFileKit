@@ -18,18 +18,22 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > When exported, the XML lists the currently active item as the first child in the audition
     /// > container.
-    public struct Audition {
-        public var clips: [AnyClip]
+    public struct Audition: FCPXMLAnchorableAttributes {
         public var lane: Int?
+        public var offset: Timecode?
+        
+        public var clips: [AnyClip]
         
         // TODO: public var dateModified: Date?
         
         public init(
-            clips: [AnyClip] = [],
-            lane: Int?
+            lane: Int?,
+            offset: Timecode?,
+            clips: [AnyClip] = []
         ) {
-            self.clips = clips
             self.lane = lane
+            self.offset = offset
+            self.clips = clips
         }
     }
 }
@@ -39,20 +43,16 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClipAttributes {
         activeClip?.name
     }
     
-    public var start: TimecodeKit.Timecode? {
+    public var start: Timecode? {
         activeClip?.start
     }
     
-    public var duration: TimecodeKit.Timecode? {
+    public var duration: Timecode? {
         activeClip?.duration
     }
     
     public var enabled: Bool {
         activeClip?.enabled ?? true
-    }
-    
-    public var offset: TimecodeKit.Timecode? {
-        activeClip?.offset
     }
 }
 
@@ -65,7 +65,6 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLElementContext {
 extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
     /// Attributes unique to ``Audition``.
     public enum Attributes: String, XMLParsableAttributesKey {
-        case lane
         case modDate
     }
     
@@ -75,11 +74,14 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLClip {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        // let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
-        if let laneString = rawValues[.lane] {
-            lane = Int(laneString)
-        }
+        let anchorableAttributes = Self.parseAnchorableAttributes(
+            from: xmlLeaf,
+            resources: resources
+        )
+        lane = anchorableAttributes.lane
+        offset = anchorableAttributes.offset
         
         let storyElements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
