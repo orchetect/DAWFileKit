@@ -110,20 +110,11 @@ extension FinalCutPro.FCPXML.Event: FCPXMLExtractable {
         []
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         let p = projects.asAnyElements()
         let c = clips.asAnyElements()
         
-        return extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            contents: p + c,
-            matching: predicate
-        )
+        return p + c
     }
 }
 

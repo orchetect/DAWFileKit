@@ -152,24 +152,12 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLExtractable {
         []
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         // resource may contain story elements
-        let mediaRefElements = mediaType.extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            matching: predicate
-        )
+        let mtElements = mediaType.extractableElements()
+        let mtChildren = mediaType.extractableChildren()
         
-        return extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            contents: mediaRefElements + contents.asAnyElements(),
-            matching: predicate
-        )
+        return contents.asAnyElements() + mtElements + mtChildren
     }
 }
 

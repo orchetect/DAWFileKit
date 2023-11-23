@@ -124,20 +124,15 @@ extension FinalCutPro.FCPXML.Media.MediaType: FCPXMLExtractable {
     public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
         []
     }
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
         case .multicam(_):
-            return [] // TODO: AFAIK RefClip can never contain a `multicam` element
+            // TODO: AFAIK RefClip can never contain a `multicam` element
+            return []
+            
         case let .sequence(sequence):
-            return sequence.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+            return [sequence.asAnyElement()]
         }
     }
 }

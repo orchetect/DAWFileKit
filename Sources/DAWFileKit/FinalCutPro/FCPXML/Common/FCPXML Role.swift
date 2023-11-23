@@ -132,7 +132,7 @@ extension FinalCutPro.FCPXML {
     static func roles(
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
-        auditionMask: Audition.Mask // = .activeAudition
+        auditions: Audition.Mask // = .activeAudition
     ) -> Set<Role> {
         guard let elementType = ElementType(from: xmlLeaf) else { return [] }
         
@@ -395,7 +395,7 @@ extension FinalCutPro.FCPXML {
         of xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
-        auditionMask: Audition.Mask // = .activeAudition
+        auditions: Audition.Mask // = .activeAudition
     ) -> AncestorRoles {
         var ancestorRoles = AncestorRoles()
         
@@ -403,7 +403,7 @@ extension FinalCutPro.FCPXML {
             let bcRoles = roles(
                 of: breadcrumb,
                 resources: resources,
-                auditionMask: auditionMask
+                auditions: auditions
             )
             guard let bcType = ElementType(from: breadcrumb) else { continue }
             let defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)

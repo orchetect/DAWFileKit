@@ -122,17 +122,8 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLExtractable {
         []
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
-        extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            contents: contents.asAnyElements(),
-            matching: predicate
-        )
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
+        contents.asAnyElements()
     }
 }
 

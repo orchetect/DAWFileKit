@@ -119,41 +119,30 @@ extension FinalCutPro.FCPXML.Audition: FCPXMLExtractable {
         []
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
-        switch settings.auditionMask {
-        case .omitAuditions:
-            return []
-            
-        case .activeAudition:
-            guard let activeClip = activeClip else {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
+        // note: extract logic will handle audition mask.
+        // this just to fulfill the protocol requirement.
+        clips.asAnyElements()
+    }
+    
+    public func extractableChildren(mask: Mask) -> [FinalCutPro.FCPXML.AnyElement] {
+        switch mask {
+        case .active:
+            if let activeClip = activeClip {
+                return [activeClip.asAnyElement()]
+            } else {
                 print("Note: No active audition in FCPXML audition clip.")
                 return []
             }
-            return extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                contents: [activeClip.asAnyElement()],
-                matching: predicate
-            )
             
-        case .allAuditions:
-            return extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                contents: clips.asAnyElements(),
-                matching: predicate
-            )
+        case .activeAndAlternates:
+            return clips.asAnyElements()
         }
     }
     
-    public enum Mask {
-        case omitAuditions
-        case activeAudition
-        case allAuditions
+    public enum Mask: Equatable, Hashable, CaseIterable {
+        case active
+        case activeAndAlternates
     }
 }
 

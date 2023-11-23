@@ -148,14 +148,10 @@ extension FinalCutPro.FCPXML.Marker: FCPXMLAnnotationElement {
 
 extension FinalCutPro.FCPXML.Marker: FCPXMLExtractable {
     public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        [self.asAnyElement()]
+        []
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         []
     }
 }

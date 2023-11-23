@@ -167,9 +167,9 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         // story elements (clips etc.)
         
         let spine = sequence.spine
-        XCTAssertEqual(spine.elements.count, 1)
+        XCTAssertEqual(spine.contents.count, 1)
                 
-        guard case let .anyClip(.assetClip(element1)) = spine.elements[0] 
+        guard case let .anyClip(.assetClip(element1)) = spine.contents[0] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offset, Self.tc("01:00:00:00", .fps25))

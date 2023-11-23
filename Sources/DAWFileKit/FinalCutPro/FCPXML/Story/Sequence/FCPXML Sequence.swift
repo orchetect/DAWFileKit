@@ -150,17 +150,8 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLExtractable {
         [] // not found in sequence, they're in the inner spine instead
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
-        extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            contents: [spine.asAnyElement()],
-            matching: predicate
-        )
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
+        [spine.asAnyElement()]
     }
 }
 

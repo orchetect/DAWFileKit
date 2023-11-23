@@ -130,26 +130,11 @@ extension FinalCutPro.FCPXML.AnyStructureElement: FCPXMLExtractable {
         }
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case .library(_):
-            return [] // TODO: implement on library
-        case let .event(event):
-            return event.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .project(project):
-            return project.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+        case .library(_): return [] // TODO: implement on library
+        case let .event(event): return event.extractableChildren()
+        case let .project(project): return project.extractableChildren()
         }
     }
 }

@@ -218,9 +218,9 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         
         let spine = sequence.spine
         
-        XCTAssertEqual(spine.elements.count, 7)
+        XCTAssertEqual(spine.contents.count, 7)
         
-        guard case let .anyClip(.assetClip(element1)) = spine.elements[0] else { XCTFail("Clip was not expected type.") ; return }
+        guard case let .anyClip(.assetClip(element1)) = spine.contents[0] else { XCTFail("Clip was not expected type.") ; return }
         // TODO: contains a `conform-rate` child - do we need to do math based on its attributes?
         
         XCTAssertEqual(element1.ref, "r2")
@@ -270,8 +270,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         // project
         let project = try XCTUnwrap(fcpxml.allProjects().first)
         
-        let extractedMarkers = project
-            .extractMarkers(settings: FinalCutPro.FCPXML.ExtractionSettings())
+        let extractedMarkers = project.extractElements(preset: .markers, settings: .deep())
         
         let markers = try extractedMarkers
             .map { try Self.convert(absoluteStartOf: $0, to: .fps25) }
@@ -283,7 +282,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         print(Self.debugString(for: markers))
         
         // print("Sorted by name:")
-        // print(Self.debugString(for: markers.sortedByName()))
+//         print(Self.debugString(for: markers.sortedByName()))
         
         // TODO: subframe rounding issues could be possibly eliminated if model used CMTime instead of Timecode for fractional time values, since the aggregate math involved between one or more Timecode instances could introduce very small amounts of cumulative subframes aliasing
         
@@ -450,11 +449,10 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         let project = try XCTUnwrap(fcpxml.allProjects().first)
         
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludeTypes: [.story(.anyClip(.refClip))], 
-            auditionMask: .activeAudition
+            excludedTypes: [.story(.anyClip(.refClip))]
         )
         let markers = try project
-            .extractMarkers(settings: settings)
+            .extractElements(preset: .markers, settings: settings)
             .map { try Self.convert(absoluteStartOf: $0, to: .fps25) }
             .sortedByAbsoluteStart()
         

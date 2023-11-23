@@ -137,7 +137,7 @@ extension FinalCutPro.FCPXML {
             let elementRoles = FinalCutPro.FCPXML.roles(
                 of: xmlLeaf,
                 resources: resources,
-                auditionMask: .activeAudition
+                auditions: .active
             )
             if includeDefaultRoles, let elementType = elementType {
                 let defaultedRoles = FinalCutPro.FCPXML.addDefaultRoles(for: elementType, to: elementRoles)
@@ -153,7 +153,7 @@ extension FinalCutPro.FCPXML {
                 of: xmlLeaf,
                 breadcrumbs: breadcrumbs,
                 resources: resources,
-                auditionMask: .activeAudition
+                auditions: .active
             )
             .flattenedInterpolatedRoles()
         }
@@ -248,6 +248,13 @@ extension FinalCutPro.FCPXML {
                 if xmlLeaf.attribute(forName: attrName) != nil { return xmlLeaf }
             }
             return xmlLeaf.firstAncestor(withAttribute: attrName)
+        }
+        
+        /// Types of the element's ancestors (breadcrumbs).
+        public var ancestorElementTypes: [FinalCutPro.FCPXML.ElementType] {
+            breadcrumbs.compactMap {
+                FinalCutPro.FCPXML.ElementType(from: $0)
+            }
         }
         
         /// Returns the ancestor event, if the element is contained within a event.

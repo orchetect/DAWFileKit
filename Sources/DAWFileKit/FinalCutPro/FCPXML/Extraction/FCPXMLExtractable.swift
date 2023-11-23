@@ -16,76 +16,126 @@ public protocol FCPXMLExtractable { // parent/container
     /// Extractable elements contained immediately within the element. Do not include children.
     func extractableElements() -> [FinalCutPro.FCPXML.AnyElement]
     
-    /// Extract elements from the element and optionally recursively from all sub-elements.
-    /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
-    func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement]
+    /// Extractable children contained one level under the element.
+    func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement]
 }
 
-// MARK: - Extraction Logic
+// MARK: - Additional Methods
 
 extension FCPXMLExtractable where Self: FCPXMLElement {
-    func extractElements(
+    /// Extract elements from the element and recursively from all sub-elements.
+    /// - Note: Ancestors is ordered from furthest ancestor to closest ancestor of the `parent`.
+    public func extractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        extractElements(settings: settings) { _ in true }
+    }
+}
+
+// MARK: - Recursive Extraction Logic
+
+extension FCPXMLExtractable where Self: FCPXMLElement {
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        contents: [FinalCutPro.FCPXML.AnyElement],
         matching predicate: (FinalCutPro.FCPXML.AnyElement) -> Bool
     ) -> [FinalCutPro.FCPXML.AnyElement] {
-        let isFiltered = settings.excludeTypes.contains(elementType)
-        guard !isFiltered else { return [] }
+        // apply filters from settings
+        if !filter(settings: settings) {
+            return []
+        }
         
-        let ownElements = [self.asAnyElement()] + extractableElements()
+        let selfElement = self.asAnyElement()
+        let ownElements = [selfElement] + extractableElements()
         
-        let childAncestors = ancestorsOfParent + [self.asAnyElement()]
+        let children = getExtractableChildren(settings: settings)
         
-        let childElements = contents.flatMap {
-            $0.extractableElements()
-                + $0.extractElements(
-                    settings: settings,
-                    ancestorsOfParent: childAncestors,
-                    matching: predicate
-                )
+        let childElements = children.flatMap {
+            $0.extractElements(
+                settings: settings,
+                matching: predicate
+            )
         }
         
         let matchingElements = (ownElements + childElements).filter(predicate)
         
         return matchingElements
     }
-}
-
-// MARK: - Specialized Extraction
-
-extension FCPXMLExtractable {
-    /// Extract all nested markers.
-    public func extractMarkers(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement] = []
-    ) -> [FinalCutPro.FCPXML.Marker] {
-        let extracted = extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent) { element in
-                element.elementType == .story(.anyAnnotation(.marker)) ||
-                element.elementType == .story(.anyAnnotation(.chapterMarker))
+    
+    func filter(
+        settings: FinalCutPro.FCPXML.ExtractionSettings
+    ) -> Bool {
+        if let filteredTypes = settings.filteredTypes,
+           !filteredTypes.contains(elementType) 
+        {
+            return false
+        }
+        
+        if settings.excludedTypes.contains(elementType)
+        {
+            return false
+        }
+        
+        // TODO: this needs unit testing
+        if !settings.excludedAncestorTypes.isEmpty {
+            for t in settings.excludedAncestorTypes {
+                if hasAncestorExcludingParent(ofType: t) {
+                    return false
+                }
             }
-        let markers = extracted.storyElements().annotations().markers()
-        return markers
+        }
+        
+        return true
     }
     
-    /// Extract all nested captions.
-    public func extractCaptions(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement] = []
-    ) -> [FinalCutPro.FCPXML.Caption] {
-        let extracted = extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent) { element in
-                element.elementType == .story(.anyAnnotation(.caption))
-            }
-        let captions = extracted.storyElements().annotations().captions()
-        return captions
+    func getExtractableChildren(
+        settings: FinalCutPro.FCPXML.ExtractionSettings
+    ) -> [FinalCutPro.FCPXML.AnyElement] {
+        if case let .story(.anyClip(.audition(auditionClip))) = self.asAnyElement() {
+            return auditionClip.extractableChildren(mask: settings.auditions)
+        } else {
+            return extractableChildren()
+        }
+    }
+}
+
+// MARK: - Extraction Presets
+
+extension FCPXMLExtractable where Self: FCPXMLElement {
+    /// Extract elements using a preset.
+    public func extractElements<Result>(
+        preset: some FCPXMLExtractionPreset<Result>,
+        settings: FinalCutPro.FCPXML.ExtractionSettings = .mainTimeline
+    ) -> Result {
+        preset.perform(on: self, baseSettings: settings)
+    }
+}
+
+// MARK: - Helpers
+
+extension FinalCutPro.FCPXML.AnyElement {
+    /// Returns `true` if element has an ancestor with the specified element type, excluding its
+    /// immediate parent.
+    func hasAncestorExcludingParent(
+        ofType elementType: FinalCutPro.FCPXML.ElementType
+    ) -> Bool {
+        guard var ancestorTypesOfClip = context[.ancestorElementTypes] else {
+            return false
+        }
+        
+        // remove clip that the element is directly attached to
+        _ = ancestorTypesOfClip.popLast()
+        return ancestorTypesOfClip.contains(elementType)
+    }
+}
+
+extension FCPXMLElement {
+    /// Returns `true` if element has an ancestor with the specified element type, excluding its
+    /// immediate parent.
+    func hasAncestorExcludingParent(
+        ofType elementType: FinalCutPro.FCPXML.ElementType
+    ) -> Bool {
+        self.asAnyElement()
+            .hasAncestorExcludingParent(ofType: elementType)
     }
 }
 

@@ -12,26 +12,67 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     /// Settings applied when extracting FCPXML elements.
     public struct ExtractionSettings {
-        // /// If `true`, perform a deep traversal recursively gathering child elements from all sub-elements.
-        // /// If `false`, perform a shallow traversal of only the element's own child elements.
-        // public var deep: Bool
+        /// Filter to apply to Audition clip contents.
+        public var auditions: FinalCutPro.FCPXML.Audition.Mask
         
-        /// Filter to apply to Auditions.
-        public var auditionMask: FinalCutPro.FCPXML.Audition.Mask
+        /// Element types to filter during extraction.
+        /// Any other element types will be excluded.
+        /// This rule is superseded by ``excludedTypes`` or ``excludedAncestorTypes`` in the event
+        /// the
+        /// same type is in both.
+        ///
+        /// - Note: If this set is non-nil and empty, no elements will be extracted.
+        public var filteredTypes: Set<FinalCutPro.FCPXML.ElementType>?
         
         /// Element types to exclude during extraction.
-        public var excludeTypes: [FinalCutPro.FCPXML.ElementType]
+        /// This rule supersedes ``filteredTypes`` in the event the same type is in both.
+        public var excludedTypes: Set<FinalCutPro.FCPXML.ElementType>
+        
+        /// Exclude elements that have ancestors with these element types.
+        /// This rule supersedes ``filteredTypes`` in the event the same type is in both.
+        public var excludedAncestorTypes: Set<FinalCutPro.FCPXML.ElementType>
         
         public init(
-            // deep: Bool,
-            excludeTypes: [FinalCutPro.FCPXML.ElementType] = [],
-            auditionMask: FinalCutPro.FCPXML.Audition.Mask = .activeAudition
+            auditions: FinalCutPro.FCPXML.Audition.Mask = .active,
+            filteredTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
+            excludedTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
+            excludedAncestorTypes: Set<FinalCutPro.FCPXML.ElementType> = []
         ) {
-            // self.deep = deep
-            self.excludeTypes = excludeTypes
-            self.auditionMask = auditionMask
+            self.filteredTypes = filteredTypes
+            self.excludedTypes = excludedTypes
+            self.excludedAncestorTypes = excludedAncestorTypes
+            self.auditions = auditions
         }
     }
+}
+
+extension FinalCutPro.FCPXML.ExtractionSettings {
+    /// Extraction settings that return deep results including internal timelines within clips,
+    /// producing results that include elements visible from the main timeline and elements not
+    /// visible from the main timeline.
+    public static func deep(
+        auditions: FinalCutPro.FCPXML.Audition.Mask = .active
+    ) -> FinalCutPro.FCPXML.ExtractionSettings {
+        FinalCutPro.FCPXML.ExtractionSettings(
+            auditions: .active,
+            filteredTypes: nil,
+            excludedTypes: [],
+            excludedAncestorTypes: []
+        )
+    }
+    
+    /// Extraction settings that constrain results to elements that are visible from the main
+    /// timeline.
+    public static let mainTimeline = FinalCutPro.FCPXML.ExtractionSettings(
+        auditions: .active,
+        filteredTypes: nil,
+        excludedTypes: [],
+        excludedAncestorTypes: [
+            .story(.anyClip(.refClip)),
+            .story(.anyClip(.syncClip)),
+            .story(.anyClip(.mcClip))
+        ]
+    )
 }
 
 #endif

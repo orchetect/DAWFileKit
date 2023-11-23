@@ -196,36 +196,12 @@ extension FinalCutPro.FCPXML.AnyStoryElement: FCPXMLExtractable {
         }
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case let .anyAnnotation(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .anyClip(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .sequence(sequence):
-            return sequence.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .spine(spine):
-            return spine.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+        case let .anyAnnotation(clip): return clip.extractableChildren()
+        case let .anyClip(clip): return clip.extractableChildren()
+        case let .sequence(sequence): return sequence.extractableChildren()
+        case let .spine(spine): return spine.extractableChildren()
         }
     }
 }

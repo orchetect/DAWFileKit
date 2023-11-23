@@ -96,9 +96,9 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // clips
         
-        guard case let .anyClip(.title(title1)) = try XCTUnwrap(spine.elements[safe: 0]),
-              case let .anyClip(.gap(gap)) = try XCTUnwrap(spine.elements[safe: 1]),
-              case let .anyClip(.title(title2)) = try XCTUnwrap(spine.elements[safe: 2])
+        guard case let .anyClip(.title(title1)) = try XCTUnwrap(spine.contents[safe: 0]),
+              case let .anyClip(.gap(gap)) = try XCTUnwrap(spine.contents[safe: 1]),
+              case let .anyClip(.title(title2)) = try XCTUnwrap(spine.contents[safe: 2])
         else { return }
         
         // clip 1 - title
@@ -181,14 +181,8 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [],
-                auditionMask: .activeAudition
-            ),
-            ancestorsOfParent: []
-        )
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(auditions: .active)
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 3)
         
         let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
@@ -251,27 +245,19 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
     
     func testExtractMarkers_ExcludeTitle() throws {
         // load file
-        
         let rawData = try fileContents
         
         // load
-        
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [.story(.anyClip(.title))],
-                auditionMask: .activeAudition
-            ), 
-            ancestorsOfParent: []
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludedTypes: [.story(.anyClip(.title))]
         )
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 0])
@@ -280,27 +266,19 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
     
     func testExtractMarkers_ExcludeGap() throws {
         // load file
-        
         let rawData = try fileContents
         
         // load
-        
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [.story(.anyClip(.gap))],
-                auditionMask: .activeAudition
-            ),
-            ancestorsOfParent: []
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludedTypes: [.story(.anyClip(.gap))]
         )
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
@@ -312,27 +290,19 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
     
     func testExtractMarkers_ExcludeGapAndTitle() throws {
         // load file
-        
         let rawData = try fileContents
         
         // load
-        
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [.story(.anyClip(.gap)), .story(.anyClip(.title))],
-                auditionMask: .activeAudition
-            ),
-            ancestorsOfParent: []
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludedTypes: [.story(.anyClip(.gap)), .story(.anyClip(.title))]
         )
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 0)
     }
 }

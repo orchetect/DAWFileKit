@@ -54,9 +54,9 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         // story elements (clips etc.)
         
         let spine = sequence.spine
-        XCTAssertEqual(spine.elements.count, 1)
-                
-        guard case let .anyClip(.audition(audition)) = try XCTUnwrap(spine.elements[safe: 0])
+        XCTAssertEqual(spine.contents.count, 1)
+        
+        guard case let .anyClip(.audition(audition)) = try XCTUnwrap(spine.contents[safe: 0])
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(audition.clips.count, 2)
         
@@ -133,14 +133,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [],
-                auditionMask: .activeAudition
-            ),
-            ancestorsOfParent: []
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            auditions: .active
         )
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         let marker = try XCTUnwrap(extractedMarkers[safe: 0])
@@ -158,14 +154,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [],
-                auditionMask: .allAuditions
-            ),
-            ancestorsOfParent: []
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            auditions: .activeAndAlternates
         )
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         let marker1 = try XCTUnwrap(extractedMarkers[safe: 0])

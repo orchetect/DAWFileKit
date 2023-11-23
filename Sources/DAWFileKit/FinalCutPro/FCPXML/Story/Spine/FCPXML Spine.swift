@@ -13,7 +13,7 @@ extension FinalCutPro.FCPXML {
     /// Contains elements ordered sequentially in time.
     public struct Spine: FCPXMLAnchorableAttributes {
         public var name: String?
-        public var elements: [FinalCutPro.FCPXML.AnyStoryElement]
+        public var contents: [FinalCutPro.FCPXML.AnyStoryElement]
         
         // FCPXMLAnchorableAttributes
         public var lane: Int?
@@ -25,7 +25,7 @@ extension FinalCutPro.FCPXML {
         
         public init(
             name: String?,
-            elements: [FinalCutPro.FCPXML.AnyStoryElement],
+            contents: [FinalCutPro.FCPXML.AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
             offset: Timecode?,
@@ -33,7 +33,7 @@ extension FinalCutPro.FCPXML {
             context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
             self.name = name
-            self.elements = elements
+            self.contents = contents
             
             // FCPXMLAnchorableAttributes
             self.lane = lane
@@ -62,7 +62,7 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
         
         name = rawValues[.name]
         
-        elements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
+        contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
             breadcrumbs: breadcrumbs,
             resources: resources,
@@ -95,17 +95,8 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLExtractable {
         []
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
-        extractElements(
-            settings: settings,
-            ancestorsOfParent: ancestorsOfParent,
-            contents: elements.asAnyElements(),
-            matching: predicate
-        )
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
+        contents.asAnyElements()
     }
 }
 

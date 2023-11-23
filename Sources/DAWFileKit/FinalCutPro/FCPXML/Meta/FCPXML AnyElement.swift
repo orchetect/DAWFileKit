@@ -101,24 +101,12 @@ extension FinalCutPro.FCPXML.AnyElement: FCPXMLExtractable {
         }
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
         case let .story(story):
-            return story.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+            return story.extractableChildren()
         case let .structure(structure):
-            return structure.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+            return structure.extractableChildren()
         }
     }
 }

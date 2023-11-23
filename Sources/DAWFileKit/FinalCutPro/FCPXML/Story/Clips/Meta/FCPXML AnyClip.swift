@@ -239,72 +239,18 @@ extension FinalCutPro.FCPXML.AnyClip: FCPXMLExtractable {
         }
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case let .assetClip(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .audio(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .audition(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .clip(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .gap(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .mcClip(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .refClip(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .syncClip(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .title(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .video(clip):
-            return clip.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+        case let .assetClip(clip): return clip.extractableChildren()
+        case let .audio(clip): return clip.extractableChildren()
+        case let .audition(clip): return clip.extractableChildren()
+        case let .clip(clip): return clip.extractableChildren()
+        case let .gap(clip): return clip.extractableChildren()
+        case let .mcClip(clip): return clip.extractableChildren()
+        case let .refClip(clip): return clip.extractableChildren()
+        case let .syncClip(clip): return clip.extractableChildren()
+        case let .title(clip): return clip.extractableChildren()
+        case let .video(clip): return clip.extractableChildren()
         }
     }
 }

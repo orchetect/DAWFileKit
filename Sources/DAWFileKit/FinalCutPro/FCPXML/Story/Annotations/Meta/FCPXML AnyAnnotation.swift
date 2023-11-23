@@ -159,30 +159,11 @@ extension FinalCutPro.FCPXML.AnyAnnotation: FCPXMLExtractable {
         }
     }
     
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        ancestorsOfParent: [FinalCutPro.FCPXML.AnyElement],
-        matching predicate: (_ element: FinalCutPro.FCPXML.AnyElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.AnyElement] {
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case let .caption(annotation):
-            return annotation.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .keyword(annotation):
-            return annotation.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
-        case let .marker(annotation):
-            return annotation.extractElements(
-                settings: settings,
-                ancestorsOfParent: ancestorsOfParent,
-                matching: predicate
-            )
+        case let .caption(annotation): return annotation.extractableChildren()
+        case let .keyword(annotation): return annotation.extractableChildren()
+        case let .marker(annotation): return annotation.extractableChildren()
         }
     }
 }

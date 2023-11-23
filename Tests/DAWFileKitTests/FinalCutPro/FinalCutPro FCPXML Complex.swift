@@ -399,9 +399,9 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         // story elements (clips etc.)
         
         let spine = sequence.spine
-        XCTAssertEqual(spine.elements.count, 3)
+        XCTAssertEqual(spine.contents.count, 3)
                 
-        guard case let .anyClip(.assetClip(element1)) = spine.elements[0] 
+        guard case let .anyClip(.assetClip(element1)) = spine.contents[0] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offset, Self.tc("00:00:00:00", .fps25))
@@ -412,7 +412,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         XCTAssertEqual(element1.duration?.frameRate, .fps25)
         XCTAssertEqual(element1.audioRole, "dialogue")
         
-        guard case let .anyClip(.assetClip(element2)) = spine.elements[1] 
+        guard case let .anyClip(.assetClip(element2)) = spine.contents[1] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element2.ref, "r5")
         XCTAssertEqual(element2.offset, Self.tc("00:02:22:01", .fps25))
@@ -423,7 +423,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         XCTAssertEqual(element2.duration?.frameRate, .fps25)
         XCTAssertEqual(element2.audioRole, "dialogue")
         
-        guard case let .anyClip(.video(element3)) = spine.elements[2] 
+        guard case let .anyClip(.video(element3)) = spine.contents[2] 
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(element3.ref, "r7")
         XCTAssertEqual(element3.offset, Self.tc("00:05:47:21", .fps25))
@@ -475,14 +475,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractMarkers(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
-                // deep: true,
-                excludeTypes: [],
-                auditionMask: .activeAudition
-            ),
-            ancestorsOfParent: []
-        )
+        let extractedMarkers = event.extractElements(preset: .markers, settings: .deep())
         XCTAssertEqual(extractedMarkers.count, Self.markerData.count)
         
         // print(debugString(for: extractedMarkers))
@@ -534,9 +527,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         
         // extract all elements
         let extractedElements = event.extractElements(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(),
-            ancestorsOfParent: [],
-            matching: { _ in true }
+            settings: .deep(auditions: .activeAndAlternates)
         )
         // XCTAssertEqual(extractedElements.count, ???)
         
