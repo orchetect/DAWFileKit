@@ -283,9 +283,10 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         // inheritedRoles: Set<FinalCutPro.FCPXML.Role>
     )
     
-    static let titlesRole: FinalCutPro.FCPXML.Role = .video("Titles")
-    static let videoRole: FinalCutPro.FCPXML.Role = .video("Video")
-    static let customRole: FinalCutPro.FCPXML.Role = .video("Video")
+    // TODO: test roles
+    static let titlesRole = FinalCutPro.FCPXML.VideoRole(rawValue: "Titles")
+    static let videoRole = FinalCutPro.FCPXML.VideoRole(rawValue: "Video")
+    static let customRole = FinalCutPro.FCPXML.VideoRole(rawValue: "Sample Role.Sample Role-1")
     
     // TODO: markers with "***" trialing comment off by 1 subframe from what Final Cut Pro shows
     // this is due to intra-subframe aliasing in the model objects since they are stored
