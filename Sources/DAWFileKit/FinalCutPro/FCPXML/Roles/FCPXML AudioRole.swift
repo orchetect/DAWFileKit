@@ -56,7 +56,7 @@ extension FinalCutPro.FCPXML.AudioRole: CustomDebugStringConvertible {
 }
 
 extension FinalCutPro.FCPXML.AudioRole: FCPXMLCollapsibleRole {
-    public func collapsingSubRole() -> Self {
+    public func collapsedSubRole() -> Self {
         let collapsedValues = collapseStandardSubRole(role: role, subRole: subRole)
         return Self(role: collapsedValues.role, subRole: collapsedValues.subRole)
     }

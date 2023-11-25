@@ -116,7 +116,7 @@ public protocol FCPXMLCollapsibleRole: FCPXMLRole {
     /// >
     /// > This is provided merely as a convenience for representing simplified role names to the
     /// > user. It does not play a direct role in encoding or decoding FCPXML.
-    func collapsingSubRole() -> Self
+    func collapsedSubRole() -> Self
 }
 
 #endif
