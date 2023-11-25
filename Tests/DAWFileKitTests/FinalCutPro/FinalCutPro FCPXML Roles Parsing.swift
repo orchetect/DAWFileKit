@@ -85,6 +85,31 @@ final class FinalCutPro_FCPXML_RolesParsing: FCPXMLTestCase {
         XCTAssertThrowsError(try parseRawCaptionRole(rawValue: "Main.Main."))
         XCTAssertThrowsError(try parseRawCaptionRole(rawValue: "Main.Main.Main"))
     }
+    
+    func testCollapseStandardSubRole() {
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: nil).role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: nil).subRole, nil)
+        
+        // empty sub-role
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "").role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "").subRole, nil)
+        
+        // whitespace-only sub-role
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: " ").role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: " ").subRole, nil)
+        
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "Main-1").role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "Main-1").subRole, nil)
+        
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "Main-20").role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "Main-20").subRole, nil)
+        
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole").role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole").subRole, "SubRole")
+        
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole-20").role, "Main")
+        XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole-20").subRole, "SubRole-20")
+    }
 }
 
 #endif
