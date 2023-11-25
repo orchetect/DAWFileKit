@@ -43,14 +43,51 @@ extension FinalCutPro.FCPXML.AnyRole {
     }
 }
 
-// MARK: - Proxy Properties
+extension FinalCutPro.FCPXML.AnyRole: FCPXMLRole {
+    public var roleType: FinalCutPro.FCPXML.RoleType { wrapped.roleType }
+    
+    /// Redundant, but required to fulfill `FCPXMLRole` protocol requirements.
+    public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { self }
+}
 
-extension FinalCutPro.FCPXML.AnyRole /* : FCPXMLRole */ {
+extension FinalCutPro.FCPXML.AnyRole: RawRepresentable {
     public var rawValue: String {
         switch self {
         case let .audio(role): return role.rawValue
         case let .video(role): return role.rawValue
         case let .caption(role): return role.rawValue
+        }
+    }
+    
+    public init?(rawValue: String) {
+        // TODO: not ideal
+        // to satisfy FCPXMLRole's RawRepresentable requirement we need this init
+        // but we can't derive whether the role is audio or video from a raw string,
+        // so we have to default to one of them.
+        
+        if let videoRole = FinalCutPro.FCPXML.VideoRole(rawValue: rawValue) {
+            self = .video(videoRole)
+            return
+        }
+        
+        if let captionRole =  FinalCutPro.FCPXML.CaptionRole(rawValue: rawValue) {
+            self = .caption(captionRole)
+            return
+        }
+        
+        return nil
+    }
+}
+
+// MARK: - Proxy Properties
+
+extension FinalCutPro.FCPXML.AnyRole {
+    /// Returns the unwrapped role typed as ``FCPXMLRole``.
+    public var wrapped: any FCPXMLRole {
+        switch self {
+        case let .audio(role): return role
+        case let .video(role): return role
+        case let .caption(role): return role
         }
     }
     

@@ -89,7 +89,8 @@ extension FinalCutPro.FCPXML {
                         .attributeStringValue(forName: RefClip.Attributes.useAudioSubroles.rawValue) == "1"
                     if useAudioSubroles {
                         let audioRoleSources = FinalCutPro.FCPXML.RefClip.parseAudioRoleSources(from: xmlLeaf)
-                        let audioRoles = audioRoleSources.map { $0.role }.compactMap { AnyRole.audio(raw: $0) }
+                        let audioRoles = audioRoleSources.map { $0.role }
+                            .compactMap { AnyRole.audio($0) }
                         roles.formUnion(audioRoles)
                     }
                     

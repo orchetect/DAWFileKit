@@ -178,7 +178,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(element1.start, nil)
         XCTAssertEqual(element1.duration, Self.tc("00:00:29:13", .fps25))
         XCTAssertEqual(element1.duration?.frameRate, .fps25)
-        XCTAssertEqual(element1.audioRole, "dialogue")
+        XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
         // markers
         
@@ -223,7 +223,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         let element1Caption0 = try XCTUnwrap(element1Captions[safe: 0])
         XCTAssertEqual(element1Caption0.note, nil)
-        XCTAssertEqual(element1Caption0.role, "iTT?captionFormat=ITT.en")
+        XCTAssertEqual(element1Caption0.role?.rawValue, "iTT?captionFormat=ITT.en")
         XCTAssertEqual(element1Caption0.texts, [
             FinalCutPro.FCPXML.Text(
                 rollUpHeight: nil,
@@ -251,7 +251,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         let element1Caption1 = try XCTUnwrap(element1Captions[safe: 1])
         XCTAssertEqual(element1Caption1.note, nil)
-        XCTAssertEqual(element1Caption1.role, "iTT?captionFormat=ITT.en")
+        XCTAssertEqual(element1Caption1.role?.rawValue, "iTT?captionFormat=ITT.en")
         XCTAssertEqual(element1Caption1.texts, [
             FinalCutPro.FCPXML.Text(
                 rollUpHeight: nil,

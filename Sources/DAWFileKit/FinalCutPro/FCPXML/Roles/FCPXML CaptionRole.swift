@@ -41,6 +41,11 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
+    public var roleType: FinalCutPro.FCPXML.RoleType { .caption }
+    public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { .caption(self) }
+}
+
+extension FinalCutPro.FCPXML.CaptionRole: RawRepresentable {
     public var rawValue: String {
         role + "?captionFormat=" + captionFormat
     }

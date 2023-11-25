@@ -411,7 +411,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         XCTAssertEqual(element1.start, nil)
         XCTAssertEqual(element1.duration, Self.tc("00:02:22:01", .fps25))
         XCTAssertEqual(element1.duration?.frameRate, .fps25)
-        XCTAssertEqual(element1.audioRole, "dialogue")
+        XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
         guard case let .anyClip(.assetClip(element2)) = spine.contents[1] 
         else { XCTFail("Clip was not expected type.") ; return }
@@ -422,7 +422,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         XCTAssertEqual(element2.start, nil)
         XCTAssertEqual(element2.duration, Self.tc("00:03:25:20", .fps25))
         XCTAssertEqual(element2.duration?.frameRate, .fps25)
-        XCTAssertEqual(element2.audioRole, "dialogue")
+        XCTAssertEqual(element2.audioRole?.rawValue, "dialogue")
         
         guard case let .anyClip(.video(element3)) = spine.contents[2] 
         else { XCTFail("Clip was not expected type.") ; return }
@@ -433,7 +433,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         XCTAssertEqual(element3.start?.frameRate, .fps25)
         XCTAssertEqual(element3.duration, Self.tc("00:01:40:03", .fps25))
         XCTAssertEqual(element3.duration?.frameRate, .fps25)
-        XCTAssertEqual(element3.role, "Sample Role.Sample Role-1")
+        XCTAssertEqual(element3.role?.rawValue, "Sample Role.Sample Role-1")
         
         // markers
         

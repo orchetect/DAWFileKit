@@ -32,6 +32,11 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
+    public var roleType: FinalCutPro.FCPXML.RoleType { .audio }
+    public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { .audio(self) }
+}
+
+extension FinalCutPro.FCPXML.AudioRole: RawRepresentable {
     public var rawValue: String {
         var rawRole = role
         if let subRole = subRole {

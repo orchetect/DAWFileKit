@@ -15,7 +15,7 @@ extension FinalCutPro.FCPXML {
         public var note: String?
         /// The format is `role-name?captionFormat=captionFormat.subrole`.
         /// ie: `iTT?captionFormat=ITT.en`.
-        public var role: String?
+        public var role: CaptionRole?
         public var texts: [Text]
         public var textStyleDefinitions: [XMLElement]
         
@@ -37,7 +37,7 @@ extension FinalCutPro.FCPXML {
         
         public init(
             note: String?,
-            role: String?,
+            role: CaptionRole?,
             texts: [Text],
             textStyleDefinitions: [XMLElement],
             // FCPXMLAnchorableAttributes
@@ -94,7 +94,13 @@ extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         note = rawValues[.note]
-        role = rawValues[.role]
+        
+        if let roleString = rawValues[.role],
+           let role = FinalCutPro.FCPXML.CaptionRole(rawValue: roleString)
+        {
+            self.role = role
+        }
+        
         texts = Self.parseTexts(from: xmlLeaf)
         textStyleDefinitions = Self.parseTextStyleDefinitions(from: xmlLeaf)
         

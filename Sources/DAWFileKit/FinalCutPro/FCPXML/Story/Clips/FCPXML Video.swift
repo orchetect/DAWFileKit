@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     /// > References video data from an `asset` or `effect` element.
     public struct Video: FCPXMLClipAttributes {
         public let ref: String // resource ID, required
-        public let role: String?
+        public let role: VideoRole?
         
         public var contents: [AnyStoryElement]
         
@@ -39,7 +39,7 @@ extension FinalCutPro.FCPXML {
         
         public init(
             ref: String,
-            role: String?,
+            role: VideoRole?,
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -89,7 +89,14 @@ extension FinalCutPro.FCPXML.Video: FCPXMLClip {
         
         guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
-        role = rawValues[.role]
+        
+        if let videoRoleString = rawValues[.role],
+           let videoRole = FinalCutPro.FCPXML.VideoRole(rawValue: videoRoleString)
+        {
+            role = videoRole
+        } else {
+            role = nil
+        }
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,

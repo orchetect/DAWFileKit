@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     /// > References audio data from an `asset` or `effect` element.
     public struct Audio: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
-        public var role: String?
+        public var role: AudioRole?
         public var sourceChannels: String?
         public var outputChannels: String?
         
@@ -41,7 +41,7 @@ extension FinalCutPro.FCPXML {
         
         public init(
             ref: String,
-            role: String?,
+            role: AudioRole?,
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -93,7 +93,13 @@ extension FinalCutPro.FCPXML.Audio: FCPXMLClip {
         
         guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
-        role = rawValues[.role]
+        
+        if let roleString = rawValues[.role],
+           let role = FinalCutPro.FCPXML.AudioRole(rawValue: roleString)
+        {
+            self.role = role
+        }
+        
         sourceChannels = rawValues[.srcCh]
         outputChannels = rawValues[.outCh]
         

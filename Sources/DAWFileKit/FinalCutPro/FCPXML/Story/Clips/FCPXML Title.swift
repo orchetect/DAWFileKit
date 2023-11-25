@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
     public struct Title: FCPXMLClipAttributes {
         public var ref: String // resource ID, required
-        public var role: String?
+        public var role: VideoRole?
         
         public var contents: [AnyStoryElement]
         
@@ -39,7 +39,7 @@ extension FinalCutPro.FCPXML {
         
         public init(
             ref: String,
-            role: String?,
+            role: VideoRole?,
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -89,7 +89,14 @@ extension FinalCutPro.FCPXML.Title: FCPXMLClip {
         
         guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
-        role = rawValues[.role]
+        
+        if let videoRoleString = rawValues[.role],
+           let videoRole = FinalCutPro.FCPXML.VideoRole(rawValue: videoRoleString)
+        {
+            role = videoRole
+        } else {
+            role = nil
+        }
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,

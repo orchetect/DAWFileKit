@@ -31,6 +31,11 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
+    public var roleType: FinalCutPro.FCPXML.RoleType { .video }
+    public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { .video(self) }
+}
+
+extension FinalCutPro.FCPXML.VideoRole: RawRepresentable {
     public var rawValue: String {
         var rawRole = role
         if let subRole = subRole {

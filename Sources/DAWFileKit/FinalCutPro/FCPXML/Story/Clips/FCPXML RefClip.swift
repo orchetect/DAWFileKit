@@ -185,7 +185,7 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLExtractable {
 
 extension FinalCutPro.FCPXML.RefClip {
     public struct AudioRoleSource: Equatable, Hashable {
-        public var role: String
+        public var role: FinalCutPro.FCPXML.AudioRole
         public var contents: [XMLElement]
         
         /// Attributes unique to ``AudioRoleSource``.
@@ -199,10 +199,14 @@ extension FinalCutPro.FCPXML.RefClip {
             .filter { $0.name == Children.audioRoleSource.rawValue }
             .compactMap { $0 as? XMLElement }
         
-        return elements.map {
+        return elements.compactMap {
             let rawValues = $0.parseRawAttributeValues(key: AudioRoleSource.Attributes.self)
             let children = $0.children?.compactMap { $0 as? XMLElement } ?? []
-            return AudioRoleSource(role: rawValues[.role] ?? "", contents: children)
+            
+            guard let audioRole = FinalCutPro.FCPXML.AudioRole(rawValue: rawValues[.role] ?? "")
+            else { return nil }
+            
+            return AudioRoleSource(role: audioRole, contents: children)
         }
     }
 }

@@ -9,7 +9,13 @@
 import Foundation
 @_implementationOnly import OTCore
 
-public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String { }
+public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String {
+    /// Returns the role type enum case.
+    var roleType: FinalCutPro.FCPXML.RoleType { get }
+    
+    /// Returns the annotation as ``FinalCutPro/FCPXML/AnyRole``.
+    func asAnyRole() -> FinalCutPro.FCPXML.AnyRole
+}
 
 // MARK: - Utilities
 

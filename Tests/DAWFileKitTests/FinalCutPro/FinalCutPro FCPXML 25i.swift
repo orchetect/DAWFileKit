@@ -236,7 +236,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
                 .adding(.frames(0, subFrames: 1)), // for cumulative subframe aliasing
             Self.tc("00:00:03:10", .fps25) // confirmed in FCP
         )
-        XCTAssertEqual(element1.audioRole, "dialogue")
+        XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
         // markers
         
