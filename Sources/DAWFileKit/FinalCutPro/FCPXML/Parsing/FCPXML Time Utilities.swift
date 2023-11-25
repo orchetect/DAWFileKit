@@ -50,20 +50,27 @@ extension FinalCutPro.FCPXML {
             
             let elementType = ElementType(from: breadcrumb)
             
-            if case .story(let storyElementType) = elementType,
-               case .anyAnnotation(_) = storyElementType
+            if case let .story(storyElementType) = elementType,
+               case let .anyAnnotation(annotationType) = storyElementType
             {
-                // annotations use `start` attribute as an offset, so handle it specially
-                if let elementStart = start(of: breadcrumb, resources: resources) {
-                    if let breadcrumbParent = breadcrumb.parentXMLElement,
-                       let parentStart = start(of: breadcrumbParent, resources: resources)
-                    {
-                        let diff = elementStart - parentStart
-                        add(diff)
-                    } else {
-                        add(elementStart)
+                switch annotationType {
+                case .marker, .chapterMarker, .keyword:
+                    // markers and keywords use `start` attribute as an offset, so handle it specially
+                    if let elementStart = start(of: breadcrumb, resources: resources) {
+                        if let breadcrumbParent = breadcrumb.parentXMLElement,
+                           let parentStart = start(of: breadcrumbParent, resources: resources)
+                        {
+                            let diff = elementStart - parentStart
+                            add(diff)
+                        } else {
+                            add(elementStart)
+                        }
                     }
+                case .caption:
+                    // caption behaves like a clip and follows the same rules
+                    break
                 }
+                
             }
             
             if let start = start(of: breadcrumb, resources: resources) {
