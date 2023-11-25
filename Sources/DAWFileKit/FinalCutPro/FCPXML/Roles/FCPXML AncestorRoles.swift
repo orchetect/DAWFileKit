@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML.AncestorRoles {
         
         for role in roles {
             switch role {
-            case .assigned:
+            case .assigned, .inherited:
                 effectiveRole = role
                 foundAssigned = true
             case .defaulted:
@@ -94,14 +94,24 @@ extension FinalCutPro.FCPXML {
     ) -> AncestorRoles {
         var ancestorRoles = AncestorRoles()
         
-        for breadcrumb in breadcrumbs + [xmlLeaf] {
+        let elements = breadcrumbs + [xmlLeaf]
+        
+        for index in elements.indices {
+            let breadcrumb = elements[index]
+            let isLastElement = index == elements.indices.last
             let bcRoles = roles(
                 of: breadcrumb,
                 resources: resources,
                 auditions: auditions
             )
             guard let bcType = ElementType(from: breadcrumb) else { continue }
-            let defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)
+            
+            var defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)
+            
+            if !isLastElement {
+                defaultedRoles = defaultedRoles.replaceAssignedRolesWithInherited()
+            }
+            
             if !defaultedRoles.isEmpty {
                 let elementRoles = AncestorRoles.ElementRoles(elementType: bcType, roles: defaultedRoles)
                 ancestorRoles.elements.append(elementRoles)
@@ -109,6 +119,30 @@ extension FinalCutPro.FCPXML {
         }
         
         return ancestorRoles
+    }
+}
+
+extension Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
+    func replaceAssignedRolesWithInherited() -> Self {
+        let roles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = map {
+            switch $0 {
+            case let .assigned(role):
+                return .inherited(role)
+            default:
+                return $0
+            }
+        }
+        let rolesSet = Set(roles)
+        return rolesSet
+    }
+}
+
+extension FinalCutPro.FCPXML.AncestorRoles.ElementRoles {
+    func replaceAssignedRolesWithInherited() -> Self {
+        Self(
+            elementType: elementType,
+            roles: roles.replaceAssignedRolesWithInherited()
+        )
     }
 }
 

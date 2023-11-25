@@ -248,6 +248,19 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(element1Caption0.start, Self.tc("01:00:00:00", .fps25))
         XCTAssertEqual(element1Caption0.duration, Self.tc("00:00:04:00", .fps25))
         XCTAssertEqual(element1Caption0.enabled, false)
+        XCTAssertEqual(element1Caption0.context[.absoluteStart], Self.tc("01:00:03:00", .fps25))
+        XCTAssertEqual(
+            element1Caption0.context[.roles],
+            [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
+        )
+        XCTAssertEqual(
+            element1Caption0.context[.inheritedRoles],
+            [
+                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!),
+                .defaulted(.video(raw: "Video")!),
+                .inherited(.audio(raw: "dialogue")!)
+            ]
+        )
         
         let element1Caption1 = try XCTUnwrap(element1Captions[safe: 1])
         XCTAssertEqual(element1Caption1.note, nil)
@@ -276,6 +289,19 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(element1Caption1.start, Self.tc("01:00:00:00", .fps25))
         XCTAssertEqual(element1Caption1.duration, Self.tc("00:00:02:00", .fps25))
         XCTAssertEqual(element1Caption1.enabled, true)
+        XCTAssertEqual(element1Caption1.context[.absoluteStart], Self.tc("01:00:09:10", .fps25))
+        XCTAssertEqual(
+            element1Caption1.context[.roles],
+            [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
+        )
+        XCTAssertEqual(
+            element1Caption1.context[.inheritedRoles],
+            [
+                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!),
+                .defaulted(.video(raw: "Video")!),
+                .inherited(.audio(raw: "dialogue")!)
+            ]
+        )
     }
 }
 

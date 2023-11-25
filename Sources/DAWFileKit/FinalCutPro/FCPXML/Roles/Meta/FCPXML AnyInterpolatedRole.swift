@@ -10,11 +10,16 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     public enum AnyInterpolatedRole: Equatable, Hashable {
-        /// Role is a custom role assigned by the user.
+        /// Element's role is a custom role assigned by the user.
         case assigned(AnyRole)
         
-        /// Role is a defaulted role.
+        /// Element's role is a defaulted role and no role is assigned either to the element or any
+        /// of its ancestors.
         case defaulted(AnyRole)
+        
+        /// Role is not assigned to the element, but is inherited from an ancestor whose role was
+        /// assigned by the user.
+        case inherited(AnyRole)
     }
 }
 
@@ -23,6 +28,7 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole {
         switch self {
         case let .assigned(role): return role
         case let .defaulted(role): return role
+        case let .inherited(role): return role
         }
     }
 }

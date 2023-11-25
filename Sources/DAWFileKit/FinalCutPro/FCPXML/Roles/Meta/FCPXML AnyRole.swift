@@ -65,8 +65,8 @@ extension FinalCutPro.FCPXML.AnyRole: RawRepresentable {
         // but we can't derive whether the role is audio or video from a raw string,
         // so we have to default to one of them.
         
-        if let videoRole = FinalCutPro.FCPXML.VideoRole(rawValue: rawValue) {
-            self = .video(videoRole)
+        if let videoOrAudioRole = FinalCutPro.FCPXML.VideoRole(rawValue: rawValue) {
+            self = .video(videoOrAudioRole)
             return
         }
         
