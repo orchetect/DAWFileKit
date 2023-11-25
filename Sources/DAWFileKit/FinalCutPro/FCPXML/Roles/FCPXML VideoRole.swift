@@ -40,7 +40,7 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
     }
     
     public init?(rawValue: String) {
-        guard let parsed = try? Self.parseRawStandardRole(rawValue: rawValue)
+        guard let parsed = try? parseRawStandardRole(rawValue: rawValue)
         else { return nil }
         
         role = parsed.role

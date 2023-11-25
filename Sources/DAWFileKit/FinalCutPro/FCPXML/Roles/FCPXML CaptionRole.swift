@@ -46,7 +46,7 @@ extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
     }
     
     public init?(rawValue: String) {
-        guard let parsed = try? Self.parseRawCaptionRole(rawValue: rawValue)
+        guard let parsed = try? parseRawCaptionRole(rawValue: rawValue)
         else { return nil }
         
         role = parsed.role
