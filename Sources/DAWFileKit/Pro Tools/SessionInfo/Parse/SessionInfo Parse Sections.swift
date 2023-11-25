@@ -20,9 +20,11 @@ extension ProTools.SessionInfo {
         
         private(set) var main = Main()
         
-        init(lines section: [String]) {
+        init(lines section: [Substring]) {
+            guard section.count >= 8 else { return }
+            
             // SESSION NAME
-            main.name = section[0]
+            main.name = String(section[0])
             
             // SAMPLE RATE
             if let val = Double(section[1]) {
@@ -34,10 +36,10 @@ extension ProTools.SessionInfo {
             }
             
             // BIT DEPTH
-            main.bitDepth = section[2]
+            main.bitDepth = String(section[2])
             
             // SESSION START TIMECODE
-            let tempStartTimecode: String = section[3]
+            let tempStartTimecode = String(section[3])
             
             #warning(
                 "> TODO: (Not all PT frame rates have been tested to be recognized from PT text files but in theory they should work. Need to individually test each frame rate by exporting a text file from Pro Tools at each frame rate to ensure they are correct.)"
@@ -504,6 +506,38 @@ extension ProTools.SessionInfo {
             public var state: String
             public var plugins: String
             public var clips: [ClipComponents] = []
+            
+            public init(
+                name: String,
+                comments: String,
+                userDelay: String,
+                state: String,
+                plugins: String,
+                clips: [ClipComponents]
+            ) {
+                self.name = name
+                self.comments = comments
+                self.userDelay = userDelay
+                self.state = state
+                self.plugins = plugins
+                self.clips = clips
+            }
+            
+            public init(
+                name: Substring,
+                comments: Substring,
+                userDelay: Substring,
+                state: Substring,
+                plugins: Substring,
+                clips: [ClipComponents]
+            ) {
+                self.name = String(name)
+                self.comments = String(comments)
+                self.userDelay = String(userDelay)
+                self.state = String(state)
+                self.plugins = String(plugins)
+                self.clips = clips
+            }
             
             struct ClipComponents {
                 let channel: String
