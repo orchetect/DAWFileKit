@@ -21,6 +21,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Static Constructors
+
 extension FinalCutPro.FCPXML.AnyRole {
     /// An audio role.
     public static func audio(raw: String) -> Self? {
@@ -40,6 +42,8 @@ extension FinalCutPro.FCPXML.AnyRole {
         return .caption(role)
     }
 }
+
+// MARK: - Proxy Properties
 
 extension FinalCutPro.FCPXML.AnyRole /* : FCPXMLRole */ {
     public var rawValue: String {
@@ -76,6 +80,8 @@ extension FinalCutPro.FCPXML.AnyRole: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: - Metadata
 
 extension FinalCutPro.FCPXML.AnyRole {
     public var isAudio: Bool {

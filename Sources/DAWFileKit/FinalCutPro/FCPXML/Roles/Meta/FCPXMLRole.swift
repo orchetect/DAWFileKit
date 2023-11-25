@@ -11,6 +11,8 @@ import Foundation
 
 public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String { }
 
+// MARK: - Utilities
+
 extension FCPXMLRole {
     /// Parses raw audio or video role string and returns role and optional sub-role.
     static func parseRawStandardRole(

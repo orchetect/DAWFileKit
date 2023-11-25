@@ -152,6 +152,10 @@ extension FinalCutPro.FCPXML {
 // MARK: - Default Roles
 
 extension FinalCutPro.FCPXML {
+    // Known default roles Final Cut Pro uses.
+    // If an element does not have a user-assigned role, Final Cut Pro uses
+    // certain defaults.
+    // TODO: These are English-only defaults, would be nice to localize them
     static let defaultAudioRole: AnyRole = .audio(raw: "Dialogue")!
     static let defaultVideoRole: AnyRole = .video(raw: "Video")!
     static let titlesRole: AnyRole = .video(raw: "Titles")!
