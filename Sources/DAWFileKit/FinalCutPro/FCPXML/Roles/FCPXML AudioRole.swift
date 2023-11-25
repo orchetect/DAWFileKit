@@ -7,6 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
+@_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Audio role.
@@ -45,6 +46,12 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
         
         role = parsed.role
         subRole = parsed.subRole
+    }
+}
+
+extension FinalCutPro.FCPXML.AudioRole: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "audio(\(rawValue.quoted))"
     }
 }
 

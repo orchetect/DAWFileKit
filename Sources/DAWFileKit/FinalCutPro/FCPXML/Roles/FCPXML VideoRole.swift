@@ -48,4 +48,10 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
     }
 }
 
+extension FinalCutPro.FCPXML.VideoRole: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "video(\(rawValue.quoted))"
+    }
+}
+
 #endif

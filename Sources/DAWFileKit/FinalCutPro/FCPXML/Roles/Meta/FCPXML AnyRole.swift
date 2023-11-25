@@ -70,9 +70,9 @@ extension FinalCutPro.FCPXML.AnyRole /* : FCPXMLRole */ {
 extension FinalCutPro.FCPXML.AnyRole: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case let .audio(role): return "audio(\(role))"
-        case let .video(role): return "video(\(role))"
-        case let .caption(role): return "caption(\(role))"
+        case let .audio(role): return role.debugDescription
+        case let .video(role): return role.debugDescription
+        case let .caption(role): return role.debugDescription
         }
     }
 }

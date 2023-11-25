@@ -7,6 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
+@_implementationOnly import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Caption role.
@@ -50,6 +51,12 @@ extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
         
         role = parsed.role
         captionFormat = parsed.captionFormat
+    }
+}
+
+extension FinalCutPro.FCPXML.CaptionRole: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "caption(\(rawValue.quoted))"
     }
 }
 
