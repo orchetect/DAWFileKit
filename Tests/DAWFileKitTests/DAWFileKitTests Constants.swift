@@ -9,7 +9,7 @@ import XCTest
 // MARK: - Constants
 
 enum ResourcesFolder: String {
-    case cubaseTrackArchiveXML = "Cubase TrackArchive XML"
+    case cubaseTrackArchiveXML = "Cubase TrackArchive XML Exports"
     case ptSessionTextExports = "PT Session Text Exports"
     case fcpxmlExports = "FCPXML Exports"
 }
