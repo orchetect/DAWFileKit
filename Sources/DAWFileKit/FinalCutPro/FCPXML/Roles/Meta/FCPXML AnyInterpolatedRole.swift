@@ -9,6 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
+    /// Type-erased box containing a specialized interpolated role instance.
     public enum AnyInterpolatedRole: Equatable, Hashable {
         /// Element's role is a custom role assigned by the user.
         case assigned(AnyRole)
@@ -34,19 +35,19 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole {
 }
 
 extension FinalCutPro.FCPXML.AnyInterpolatedRole {
-    /// Returns `true` if the interpolated case is ``assigned``.
+    /// Returns `true` if the interpolated case is ``FinalCutPro/FCPXML/AnyInterpolatedRole/assigned(_:)``.
     public var isAssigned: Bool {
         guard case .assigned = self else { return false }
         return true
     }
     
-    /// Returns `true` if the interpolated case is ``defaulted``.
+    /// Returns `true` if the interpolated case is ``FinalCutPro/FCPXML/AnyInterpolatedRole/defaulted(_:)``.
     public var isDefaulted: Bool {
         guard case .defaulted = self else { return false }
         return true
     }
     
-    /// Returns `true` if the interpolated case is ``inherited``.
+    /// Returns `true` if the interpolated case is ``FinalCutPro/FCPXML/AnyInterpolatedRole/inherited(_:)``.
     public var isInherited: Bool {
         guard case .inherited = self else { return false }
         return true

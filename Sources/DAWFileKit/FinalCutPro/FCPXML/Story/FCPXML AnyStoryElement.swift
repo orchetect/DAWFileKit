@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Type-erased box containing a story element.
+    /// Type-erased box containing a specialized story element instance.
     public enum AnyStoryElement {
         case anyAnnotation(AnyAnnotation)
         case anyClip(AnyClip)

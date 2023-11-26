@@ -9,6 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
+    /// Type-erased box containing a specialized role instance.
     public enum AnyRole: Equatable, Hashable {
         /// An audio role.
         case audio(_ role: AudioRole)
@@ -70,7 +71,10 @@ extension FinalCutPro.FCPXML.AnyRole: RawRepresentable {
             return
         }
         
-        if let captionRole =  FinalCutPro.FCPXML.CaptionRole(rawValue: rawValue) {
+        // caption roles, however, have a format that is fundamentally different from audio/video
+        // roles.
+        
+        if let captionRole = FinalCutPro.FCPXML.CaptionRole(rawValue: rawValue) {
             self = .caption(captionRole)
             return
         }
@@ -91,6 +95,7 @@ extension FinalCutPro.FCPXML.AnyRole {
         }
     }
     
+    /// Returns the main role.
     public var role: String {
         switch self {
         case let .audio(role): return role.role
@@ -99,6 +104,7 @@ extension FinalCutPro.FCPXML.AnyRole {
         }
     }
     
+    /// Returns the sub-role, if present or applicable.
     public var subRole: String? {
         switch self {
         case let .audio(role): return role.subRole
@@ -121,16 +127,19 @@ extension FinalCutPro.FCPXML.AnyRole: CustomDebugStringConvertible {
 // MARK: - Metadata
 
 extension FinalCutPro.FCPXML.AnyRole {
+    /// Returns `true` if the case is an ``FinalCutPro/FCPXML/AnyRole/audio(_:)`` role.
     public var isAudio: Bool {
         guard case .audio(_) = self else { return false }
         return true
     }
     
+    /// Returns `true` if the case is a ``FinalCutPro/FCPXML/AnyRole/video(_:)`` role.
     public var isVideo: Bool {
         guard case .video(_) = self else { return false }
         return true
     }
     
+    /// Returns `true` if the case is a ``FinalCutPro/FCPXML/AnyRole/caption(_:)`` role.
     public var isCaption: Bool {
         guard case .caption(_) = self else { return false }
         return true

@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Type-erased box containing a structure element.
+    /// Type-erased box containing a specialized structure element instance.
     public enum AnyStructureElement {
         case library(Library)
         case event(Event)

@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Type-erased container for a shared resource.
+    /// Type-erased box containing a specialized shared resource instance.
     public enum AnyResource: Equatable, Hashable {
         case asset(Asset)
         case media(Media)

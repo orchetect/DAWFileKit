@@ -11,6 +11,8 @@ import Foundation
 // MARK: - FCPXML Parsing
 
 extension FinalCutPro.FCPXML {
+    /// Returns roles explicitly attached to an element.
+    /// No default roles are added and no interpolation is performed.
     static func roles(
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
@@ -161,6 +163,9 @@ extension FinalCutPro.FCPXML {
     static let defaultVideoRole: AnyRole = .video(raw: "Video")!
     static let titlesRole: AnyRole = .video(raw: "Titles")!
     
+    /// Returns known default role(s) that Final Cut Pro uses for a given element type.
+    /// If an element does not have a user-assigned role, Final Cut Pro uses
+    /// certain defaults that are not written to the FCPXML file so we have to provide them.
     static func defaultRoles(for elementType: ElementType) -> Set<AnyRole> {
         switch elementType {
         case let .story(storyElementType):

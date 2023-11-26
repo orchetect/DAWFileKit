@@ -9,6 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
+    /// Describes ancestors of an element and their interpolated roles.
     public struct AncestorRoles: Equatable, Hashable {
         public var elements: [ElementRoles]
         
@@ -18,12 +19,13 @@ extension FinalCutPro.FCPXML {
     }
 }
 extension FinalCutPro.FCPXML.AncestorRoles {
+    /// Describes an ancestor element and its interpolated roles.
     public struct ElementRoles: Equatable, Hashable {
         public var elementType: FinalCutPro.FCPXML.ElementType
         public var roles: Set<FinalCutPro.FCPXML.AnyInterpolatedRole>
         
         public init(
-            elementType: FinalCutPro.FCPXML.ElementType, 
+            elementType: FinalCutPro.FCPXML.ElementType,
             roles: Set<FinalCutPro.FCPXML.AnyInterpolatedRole> = []
         ) {
             self.elementType = elementType
@@ -86,6 +88,7 @@ extension FinalCutPro.FCPXML.AncestorRoles {
 // MARK: - FCPXML Parsing
 
 extension FinalCutPro.FCPXML {
+    /// Analyzes an element and its ancestors and returns typed information about their roles.
     static func inheritedRoles(
         of xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
@@ -108,6 +111,7 @@ extension FinalCutPro.FCPXML {
             
             var defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)
             
+            // differentiate assigned ancestor roles
             if !isLastElement {
                 defaultedRoles = defaultedRoles.replaceAssignedRolesWithInherited()
             }
@@ -123,6 +127,8 @@ extension FinalCutPro.FCPXML {
 }
 
 extension Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
+    /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
+    /// case instead.
     func replaceAssignedRolesWithInherited() -> Self {
         let roles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = map {
             switch $0 {
@@ -138,6 +144,8 @@ extension Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
 }
 
 extension FinalCutPro.FCPXML.AncestorRoles.ElementRoles {
+    /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
+    /// case instead.
     func replaceAssignedRolesWithInherited() -> Self {
         Self(
             elementType: elementType,
