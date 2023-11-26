@@ -33,6 +33,29 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyInterpolatedRole {
+    /// Returns `true` if the interpolated case is ``assigned``.
+    public var isAssigned: Bool {
+        guard case .assigned = self else { return false }
+        return true
+    }
+    
+    /// Returns `true` if the interpolated case is ``defaulted``.
+    public var isDefaulted: Bool {
+        guard case .defaulted = self else { return false }
+        return true
+    }
+    
+    /// Returns `true` if the interpolated case is ``inherited``.
+    public var isInherited: Bool {
+        guard case .inherited = self else { return false }
+        return true
+    }
+}
+
+// MARK: - Collection Methods
+
+
 extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
     public var containsAudioRoles: Bool {
         contains(where: { $0.wrapped.isAudio })
