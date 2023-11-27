@@ -139,8 +139,7 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
         )
         
         useAudioSubroles = rawValues[.useAudioSubroles] == "1"
-        // TODO: parse audioRoleSources
-        audioRoleSources = Self.parseAudioRoleSources(from: xmlLeaf)
+        audioRoleSources = FinalCutPro.FCPXML.parseAudioRoleSources(from: xmlLeaf)
         
         let clipAttributes = Self.parseClipAttributes(
             from: xmlLeaf,
@@ -180,34 +179,6 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLExtractable {
         let mtChildren = mediaType.extractableChildren()
         
         return contents.asAnyElements() + mtElements + mtChildren
-    }
-}
-
-extension FinalCutPro.FCPXML.RefClip {
-    public struct AudioRoleSource: Equatable, Hashable {
-        public var role: FinalCutPro.FCPXML.AudioRole
-        public var contents: [XMLElement]
-        
-        /// Attributes unique to ``AudioRoleSource``.
-        public enum Attributes: String, XMLParsableAttributesKey {
-            case role
-        }
-    }
-    
-    static func parseAudioRoleSources(from xmlLeaf: XMLElement) -> [AudioRoleSource] {
-        let elements = (xmlLeaf.children ?? [])
-            .filter { $0.name == Children.audioRoleSource.rawValue }
-            .compactMap { $0 as? XMLElement }
-        
-        return elements.compactMap {
-            let rawValues = $0.parseRawAttributeValues(key: AudioRoleSource.Attributes.self)
-            let children = $0.children?.compactMap { $0 as? XMLElement } ?? []
-            
-            guard let audioRole = FinalCutPro.FCPXML.AudioRole(rawValue: rawValues[.role] ?? "")
-            else { return nil }
-            
-            return AudioRoleSource(role: audioRole, contents: children)
-        }
     }
 }
 
