@@ -37,6 +37,7 @@ extension FinalCutPro.FCPXML {
         public var ref: String = "" // resource ID, required
         public var audioRole: AudioRole?
         public var videoRole: VideoRole?
+        public var audioChannelSources: [AudioChannelSource]
         
         public var contents: [AnyStoryElement] = []
         
@@ -60,6 +61,7 @@ extension FinalCutPro.FCPXML {
             ref: String,
             audioRole: AudioRole?,
             videoRole: VideoRole?,
+            audioChannelSources: [AudioChannelSource],
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -75,6 +77,7 @@ extension FinalCutPro.FCPXML {
             self.ref = ref
             self.audioRole = audioRole
             self.videoRole = videoRole
+            self.audioChannelSources = audioChannelSources
             self.contents = contents
             
             // FCPXMLAnchorableAttributes
@@ -123,6 +126,8 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLClip {
         {
             self.videoRole = videoRole
         }
+        
+        audioChannelSources = FinalCutPro.FCPXML.parseAudioChannelSources(from: xmlLeaf, resources: resources)
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,

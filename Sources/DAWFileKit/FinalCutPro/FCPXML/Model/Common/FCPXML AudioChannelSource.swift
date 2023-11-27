@@ -32,6 +32,10 @@ extension FinalCutPro.FCPXML {
         
         public var active: Bool
         
+        // TODO: public var adjusts: []
+        // TODO: public var filters: []
+        // TODO: public var mutes: []
+        
         public var contents: [XMLElement]
         
         public init(
