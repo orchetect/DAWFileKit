@@ -232,7 +232,6 @@ extension FinalCutPro.FCPXML {
         case .trackingShape(_): return nil
         }
     }
-    
 }
 
 // MARK: - Format Resource Utils

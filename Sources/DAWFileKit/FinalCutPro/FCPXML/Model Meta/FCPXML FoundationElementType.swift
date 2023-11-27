@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    public enum FoundationElementType: String {
+    public enum FoundationElementType: String, Equatable, Hashable, CaseIterable {
         /// Mandatory root-level XML element which all other elements exist.
         /// Exactly one of these elements is always required at the XML top level.
         case fcpxml
