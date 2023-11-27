@@ -16,6 +16,7 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.
     public struct SyncClip: FCPXMLClipAttributes {
+        public var format: String? // DTD: default is same as parent
         public var contents: [AnyStoryElement]
         
         // FCPXMLAnchorableAttributes
@@ -66,6 +67,10 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case format
+    }
+    
     public enum Children: String {
         case syncSource = "sync-source"
     }
@@ -77,6 +82,10 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) {
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        format = rawValues[.format]
+        
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
             breadcrumbs: breadcrumbs,
