@@ -59,6 +59,10 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.MediaRep {
+    public enum Element: String {
+        case name = "media-rep"
+    }
+    
     /// Attributes unique to ``MediaRep``.
     public enum Attributes: String, XMLParsableAttributesKey {
         case kind
@@ -74,7 +78,7 @@ extension FinalCutPro.FCPXML.MediaRep {
     
     public init?(from xmlLeaf: XMLElement) {
         // validate element name
-        guard xmlLeaf.name == "media-rep" else { return nil }
+        guard xmlLeaf.name == Element.name.rawValue else { return nil }
         
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         

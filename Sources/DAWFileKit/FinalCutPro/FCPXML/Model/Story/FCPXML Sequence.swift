@@ -129,7 +129,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
         from xmlLeaf: XMLElement
     ) -> XMLElement? {
         let spines = xmlLeaf.children?.lazy
-            .filter { $0.name == "spine" }
+            .filter { $0.name == FinalCutPro.FCPXML.StoryElementType.spine.rawValue }
             .compactMap { $0 as? XMLElement } ?? []
         guard let spine = spines.first else {
             print("Expected one spine within sequence but found none.")

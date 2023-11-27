@@ -33,6 +33,10 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Text {
+    public enum Element: String {
+        case name = "text"
+    }
+    
     /// Attributes unique to ``Text``.
     public enum Attributes: String, XMLParsableAttributesKey {
         case displayStyle = "display-style"
@@ -44,13 +48,12 @@ extension FinalCutPro.FCPXML.Text {
     
     /// Children of ``Text``.
     public enum Children: String {
-        case value = "" // TODO: ?
         case textStyle = "text-style"
     }
     
     public init?(from xmlLeaf: XMLElement) {
         // validate element name
-        guard xmlLeaf.name == "text" else { return nil }
+        guard xmlLeaf.name == Element.name.rawValue else { return nil }
         
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
@@ -81,23 +84,25 @@ extension FinalCutPro.FCPXML.Text {
             self.ref = ref
             self.string = string
         }
+    }
+}
+
+extension FinalCutPro.FCPXML.Text.TextString {
+    /// Attributes unique to ``Text``.
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case ref
+    }
+    
+    public init?(from xmlLeaf: XMLElement) {
+        // validate element name
+        guard xmlLeaf.name == FinalCutPro.FCPXML.Text.Children.textStyle.rawValue else { return nil }
         
-        /// Attributes unique to ``Text``.
-        public enum Attributes: String, XMLParsableAttributesKey {
-            case ref
-        }
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
-        public init?(from xmlLeaf: XMLElement) {
-            // validate element name
-            guard xmlLeaf.name == FinalCutPro.FCPXML.Text.Children.textStyle.rawValue else { return nil }
-            
-            let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-            
-            ref = rawValues[.ref]
-            
-            // caption text is the string value of the element, not an attribute
-            string = xmlLeaf.stringValue ?? ""
-        }
+        ref = rawValues[.ref]
+        
+        // caption text is the string value of the element, not an attribute
+        string = xmlLeaf.stringValue ?? ""
     }
 }
 

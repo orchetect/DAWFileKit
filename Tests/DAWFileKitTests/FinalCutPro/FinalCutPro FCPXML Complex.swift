@@ -374,21 +374,21 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
-        let event = try XCTUnwrap(events[safe: 0])
+        let event = try XCTUnwrap(events.first)
         XCTAssertEqual(event.name, "Example A")
         
         // projects
         
-        let projects = try XCTUnwrap(events[safe: 0]).projects
+        let projects = event.projects
         XCTAssertEqual(projects.count, 1)
         
-        let project = try XCTUnwrap(projects[safe: 0])
+        let project = try XCTUnwrap(projects.first)
         XCTAssertEqual(project.name, "Marker Data Demo_V2")
         XCTAssertEqual(project.startTimecode, Self.tc("00:00:00:00", .fps25))
         
         // sequence
         
-        let sequence = try XCTUnwrap(projects[safe: 0]).sequence
+        let sequence = project.sequence
         XCTAssertEqual(sequence.formatID, "r1")
         XCTAssertEqual(sequence.startTimecode, Self.tc("00:00:00:00", .fps25))
         XCTAssertEqual(sequence.startTimecode?.frameRate, .fps25)

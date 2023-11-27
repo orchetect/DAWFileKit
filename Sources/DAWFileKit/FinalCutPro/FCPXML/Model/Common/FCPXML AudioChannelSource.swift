@@ -102,9 +102,9 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
             resources: resources
         )
         
-        enabled = (rawValues[.enabled] ?? "1") == "1"
+        enabled = rawValues[.enabled] ?? "1" == "1"
         
-        active = (rawValues[.active] ?? "1") == "1"
+        active = rawValues[.active] ?? "1" == "1"
         
         contents = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
     }
