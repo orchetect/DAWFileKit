@@ -34,6 +34,8 @@ extension FinalCutPro.FCPXML {
         public var enabled: Bool
         
         // TODO: add missing attributes and protocols
+        // public var audioStart: Timecode?
+        // public var audioDuration: Timecode?
         
         // FCPXMLElementContext
         @EquatableAndHashableExempt

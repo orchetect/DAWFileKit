@@ -87,7 +87,8 @@ extension FinalCutPro.FCPXML {
                     break
                     
                 case .clip:
-                    break
+                    let childRoles = rolesForNearestDescendant(of: xmlLeaf, resources: resources, auditions: auditions)
+                    roles.formUnion(childRoles)
                     
                 case .gap:
                     break
@@ -115,23 +116,19 @@ extension FinalCutPro.FCPXML {
                 case .syncClip:
                     // sync clip does not have video/audio roles itself.
                     
-                    // instead, we derive the video role from the sync clip's contents.
+                    // instead, we derive the video role from the sync clip's first video media.
                     // we'll also add any audio roles found in case sync sources are missing and
                     // audio roles can't be derived from them.
-                    let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
-                    let contentsRoles = contents.flatMap {
-                        Self.roles(of: $0, resources: resources, auditions: auditions)
-                    }
-                    roles.formUnion(contentsRoles)
+                    let childRoles = rolesForNearestDescendant(of: xmlLeaf, resources: resources, auditions: auditions)
+                    roles.formUnion(childRoles)
                     
                     // the audio role may be present in a `sync-source` child of the sync clip.
                     let syncSources = FinalCutPro.FCPXML.parseSyncSources(from: xmlLeaf)
                     if !syncSources.isEmpty {
                         let audioRoleSources = syncSources.flatMap(\.audioRoleSources)
-                        let audioRoles = audioRoleSources.map { $0.role }.asAnyRoles()
+                        let audioRoles = audioRoleSources.map(\.role).asAnyRoles()
                         roles.formUnion(audioRoles)
                     }
-                    
                 case .title:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Title.Attributes.role.rawValue),
                        let role = VideoRole(rawValue: rawString)
@@ -157,6 +154,28 @@ extension FinalCutPro.FCPXML {
         case .structure(_):
             // structure elements don't have roles
             break
+        }
+        
+        return roles
+    }
+    
+    /// Descends into child story elements, attempting to extract assigned roles for the first video media found.
+    static func rolesForNearestDescendant(
+        of xmlLeaf: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        auditions: Audition.Mask // = .activeAudition
+    ) -> Set<AnyRole> {
+        var roles: Set<AnyRole> = []
+        
+        let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
+        
+        for index in contents.indices {
+            let child = contents[index]
+            let itemRoles = Self.roles(of: child, resources: resources, auditions: auditions)
+            if itemRoles.containsVideoRoles {
+                roles = itemRoles
+                break
+            }
         }
         
         return roles
