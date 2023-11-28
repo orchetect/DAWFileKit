@@ -49,6 +49,16 @@ extension XMLElement {
         return nil
     }
     
+    /// Returns all ancestors of the element.
+    var ancestors: [XMLElement] {
+        var ancestors: [XMLElement] = []
+        walkAncestors(includingSelf: false) { element in
+            ancestors.insert(element, at: 0)
+            return true
+        }
+        return ancestors
+    }
+    
     /// Starting with the current XML element's parent, traverse ancestors and return
     /// the first ancestor whose element name matches the given string.
     func firstAncestor(named name: String) -> XMLElement? {

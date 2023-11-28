@@ -241,16 +241,24 @@ extension Collection<FinalCutPro.FCPXML.AnyStoryElement> {
 // MARK: - FCPXML Parsing
 
 extension FinalCutPro.FCPXML {
+    static func storyXMLElements(
+        in xmlLeaf: XMLElement
+    ) -> [XMLElement] {
+        xmlLeaf
+            .children?
+            .lazy
+            .filter { StoryElementType(rawValue: $0.name ?? "") != nil }
+            .compactMap { $0 as? XMLElement }
+        ?? []
+    }
+    
     static func storyElements(
         in xmlLeaf: XMLElement,
         breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder
     ) -> [AnyStoryElement] {
-        xmlLeaf
-            .children?
-            .lazy
-            .compactMap { $0 as? XMLElement }
+        storyXMLElements(in: xmlLeaf)
             .compactMap {
                 AnyStoryElement(
                     from: $0,
@@ -259,7 +267,6 @@ extension FinalCutPro.FCPXML {
                     contextBuilder: contextBuilder
                 )
             }
-            ?? []
     }
 }
 
