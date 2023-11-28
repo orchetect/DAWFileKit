@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+@_implementationOnly import OTCore
 
 public protocol FCPXMLElementContext {
     /// Additional contextual metadata for the element.
@@ -76,6 +77,15 @@ extension FinalCutPro.FCPXML {
             )
         }
         
+        /// The absolute end timecode of the current element.
+        /// This is calculated based on ancestor elements.
+        public var absoluteEnd: Timecode? {
+            guard let absoluteStart = absoluteStart,
+                  let duration = FinalCutPro.FCPXML.duration(of: xmlLeaf, resources: resources)
+            else { return nil }
+            return absoluteStart + duration
+        }
+        
         /// Returns the effective format for the current element.
         public var effectiveFormat: Format? {
             FinalCutPro.FCPXML.firstFormat(forElementOrAncestors: xmlLeaf, in: resources)
@@ -119,6 +129,15 @@ extension FinalCutPro.FCPXML {
                 breadcrumbs: breadcrumbs.dropLast(),
                 resources: resources
             )
+        }
+        
+        /// The parent element's absolute end time.
+        /// This is calculated based on ancestor elements.
+        public var parentAbsoluteEnd: Timecode? {
+            guard let parentAbsoluteStart = parentAbsoluteStart,
+                  let parentDuration = parentDuration
+            else { return nil }
+            return parentAbsoluteStart + parentDuration
         }
         
         /// The parent element's duration.

@@ -81,6 +81,17 @@ extension FinalCutPro.FCPXML {
         return accum
     }
     
+    /// Returns the `duration` attribute value as `Timecode`.
+    static func duration(
+        of element: XMLElement,
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        guard let startValue = element.attributeStringValue(forName: "duration")
+        else { return nil }
+        
+        return try? timecode(fromRational: startValue, xmlLeaf: element, resources: resources)
+    }
+    
     /// Returns the `offset` attribute value as `Timecode`.
     static func offset(
         of element: XMLElement,
