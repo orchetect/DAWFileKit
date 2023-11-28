@@ -30,7 +30,7 @@ extension FinalCutPro.FCPXML {
 // MARK: - Static Constructor
 
 extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.GroupContext {
-    /// Default (empty) context for model elements.
+    /// Group context for model elements. Allows multiple context builders.
     public static func group(_ builders: [FCPXMLElementContextBuilder]) -> FinalCutPro.FCPXML.GroupContext {
         FinalCutPro.FCPXML.GroupContext(builders)
     }
