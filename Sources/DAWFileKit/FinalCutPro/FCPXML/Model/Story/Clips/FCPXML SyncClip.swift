@@ -20,6 +20,7 @@ extension FinalCutPro.FCPXML {
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.
     public struct SyncClip: FCPXMLClipAttributes {
         public var format: String? // DTD: default is same as parent
+        public var syncSources: [SyncSource]
         public var contents: [AnyStoryElement]
         
         // FCPXMLAnchorableAttributes
@@ -39,6 +40,8 @@ extension FinalCutPro.FCPXML {
         public var context: FinalCutPro.FCPXML.ElementContext
         
         public init(
+            format: String?,
+            syncSources: [SyncSource],
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -51,6 +54,8 @@ extension FinalCutPro.FCPXML {
             // FCPXMLElementContext
             context: FinalCutPro.FCPXML.ElementContext = .init()
         ) {
+            self.format = format
+            self.syncSources = syncSources
             self.contents = contents
             
             // FCPXMLAnchorableAttributes
@@ -88,6 +93,8 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLClip {
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         format = rawValues[.format]
+        
+        syncSources = FinalCutPro.FCPXML.parseSyncSources(from: xmlLeaf)
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
@@ -130,6 +137,63 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLExtractable {
     
     public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         contents.asAnyElements()
+    }
+}
+
+extension FinalCutPro.FCPXML.SyncClip {
+    /// Describes an the audio component of a synchronized clip.
+    ///
+    /// > FCPXML 1.11 DTD:
+    /// > A `sync-source` element defines the role-based audio components to be used
+    /// > for a source of a synchronized clip.
+    public struct SyncSource: Equatable, Hashable {
+        public var sourceID: SourceID
+        public var audioRoleSources: [FinalCutPro.FCPXML.AudioRoleSource]
+    }
+}
+
+extension FinalCutPro.FCPXML.SyncClip.SyncSource {
+    public enum Element: String {
+        case name = "sync-source"
+    }
+    
+    public enum Attributes: String, XMLParsableAttributesKey {
+        case sourceID // required
+    }
+    
+    init?(from xmlLeaf: XMLElement) {
+        // validate element name
+        guard xmlLeaf.name == Element.name.rawValue else { return nil }
+        
+        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        
+        guard let sourceIDString = rawValues[.sourceID],
+              let sourceID = SourceID(rawValue: sourceIDString)
+        else { return nil }
+        self.sourceID = sourceID
+        
+        audioRoleSources = FinalCutPro.FCPXML.parseAudioRoleSources(from: xmlLeaf)
+    }
+}
+
+extension FinalCutPro.FCPXML {
+    static func parseSyncSources(
+        from xmlLeaf: XMLElement
+    ) -> [FinalCutPro.FCPXML.SyncClip.SyncSource] {
+        let elements = (xmlLeaf.children ?? [])
+            .filter { $0.name == SyncClip.SyncSource.Element.name.rawValue }
+            .compactMap { $0 as? XMLElement }
+        
+        return elements.compactMap {
+            SyncClip.SyncSource(from: $0)
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.SyncClip.SyncSource {
+    public enum SourceID: String, Equatable, Hashable, CaseIterable {
+        case storyline
+        case connected
     }
 }
 

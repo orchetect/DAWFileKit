@@ -113,8 +113,24 @@ extension FinalCutPro.FCPXML {
                     }
                     
                 case .syncClip:
-                    // does not have roles itself. contains story elements that may contain their own roles.
-                    break
+                    // sync clip does not have video/audio roles itself.
+                    
+                    // instead, we derive the video role from the sync clip's contents.
+                    // we'll also add any audio roles found in case sync sources are missing and
+                    // audio roles can't be derived from them.
+                    let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
+                    let contentsRoles = contents.flatMap {
+                        Self.roles(of: $0, resources: resources, auditions: auditions)
+                    }
+                    roles.formUnion(contentsRoles)
+                    
+                    // the audio role may be present in a `sync-source` child of the sync clip.
+                    let syncSources = FinalCutPro.FCPXML.parseSyncSources(from: xmlLeaf)
+                    if !syncSources.isEmpty {
+                        let audioRoleSources = syncSources.flatMap(\.audioRoleSources)
+                        let audioRoles = audioRoleSources.map { $0.role }.asAnyRoles()
+                        roles.formUnion(audioRoles)
+                    }
                     
                 case .title:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Title.Attributes.role.rawValue),
