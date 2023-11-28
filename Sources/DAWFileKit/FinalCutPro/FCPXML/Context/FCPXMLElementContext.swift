@@ -177,6 +177,36 @@ extension FinalCutPro.FCPXML {
             .flattenedInterpolatedRoles()
         }
         
+        /// Returns occlusion information for the current element in relation to its parent.
+        public var occlusion: FinalCutPro.FCPXML.ElementOcclusion {
+            guard let parentStart = parentAbsoluteStart,
+                  let parentEnd = parentAbsoluteEnd,
+                  let elementStart = absoluteStart
+            else { return .notOccluded }
+            
+            let parentRange = parentStart ... parentEnd.clamped(to: parentStart...)
+            
+            if let elementEnd = absoluteEnd {
+                // element has duration, treat as a time range
+                
+                let elementRange = elementStart ... elementEnd.clamped(to: elementStart...)
+                
+                if parentRange.contains(elementRange) {
+                    return .notOccluded
+                }
+                
+                if parentRange.overlaps(elementRange) {
+                    return .partiallyOccluded
+                } else {
+                    return .fullyOccluded
+                }
+            } else {
+                // element does not have duration, treat as a single point in time
+                
+                return parentRange.contains(elementStart) ? .notOccluded : .fullyOccluded
+            }
+        }
+        
         // MARK: - Parsing Tools
         
         /// Returns the value of the given attribute key name for the current element.
