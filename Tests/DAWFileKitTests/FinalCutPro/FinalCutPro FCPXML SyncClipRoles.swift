@@ -68,13 +68,16 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
         let markers = clip1.contents.annotations().markers()
         XCTAssertEqual(markers.count, 1)
         
+        // FCP shows video role: "VFX.VFX-Background"
+        // FCP shows audio roles: "MixL, MixR" of Dialogue
         let marker = try XCTUnwrap(markers.first)
         XCTAssertEqual(marker.name, "Marker 1")
         XCTAssertEqual(marker.start, Self.tc("10:43:05:16", .fps25))
         XCTAssertEqual(marker.context[.absoluteStart], Self.tc("01:01:04:23", .fps25))
         XCTAssertEqual(marker.context[.inheritedRoles], [
+            .inherited(.audio(raw: "dialogue.MixL")!), // from asset clip sync-source
+            .inherited(.audio(raw: "dialogue.MixR")!), // from asset clip sync-source
             .inherited(.video(raw: "VFX.VFX-Background")!), // from first video asset in sync clip
-            .inherited(.audio(raw: "dialogue.MixL")!) // from asset clip sync-source
         ])
     }
 }

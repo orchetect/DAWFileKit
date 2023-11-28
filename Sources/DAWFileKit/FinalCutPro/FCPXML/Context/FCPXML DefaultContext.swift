@@ -91,13 +91,13 @@ extension FinalCutPro.FCPXML.ContextKey {
     
     /// The element's own roles, if applicable or present.
     /// Includes default roles if none are specified and if applicable.
-    public static var roles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.AnyRole>> {
+    public static var roles: FinalCutPro.FCPXML.ContextKey<[FinalCutPro.FCPXML.AnyRole]> {
         .init(key: Key.roles)
     }
     
     /// Returns the effective roles of the element inherited from ancestors.
     /// Includes default roles if none are specified and if applicable.
-    public static var inheritedRoles: FinalCutPro.FCPXML.ContextKey<Set<FinalCutPro.FCPXML.AnyInterpolatedRole>> {
+    public static var inheritedRoles: FinalCutPro.FCPXML.ContextKey<[FinalCutPro.FCPXML.AnyInterpolatedRole]> {
         .init(key: Key.inheritedRoles)
     }
     

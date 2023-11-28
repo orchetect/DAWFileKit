@@ -133,7 +133,7 @@ extension FinalCutPro.FCPXML {
         }
         
         /// The element's own roles, if applicable or present.
-        public func roles(includeDefaultRoles: Bool) -> Set<AnyRole> {
+        public func roles(includeDefaultRoles: Bool) -> [AnyRole] {
             let elementRoles = FinalCutPro.FCPXML.roles(
                 of: xmlLeaf,
                 resources: resources,
@@ -141,14 +141,14 @@ extension FinalCutPro.FCPXML {
             )
             if includeDefaultRoles, let elementType = elementType {
                 let defaultedRoles = FinalCutPro.FCPXML.addDefaultRoles(for: elementType, to: elementRoles)
-                return Set(defaultedRoles.map(\.wrapped))
+                return defaultedRoles.map(\.wrapped)
             } else {
                 return elementRoles
             }
         }
         
         /// Returns the effective roles of the element inherited from ancestors.
-        public func inheritedRoles() -> Set<AnyInterpolatedRole> {
+        public func inheritedRoles() -> [AnyInterpolatedRole] {
             FinalCutPro.FCPXML.inheritedRoles(
                 of: xmlLeaf,
                 breadcrumbs: breadcrumbs,

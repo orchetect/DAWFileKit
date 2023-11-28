@@ -86,8 +86,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(marker.start, Self.tc("00:00:10:00", .fps25))
         XCTAssertEqual(marker.context[.absoluteStart], Self.tc("01:00:10:00", .fps25))
         XCTAssertEqual(marker.context[.inheritedRoles], [
-            .inherited(.video(raw: "Sample Role")!), // markers can never have 'assigned' roles
-            .inherited(.audio(raw: "music.music-1")!) // markers can never have 'assigned' roles
+            .inherited(.audio(raw: "music.music-1")!), // markers can never have 'assigned' roles
+            .inherited(.video(raw: "Sample Role")!) // markers can never have 'assigned' roles
         ])
     }
     
@@ -114,8 +114,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(marker0.start, Self.tc("00:00:03:00", .fps25))
         XCTAssertEqual(marker0.context[.absoluteStart], Self.tc("01:00:03:00", .fps25))
         XCTAssertEqual(marker0.context[.inheritedRoles], [
-            .inherited(.video(raw: "Sample Role")!), // markers can never have 'assigned' roles
-            .inherited(.audio(raw: "effects.effects-1")!) // markers can never have 'assigned' roles
+            .inherited(.audio(raw: "effects.effects-1")!), // markers can never have 'assigned' roles
+            .inherited(.video(raw: "Sample Role")!) // markers can never have 'assigned' roles
         ])
         
         let marker1 = try XCTUnwrap(extractedMarkers[safe: 1])
@@ -123,8 +123,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(marker1.start, Self.tc("00:00:27:10", .fps25))
         XCTAssertEqual(marker1.context[.absoluteStart], Self.tc("01:00:27:10", .fps25))
         XCTAssertEqual(marker1.context[.inheritedRoles], [
-            .inherited(.video(raw: "Sample Role")!), // markers can never have 'assigned' roles
-            .inherited(.audio(raw: "music.music-1")!) // markers can never have 'assigned' roles
+            .inherited(.audio(raw: "music.music-1")!), // markers can never have 'assigned' roles
+            .inherited(.video(raw: "Sample Role")!) // markers can never have 'assigned' roles
         ])
         
         // sync clip does not have video/audio roles nor does its parents.
@@ -135,8 +135,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(marker2.start, Self.tc("00:00:10:00", .fps25))
         XCTAssertEqual(marker2.context[.absoluteStart], Self.tc("01:00:10:00", .fps25))
         XCTAssertEqual(marker2.context[.inheritedRoles], [
-            .inherited(.video(raw: "Sample Role")!), // markers can never have 'assigned' roles
-            .inherited(.audio(raw: "music.music-1")!) // markers can never have 'assigned' roles
+            .inherited(.audio(raw: "music.music-1")!), // markers can never have 'assigned' roles
+            .inherited(.video(raw: "Sample Role")!) // markers can never have 'assigned' roles
         ])
     }
 }

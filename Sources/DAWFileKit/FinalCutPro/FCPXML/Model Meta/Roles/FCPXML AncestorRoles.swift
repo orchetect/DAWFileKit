@@ -22,11 +22,11 @@ extension FinalCutPro.FCPXML.AncestorRoles {
     /// Describes an ancestor element and its interpolated roles.
     public struct ElementRoles: Equatable, Hashable {
         public var elementType: FinalCutPro.FCPXML.ElementType
-        public var roles: Set<FinalCutPro.FCPXML.AnyInterpolatedRole>
+        public var roles: [FinalCutPro.FCPXML.AnyInterpolatedRole]
         
         public init(
             elementType: FinalCutPro.FCPXML.ElementType,
-            roles: Set<FinalCutPro.FCPXML.AnyInterpolatedRole> = []
+            roles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = []
         ) {
             self.elementType = elementType
             self.roles = roles
@@ -37,51 +37,66 @@ extension FinalCutPro.FCPXML.AncestorRoles {
 extension FinalCutPro.FCPXML.AncestorRoles {
     /// Flattens all ancestor roles to produce a set of effective inherited roles for an element.
     /// Includes the source of the role inheritance interpolation.
-    public func flattenedInterpolatedRoles() -> Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
-        var outputRoles: Set<FinalCutPro.FCPXML.AnyInterpolatedRole> = []
+    public func flattenedInterpolatedRoles() -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
+        var outputRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = []
         
-        let elementAudioRoles = elements.flatMap { $0.roles.audioRoles() }
-        if let audioRole = flatten(singleRoleType: elementAudioRoles) {
-            outputRoles.insert(audioRole)
-        }
+        let elementAudioRoles = elements.map { $0.roles.audioRoles() }
+        let audioRoles = flatten(singleRoleType: elementAudioRoles)
+        outputRoles.append(contentsOf: audioRoles)
         
-        let elementVideoRoles = elements.flatMap { $0.roles.videoRoles() }
-        if let videoRole = flatten(singleRoleType: elementVideoRoles) {
-            outputRoles.insert(videoRole)
-        }
+        let elementVideoRoles = elements.map { $0.roles.videoRoles() }
+        let videoRoles = flatten(singleRoleType: elementVideoRoles)
+        outputRoles.append(contentsOf: videoRoles)
         
-        let elementCaptionRoles = elements.flatMap { $0.roles.captionRoles() }
-        if let captionRole = flatten(singleRoleType: elementCaptionRoles) {
-            outputRoles.insert(captionRole)
-        }
+        let elementCaptionRoles = elements.map { $0.roles.captionRoles() }
+        let captionRoles = flatten(singleRoleType: elementCaptionRoles)
+        outputRoles.append(contentsOf: captionRoles)
+        
+        outputRoles.removeDuplicates()
         
         return outputRoles
     }
     
     /// Flattens all ancestor roles to produce a set of effective inherited roles for an element.
-    public func flattenedRoles() -> Set<FinalCutPro.FCPXML.AnyRole> {
-        Set(flattenedInterpolatedRoles().map(\.wrapped))
+    public func flattenedRoles() -> [FinalCutPro.FCPXML.AnyRole] {
+        flattenedInterpolatedRoles().map(\.wrapped)
     }
     
     /// Only supply a collection containing roles of the same type, ie: only `.audio()` roles.
     /// This favors assigned roles and prevents defaulted roles from overriding them.
     func flatten(
-        singleRoleType roles: [FinalCutPro.FCPXML.AnyInterpolatedRole]
-    ) -> FinalCutPro.FCPXML.AnyInterpolatedRole? {
-        var effectiveRole: FinalCutPro.FCPXML.AnyInterpolatedRole?
-        var foundAssigned: Bool = false
+        singleRoleType elementsRoles: [[FinalCutPro.FCPXML.AnyInterpolatedRole]]
+    ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
+        var effectiveRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = []
         
-        for role in roles {
-            switch role {
-            case .assigned, .inherited:
-                effectiveRole = role
-                foundAssigned = true
-            case .defaulted:
-                if !foundAssigned { effectiveRole = role }
+        func containsAssignedOrInherited(_ roles: [FinalCutPro.FCPXML.AnyInterpolatedRole]) -> Bool {
+            roles.contains(where: \.isAssigned) ||
+            roles.contains(where: \.isInherited)
+        }
+        
+        // it's possible for an element to have more than one valid audio role.
+        // ie: `sync-clip` can have `sync-source` with more than one `audio-role-source`
+        // and FCP shows them all in a comma-separated list for Audio Role,
+        // ie: "Dialogue.MixL" and "Dialogue.MixR" shown in GUI as "MixL, MixR" for Audio Role
+        // but both roles are selected in the drop-down role menu of course.
+        for elementRoles in elementsRoles {
+            if containsAssignedOrInherited(elementRoles) {
+                effectiveRoles.removeAll()
+            }
+            
+            for role in elementRoles {
+                switch role {
+                case .assigned, .inherited:
+                    effectiveRoles.append(role)
+                case .defaulted:
+                    if !containsAssignedOrInherited(effectiveRoles) {
+                        effectiveRoles.append(role)
+                    }
+                }
             }
         }
         
-        return effectiveRole
+        return effectiveRoles
     }
 }
 
@@ -126,7 +141,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
+extension [FinalCutPro.FCPXML.AnyInterpolatedRole] {
     /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
     /// case instead.
     func replaceAssignedRolesWithInherited() -> Self {
@@ -138,8 +153,7 @@ extension Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
                 return $0
             }
         }
-        let rolesSet = Set(roles)
-        return rolesSet
+        return roles
     }
 }
 

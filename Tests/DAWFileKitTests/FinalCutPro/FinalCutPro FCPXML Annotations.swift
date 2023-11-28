@@ -256,9 +256,9 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(
             element1Caption0.context[.inheritedRoles],
             [
-                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!),
+                .inherited(.audio(raw: "dialogue")!),
                 .defaulted(.video(raw: "Video")!),
-                .inherited(.audio(raw: "dialogue")!)
+                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!)
             ]
         )
         
@@ -297,9 +297,9 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(
             element1Caption1.context[.inheritedRoles],
             [
-                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!),
+                .inherited(.audio(raw: "dialogue")!),
                 .defaulted(.video(raw: "Video")!),
-                .inherited(.audio(raw: "dialogue")!)
+                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!)
             ]
         )
     }

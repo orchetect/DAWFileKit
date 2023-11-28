@@ -17,10 +17,10 @@ extension FinalCutPro.FCPXML {
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         auditions: Audition.Mask // = .activeAudition
-    ) -> Set<AnyRole> {
+    ) -> [AnyRole] {
         guard let elementType = ElementType(from: xmlLeaf) else { return [] }
         
-        var roles: Set<AnyRole> = []
+        var roles: [AnyRole] = []
         
         switch elementType {
         case let .story(storyElementType):
@@ -31,7 +31,7 @@ extension FinalCutPro.FCPXML {
                     if let rawString = xmlLeaf.attributeStringValue(forName: Caption.Attributes.role.rawValue),
                        let role = CaptionRole(rawValue: rawString)
                     {
-                        roles.insert(.caption(role))
+                        roles.append(.caption(role))
                     }
                     
                 case .keyword:
@@ -55,7 +55,7 @@ extension FinalCutPro.FCPXML {
                     ),
                         let role = VideoRole(rawValue: rawString)
                     {
-                        roles.insert(.video(role))
+                        roles.append(.video(role))
                     }
                     
                     let audioChannelSources = parseAudioChannelSources(from: xmlLeaf, resources: resources)
@@ -66,19 +66,19 @@ extension FinalCutPro.FCPXML {
                         ),
                            let role = AudioRole(rawValue: rawString)
                         {
-                            roles.insert(.audio(role))
+                            roles.append(.audio(role))
                         }
                     } else {
                         // TODO: if audio channel source has a time range and it starts later than the clip's start, then do we assume FCP falls back to using the asset clip's audio role? not sure.
                         // TODO: also, what happens when there are multiple audio channel sources that overlap? or all lack a time range. does FCP use the topmost?
-                        roles.formUnion(audioChannelSources.asAnyRoles())
+                        roles.append(contentsOf: audioChannelSources.asAnyRoles())
                     }
                     
                 case .audio:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Audio.Attributes.role.rawValue),
                        let role = AudioRole(rawValue: rawString)
                     {
-                        roles.insert(.audio(role))
+                        roles.append(.audio(role))
                     }
                     
                 case .audition:
@@ -88,7 +88,7 @@ extension FinalCutPro.FCPXML {
                     
                 case .clip:
                     let childRoles = rolesForNearestDescendant(of: xmlLeaf, resources: resources, auditions: auditions)
-                    roles.formUnion(childRoles)
+                    roles.append(contentsOf: childRoles)
                     
                 case .gap:
                     break
@@ -110,7 +110,7 @@ extension FinalCutPro.FCPXML {
                     if useAudioSubroles {
                         let audioRoleSources = FinalCutPro.FCPXML.parseAudioRoleSources(from: xmlLeaf)
                         let audioRoles = audioRoleSources.asAnyRoles()
-                        roles.formUnion(audioRoles)
+                        roles.append(contentsOf: audioRoles)
                     }
                     
                 case .syncClip:
@@ -120,27 +120,27 @@ extension FinalCutPro.FCPXML {
                     // we'll also add any audio roles found in case sync sources are missing and
                     // audio roles can't be derived from them.
                     let childRoles = rolesForNearestDescendant(of: xmlLeaf, resources: resources, auditions: auditions)
-                    roles.formUnion(childRoles)
+                    roles.append(contentsOf: childRoles)
                     
                     // the audio role may be present in a `sync-source` child of the sync clip.
                     let syncSources = FinalCutPro.FCPXML.parseSyncSources(from: xmlLeaf)
                     if !syncSources.isEmpty {
                         let audioRoleSources = syncSources.flatMap(\.audioRoleSources)
                         let audioRoles = audioRoleSources.map(\.role).asAnyRoles()
-                        roles.formUnion(audioRoles)
+                        roles.append(contentsOf: audioRoles)
                     }
                 case .title:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Title.Attributes.role.rawValue),
                        let role = VideoRole(rawValue: rawString)
                     {
-                        roles.insert(.video(role))
+                        roles.append(.video(role))
                     }
                     
                 case .video:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Video.Attributes.role.rawValue),
                        let role = VideoRole(rawValue: rawString)
                     {
-                        roles.insert(.video(role))
+                        roles.append(.video(role))
                     }
                 }
                 
@@ -164,7 +164,7 @@ extension FinalCutPro.FCPXML {
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         auditions: Audition.Mask // = .activeAudition
-    ) -> Set<AnyRole> {
+    ) -> [AnyRole] {
         let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
         
         guard let firstChild = contents.first else { return [] }
@@ -176,20 +176,20 @@ extension FinalCutPro.FCPXML {
     
     static func addDefaultRoles(
         for elementType: ElementType,
-        to roles: Set<AnyRole>
-    ) -> Set<AnyInterpolatedRole> {
-        var roles: Set<AnyInterpolatedRole> = Set(roles.map { .assigned($0) })
+        to roles: [AnyRole]
+    ) -> [AnyInterpolatedRole] {
+        var roles: [AnyInterpolatedRole] = roles.map { .assigned($0) }
         
-        // insert default roles if needed
+        // add default roles if needed
         let defaultRoles = defaultRoles(for: elementType)
         if !roles.containsAudioRoles {
-            roles.formUnion(defaultRoles.audioRoles().map { .defaulted($0) })
+            roles.append(contentsOf: defaultRoles.audioRoles().map { .defaulted($0) })
         }
         if !roles.containsVideoRoles {
-            roles.formUnion(defaultRoles.videoRoles().map { .defaulted($0) })
+            roles.append(contentsOf: defaultRoles.videoRoles().map { .defaulted($0) })
         }
         if !roles.containsCaptionRoles {
-            roles.formUnion(defaultRoles.captionRoles().map { .defaulted($0) })
+            roles.append(contentsOf: defaultRoles.captionRoles().map { .defaulted($0) })
         }
         
         return roles
@@ -210,7 +210,7 @@ extension FinalCutPro.FCPXML {
     /// Returns known default role(s) that Final Cut Pro uses for a given element type.
     /// If an element does not have a user-assigned role, Final Cut Pro uses
     /// certain defaults that are not written to the FCPXML file so we have to provide them.
-    static func defaultRoles(for elementType: ElementType) -> Set<AnyRole> {
+    static func defaultRoles(for elementType: ElementType) -> [AnyRole] {
         switch elementType {
         case let .story(storyElementType):
             switch storyElementType {
@@ -272,7 +272,7 @@ extension FinalCutPro.FCPXML {
     /// Attempting to extract default roles for the first child clip found.
     static func defaultRolesForNearestDescendant(
         of xmlLeaf: XMLElement
-    ) -> Set<AnyRole> {
+    ) -> [AnyRole] {
         let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
         
         guard let firstChild = contents.first else { return [] }

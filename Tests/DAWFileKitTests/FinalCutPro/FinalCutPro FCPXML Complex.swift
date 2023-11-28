@@ -280,7 +280,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         note: String?,
         md: FinalCutPro.FCPXML.Marker.MarkerMetaData,
         clip: ClipInfo
-        // inheritedRoles: Set<FinalCutPro.FCPXML.Role>
+        // inheritedRoles: [FinalCutPro.FCPXML.Role]
     )
     
     // TODO: test roles
