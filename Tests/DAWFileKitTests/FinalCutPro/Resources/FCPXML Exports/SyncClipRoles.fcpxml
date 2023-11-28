@@ -108,7 +108,9 @@
                             <marker start="964641/25s" duration="100/2500s" value="Marker 1"/>
                             <sync-source sourceID="connected">
                                 <audio-role-source role="dialogue.MixL"/>
+                                <audio-role-source role="Blank" active="0"/>
                                 <audio-role-source role="dialogue.MixR"/>
+                                <audio-role-source role="LavMic" active="0"/>
                             </sync-source>
                             <metadata>
                                 <md key="com.apple.proapps.studio.reel" value="TestVideo; 0304"/>

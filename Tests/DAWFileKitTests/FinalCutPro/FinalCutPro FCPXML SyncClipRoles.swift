@@ -65,6 +65,31 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
         XCTAssertEqual(clip1.duration, Self.tc("00:00:01:24", .fps25))
         XCTAssertEqual(clip1.duration?.frameRate, .fps25)
         
+        // `sync-clip` `sync-source`s
+        
+        XCTAssertEqual(clip1.syncSources.count, 1)
+        let clip1SyncSource = try XCTUnwrap(clip1.syncSources.first)
+        
+        XCTAssertEqual(clip1SyncSource.audioRoleSources.count, 4)
+        
+        let arSource0 = try XCTUnwrap(clip1SyncSource.audioRoleSources[safe: 0])
+        XCTAssertEqual(arSource0.role, .init(rawValue: "dialogue.MixL")!)
+        XCTAssertEqual(arSource0.active, true)
+        
+        let arSource1 = try XCTUnwrap(clip1SyncSource.audioRoleSources[safe: 1])
+        XCTAssertEqual(arSource1.role, .init(rawValue: "Blank")!)
+        XCTAssertEqual(arSource1.active, false)
+        
+        let arSource2 = try XCTUnwrap(clip1SyncSource.audioRoleSources[safe: 2])
+        XCTAssertEqual(arSource2.role, .init(rawValue: "dialogue.MixR")!)
+        XCTAssertEqual(arSource2.active, true)
+        
+        let arSource3 = try XCTUnwrap(clip1SyncSource.audioRoleSources[safe: 3])
+        XCTAssertEqual(arSource3.role, .init(rawValue: "LavMic")!)
+        XCTAssertEqual(arSource3.active, false)
+        
+        // marker
+        
         let markers = clip1.contents.annotations().markers()
         XCTAssertEqual(markers.count, 1)
         

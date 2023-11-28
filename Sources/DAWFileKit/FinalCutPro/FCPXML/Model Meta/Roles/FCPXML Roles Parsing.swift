@@ -59,6 +59,7 @@ extension FinalCutPro.FCPXML {
                     }
                     
                     let audioChannelSources = parseAudioChannelSources(from: xmlLeaf, resources: resources)
+                        .filter(\.active)
                     
                     if audioChannelSources.isEmpty {
                         if let rawString = xmlLeaf.attributeStringValue(
@@ -109,6 +110,7 @@ extension FinalCutPro.FCPXML {
                         .attributeStringValue(forName: RefClip.Attributes.useAudioSubroles.rawValue) == "1"
                     if useAudioSubroles {
                         let audioRoleSources = FinalCutPro.FCPXML.parseAudioRoleSources(from: xmlLeaf)
+                            .filter(\.active)
                         let audioRoles = audioRoleSources.asAnyRoles()
                         roles.append(contentsOf: audioRoles)
                     }
@@ -126,6 +128,7 @@ extension FinalCutPro.FCPXML {
                     let syncSources = FinalCutPro.FCPXML.parseSyncSources(from: xmlLeaf)
                     if !syncSources.isEmpty {
                         let audioRoleSources = syncSources.flatMap(\.audioRoleSources)
+                            .filter(\.active)
                         let audioRoles = audioRoleSources.map(\.role).asAnyRoles()
                         roles.append(contentsOf: audioRoles)
                     }

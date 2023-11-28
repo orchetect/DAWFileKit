@@ -55,7 +55,7 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
         else { return nil }
         role = audioRole
         
-        active = rawValues[.active] ?? "0" == "1"
+        active = rawValues[.active] ?? "1" == "1"
         
         contents = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
     }
