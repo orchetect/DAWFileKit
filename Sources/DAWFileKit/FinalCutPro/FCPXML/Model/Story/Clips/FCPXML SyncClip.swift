@@ -12,6 +12,9 @@ import TimecodeKit
 extension FinalCutPro.FCPXML {
     /// Contains a clip with its contained and anchored items synchronized.
     ///
+    /// In Final Cut Pro, a Sync Clip does not bear roles itself.
+    /// Instead, it inherits the video and audio role of the asset clip(s) within it.
+    ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.

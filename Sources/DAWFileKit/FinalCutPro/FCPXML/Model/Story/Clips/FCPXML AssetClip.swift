@@ -27,8 +27,8 @@ extension FinalCutPro.FCPXML {
     /// > `dialogue.dialogue-1`, `dialogue.dialogue-2` and so on.
     /// >
     /// > Just as you do with the `clip` element, you can also use a `asset-clip` element as an
-    /// > immediate child element of an event element to represent a browser clip. In this case, use
-    /// > the Timeline Attributes to specify its format, etc.
+    /// > immediate child element of an `event` element to represent a browser clip. In this case,
+    /// > use the Timeline Attributes to specify its format, etc.
     /// >
     /// > > Note:
     /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
