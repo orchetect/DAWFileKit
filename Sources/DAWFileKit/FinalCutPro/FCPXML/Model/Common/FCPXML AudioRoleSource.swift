@@ -17,7 +17,20 @@ extension FinalCutPro.FCPXML {
         /// Role the audio component is associated with.
         public var role: FinalCutPro.FCPXML.AudioRole
         
+        /// Active state of the audio role source.
+        public var active: Bool
+        
         public var contents: [XMLElement]
+        
+        public init(
+            role: FinalCutPro.FCPXML.AudioRole,
+            active: Bool,
+            contents: [XMLElement] = []
+        ) {
+            self.role = role
+            self.active = active
+            self.contents = contents
+        }
     }
 }
 
@@ -29,6 +42,7 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
     /// Attributes unique to ``AudioRoleSource``.
     public enum Attributes: String, XMLParsableAttributesKey {
         case role
+        case active
     }
     
     init?(from xmlLeaf: XMLElement) {
@@ -40,6 +54,8 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
         guard let audioRole = FinalCutPro.FCPXML.AudioRole(rawValue: rawValues[.role] ?? "")
         else { return nil }
         role = audioRole
+        
+        active = rawValues[.active] ?? "0" == "1"
         
         contents = xmlLeaf.children?.compactMap { $0 as? XMLElement } ?? []
     }
