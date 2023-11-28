@@ -155,13 +155,13 @@ extension FinalCutPro.FCPXML {
         // insert default roles if needed
         let defaultRoles = defaultRoles(for: elementType)
         if !roles.containsAudioRoles {
-            roles.formUnion(defaultRoles.audioRoles.map { .defaulted($0) })
+            roles.formUnion(defaultRoles.audioRoles().map { .defaulted($0) })
         }
         if !roles.containsVideoRoles {
-            roles.formUnion(defaultRoles.videoRoles.map { .defaulted($0) })
+            roles.formUnion(defaultRoles.videoRoles().map { .defaulted($0) })
         }
         if !roles.containsCaptionRoles {
-            roles.formUnion(defaultRoles.captionRoles.map { .defaulted($0) })
+            roles.formUnion(defaultRoles.captionRoles().map { .defaulted($0) })
         }
         
         return roles

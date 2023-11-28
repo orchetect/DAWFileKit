@@ -40,17 +40,17 @@ extension FinalCutPro.FCPXML.AncestorRoles {
     public func flattenedInterpolatedRoles() -> Set<FinalCutPro.FCPXML.AnyInterpolatedRole> {
         var outputRoles: Set<FinalCutPro.FCPXML.AnyInterpolatedRole> = []
         
-        let elementAudioRoles = elements.flatMap { $0.roles.audioRoles }
+        let elementAudioRoles = elements.flatMap { $0.roles.audioRoles() }
         if let audioRole = flatten(singleRoleType: elementAudioRoles) {
             outputRoles.insert(audioRole)
         }
         
-        let elementVideoRoles = elements.flatMap { $0.roles.videoRoles }
+        let elementVideoRoles = elements.flatMap { $0.roles.videoRoles() }
         if let videoRole = flatten(singleRoleType: elementVideoRoles) {
             outputRoles.insert(videoRole)
         }
         
-        let elementCaptionRoles = elements.flatMap { $0.roles.captionRoles }
+        let elementCaptionRoles = elements.flatMap { $0.roles.captionRoles() }
         if let captionRole = flatten(singleRoleType: elementCaptionRoles) {
             outputRoles.insert(captionRole)
         }

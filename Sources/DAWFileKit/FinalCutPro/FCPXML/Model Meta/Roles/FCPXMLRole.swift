@@ -17,6 +17,54 @@ public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String {
     func asAnyRole() -> FinalCutPro.FCPXML.AnyRole
 }
 
+// MARK: - Equatable
+
+extension FCPXMLRole {
+    func isEqual(to other: some FCPXMLRole) -> Bool {
+        self.asAnyRole() == other.asAnyRole()
+    }
+}
+
+// MARK: - Collection Methods
+
+extension Collection<FinalCutPro.FCPXML.AnyRole> {
+    public func contains(_ element: any FCPXMLRole) -> Bool {
+        contains(where: { $0.wrapped.isEqual(to: element) })
+    }
+}
+
+extension Dictionary where Value == FinalCutPro.FCPXML.AnyRole {
+    public func contains(value element: any FCPXMLRole) -> Bool {
+        values.contains(element)
+    }
+}
+
+extension Collection where Element: FCPXMLRole {
+    public func contains(_ element: FinalCutPro.FCPXML.AnyRole) -> Bool {
+        contains(where: { $0.asAnyRole() == element })
+    }
+}
+
+extension Dictionary where Value: FCPXMLRole {
+    public func contains(value element: FinalCutPro.FCPXML.AnyRole) -> Bool {
+        values.contains(where: { $0.asAnyRole() == element })
+    }
+}
+
+// MARK: - Nested Type Erasure
+
+extension Collection where Element: FCPXMLRole {
+    public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
+        map { $0.asAnyRole() }
+    }
+}
+
+extension Collection<FinalCutPro.FCPXML.AnyRole> {
+    public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
+        map { $0.asAnyRole() }
+    }
+}
+
 // MARK: - Utilities
 
 /// Parses raw audio or video role string and returns role and optional sub-role.

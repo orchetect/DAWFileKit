@@ -56,7 +56,6 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole {
 
 // MARK: - Collection Methods
 
-
 extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
     public var containsAudioRoles: Bool {
         contains(where: { $0.wrapped.isAudio })
@@ -69,16 +68,20 @@ extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
     public var containsCaptionRoles: Bool {
         contains(where: { $0.wrapped.isCaption })
     }
-    
-    public var audioRoles: [Element] {
+}
+
+// MARK: - Filtering
+
+extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
+    public func audioRoles() -> [Element] {
         filter { $0.wrapped.isAudio }
     }
     
-    public var videoRoles: [Element] {
+    public func videoRoles() -> [Element] {
         filter { $0.wrapped.isVideo }
     }
     
-    public var captionRoles: [Element] {
+    public func captionRoles() -> [Element] {
         filter { $0.wrapped.isCaption }
     }
 }

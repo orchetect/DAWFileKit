@@ -160,17 +160,24 @@ extension Collection<FinalCutPro.FCPXML.AnyRole> {
     public var containsCaptionRoles: Bool {
         contains(where: { $0.isCaption })
     }
-    
-    public var audioRoles: Set<Element> {
-        Set(filter(\.isAudio))
+}
+
+// MARK: - Filtering
+
+extension Collection<FinalCutPro.FCPXML.AnyRole> {
+    /// Convenience to filter the FCPXML role collection and return only audio roles.
+    public func audioRoles() -> [Element] {
+        filter(\.isAudio)
     }
     
-    public var videoRoles: Set<Element> {
-        Set(filter(\.isVideo))
+    /// Convenience to filter the FCPXML role collection and return only video roles.
+    public func videoRoles() -> [Element] {
+        filter(\.isVideo)
     }
     
-    public var captionRoles: Set<Element> {
-        Set(filter(\.isCaption))
+    /// Convenience to filter the FCPXML role collection and return only caption roles.
+    public func captionRoles() -> [Element] {
+        filter(\.isCaption)
     }
 }
 
