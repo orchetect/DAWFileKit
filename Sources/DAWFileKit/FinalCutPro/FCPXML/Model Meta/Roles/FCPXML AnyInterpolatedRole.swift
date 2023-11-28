@@ -54,6 +54,16 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyInterpolatedRole: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case let .assigned(role): return "assigned(\(role.debugDescription))"
+        case let .defaulted(role): return "defaulted(\(role.debugDescription))"
+        case let .inherited(role): return "inherited(\(role.debugDescription))"
+        }
+    }
+}
+
 // MARK: - Collection Methods
 
 extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
