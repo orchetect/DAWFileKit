@@ -44,17 +44,34 @@ extension FinalCutPro.FCPXML {
             case let .anyClip(clipType):
                 switch clipType {
                 case .assetClip:
-                    // TODO: can also contain sub-roles in `audio-channel-source` children
+                    // asset clip can have `audioRole` and/or `videoRole` attributes.
                     
-                    if let rawString = xmlLeaf.attributeStringValue(forName: AssetClip.Attributes.audioRole.rawValue),
-                       let role = AudioRole(rawValue: rawString)
-                    {
-                        roles.insert(.audio(role))
-                    }
-                    if let rawString = xmlLeaf.attributeStringValue(forName: AssetClip.Attributes.videoRole.rawValue),
-                       let role = VideoRole(rawValue: rawString)
+                    // it can also have roles in `audio-channel-source` children which may or may
+                    // not contain a time range. if there is no time range it applies to the entire
+                    // clip and overrides the asset clip's `audioRole`.
+                    
+                    if let rawString = xmlLeaf.attributeStringValue(
+                        forName: AssetClip.Attributes.videoRole.rawValue
+                    ),
+                        let role = VideoRole(rawValue: rawString)
                     {
                         roles.insert(.video(role))
+                    }
+                    
+                    let audioChannelSources = parseAudioChannelSources(from: xmlLeaf, resources: resources)
+                    
+                    if audioChannelSources.isEmpty {
+                        if let rawString = xmlLeaf.attributeStringValue(
+                            forName: AssetClip.Attributes.audioRole.rawValue
+                        ),
+                           let role = AudioRole(rawValue: rawString)
+                        {
+                            roles.insert(.audio(role))
+                        }
+                    } else {
+                        // TODO: if audio channel source has a time range and it starts later than the clip's start, then do we assume FCP falls back to using the asset clip's audio role? not sure.
+                        // TODO: also, what happens when there are multiple audio channel sources that overlap? or all lack a time range. does FCP use the topmost?
+                        roles.formUnion(audioChannelSources.asAnyRoles())
                     }
                     
                 case .audio:
