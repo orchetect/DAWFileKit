@@ -1,5 +1,5 @@
 //
-//  FinalCutPro FCPXML SyncClipRoles.swift
+//  FinalCutPro FCPXML SyncClipRoles2.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
+final class FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
@@ -19,7 +19,7 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
     
     var fileContents: Data { get throws {
         try XCTUnwrap(loadFileContents(
-            forResource: "SyncClipRoles",
+            forResource: "SyncClipRoles2",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
@@ -57,24 +57,16 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
         guard case let .anyClip(.syncClip(clip1)) = spine.contents[0]
         else { XCTFail("Clip was not expected type.") ; return }
         
-        XCTAssertEqual(clip1.format, nil)
-        XCTAssertEqual(clip1.offset, Self.tc("01:01:04:23", .fps25))
-        XCTAssertEqual(clip1.offset?.frameRate, .fps25)
-        XCTAssertEqual(clip1.name, "Sync Clip 1")
-        XCTAssertEqual(clip1.start, Self.tc("10:43:05:16", .fps25))
-        XCTAssertEqual(clip1.duration, Self.tc("00:00:01:24", .fps25))
-        XCTAssertEqual(clip1.duration?.frameRate, .fps25)
+        XCTAssertEqual(clip1.name, "5A-1-1")
         
         let markers = clip1.contents.annotations().markers()
         XCTAssertEqual(markers.count, 1)
         
         let marker = try XCTUnwrap(markers.first)
         XCTAssertEqual(marker.name, "Marker 1")
-        XCTAssertEqual(marker.start, Self.tc("10:43:05:16", .fps25))
-        XCTAssertEqual(marker.context[.absoluteStart], Self.tc("01:01:04:23", .fps25))
         XCTAssertEqual(marker.context[.inheritedRoles], [
-            .inherited(.video(raw: "VFX.VFX-Background")!), // from first video asset in sync clip
-            .inherited(.audio(raw: "dialogue.MixL")!) // from asset clip sync-source
+            .defaulted(.video(raw: "Video")!) // from first video asset in sync clip
+            // no audio role
         ])
     }
 }

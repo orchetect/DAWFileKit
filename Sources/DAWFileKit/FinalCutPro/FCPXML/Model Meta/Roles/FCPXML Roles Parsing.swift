@@ -151,7 +151,7 @@ extension FinalCutPro.FCPXML {
                 break
             }
             
-        case .structure(_):
+        case .structure:
             // structure elements don't have roles
             break
         }
@@ -159,26 +159,19 @@ extension FinalCutPro.FCPXML {
         return roles
     }
     
-    /// Descends into child story elements, attempting to extract assigned roles for the first video media found.
+    /// Attempting to extract assigned roles for the first child clip found.
     static func rolesForNearestDescendant(
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         auditions: Audition.Mask // = .activeAudition
     ) -> Set<AnyRole> {
-        var roles: Set<AnyRole> = []
-        
         let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
         
-        for index in contents.indices {
-            let child = contents[index]
-            let itemRoles = Self.roles(of: child, resources: resources, auditions: auditions)
-            if itemRoles.containsVideoRoles {
-                roles = itemRoles
-                break
-            }
-        }
+        guard let firstChild = contents.first else { return [] }
         
-        return roles
+        let childRoles = Self.roles(of: firstChild, resources: resources, auditions: auditions)
+        
+        return childRoles
     }
     
     static func addDefaultRoles(
@@ -243,8 +236,8 @@ extension FinalCutPro.FCPXML {
                     // so we won't parse them here
                     return []
                 case .clip:
-                    // not exactly sure if a default is provided for `clip`.
-                    return []
+                    // not exactly sure if a default is provided for `clip` itself.
+                    return [defaultVideoRole]
                 case .gap:
                     return []
                 case .liveDrawing:
@@ -259,7 +252,7 @@ extension FinalCutPro.FCPXML {
                     return []
                 case .syncClip:
                     // does not have roles itself. contains story elements that may contain their own roles.
-                    return []
+                    return [defaultVideoRole]
                 case .title:
                     return [titlesRole]
                 case .video:
@@ -274,6 +267,19 @@ extension FinalCutPro.FCPXML {
             return []
             // structure elements don't have roles
         }
+    }
+    
+    /// Attempting to extract default roles for the first child clip found.
+    static func defaultRolesForNearestDescendant(
+        of xmlLeaf: XMLElement
+    ) -> Set<AnyRole> {
+        let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
+        
+        guard let firstChild = contents.first else { return [] }
+        
+        guard let elementType = ElementType(from: firstChild) else { return [] }
+        
+        return defaultRoles(for: elementType)
     }
 }
 
