@@ -64,6 +64,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(assetClip.start, nil)
         XCTAssertEqual(assetClip.duration, Self.tc("00:00:29:13", .fps25))
         XCTAssertEqual(assetClip.duration?.frameRate, .fps25)
+        XCTAssertEqual(assetClip.context[.effectiveOcclusion], .notOccluded)
     }
     
     /// Test main timeline markers extraction.

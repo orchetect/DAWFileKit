@@ -91,7 +91,7 @@ extension FinalCutPro.FCPXML {
             
             let internalRange = internalStart ..< internalEnd.clamped(to: internalStart...)
             
-            if parentRange == internalRange || parentRange.contains(internalRange) {
+            if parentRange.contains(internalRange) {
                 return .notOccluded
             }
             
@@ -106,7 +106,8 @@ extension FinalCutPro.FCPXML {
         } else {
             // internal element does not have duration, treat as a single point in time
             
-            return parentRange.contains(internalStart) ? .notOccluded : .fullyOccluded
+            let isContained = parentRange.contains(internalStart)
+            return isContained ? .notOccluded : .fullyOccluded
         }
     }
     
@@ -129,8 +130,17 @@ extension FinalCutPro.FCPXML {
         var isPartial = false
         
         var breadcrumbs = breadcrumbs
+        var lastLane: Int?
         
         while let breadcrumb = breadcrumbs.popLast() {
+            let value = breadcrumb.attributeStringValue(forName: "lane")
+            let lane = value != nil ? Int(value!) : nil
+            defer { lastLane = lane }
+            
+            if let getLastLane = lastLane {
+                guard lane == getLastLane else { continue }
+            }
+            
             guard let bcAbsStart = calculateAbsoluteStart(
                 of: breadcrumb,
                 breadcrumbs: breadcrumbs,
@@ -138,8 +148,8 @@ extension FinalCutPro.FCPXML {
             ),
             let bcDuration = nearestDuration(of: breadcrumb, breadcrumbs: breadcrumbs, resources: resources)
             else { continue }
-            let bcAbsEnd = bcAbsStart + bcDuration
             
+            let bcAbsEnd = bcAbsStart + bcDuration
             let bcRange = bcAbsStart ..< bcAbsEnd
             
             let o = occlusion(area: bcRange, internalStart: elementStart, internalEnd: elementEnd)
