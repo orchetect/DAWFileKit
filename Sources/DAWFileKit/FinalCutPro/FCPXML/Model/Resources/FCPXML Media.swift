@@ -97,7 +97,7 @@ extension FinalCutPro.FCPXML.Media {
         case sequence(_ sequence: FinalCutPro.FCPXML.Sequence)
     }
     
-    func generateMediaType(
+    public func generateMediaType(
         breadcrumbs: [XMLElement],
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         contextBuilder: FCPXMLElementContextBuilder

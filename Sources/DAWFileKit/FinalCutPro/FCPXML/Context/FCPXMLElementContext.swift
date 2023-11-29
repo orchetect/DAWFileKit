@@ -81,7 +81,10 @@ extension FinalCutPro.FCPXML {
         /// This is calculated based on ancestor elements.
         public var absoluteEnd: Timecode? {
             guard let absoluteStart = absoluteStart,
-                  let duration = FinalCutPro.FCPXML.duration(of: xmlLeaf, resources: resources)
+                  let duration = FinalCutPro.FCPXML.duration(
+                      of: xmlLeaf,
+                      resources: resources
+                  )
             else { return nil }
             return absoluteStart + duration
         }
@@ -143,10 +146,9 @@ extension FinalCutPro.FCPXML {
         /// The parent element's duration.
         public var parentDuration: Timecode? {
             guard let parent = parent else { return nil }
-            guard let durationValue = parent.attributeStringValue(forName: "duration") else { return nil }
-            return try? FinalCutPro.FCPXML.timecode(
-                fromRational: durationValue,
-                xmlLeaf: parent,
+            return FinalCutPro.FCPXML.nearestDuration(
+                of: parent,
+                breadcrumbs: breadcrumbs.dropLast(),
                 resources: resources
             )
         }
@@ -167,7 +169,7 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Returns the effective roles of the element inherited from ancestors.
-        public func inheritedRoles() -> [AnyInterpolatedRole] {
+        public var inheritedRoles: [AnyInterpolatedRole] {
             FinalCutPro.FCPXML.inheritedRoles(
                 of: xmlLeaf,
                 breadcrumbs: breadcrumbs,
@@ -184,27 +186,20 @@ extension FinalCutPro.FCPXML {
                   let elementStart = absoluteStart
             else { return .notOccluded }
             
-            let parentRange = parentStart ... parentEnd.clamped(to: parentStart...)
-            
-            if let elementEnd = absoluteEnd {
-                // element has duration, treat as a time range
-                
-                let elementRange = elementStart ... elementEnd.clamped(to: elementStart...)
-                
-                if parentRange.contains(elementRange) {
-                    return .notOccluded
-                }
-                
-                if parentRange.overlaps(elementRange) {
-                    return .partiallyOccluded
-                } else {
-                    return .fullyOccluded
-                }
-            } else {
-                // element does not have duration, treat as a single point in time
-                
-                return parentRange.contains(elementStart) ? .notOccluded : .fullyOccluded
-            }
+            return FinalCutPro.FCPXML.occlusion(
+                area: parentStart ..< parentEnd,
+                internalStart: elementStart,
+                internalEnd: absoluteEnd
+            )
+        }
+        
+        /// Returns the effective occlusion for the current element with regards the main timeline.
+        public var effectiveOcclusion: FinalCutPro.FCPXML.ElementOcclusion {
+            FinalCutPro.FCPXML.effectiveOcclusion(
+                of: xmlLeaf,
+                breadcrumbs: breadcrumbs,
+                resources: resources
+            )
         }
         
         // MARK: - Parsing Tools

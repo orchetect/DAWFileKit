@@ -18,6 +18,7 @@ extension FinalCutPro.FCPXML {
     /// - ``FinalCutPro/FCPXML/ContextKey/roles``
     /// - ``FinalCutPro/FCPXML/ContextKey/inheritedRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/occlusion``
+    /// - ``FinalCutPro/FCPXML/ContextKey/effectiveOcclusion``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorElementTypes``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorEventName``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorProjectName``
@@ -33,8 +34,9 @@ extension FinalCutPro.FCPXML {
                 var dict: FinalCutPro.FCPXML.ElementContext = [:]
                 dict[.absoluteStart] = tools.absoluteStart
                 dict[.roles] = tools.roles(includeDefaultRoles: true)
-                dict[.inheritedRoles] = tools.inheritedRoles()
+                dict[.inheritedRoles] = tools.inheritedRoles
                 dict[.occlusion] = tools.occlusion
+                dict[.effectiveOcclusion] = tools.effectiveOcclusion
                 dict[.ancestorElementTypes] = tools.ancestorElementTypes
                 dict[.ancestorEventName] = tools.ancestorEventName
                 dict[.ancestorProjectName] = tools.ancestorProjectName
@@ -59,6 +61,7 @@ extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.DefaultCo
     /// - ``FinalCutPro/FCPXML/ContextKey/roles``
     /// - ``FinalCutPro/FCPXML/ContextKey/inheritedRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/occlusion``
+    /// - ``FinalCutPro/FCPXML/ContextKey/effectiveOcclusion``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorElementTypes``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorEventName``
     /// - ``FinalCutPro/FCPXML/ContextKey/ancestorProjectName``
@@ -79,6 +82,7 @@ extension FinalCutPro.FCPXML.ContextKey {
         case roles
         case inheritedRoles
         case occlusion
+        case effectiveOcclusion
         case ancestorElementTypes
         case ancestorEventName
         case ancestorProjectName
@@ -105,9 +109,15 @@ extension FinalCutPro.FCPXML.ContextKey {
         .init(key: Key.inheritedRoles)
     }
     
-    /// Returns the occlusion information for the element.
+    /// Returns the occlusion information for the element in relation to its parent.
     public static var occlusion: FinalCutPro.FCPXML.ContextKey<FinalCutPro.FCPXML.ElementOcclusion> {
         .init(key: Key.occlusion)
+    }
+    
+    /// Returns the effective occlusion information for the element in relation to the main
+    /// timeline.
+    public static var effectiveOcclusion: FinalCutPro.FCPXML.ContextKey<FinalCutPro.FCPXML.ElementOcclusion> {
+        .init(key: Key.effectiveOcclusion)
     }
     
     /// Types of the element's ancestors (breadcrumbs).

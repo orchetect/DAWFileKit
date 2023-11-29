@@ -81,6 +81,84 @@ extension FinalCutPro.FCPXML {
         return accum
     }
     
+    static func occlusion(
+        area parentRange: Range<Timecode>,
+        internalStart: Timecode,
+        internalEnd: Timecode?
+    ) -> ElementOcclusion {
+        if let internalEnd = internalEnd {
+            // internal element has duration, treat as a time range
+            
+            let internalRange = internalStart ..< internalEnd.clamped(to: internalStart...)
+            
+            if parentRange == internalRange || parentRange.contains(internalRange) {
+                return .notOccluded
+            }
+            
+            if parentRange.overlaps(internalRange)
+            // elementEnd != parentStart, // don't count consecutive events as overlap
+            // elementStart != parentEnd // don't count consecutive events as overlap
+            {
+                return .partiallyOccluded
+            } else {
+                return .fullyOccluded
+            }
+        } else {
+            // internal element does not have duration, treat as a single point in time
+            
+            return parentRange.contains(internalStart) ? .notOccluded : .fullyOccluded
+        }
+    }
+    
+    static func effectiveOcclusion(
+        of element: XMLElement,
+        breadcrumbs: [XMLElement],
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> FinalCutPro.FCPXML.ElementOcclusion {
+        guard var elementStart = calculateAbsoluteStart(
+            of: element,
+            breadcrumbs: breadcrumbs,
+            resources: resources
+        ) else { return .notOccluded }
+        
+        var elementEnd: Timecode?
+        if let elementDuration = duration(of: element, resources: resources) {
+            elementEnd = elementStart + elementDuration
+        }
+        
+        var isPartial = false
+        
+        var breadcrumbs = breadcrumbs
+        
+        while let breadcrumb = breadcrumbs.popLast() {
+            guard let bcAbsStart = calculateAbsoluteStart(
+                of: breadcrumb,
+                breadcrumbs: breadcrumbs,
+                resources: resources
+            ),
+            let bcDuration = nearestDuration(of: breadcrumb, breadcrumbs: breadcrumbs, resources: resources)
+            else { continue }
+            let bcAbsEnd = bcAbsStart + bcDuration
+            
+            let bcRange = bcAbsStart ..< bcAbsEnd
+            
+            let o = occlusion(area: bcRange, internalStart: elementStart, internalEnd: elementEnd)
+            
+            if o == .fullyOccluded {
+                return o
+            }
+            
+            if o == .partiallyOccluded {
+                // reduce exposed internal range
+                elementStart = elementStart.clamped(to: bcRange)
+                elementEnd = elementEnd?.clamped(to: bcRange)
+                isPartial = true
+            }
+        }
+        
+        return isPartial ? .partiallyOccluded : .notOccluded
+    }
+    
     /// Returns the `duration` attribute value as `Timecode`.
     static func duration(
         of element: XMLElement,
@@ -90,6 +168,23 @@ extension FinalCutPro.FCPXML {
         else { return nil }
         
         return try? timecode(fromRational: startValue, xmlLeaf: element, resources: resources)
+    }
+    
+    /// Return nearest `duration` attribute value as `Timecode`, starting from the element and
+    /// traversing up through ancestors.
+    static func nearestDuration(
+        of element: XMLElement,
+        breadcrumbs: [XMLElement],
+        resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Timecode? {
+        let elements = (breadcrumbs + [element]).reversed()
+        
+        guard let firstWithDuration = elements
+            .first(where: { $0.attribute(forName: "duration") != nil }),
+              let durString = firstWithDuration.attributeStringValue(forName: "duration")
+        else { return nil }
+        
+        return try? timecode(fromRational: durString, xmlLeaf: firstWithDuration, resources: resources)
     }
     
     /// Returns the `offset` attribute value as `Timecode`.
