@@ -295,9 +295,12 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Types of the element's ancestors (breadcrumbs).
-        public var ancestorElementTypes: [FinalCutPro.FCPXML.ElementType] {
+        public var ancestorElementTypes: [(lane: Int?, type: FinalCutPro.FCPXML.ElementType)] {
             breadcrumbs.compactMap {
-                FinalCutPro.FCPXML.ElementType(from: $0)
+                guard let type = FinalCutPro.FCPXML.ElementType(from: $0) else { return nil }
+                let laneStr = $0.attributeStringValue(forName: "lane")
+                let lane: Int? = laneStr != nil ? Int(laneStr!) : nil
+                return (lane: lane, type: type)
             }
         }
         

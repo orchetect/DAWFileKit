@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" frameDuration="100/2500s" width="1920" height="960" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <asset id="r3" name="TempMusic" uid="BD3D9F1DD4EE65B46E347153BC1DADB0" start="0s" duration="6861s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="BD3D9F1DD4EE65B46E347153BC1DADB0" src="file:///Users/user/Music/TempMusic.wav"/>
+        </asset>
+        <format id="r4" name="FFVideoFormatRateUndefined"/>
+        <asset id="r5" name="Intro" uid="4A7CCC69AFDAB08992538DC3334A7818" start="3600s" duration="840s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="4A7CCC69AFDAB08992538DC3334A7818" src="file:///Users/user/Music/Intro.wav"/>
+        </asset>
+        <effect id="r6" name="Timecode" uid=".../Effects.localized/Basics.localized/Timecode.localized/Timecode.moef"/>
+        <format id="r7" name="FFVideoFormat1080p25" frameDuration="1/25s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r8" name="B003C008_200304_RO6B" uid="DFEBE874DD4A0AA7739FCBDAD4517651" start="1070570/25s" duration="26760/1000s" hasVideo="1" format="r7" videoSources="1" customLUTOverride="0 (None)">
+            <media-rep kind="original-media" sig="DFEBE874DD4A0AA7739FCBDAD4517651" src="file:///Users/user/Movies/B003C008_200304_RO6B.mov"/>
+        </asset>
+        <asset id="r9" name="GM7884P7" uid="35385FD92BF23A0C1BA76BE79B7AEC61" start="42810s" duration="2168440/48000s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="35385FD92BF23A0C1BA76BE79B7AEC61" src="file:///Users/user/Music/GM7884P7.WAV"/>
+        </asset>
+        <asset id="r10" name="Helicopter Land Close And Wind Down" uid="DC9D8CE0EF5C478F52962A6A17168156" start="0s" duration="1794367/48000s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="DC9D8CE0EF5C478F52962A6A17168156" src="file:///Users/user/Music/Helicopter%20Land%20Close%20And%20Wind%20Down.wav"/>
+        </asset>
+        <asset id="r11" name="TestVideo" uid="97BED578CDA2F3DACEBF29F8992250D0" start="548293632/12800s" duration="4160/1000s" hasVideo="1" format="r12" videoSources="1">
+            <media-rep kind="original-media" sig="97BED578CDA2F3DACEBF29F8992250D0" src="file:///Users/user/Movies/TestVideo.mov"/>
+        </asset>
+        <format id="r12" name="FFVideoFormat3840x2160p25" frameDuration="100/2500s" width="3840" height="2160" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r13" name="E004_C001_20200306_R1" uid="93AAF2DB0EEFB0F6EA0B730BAE1EB555" start="1791783/25s" duration="45240/1000s" hasVideo="1" format="r7" videoSources="1" customLUTOverride="0 (None)">
+            <media-rep kind="original-media" sig="93AAF2DB0EEFB0F6EA0B730BAE1EB555" src="file:///Users/user/Movies/E004_C001_20200306_R1.mov"/>
+        </asset>
+        <asset id="r14" name="TestAudio" uid="78E738909C02DE2A3402B2E9281E832B" start="33211s" duration="3877488/48000s" hasAudio="1" audioSources="1" audioChannels="4" audioRate="48000">
+            <media-rep kind="original-media" sig="78E738909C02DE2A3402B2E9281E832B" src="file:///Users/user/Music/TestAudio.WAV"/>
+        </asset>
+        <effect id="r15" name="Telephone" uid="Telephone.Distortion.audio.effectBundle"/>
+        <asset id="r16" name="B004C013_200304_RO6B" uid="ED432D8C06C20D30FD0D881F4CEDDE80" start="1737623/25s" duration="72920/1000s" hasVideo="1" format="r7" videoSources="1" customLUTOverride="0 (None)">
+            <media-rep kind="original-media" sig="ED432D8C06C20D30FD0D881F4CEDDE80" src="file:///Users/user/Movies/B004C013_200304_RO6B.mov"/>
+        </asset>
+        <asset id="r17" name="TestAudio2" uid="B6314D05F840CAF58A117F413919A534" start="890123264/12800s" duration="3120/1000s" hasVideo="1" format="r12" videoSources="1">
+            <media-rep kind="original-media" sig="B6314D05F840CAF58A117F413919A534" src="file:///Users/user/Movies/TestAudio2.mov"/>
+        </asset>
+    </resources>
+    <library location="file:///Users/user/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="AE0E3222-9235-45E2-BBB2-D902AE1B04A6">
+            <project name="Test Project" uid="616DFEC1-C85D-45C7-8C07-0A591C83ECC1" modDate="2023-11-28 22:04:30 -0800">
+                <sequence format="r1" duration="80985600/240000s" tcStart="3590s" tcFormat="NDF" renderFormat="FFRenderFormatProRes422LT" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <title ref="r2" offset="3590s" name="Basic Title" start="3600s" duration="151200/30000s">
+                            <text>
+                                <text-style ref="ts1">Title</text-style>
+                            </text>
+                            <text-style-def id="ts1">
+                                <text-style font="Helvetica Neue" fontSize="105" fontFace="Medium" fontColor="1 1 1 1" alignment="center" lineSpacing="13"/>
+                            </text-style-def>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <asset-clip ref="r3" lane="-2" offset="3600s" name="TempMusic" duration="10123200/30000s" enabled="0" format="r4" audioRole="dialogue">
+                                <adjust-volume>
+                                    <param name="amount">
+                                        <fadeOut type="easeIn" duration="464501/720000s"/>
+                                    </param>
+                                </adjust-volume>
+                                <audio-channel-source srcCh="1, 2" role="Score Komponist.Score Komponist-1"/>
+                            </asset-clip>
+                            <asset-clip ref="r5" lane="-1" offset="3600s" name="Intro" start="3600s" duration="80985600/240000s" format="r4" audioRole="dialogue">
+                                <audio-channel-source srcCh="1, 2" role="Score Komponist.Score Komponist-1"/>
+                            </asset-clip>
+                            <title ref="r2" lane="4" offset="3600s" name="Watermark" start="3600s" duration="10123200/30000s">
+                                <text>
+                                    <text-style ref="ts8">Watermark</text-style>
+                                </text>
+                                <text-style-def id="ts8">
+                                    <text-style font="Helvetica" fontSize="40" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                            </title>
+                        </title>
+                        <sync-clip offset="107851200/30000s" name="2-1-5" start="107089700/2500s" duration="8300/2500s" audioStart="30841833600/720000s" audioDuration="1843200/720000s" tcFormat="NDF">
+                            <adjust-volume amount="-96dB"/>
+                            <clip offset="1070570/25s" name="B003C008_200304_RO6B" start="1070570/25s" duration="66900/2500s" format="r7" tcFormat="NDF">
+                                <adjust-conform type="fill"/>
+                                <video ref="r8" offset="107057000/2500s" start="107057000/2500s" duration="66900/2500s" role="VFX.VFX-Background">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                </video>
+                                <clip lane="-1" offset="42810s" name="GM7884P7" start="42810s" duration="988/25s" format="r4" tcFormat="NDF">
+                                    <audio ref="r9" offset="42810s" start="42810s" duration="2168440/48000s" role="dialogue.MixL" srcCh="1">
+                                        <audio ref="r9" lane="-1" offset="42810s" start="42810s" duration="2168440/48000s" role="dialogue.MixR" srcCh="2"/>
+                                    </audio>
+                                </clip>
+                            </clip>
+                            <clip lane="-1" offset="30841597654/720000s" name="Helicopter Land Close And Wind Down" start="1845575/720000s" duration="10950885/720000s" format="r4" tcFormat="NDF">
+                                <audio ref="r10" offset="0s" duration="26915494/720000s" role="dialogue.dialogue-1" srcCh="1, 2"/>
+                                <audio-channel-source srcCh="1, 2" role="effects.effects-1"/>
+                            </clip>
+                            <asset-clip ref="r11" lane="1" offset="13707481600/320000s" name="TestVideo" start="13707481600/320000s" duration="1062400/320000s" format="r12" tcFormat="NDF" videoRole="VFX Scanline DI Final">
+                                <adjust-conform type="fill"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            </asset-clip>
+                            <caption lane="1" offset="1070897/25s" name="Caption 1" start="3600s" duration="8300/2500s" role="SRT?captionFormat=SRT.zu">
+                                <text placement="bottom">
+                                    <text-style ref="ts9">Caption 1</text-style>
+                                </text>
+                                <text-style-def id="ts9">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13.01" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1"/>
+                                </text-style-def>
+                            </caption>
+                            <title ref="r2" lane="2" offset="107089700/2500s" name="VFX - Add SFX" start="8912000/2500s" duration="8300/2500s" role="Titles VFX.Titles VFX-1">
+                                <param name="Position" key="9999/999166631/999166633/1/100/101" value="-950 450"/>
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="disableDRT" key="3733" value="1"/>
+                                <text>
+                                    <text-style ref="ts10">Add SFX</text-style>
+                                </text>
+                                <text-style-def id="ts10">
+                                    <text-style font="Helvetica" fontSize="28" fontFace="Regular" fontColor="1 1 1 1" shadowColor="0 0 0 0.75" shadowOffset="5 315"/>
+                                </text-style-def>
+                                <adjust-blend amount="0.75"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            </title>
+                            <caption lane="1" offset="1070899/25s" name="Caption 2" start="3600s" duration="8500/2500s" role="SRT?captionFormat=SRT.de-DE">
+                                <text placement="bottom">
+                                    <text-style ref="ts11">Caption 2</text-style>
+                                </text>
+                                <text-style-def id="ts11">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13.01" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>
+                                </text-style-def>
+                            </caption>
+                        </sync-clip>
+                        <sync-clip offset="107950800/30000s" name="1-X-1" start="179241300/2500s" duration="5700/2500s" tcFormat="NDF">
+                            <adjust-transform position="0 22.5729"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <clip offset="1791783/25s" name="1-X-1" start="1791783/25s" duration="113100/2500s" format="r7" tcFormat="NDF">
+                                <adjust-conform type="fill"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <video ref="r13" offset="1791783/25s" name="E004_C001_20200306_R1 - v1" start="1791783/25s" duration="1131/25s" role="VFX.VFX-Background Plate">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                </video>
+                            </clip>
+                            <sync-clip lane="-1" offset="51618859855/720000s" name="5-1-9" start="23925407855/720000s" duration="4564145/720000s" tcFormat="NDF">
+                                <adjust-volume amount="12.0412dB">
+                                    <param name="amount">
+                                        <fadeIn type="easeIn" duration="84086/720000s"/>
+                                    </param>
+                                </adjust-volume>
+                                <gap name="Gap" offset="830371/25s" start="830371/25s" duration="191200/2500s">
+                                    <clip lane="-1" offset="33211s" name="TestAudio" start="33211s" duration="2007/25s" format="r4" tcFormat="NDF">
+                                        <adjust-volume amount="3dB"/>
+                                        <audio ref="r14" offset="33211s" start="33211s" duration="58162320/720000s" role="dialogue.MIX L" srcCh="1">
+                                            <audio ref="r14" lane="-3" offset="33211s" start="33211s" duration="58162320/720000s" role="dialogue.dialogue-1" srcCh="4"/>
+                                            <audio ref="r14" lane="-2" offset="33211s" start="33211s" duration="58162320/720000s" role="dialogue.Boom 1" srcCh="3"/>
+                                            <audio ref="r14" lane="-1" offset="33211s" start="33211s" duration="58162320/720000s" role="dialogue.MIX R" srcCh="2"/>
+                                        </audio>
+                                    </clip>
+                                </gap>
+                                <sync-source sourceID="connected">
+                                    <audio-role-source role="dialogue.dialogue-1"/>
+                                    <audio-role-source role="dialogue.Boom 1" enabled="0"/>
+                                    <audio-role-source role="dialogue.MIX L"/>
+                                    <audio-role-source role="dialogue.MIX R"/>
+                                </sync-source>
+                                <filter-audio ref="r15" name="Telephone"/>
+                            </sync-clip>
+                            <caption lane="1" offset="1792413/25s" name="ILA_001_0030 - 00004" start="3600s" duration="5700/2500s" role="SRT?captionFormat=SRT.zu">
+                                <text placement="bottom">
+                                    <text-style ref="ts12">ILA_001_0030 - 00004</text-style>
+                                </text>
+                                <text-style-def id="ts12">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13.01" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1"/>
+                                </text-style-def>
+                            </caption>
+                            <sync-clip lane="1" offset="179241300/2500s" name="1-2-2 MOS" start="173853300/2500s" duration="5700/2500s" tcFormat="NDF">
+                                <adjust-conform type="fill"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <clip offset="1737623/25s" name="1-2-2 MOS" start="1737623/25s" duration="182300/2500s" format="r7" tcFormat="NDF">
+                                    <adjust-conform type="fill"/>
+                                    <video ref="r16" offset="173762300/2500s" name="B004C013_200304_RO6B - v1" start="173762300/2500s" duration="182300/2500s" role="VFX.VFX-Background">
+                                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    </video>
+                                </clip>
+                                <marker start="1738533/25s" duration="100/2500s" value="Marker 1"/>
+                            </sync-clip>
+                            <asset-clip ref="r17" lane="2" offset="22942886400/320000s" name="TestAudio2" start="22253222400/320000s" duration="729600/320000s" format="r12" tcFormat="NDF" videoRole="VFX Scanline DI Final">
+                                <adjust-conform type="fill"/>
+                            </asset-clip>
+                            <title ref="r2" lane="3" offset="179241300/2500s" name="VFX - Set extension" start="8916500/2500s" duration="5700/2500s" role="Titles VFX.Titles VFX-1">
+                                <text>
+                                    <text-style ref="ts13">Set extension</text-style>
+                                </text>
+                                <text-style-def id="ts13">
+                                    <text-style font="Helvetica" fontSize="28" fontFace="Regular" fontColor="1 1 1 1" shadowColor="0 0 0 0.75" shadowOffset="5 315"/>
+                                </text-style-def>
+                            </title>
+                            <caption lane="1" offset="1792417/25s" name="Caption 3" start="3600s" duration="5300/2500s" role="SRT?captionFormat=SRT.de-DE">
+                                <text placement="bottom">
+                                    <text-style ref="ts14">Caption 3</text-style>
+                                </text>
+                                <text-style-def id="ts14">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13.01" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>
+                                </text-style-def>
+                            </caption>
+                            <marker start="1792414/25s" duration="100/2500s" value="Marker 2"/>
+                        </sync-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>

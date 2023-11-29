@@ -122,7 +122,7 @@ extension FinalCutPro.FCPXML.ContextKey {
     
     /// Types of the element's ancestors (breadcrumbs).
     public static var ancestorElementTypes: FinalCutPro.FCPXML.ContextKey<
-        [FinalCutPro.FCPXML.ElementType]
+        [(lane: Int?, type: FinalCutPro.FCPXML.ElementType)]
     > {
         .init(key: Key.ancestorElementTypes)
     }

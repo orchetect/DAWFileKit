@@ -77,7 +77,8 @@ extension FCPXMLExtractable where Self: FCPXMLElement {
         
         if !settings.excludedAncestorTypes.isEmpty {
             for t in settings.excludedAncestorTypes {
-                if hasAncestorExcludingParent(ofType: t) {
+                let lane = effectiveLane()
+                if hasAncestorExcludingParent(elementLane: lane, ofType: t) {
                     return false
                 }
             }
@@ -101,6 +102,13 @@ extension FCPXMLExtractable where Self: FCPXMLElement {
             return extractableChildren()
         }
     }
+    
+    func effectiveLane() -> Int? {
+        context[.ancestorElementTypes]?
+            .reversed()
+            .first(where: { $0.lane != nil })?
+            .lane
+    }
 }
 
 // MARK: - Extraction Presets
@@ -121,6 +129,7 @@ extension FinalCutPro.FCPXML.AnyElement {
     /// Returns `true` if element has an ancestor with the specified element type, excluding its
     /// immediate parent.
     func hasAncestorExcludingParent(
+        elementLane: Int?,
         ofType elementType: FinalCutPro.FCPXML.ElementType
     ) -> Bool {
         guard var ancestorTypesOfClip = context[.ancestorElementTypes] else {
@@ -129,7 +138,9 @@ extension FinalCutPro.FCPXML.AnyElement {
         
         // remove clip that the element is directly attached to
         _ = ancestorTypesOfClip.popLast()
-        return ancestorTypesOfClip.contains(elementType)
+        return ancestorTypesOfClip.contains { (lane: Int?, type: FinalCutPro.FCPXML.ElementType) in
+            lane == elementLane && type == elementType
+        }
     }
 }
 
@@ -137,10 +148,11 @@ extension FCPXMLElement {
     /// Returns `true` if element has an ancestor with the specified element type, excluding its
     /// immediate parent.
     func hasAncestorExcludingParent(
+        elementLane: Int?,
         ofType elementType: FinalCutPro.FCPXML.ElementType
     ) -> Bool {
         self.asAnyElement()
-            .hasAncestorExcludingParent(ofType: elementType)
+            .hasAncestorExcludingParent(elementLane: elementLane, ofType: elementType)
     }
 }
 

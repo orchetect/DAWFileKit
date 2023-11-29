@@ -115,51 +115,6 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         XCTAssertEqual(title2M2.context[.effectiveOcclusion], .notOccluded) // main timeline
     }
     
-//    /// Test main timeline markers extraction with limited occlusion conditions.
-//    func testExtractMarkers_MainTimeline_LimitedOcclusions() throws {
-//        // load file
-//        let rawData = try fileContents
-//        
-//        // parse file
-//        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-//        
-//        // event
-//        let event = try XCTUnwrap(fcpxml.allEvents().first)
-//        
-//        // extract markers
-//        let extractedMarkers = event.extractElements(preset: .markers, settings: .mainTimeline)
-//        XCTAssertEqual(extractedMarkers.count, 4)
-//        
-//        XCTAssertEqual(
-//            extractedMarkers.map(\.name),
-//            ["Marker on Start", "Marker in Middle", "Marker 1 Frame Before End", "Marker in Middle"]
-//        )
-//    }
-    
-//    /// Test main timeline markers extraction with all occlusion conditions.
-//    func testExtractMarkers_MainTimeline_AllOcclusions() throws {
-//        // load file
-//        let rawData = try fileContents
-//        
-//        // parse file
-//        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-//        
-//        // event
-//        let event = try XCTUnwrap(fcpxml.allEvents().first)
-//        
-//        // extract markers
-//        var settings = FinalCutPro.FCPXML.ExtractionSettings.mainTimeline
-//        settings.occlusions = .allCases
-//        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
-//        XCTAssertEqual(extractedMarkers.count, 7)
-//        
-//        XCTAssertEqual(
-//            extractedMarkers.map(\.name),
-//            ["Marker on Start", "Marker in Middle", "Marker 1 Frame Before End", "Marker on End",
-//             "Marker Before Start", "Marker in Middle", "Marker Past End"]
-//        )
-//    }
-    
     // MARK: - Utils
     
     func getSequence(
