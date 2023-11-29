@@ -21,4 +21,9 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension Set<FinalCutPro.FCPXML.ElementOcclusion> {
+    public static let allCases: Self = Set(FinalCutPro.FCPXML.ElementOcclusion.allCases)
+    
+}
+
 #endif

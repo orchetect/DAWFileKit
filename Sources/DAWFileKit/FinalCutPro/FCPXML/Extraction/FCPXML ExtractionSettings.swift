@@ -15,11 +15,14 @@ extension FinalCutPro.FCPXML {
         /// Filter to apply to Audition clip contents.
         public var auditions: FinalCutPro.FCPXML.Audition.Mask
         
+        /// Occlusion conditions of elements to include.
+        /// By default, all are included.
+        public var occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion>
+        
         /// Element types to filter during extraction.
         /// Any other element types will be excluded.
         /// This rule is superseded by ``excludedTypes`` or ``excludedAncestorTypes`` in the event
-        /// the
-        /// same type is in both.
+        /// the same type is in both.
         ///
         /// - Note: If this set is non-nil and empty, no elements will be extracted.
         public var filteredTypes: Set<FinalCutPro.FCPXML.ElementType>?
@@ -34,14 +37,16 @@ extension FinalCutPro.FCPXML {
         
         public init(
             auditions: FinalCutPro.FCPXML.Audition.Mask = .active,
+            occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion> = .allCases,
             filteredTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
             excludedTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedAncestorTypes: Set<FinalCutPro.FCPXML.ElementType> = []
         ) {
+            self.auditions = auditions
+            self.occlusions = occlusions
             self.filteredTypes = filteredTypes
             self.excludedTypes = excludedTypes
             self.excludedAncestorTypes = excludedAncestorTypes
-            self.auditions = auditions
         }
     }
 }
@@ -55,6 +60,7 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     ) -> FinalCutPro.FCPXML.ExtractionSettings {
         FinalCutPro.FCPXML.ExtractionSettings(
             auditions: .active,
+            occlusions: .allCases,
             filteredTypes: nil,
             excludedTypes: [],
             excludedAncestorTypes: []
@@ -65,6 +71,7 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     /// timeline.
     public static let mainTimeline = FinalCutPro.FCPXML.ExtractionSettings(
         auditions: .active,
+        occlusions: [.notOccluded, .partiallyOccluded],
         filteredTypes: nil,
         excludedTypes: [],
         excludedAncestorTypes: [

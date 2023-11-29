@@ -75,13 +75,18 @@ extension FCPXMLExtractable where Self: FCPXMLElement {
             return false
         }
         
-        // TODO: this needs unit testing
         if !settings.excludedAncestorTypes.isEmpty {
             for t in settings.excludedAncestorTypes {
                 if hasAncestorExcludingParent(ofType: t) {
                     return false
                 }
             }
+        }
+        
+        if let occlusion = context[.effectiveOcclusion],
+           !settings.occlusions.contains(occlusion)
+        {
+            return false
         }
         
         return true
