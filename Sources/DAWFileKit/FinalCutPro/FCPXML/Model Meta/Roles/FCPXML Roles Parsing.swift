@@ -19,10 +19,20 @@ extension FinalCutPro.FCPXML {
         for xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
         auditions: Audition.Mask // = .activeAudition
-    ) -> [AnyRole] {
+    ) -> [AnyInterpolatedRole] {
         guard let elementType = ElementType(from: xmlLeaf) else { return [] }
         
-        var localRoles: [AnyRole] = []
+        var localRoles: [(role: AnyRole, isInherited: Bool)] = []
+        
+        func add(role: AnyRole, isInherited: Bool) {
+            localRoles.append((role: role, isInherited: isInherited))
+        }
+        
+        func add(roles: [AnyRole], isInherited: Bool) {
+            for role in roles {
+                add(role: role, isInherited: isInherited)
+            }
+        }
         
         switch elementType {
         case let .story(storyElementType):
@@ -33,7 +43,7 @@ extension FinalCutPro.FCPXML {
                     if let rawString = xmlLeaf.attributeStringValue(forName: Caption.Attributes.role.rawValue),
                        let role = CaptionRole(rawValue: rawString)
                     {
-                        localRoles.append(.caption(role))
+                        add(role: .caption(role), isInherited: false)
                     }
                     
                 case .keyword:
@@ -57,9 +67,9 @@ extension FinalCutPro.FCPXML {
                     if let rawString = xmlLeaf.attributeStringValue(
                         forName: AssetClip.Attributes.videoRole.rawValue
                     ),
-                        let role = VideoRole(rawValue: rawString)
+                       let role = VideoRole(rawValue: rawString)
                     {
-                        localRoles.append(.video(role))
+                        add(role: .video(role), isInherited: false)
                     }
                     
                     let audioChannelSources = parseAudioChannelSources(from: xmlLeaf, resources: resources)
@@ -71,19 +81,19 @@ extension FinalCutPro.FCPXML {
                         ),
                            let role = AudioRole(rawValue: rawString)
                         {
-                            localRoles.append(.audio(role))
+                            add(role: .audio(role), isInherited: false)
                         }
                     } else {
                         // TODO: if audio channel source has a time range and it starts later than the clip's start, then do we assume FCP falls back to using the asset clip's audio role? not sure.
                         // TODO: also, what happens when there are multiple audio channel sources that overlap? or all lack a time range. does FCP use the topmost?
-                        localRoles.append(contentsOf: audioChannelSources.asAnyRoles())
+                        add(roles: audioChannelSources.asAnyRoles(), isInherited: false)
                     }
                     
                 case .audio:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Audio.Attributes.role.rawValue),
                        let role = AudioRole(rawValue: rawString)
                     {
-                        localRoles.append(.audio(role))
+                        add(role: .audio(role), isInherited: false)
                     }
                     
                 case .audition:
@@ -92,8 +102,16 @@ extension FinalCutPro.FCPXML {
                     break
                     
                 case .clip:
-                    let childRoles = rolesForNearestDescendant(of: xmlLeaf, resources: resources, auditions: auditions)
-                    localRoles.append(contentsOf: childRoles)
+                    // does not have roles itself.
+                    // instead, it inherits from its contents.
+                    let childRoles = rolesForNearestDescendant(
+                        of: xmlLeaf,
+                        resources: resources,
+                        auditions: auditions,
+                        firstGenerationOnly: true,
+                        firstElementEachGenerationOnly: false
+                    )
+                    add(roles: childRoles, isInherited: true)
                     
                 case .gap:
                     break
@@ -115,36 +133,71 @@ extension FinalCutPro.FCPXML {
                     // - the `mc-clip` inherits video role from the video angle's contents
                     // - the `mc-clip` inherits audio role from the audio angle's contents
                     
-                    // get `mc-clip`'s multicam sources
+                    // get multicam sources for `mc-clip`
                     
                     let sources = FinalCutPro.FCPXML.MCClip.parseMulticamSources(in: xmlLeaf)
                     guard !sources.isEmpty else { break }
                     
-                    // parse angles
+                    // parse media angles
                     
-                    let angles = FinalCutPro.FCPXML.Media.Multicam.parseAngles( // adds xmlLeaf as breadcrumb
-                        in: xmlLeaf,
-                        breadcrumbs: [],
-                        resources: resources,
-                        contextBuilder: .default
-                    )
+                    guard let ref = xmlLeaf.attributeStringValue(forName: "ref") else { break }
+                    
+                    guard let xmlResources = xmlLeaf.rootDocument?
+                        .children?
+                        .filter(elementName: FinalCutPro.FCPXML.FoundationElementType.fcpxml.rawValue)
+                        .first?
+                        .children?
+                        .filter(elementName: FinalCutPro.FCPXML.FoundationElementType.resources.rawValue)
+                        .first as? XMLElement
+                    else { break }
+                    
+                    guard let xmlMedia = xmlResources.childrenXMLElements.first(where: {
+                        $0.name == FinalCutPro.FCPXML.ResourceType.media.rawValue &&
+                        $0.attributeStringValue(forName: "id") == ref
+                    })
+                    else { break }
+                    
+                    guard let xmlMulticam = xmlMedia
+                        .first(childNamed: FinalCutPro.FCPXML.Media.Children.multicam.rawValue)
+                    else { break }
                     
                     // fetch angles being used
                     
-                    let (audioAngle, videoAngle) = angles.audioVideoAngles(for: sources)
+                    let (xmlAudioAngle, xmlVideoAngle) = FinalCutPro.FCPXML.audioVideoMCAnglesXMLFor(in: xmlMulticam, sources: sources)
                     
                     // use role from first story element within each angle
                     
-                    let audioAngleClip = audioAngle?.contents.first
-                    let audioAngleClipRoles = audioAngleClip?.context[.localRoles]?.audioRoles()
-                    localRoles.append(contentsOf: audioAngleClipRoles ?? [])
+                    if let angle = xmlAudioAngle {
+                        let roles = rolesForNearestDescendant(
+                            of: angle,
+                            resources: resources,
+                            auditions: auditions,
+                            firstGenerationOnly: true,
+                            firstElementEachGenerationOnly: false
+                        )
+                        .audioRoles()
+                        .map { $0.asAnyRole() }
+                        
+                        add(roles: roles, isInherited: true)
+                    }
                     
-                    let videoAngleClip = videoAngle?.contents.first
-                    let videoAngleClipRoles = videoAngleClip?.context[.localRoles]?.videoRoles()
-                    localRoles.append(contentsOf: videoAngleClipRoles ?? [])
+                    if let angle = xmlVideoAngle {
+                        let roles = rolesForNearestDescendant(
+                            of: angle,
+                            resources: resources,
+                            auditions: auditions,
+                            firstGenerationOnly: true,
+                            firstElementEachGenerationOnly: false
+                        )
+                        .videoRoles()
+                        .map { $0.asAnyRole() }
+                        
+                        add(roles: roles, isInherited: true)
+                    }
                     
                 case .refClip:
-                    // does not have video role itself. it references a sequence that may contain clips with their own roles.
+                    // does not have video role itself. it references a sequence that may contain
+                    // clips with their own roles.
                     // has audio subroles that are enable-able.
                     
                     let useAudioSubroles = xmlLeaf
@@ -153,7 +206,7 @@ extension FinalCutPro.FCPXML {
                         let audioRoleSources = FinalCutPro.FCPXML.parseAudioRoleSources(from: xmlLeaf)
                             .filter(\.active)
                         let audioRoles = audioRoleSources.asAnyRoles()
-                        localRoles.append(contentsOf: audioRoles)
+                        add(roles: audioRoles, isInherited: false)
                     }
                     
                 case .syncClip:
@@ -162,8 +215,14 @@ extension FinalCutPro.FCPXML {
                     // instead, we derive the video role from the sync clip's first video media.
                     // we'll also add any audio roles found in case sync sources are missing and
                     // audio roles can't be derived from them.
-                    let childRoles = rolesForNearestDescendant(of: xmlLeaf, resources: resources, auditions: auditions)
-                    localRoles.append(contentsOf: childRoles)
+                    let childRoles = rolesForNearestDescendant(
+                        of: xmlLeaf,
+                        resources: resources,
+                        auditions: auditions,
+                        firstGenerationOnly: true,
+                        firstElementEachGenerationOnly: true
+                    )
+                    add(roles: childRoles, isInherited: true)
                     
                     // the audio role may be present in a `sync-source` child of the sync clip.
                     let syncSources = FinalCutPro.FCPXML.parseSyncSources(from: xmlLeaf)
@@ -171,20 +230,20 @@ extension FinalCutPro.FCPXML {
                         let audioRoleSources = syncSources.flatMap(\.audioRoleSources)
                             .filter(\.active)
                         let audioRoles = audioRoleSources.map(\.role).asAnyRoles()
-                        localRoles.append(contentsOf: audioRoles)
+                        add(roles: audioRoles, isInherited: true)
                     }
                 case .title:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Title.Attributes.role.rawValue),
                        let role = VideoRole(rawValue: rawString)
                     {
-                        localRoles.append(.video(role))
+                        add(role: .video(role), isInherited: false)
                     }
                     
                 case .video:
                     if let rawString = xmlLeaf.attributeStringValue(forName: Video.Attributes.role.rawValue),
                        let role = VideoRole(rawValue: rawString)
                     {
-                        localRoles.append(.video(role))
+                        add(role: .video(role), isInherited: false)
                     }
                 }
                 
@@ -200,29 +259,70 @@ extension FinalCutPro.FCPXML {
             break
         }
         
-        return localRoles
+        let mappedRoles: [AnyInterpolatedRole] = localRoles.map {
+            $0.isInherited
+                ? .inherited($0.role)
+                : .assigned($0.role)
+        }
+        
+        return mappedRoles
     }
-    
-    /// Attempting to extract assigned roles for the first child clip found.
+}
+
+extension FinalCutPro.FCPXML {
+    /// Attempts to extract assigned roles for the first child clip found.
     static func rolesForNearestDescendant(
         of xmlLeaf: XMLElement,
         resources: [String: FinalCutPro.FCPXML.AnyResource],
-        auditions: Audition.Mask // = .activeAudition
+        auditions: Audition.Mask, // = .activeAudition
+        firstGenerationOnly: Bool,
+        firstElementEachGenerationOnly: Bool
     ) -> [AnyRole] {
-        let contents = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
+        let storyXMLElements = FinalCutPro.FCPXML.storyXMLElements(in: xmlLeaf)
         
-        guard let firstChild = contents.first else { return [] }
+        let elements = firstElementEachGenerationOnly
+            ? Array(storyXMLElements.prefix(1))
+            : storyXMLElements
         
-        let childRoles = Self.localRoles(for: firstChild, resources: resources, auditions: auditions)
+        for storyXMLElement in elements {
+            let roles = Self.localRoles(for: storyXMLElement, resources: resources, auditions: auditions)
+            // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
+            if !roles.isEmpty { return roles.map(\.wrapped) }
+            
+            if !firstGenerationOnly {
+                let childElements = firstElementEachGenerationOnly
+                    ? AnySequence(storyXMLElement.childrenXMLElements.prefix(1))
+                    : storyXMLElement.childrenXMLElements
+                
+                for child in childElements {
+                    let childRoles = Self.rolesForNearestDescendant(
+                        of: child,
+                        resources: resources,
+                        auditions: auditions,
+                        firstGenerationOnly: firstGenerationOnly,
+                        firstElementEachGenerationOnly: firstElementEachGenerationOnly
+                    )
+                    if !childRoles.isEmpty { return childRoles }
+                }
+            }
+        }
         
-        return childRoles
+        return []
     }
     
     static func addDefaultRoles(
         for elementType: ElementType,
         to localRoles: [AnyRole]
     ) -> [AnyInterpolatedRole] {
-        var localRoles: [AnyInterpolatedRole] = localRoles.map { .assigned($0) }
+        let localRoles: [AnyInterpolatedRole] = localRoles.map { .assigned($0) }
+        return addDefaultRoles(for: elementType, to: localRoles)
+    }
+    
+    static func addDefaultRoles(
+        for elementType: ElementType,
+        to localRoles: [AnyInterpolatedRole]
+    ) -> [AnyInterpolatedRole] {
+        var localRoles: [AnyInterpolatedRole] = localRoles
         
         // add default roles if needed
         let defaultRoles = defaultRoles(for: elementType)

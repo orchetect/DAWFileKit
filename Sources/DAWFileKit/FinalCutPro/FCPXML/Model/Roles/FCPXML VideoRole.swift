@@ -33,6 +33,18 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
     public var roleType: FinalCutPro.FCPXML.RoleType { .video }
     public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { .video(self) }
+    
+    public func lowercased() -> Self {
+        let role = role.lowercased()
+        let subRole = subRole?.lowercased()
+        return Self(role: role, subRole: subRole)
+    }
+    
+    public func titleCased() -> Self {
+        let role = role.titleCased
+        let subRole = subRole?.titleCased
+        return Self(role: role, subRole: subRole)
+    }
 }
 
 extension FinalCutPro.FCPXML.VideoRole: RawRepresentable {

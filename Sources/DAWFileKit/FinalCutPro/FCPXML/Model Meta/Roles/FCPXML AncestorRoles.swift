@@ -117,22 +117,23 @@ extension FinalCutPro.FCPXML {
         for index in elements.indices {
             let breadcrumb = elements[index]
             let isLastElement = index == elements.indices.last
-            let bcRoles = localRoles(
+            var bcRoles = localRoles(
                 for: breadcrumb,
                 resources: resources,
                 auditions: auditions
             )
+            
             guard let bcType = ElementType(from: breadcrumb) else { continue }
             
-            var defaultedRoles = addDefaultRoles(for: bcType, to: bcRoles)
+            bcRoles = addDefaultRoles(for: bcType, to: bcRoles)
             
             // differentiate assigned ancestor roles
             if !isLastElement {
-                defaultedRoles = defaultedRoles.replaceAssignedRolesWithInherited()
+                bcRoles = bcRoles.replacingAssignedRolesWithInherited()
             }
             
-            if !defaultedRoles.isEmpty {
-                let elementRoles = AncestorRoles.ElementRoles(elementType: bcType, roles: defaultedRoles)
+            if !bcRoles.isEmpty {
+                let elementRoles = AncestorRoles.ElementRoles(elementType: bcType, roles: bcRoles)
                 ancestorRoles.elements.append(elementRoles)
             }
         }
@@ -144,7 +145,7 @@ extension FinalCutPro.FCPXML {
 extension [FinalCutPro.FCPXML.AnyInterpolatedRole] {
     /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
     /// case instead.
-    func replaceAssignedRolesWithInherited() -> Self {
+    func replacingAssignedRolesWithInherited() -> Self {
         let roles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = map {
             switch $0 {
             case let .assigned(role):
@@ -160,10 +161,10 @@ extension [FinalCutPro.FCPXML.AnyInterpolatedRole] {
 extension FinalCutPro.FCPXML.AncestorRoles.ElementRoles {
     /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
     /// case instead.
-    func replaceAssignedRolesWithInherited() -> Self {
+    func replacingAssignedRolesWithInherited() -> Self {
         Self(
             elementType: elementType,
-            roles: roles.replaceAssignedRolesWithInherited()
+            roles: roles.replacingAssignedRolesWithInherited()
         )
     }
 }

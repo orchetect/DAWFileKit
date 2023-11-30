@@ -42,6 +42,10 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Media: FCPXMLResource {
+    public enum Element: String {
+        case name = "media"
+    }
+    
     /// Attributes unique to ``Media``.
     public enum Attributes: String, XMLParsableAttributesKey {
         case id

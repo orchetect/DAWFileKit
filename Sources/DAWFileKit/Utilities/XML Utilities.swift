@@ -16,9 +16,15 @@ extension XMLElement {
         parent as? XMLElement
     }
     
+    var childrenXMLElements: AnySequence<XMLElement> {
+        guard let children = children else { return .init([]) }
+        let seq = children.lazy.compactMap { $0 as? XMLElement }
+        return AnySequence(seq)
+    }
+    
     /// Returns the first immediate child whose element name matches the given string.
     func first(childNamed name: String) -> XMLElement? {
-        children?.first(where: { $0.name == name }) as? XMLElement
+        childrenXMLElements.first(where: { $0.name == name })
     }
 }
 

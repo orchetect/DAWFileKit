@@ -222,11 +222,41 @@ extension [FinalCutPro.FCPXML.Media.Multicam.Angle] {
 extension FinalCutPro.FCPXML {
     static func mcAnglesXML(in xmlLeaf: XMLElement) -> [XMLElement] {
         xmlLeaf.children?
-            .filter {
-                $0.name == FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue
-            }
+            .lazy
             .compactMap { $0 as? XMLElement }
+            .filter(\.isMCAngle)
         ?? []
+    }
+    
+    static func audioVideoMCAnglesXMLFor(
+        in xmlLeaf: XMLElement,
+        sources: [FinalCutPro.FCPXML.MCClip.MulticamSource]
+    ) -> (audio: XMLElement?, video: XMLElement?) {
+        let (audioAngleID, videoAngleID) = sources.audioVideoAngleIDs()
+        
+        let audioAngle = mcAnglesXML(in: xmlLeaf, forAngleID: audioAngleID)
+        let videoAngle = mcAnglesXML(in: xmlLeaf, forAngleID: videoAngleID)
+        
+        return (audio: audioAngle, video: videoAngle)
+    }
+    
+    static func mcAnglesXML(
+        in xmlLeaf: XMLElement,
+        forAngleID angleID: String?
+    ) -> XMLElement? {
+        guard let angleID = angleID else { return nil }
+        return mcAnglesXML(in: xmlLeaf)
+            .first(where: { $0.angleID == angleID })
+    }
+}
+
+extension XMLElement {
+    fileprivate var isMCAngle: Bool {
+        name == FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue
+    }
+    
+    fileprivate var angleID: String? {
+        attributeStringValue(forName: FinalCutPro.FCPXML.Media.Multicam.Angle.Attributes.angleID.rawValue)
     }
 }
 

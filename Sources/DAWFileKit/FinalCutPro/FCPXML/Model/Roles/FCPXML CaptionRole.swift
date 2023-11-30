@@ -43,6 +43,18 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
     public var roleType: FinalCutPro.FCPXML.RoleType { .caption }
     public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { .caption(self) }
+    
+    public func lowercased() -> Self {
+        let role = role.lowercased()
+        // caption format case shouldn't be modified
+        return Self(role: role, captionFormat: captionFormat)
+    }
+    
+    public func titleCased() -> Self {
+        let role = role.titleCased
+        // caption format case shouldn't be modified
+        return Self(role: role, captionFormat: captionFormat)
+    }
 }
 
 extension FinalCutPro.FCPXML.CaptionRole: RawRepresentable {

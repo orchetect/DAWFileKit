@@ -157,17 +157,17 @@ extension FinalCutPro.FCPXML {
         /// These roles are either attached to the element itself or in some cases are acquired from
         /// the element's contents.
         public func localRoles(includeDefaultRoles: Bool) -> [AnyRole] {
-            let elementRoles = FinalCutPro.FCPXML.localRoles(
+            var elementRoles = FinalCutPro.FCPXML.localRoles(
                 for: xmlLeaf,
                 resources: resources,
                 auditions: .active
             )
+            
             if includeDefaultRoles, let elementType = elementType {
-                let defaultedRoles = FinalCutPro.FCPXML.addDefaultRoles(for: elementType, to: elementRoles)
-                return defaultedRoles.map(\.wrapped)
-            } else {
-                return elementRoles
+                elementRoles = FinalCutPro.FCPXML.addDefaultRoles(for: elementType, to: elementRoles)
             }
+            
+            return elementRoles.map(\.wrapped)
         }
         
         /// Returns the effective roles of the element inherited from ancestors.

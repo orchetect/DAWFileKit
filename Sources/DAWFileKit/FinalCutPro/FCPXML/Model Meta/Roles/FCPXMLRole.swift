@@ -15,6 +15,12 @@ public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String {
     
     /// Returns the annotation as ``FinalCutPro/FCPXML/AnyRole``.
     func asAnyRole() -> FinalCutPro.FCPXML.AnyRole
+    
+    /// Returns the role with its string lowercased.
+    func lowercased() -> Self
+    
+    /// Returns the role with its string title-cased.
+    func titleCased() -> Self
 }
 
 // MARK: - Equatable
