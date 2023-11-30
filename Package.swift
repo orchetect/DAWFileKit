@@ -37,8 +37,8 @@ let package = Package(
             dependencies: ["DAWFileKit"],
             resources: [
                 .copy("Cubase/Resources/Cubase TrackArchive XML Exports"),
-                .copy("ProTools/Resources/PT Session Text Exports"),
-                .copy("FinalCutPro/Resources/FCPXML Exports")
+                .copy("ProTools/Resources/PT Session Text Exports")
+                // .copy("FinalCutPro/Resources/FCPXML Exports")
             ]
         )
     ]
