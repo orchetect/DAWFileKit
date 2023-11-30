@@ -23,7 +23,9 @@ public enum Cubase {
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
-    
+}
+
+extension Cubase {
     /// `Timecode` struct template.
     public static func formTimecode(
         realTime: TimeInterval,
