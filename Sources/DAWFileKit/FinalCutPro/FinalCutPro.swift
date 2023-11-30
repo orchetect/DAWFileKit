@@ -1,5 +1,5 @@
 //
-//  ProTools.swift
+//  FinalCutPro.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -7,25 +7,28 @@
 import Foundation
 import TimecodeKit
 
-/// Collection of methods and structures related to Pro Tools.
-public enum ProTools {
+/// Collection of methods and structures related to Final Cut Pro.
+/// Do not instance; use methods within directly.
+public enum FinalCutPro {
     /// `Timecode` setting for `.subFramesBase`.
-    /// Pro Tools uses 100 subframes per frame.
-    public static let timecodeSubFramesBase: Timecode.SubFramesBase = .max100SubFrames
+    /// Final Cut Pro uses 80 subframes per frame.
+    public static let timecodeSubFramesBase: Timecode.SubFramesBase = .max80SubFrames
     
     /// `Timecode` setting for `.upperLimit`.
-    /// Pro Tools uses a 24-hour SMPTE timecode clock.
+    /// Final Cut Pro is confined to a 24-hour SMPTE timecode clock.
     public static let timecodeUpperLimit: Timecode.UpperLimit = .max24Hours
+    
+    /// `Timecode` setting for `.stringFormat`.
+    public static let timecodeStringFormat: Timecode.StringFormat = []
 }
 
-extension ProTools {
+extension FinalCutPro {
     /// `Timecode` struct template.
     public static func formTimecode(
-        _ exactly: Timecode.Components,
         at rate: TimecodeFrameRate
-    ) throws -> Timecode {
-        try Timecode(
-            .components(exactly),
+    ) -> Timecode {
+        Timecode(
+            .zero,
             at: rate,
             base: timecodeSubFramesBase,
             limit: timecodeUpperLimit
@@ -34,24 +37,33 @@ extension ProTools {
     
     /// `Timecode` struct template.
     public static func formTimecode(
-        _ exactly: String,
+        rational: Fraction,
         at rate: TimecodeFrameRate
     ) throws -> Timecode {
         try Timecode(
-            .string(exactly),
+            .rational(rational),
             at: rate,
             base: timecodeSubFramesBase,
             limit: timecodeUpperLimit
         )
     }
     
+    
     /// `Timecode` struct template.
-    public static func formTimecode(
-        realTimeValue: TimeInterval,
+    public static func formTimecodeInterval(
         at rate: TimecodeFrameRate
-    ) throws -> Timecode {
-        try Timecode(
-            .realTime(seconds: realTimeValue),
+    ) -> TimecodeInterval {
+        let tc = formTimecode(at: rate)
+        return TimecodeInterval(tc)
+    }
+    
+    /// `Timecode` struct template.
+    public static func formTimecodeInterval(
+        rational: Fraction,
+        at rate: TimecodeFrameRate
+    ) throws -> TimecodeInterval {
+        try TimecodeInterval(
+            rational,
             at: rate,
             base: timecodeSubFramesBase,
             limit: timecodeUpperLimit
