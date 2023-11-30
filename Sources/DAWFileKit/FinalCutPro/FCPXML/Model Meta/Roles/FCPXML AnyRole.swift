@@ -62,7 +62,7 @@ extension FinalCutPro.FCPXML.AnyRole: FCPXMLRole {
             .asAnyRole()
     }
     
-    public var isBuiltIn: Bool { wrapped.isBuiltIn }
+    public var isMainRoleBuiltIn: Bool { wrapped.isMainRoleBuiltIn }
 }
 
 extension FinalCutPro.FCPXML.AnyRole: RawRepresentable {

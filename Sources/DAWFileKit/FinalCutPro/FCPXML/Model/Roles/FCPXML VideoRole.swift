@@ -60,15 +60,13 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
         return Self(role: newRole, subRole: newSubRole)
     }
     
-    public var isBuiltIn: Bool {
-        let collapsedRole = collapsingSubRole().rawValue
-        
-        let builtInRoles = [
+    public var isMainRoleBuiltIn: Bool {
+        let builtInMainRoles = [
             "video", "Video",
             "titles", "Titles"
         ]
         
-        return builtInRoles.contains(collapsedRole)
+        return builtInMainRoles.contains(role)
     }
     
     public var isSubRoleDerivedFromMainRole: Bool {

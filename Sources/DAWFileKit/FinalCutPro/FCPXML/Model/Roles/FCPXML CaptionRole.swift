@@ -62,7 +62,7 @@ extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
         return Self(role: role, captionFormat: captionFormat)
     }
     
-    public var isBuiltIn: Bool {
+    public var isMainRoleBuiltIn: Bool {
         let builtInRoles = [
             "iTT", "SRT", "CEA-608"
         ]

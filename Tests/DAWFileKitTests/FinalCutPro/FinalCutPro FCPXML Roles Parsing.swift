@@ -111,6 +111,79 @@ final class FinalCutPro_FCPXML_RolesParsing: FCPXMLTestCase {
         XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole-20").subRole, "SubRole-20")
     }
     
+    func testIsSMainRoleBuiltIn_Video() {
+        typealias VR = FinalCutPro.FCPXML.VideoRole
+        
+        XCTAssertFalse(VR(rawValue: "custom")!.isMainRoleBuiltIn)
+        XCTAssertFalse(VR(rawValue: "custom.custom")!.isMainRoleBuiltIn)
+        XCTAssertFalse(VR(rawValue: "custom.custom-1")!.isMainRoleBuiltIn)
+        XCTAssertFalse(VR(rawValue: "custom.video-1")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(VR(rawValue: "video")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "video.video-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "video.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(VR(rawValue: "Video")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "Video.Video-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "Video.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(VR(rawValue: "titles")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "titles.titles-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "titles.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(VR(rawValue: "Titles")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "Titles.Titles-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(VR(rawValue: "Titles.custom")!.isMainRoleBuiltIn)
+    }
+    
+    func testIsSMainRoleBuiltIn_Audio() {
+        typealias AR = FinalCutPro.FCPXML.AudioRole
+        
+        XCTAssertFalse(AR(rawValue: "custom")!.isMainRoleBuiltIn)
+        XCTAssertFalse(AR(rawValue: "custom.custom")!.isMainRoleBuiltIn)
+        XCTAssertFalse(AR(rawValue: "custom.custom-1")!.isMainRoleBuiltIn)
+        XCTAssertFalse(AR(rawValue: "custom.dialogue-1")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(AR(rawValue: "dialogue")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "dialogue.dialogue-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "dialogue.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(AR(rawValue: "Dialogue")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "Dialogue.Dialogue-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "Dialogue.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(AR(rawValue: "effects")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "effects.effects-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "effects.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(AR(rawValue: "Effects")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "Effects.Effects-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "Effects.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(AR(rawValue: "music")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "music.music-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "music.custom")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(AR(rawValue: "Music")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "Music.Music-1")!.isMainRoleBuiltIn)
+        XCTAssertTrue(AR(rawValue: "Music.custom")!.isMainRoleBuiltIn)
+    }
+    
+    func testIsSMainRoleBuiltIn_Caption() {
+        typealias CR = FinalCutPro.FCPXML.CaptionRole
+        
+        XCTAssertFalse(CR(rawValue: "custom?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertFalse(CR(rawValue: "video?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertFalse(CR(rawValue: "titles?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertFalse(CR(rawValue: "dialogue?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertFalse(CR(rawValue: "effects?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertFalse(CR(rawValue: "music?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        
+        XCTAssertTrue(CR(rawValue: "iTT?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertTrue(CR(rawValue: "SRT?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+        XCTAssertTrue(CR(rawValue: "CEA-608?captionFormat=ITT.en")!.isMainRoleBuiltIn)
+    }
+    
     func testLowercased() {
         typealias AR = FinalCutPro.FCPXML.AudioRole
         

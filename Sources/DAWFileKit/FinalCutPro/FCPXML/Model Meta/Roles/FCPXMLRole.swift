@@ -24,7 +24,7 @@ public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String {
     
     /// Returns `true` if the role is a built-in role in Final Cut Pro (and not a user-defined
     /// role).
-    var isBuiltIn: Bool { get }
+    var isMainRoleBuiltIn: Bool { get }
 }
 
 // MARK: - Equatable

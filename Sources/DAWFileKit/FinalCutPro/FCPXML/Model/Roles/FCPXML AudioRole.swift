@@ -61,16 +61,14 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
         return Self(role: newRole, subRole: newSubRole)
     }
     
-    public var isBuiltIn: Bool {
-        let collapsedRole = collapsingSubRole().rawValue
-        
-        let builtInRoles = [
+    public var isMainRoleBuiltIn: Bool {
+        let builtInMainRoles = [
             "dialogue", "Dialogue",
             "effects", "Effects",
             "music", "Music"
         ]
         
-        return builtInRoles.contains(collapsedRole)
+        return builtInMainRoles.contains(role)
     }
     
     public var isSubRoleDerivedFromMainRole: Bool {
