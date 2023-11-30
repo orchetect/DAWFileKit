@@ -21,6 +21,10 @@ public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String {
     
     /// Returns the role with its string title-cased.
     func titleCased() -> Self
+    
+    /// Returns `true` if the role is a built-in role in Final Cut Pro (and not a user-defined
+    /// role).
+    var isBuiltIn: Bool { get }
 }
 
 // MARK: - Equatable
@@ -176,7 +180,7 @@ public protocol FCPXMLCollapsibleRole: FCPXMLRole {
     /// >
     /// > This is provided merely as a convenience for representing simplified role names to the
     /// > user. It does not play a direct role in encoding or decoding FCPXML.
-    func collapsedSubRole() -> Self
+    func collapsingSubRole() -> Self
 }
 
 #endif

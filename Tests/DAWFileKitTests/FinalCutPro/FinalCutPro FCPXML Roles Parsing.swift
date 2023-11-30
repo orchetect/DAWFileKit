@@ -110,6 +110,30 @@ final class FinalCutPro_FCPXML_RolesParsing: FCPXMLTestCase {
         XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole-20").role, "Main")
         XCTAssertEqual(collapseStandardSubRole(role: "Main", subRole: "SubRole-20").subRole, "SubRole-20")
     }
+    
+    func testLowercased() {
+        typealias AR = FinalCutPro.FCPXML.AudioRole
+        
+        XCTAssertEqual(AR(rawValue: "dialogue")!.lowercased().rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "Dialogue")!.lowercased().rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.lowercased().rawValue, "dialogue")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.lowercased().rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.lowercased().rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.lowercased().rawValue, "dialogue.dialogue-1")
+    }
+    
+    func testTitleCased() {
+        typealias AR = FinalCutPro.FCPXML.AudioRole
+        
+        XCTAssertEqual(AR(rawValue: "dialogue")!.titleCased().rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "Dialogue")!.titleCased().rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.titleCased().rawValue, "Dialogue")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.titleCased().rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.titleCased().rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.titleCased().rawValue, "Dialogue.Dialogue-1")
+    }
 }
 
 #endif

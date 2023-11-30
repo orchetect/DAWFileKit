@@ -55,6 +55,14 @@ extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
         // caption format case shouldn't be modified
         return Self(role: role, captionFormat: captionFormat)
     }
+    
+    public var isBuiltIn: Bool {
+        let builtInRoles = [
+            "iTT", "SRT", "CEA-608"
+        ]
+        
+        return builtInRoles.contains(role)
+    }
 }
 
 extension FinalCutPro.FCPXML.CaptionRole: RawRepresentable {

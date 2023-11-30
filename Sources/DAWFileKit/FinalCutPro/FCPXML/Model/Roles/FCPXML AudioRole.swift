@@ -46,6 +46,18 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
         let subRole = subRole?.titleCased
         return Self(role: role, subRole: subRole)
     }
+    
+    public var isBuiltIn: Bool {
+        let collapsedRole = collapsingSubRole().rawValue
+        
+        let builtInRoles = [
+            "dialogue", "Dialogue",
+            "effects", "Effects",
+            "music", "Music"
+        ]
+        
+        return builtInRoles.contains(collapsedRole)
+    }
 }
 
 extension FinalCutPro.FCPXML.AudioRole: RawRepresentable {
@@ -73,7 +85,7 @@ extension FinalCutPro.FCPXML.AudioRole: CustomDebugStringConvertible {
 }
 
 extension FinalCutPro.FCPXML.AudioRole: FCPXMLCollapsibleRole {
-    public func collapsedSubRole() -> Self {
+    public func collapsingSubRole() -> Self {
         let collapsedValues = collapseStandardSubRole(role: role, subRole: subRole)
         return Self(role: collapsedValues.role, subRole: collapsedValues.subRole)
     }

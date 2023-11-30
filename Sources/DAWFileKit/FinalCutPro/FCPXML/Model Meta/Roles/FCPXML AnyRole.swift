@@ -53,6 +53,8 @@ extension FinalCutPro.FCPXML.AnyRole: FCPXMLRole {
     public func lowercased() -> Self { wrapped.lowercased().asAnyRole() }
     
     public func titleCased() -> Self { wrapped.titleCased().asAnyRole() }
+    
+    public var isBuiltIn: Bool { wrapped.isBuiltIn }
 }
 
 extension FinalCutPro.FCPXML.AnyRole: RawRepresentable {

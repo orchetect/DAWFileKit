@@ -45,6 +45,17 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
         let subRole = subRole?.titleCased
         return Self(role: role, subRole: subRole)
     }
+    
+    public var isBuiltIn: Bool {
+        let collapsedRole = collapsingSubRole().rawValue
+        
+        let builtInRoles = [
+            "video", "Video",
+            "titles", "Titles"
+        ]
+        
+        return builtInRoles.contains(collapsedRole)
+    }
 }
 
 extension FinalCutPro.FCPXML.VideoRole: RawRepresentable {
@@ -72,7 +83,7 @@ extension FinalCutPro.FCPXML.VideoRole: CustomDebugStringConvertible {
 }
 
 extension FinalCutPro.FCPXML.VideoRole: FCPXMLCollapsibleRole {
-    public func collapsedSubRole() -> Self {
+    public func collapsingSubRole() -> Self {
         let collapsedValues = collapseStandardSubRole(role: role, subRole: subRole)
         return Self(role: collapsedValues.role, subRole: collapsedValues.subRole)
     }
