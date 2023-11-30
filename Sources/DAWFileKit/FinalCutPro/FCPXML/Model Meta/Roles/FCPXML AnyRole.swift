@@ -50,9 +50,17 @@ extension FinalCutPro.FCPXML.AnyRole: FCPXMLRole {
     /// Redundant, but required to fulfill `FCPXMLRole` protocol requirements.
     public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { self }
     
-    public func lowercased() -> Self { wrapped.lowercased().asAnyRole() }
+    public func lowercased(derivedOnly: Bool) -> Self {
+        wrapped
+            .lowercased(derivedOnly: derivedOnly)
+            .asAnyRole()
+    }
     
-    public func titleCased() -> Self { wrapped.titleCased().asAnyRole() }
+    public func titleCased(derivedOnly: Bool) -> Self {
+        wrapped
+            .titleCased(derivedOnly: derivedOnly)
+            .asAnyRole()
+    }
     
     public var isBuiltIn: Bool { wrapped.isBuiltIn }
 }

@@ -17,10 +17,10 @@ public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String {
     func asAnyRole() -> FinalCutPro.FCPXML.AnyRole
     
     /// Returns the role with its string lowercased.
-    func lowercased() -> Self
+    func lowercased(derivedOnly: Bool) -> Self
     
     /// Returns the role with its string title-cased.
-    func titleCased() -> Self
+    func titleCased(derivedOnly: Bool) -> Self
     
     /// Returns `true` if the role is a built-in role in Final Cut Pro (and not a user-defined
     /// role).
@@ -144,20 +144,27 @@ func collapseStandardSubRole(
         return (role: inputRole, subRole: nil)
     }
     
-    guard inputSubRole.starts(with: inputRole) else {
-        return input
-    }
-    
-    let subRoleSuffix = inputSubRole.dropFirst(inputRole.count) // "-1", "-2", etc.
-    let pattern = #"^\-([\d]+)$"#
-    let suffixMatches = subRoleSuffix.regexMatches(pattern: pattern)
-    
-    // just ensure the suffix matches the expected pattern, we don't care about its actual contents
-    guard suffixMatches.count == 1 else {
+    guard isSubRole(inputSubRole, derivedFromMainRole: input.role) else {
         return input
     }
     
     return (role: input.role, subRole: nil)
+}
+
+func isSubRole(_ subRole: String?, derivedFromMainRole mainRole: String) -> Bool {
+    guard let subRole = subRole,
+          subRole.starts(with: mainRole)
+    else { return false }
+    
+    if mainRole == subRole { return true }
+    
+    // just ensure the suffix matches the expected pattern, we don't care about its actual contents
+    // since we already confirmed main role starts with the sub-role
+    let subRoleSuffix = subRole.dropFirst(mainRole.count) // "-1", "-2", etc.
+    let pattern = #"^\-([\d]+)$"#
+    let suffixMatches = subRoleSuffix.regexMatches(pattern: pattern)
+    
+    return suffixMatches.count == 1
 }
 
 public protocol FCPXMLCollapsibleRole: FCPXMLRole {

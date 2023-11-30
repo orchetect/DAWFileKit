@@ -114,25 +114,80 @@ final class FinalCutPro_FCPXML_RolesParsing: FCPXMLTestCase {
     func testLowercased() {
         typealias AR = FinalCutPro.FCPXML.AudioRole
         
-        XCTAssertEqual(AR(rawValue: "dialogue")!.lowercased().rawValue, "dialogue")
-        XCTAssertEqual(AR(rawValue: "Dialogue")!.lowercased().rawValue, "dialogue")
-        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.lowercased().rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "dialogue")!.lowercased(derivedOnly: false).rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "Dialogue")!.lowercased(derivedOnly: false).rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.lowercased(derivedOnly: false).rawValue, "dialogue")
         
-        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.lowercased().rawValue, "dialogue.dialogue-1")
-        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.lowercased().rawValue, "dialogue.dialogue-1")
-        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.lowercased().rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.lowercased(derivedOnly: false).rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.lowercased(derivedOnly: false).rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.lowercased(derivedOnly: false).rawValue, "dialogue.dialogue-1")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.mixl")!.lowercased(derivedOnly: false).rawValue, "dialogue.mixl")
+        XCTAssertEqual(AR(rawValue: "dialogue.MixL")!.lowercased(derivedOnly: false).rawValue, "dialogue.mixl")
+        XCTAssertEqual(AR(rawValue: "Dialogue.MixL")!.lowercased(derivedOnly: false).rawValue, "dialogue.mixl")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.MIXL")!.lowercased(derivedOnly: false).rawValue, "dialogue.mixl")
+    }
+    
+    func testLowercased_DerivedOnly() {
+        typealias AR = FinalCutPro.FCPXML.AudioRole
+        
+        XCTAssertEqual(AR(rawValue: "dialogue")!.lowercased(derivedOnly: true).rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "Dialogue")!.lowercased(derivedOnly: true).rawValue, "dialogue")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.lowercased(derivedOnly: true).rawValue, "dialogue")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.lowercased(derivedOnly: true).rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.lowercased(derivedOnly: true).rawValue, "dialogue.dialogue-1")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.lowercased(derivedOnly: true).rawValue, "dialogue.dialogue-1")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.mixl")!.lowercased(derivedOnly: true).rawValue, "dialogue.mixl")
+        XCTAssertEqual(AR(rawValue: "dialogue.MixL")!.lowercased(derivedOnly: true).rawValue, "dialogue.MixL")
+        XCTAssertEqual(AR(rawValue: "Dialogue.MixL")!.lowercased(derivedOnly: true).rawValue, "dialogue.MixL")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.MIXL")!.lowercased(derivedOnly: true).rawValue, "dialogue.MIXL")
     }
     
     func testTitleCased() {
         typealias AR = FinalCutPro.FCPXML.AudioRole
         
-        XCTAssertEqual(AR(rawValue: "dialogue")!.titleCased().rawValue, "Dialogue")
-        XCTAssertEqual(AR(rawValue: "Dialogue")!.titleCased().rawValue, "Dialogue")
-        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.titleCased().rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "dialogue")!.titleCased(derivedOnly: false).rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "Dialogue")!.titleCased(derivedOnly: false).rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.titleCased(derivedOnly: false).rawValue, "Dialogue")
         
-        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.titleCased().rawValue, "Dialogue.Dialogue-1")
-        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.titleCased().rawValue, "Dialogue.Dialogue-1")
-        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.titleCased().rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Dialogue-1")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.mixl")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Mixl")
+        XCTAssertEqual(AR(rawValue: "dialogue.MixL")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Mixl") // TODO: not ideal
+        XCTAssertEqual(AR(rawValue: "Dialogue.MixL")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Mixl") // TODO: not ideal
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.MIXL")!.titleCased(derivedOnly: false).rawValue, "Dialogue.Mixl") // TODO: not ideal
+    }
+    
+    func testTitleCased_DerivedOnly() {
+        typealias AR = FinalCutPro.FCPXML.AudioRole
+        
+        XCTAssertEqual(AR(rawValue: "dialogue")!.titleCased(derivedOnly: true).rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "Dialogue")!.titleCased(derivedOnly: true).rawValue, "Dialogue")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE")!.titleCased(derivedOnly: true).rawValue, "Dialogue")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.dialogue-1")!.titleCased(derivedOnly: true).rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "Dialogue.Dialogue-1")!.titleCased(derivedOnly: true).rawValue, "Dialogue.Dialogue-1")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.DIALOGUE-1")!.titleCased(derivedOnly: true).rawValue, "Dialogue.Dialogue-1")
+        
+        XCTAssertEqual(AR(rawValue: "dialogue.mixl")!.titleCased(derivedOnly: true).rawValue, "Dialogue.mixl")
+        XCTAssertEqual(AR(rawValue: "dialogue.MixL")!.titleCased(derivedOnly: true).rawValue, "Dialogue.MixL")
+        XCTAssertEqual(AR(rawValue: "Dialogue.MixL")!.titleCased(derivedOnly: true).rawValue, "Dialogue.MixL")
+        XCTAssertEqual(AR(rawValue: "DIALOGUE.MIXL")!.titleCased(derivedOnly: true).rawValue, "Dialogue.MIXL")
+    }
+    
+    func testIsSubRoleDerivedFromMainRole() {
+        XCTAssertFalse(isSubRole(nil, derivedFromMainRole: "Dialogue"))
+        XCTAssertFalse(isSubRole("", derivedFromMainRole: "Dialogue"))
+        XCTAssertFalse(isSubRole(" ", derivedFromMainRole: "Dialogue"))
+        XCTAssertFalse(isSubRole("Dial", derivedFromMainRole: "Dialogue"))
+        XCTAssertFalse(isSubRole("Video", derivedFromMainRole: "Dialogue"))
+        
+        XCTAssertTrue(isSubRole("Dialogue", derivedFromMainRole: "Dialogue"))
+        XCTAssertTrue(isSubRole("Dialogue-1", derivedFromMainRole: "Dialogue"))
     }
 }
 

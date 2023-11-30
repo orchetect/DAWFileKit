@@ -35,16 +35,30 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
     public var roleType: FinalCutPro.FCPXML.RoleType { .audio }
     public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole { .audio(self) }
     
-    public func lowercased() -> Self {
-        let role = role.lowercased()
-        let subRole = subRole?.lowercased()
-        return Self(role: role, subRole: subRole)
+    public func lowercased(derivedOnly: Bool) -> Self {
+        let newRole: String = role.lowercased()
+        var newSubRole: String?
+        
+        if derivedOnly, !isSubRoleDerivedFromMainRole {
+            newSubRole = subRole
+        } else {
+            newSubRole = subRole?.lowercased()
+        }
+        
+        return Self(role: newRole, subRole: newSubRole)
     }
     
-    public func titleCased() -> Self {
-        let role = role.titleCased
-        let subRole = subRole?.titleCased
-        return Self(role: role, subRole: subRole)
+    public func titleCased(derivedOnly: Bool) -> Self {
+        let newRole: String = role.titleCased
+        var newSubRole: String?
+        
+        if derivedOnly, !isSubRoleDerivedFromMainRole {
+            newSubRole = subRole
+        } else {
+            newSubRole = subRole?.titleCased
+        }
+        
+        return Self(role: newRole, subRole: newSubRole)
     }
     
     public var isBuiltIn: Bool {
@@ -57,6 +71,10 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
         ]
         
         return builtInRoles.contains(collapsedRole)
+    }
+    
+    public var isSubRoleDerivedFromMainRole: Bool {
+        isSubRole(subRole, derivedFromMainRole: role)
     }
 }
 
