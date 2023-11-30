@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import XCTest
-/* @testable */ import DAWFileKit
+@testable import DAWFileKit
 import OTCore
 import TimecodeKit
 
@@ -33,7 +33,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // resources
-        let resources = fcpxml.resources()
+        // let resources = fcpxml.resources()
         
         // events
         let events = fcpxml.allEvents()
@@ -75,6 +75,56 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         XCTAssertEqual(mcClip1.context[.absoluteStart], Self.tc("01:00:00:00", .fps23_976))
         XCTAssertEqual(mcClip1.context[.occlusion], .notOccluded)
         XCTAssertEqual(mcClip1.context[.effectiveOcclusion], .notOccluded)
+        XCTAssertEqual(mcClip1.context[.localRoles], [
+            FinalCutPro.FCPXML.defaultAudioRole,
+            FinalCutPro.FCPXML.defaultVideoRole
+        ])
+        // TODO: should return effective roles from angles referenced?
+        XCTAssertEqual(mcClip1.context[.inheritedRoles], [
+            .defaulted(FinalCutPro.FCPXML.defaultAudioRole),
+            .defaulted(FinalCutPro.FCPXML.defaultVideoRole)
+        ])
+        
+        // mc-clip 1 multicam media (same media used for mc-clip 2)
+        
+        let mc = mcClip1.multicam
+        
+        XCTAssertEqual(mc.format, "r1")
+        XCTAssertEqual(mc.tcStart, Self.tc("00:00:00:00", .fps23_976))
+        XCTAssertEqual(mc.angles.count, 5)
+        // XCTAssertEqual(mc.context[.localRoles], []) // multicam media does not have roles itself
+        // XCTAssertEqual(mc.context[.inheritedRoles], [
+        //     .defaulted(FinalCutPro.FCPXML.defaultVideoRole)
+        // ])
+        
+        // multicam media angles
+        
+        let mcAngle1 = try XCTUnwrap(mc.angles[safe: 0])
+        XCTAssertEqual(mcAngle1.name, "A")
+        XCTAssertEqual(mcAngle1.angleID, "+L5xmXXnRXOGdjFq1Eo7EQ")
+        XCTAssertEqual(mcAngle1.contents.count, 2)
+        
+        let mcAngle2 = try XCTUnwrap(mc.angles[safe: 1])
+        XCTAssertEqual(mcAngle2.name, "B")
+        XCTAssertEqual(mcAngle2.angleID, "FCw5EnkUQcOHu8fwK2TiQQ")
+        XCTAssertEqual(mcAngle2.contents.count, 2)
+        
+        let mcAngle3 = try XCTUnwrap(mc.angles[safe: 2])
+        XCTAssertEqual(mcAngle3.name, "C")
+        XCTAssertEqual(mcAngle3.angleID, "LphqqelgRX6/pXqi35MoGA")
+        XCTAssertEqual(mcAngle3.contents.count, 2)
+        
+        let mcAngle4 = try XCTUnwrap(mc.angles[safe: 3])
+        XCTAssertEqual(mcAngle4.name, "D")
+        XCTAssertEqual(mcAngle4.angleID, "gA31yYbYRRSetqQyxAwC8g")
+        XCTAssertEqual(mcAngle4.contents.count, 2)
+        
+        let mcAngle5 = try XCTUnwrap(mc.angles[safe: 4])
+        XCTAssertEqual(mcAngle5.name, "Music Angle")
+        XCTAssertEqual(mcAngle5.angleID, "9jilYFZRQZ+GI27X4ckxpQ")
+        XCTAssertEqual(mcAngle5.contents.count, 1)
+        
+        // mc-clip 1 marker on main timeline
         
         let mc1Markers = mcClip1.contents.annotations().markers()
         XCTAssertEqual(mc1Markers.count, 1)
@@ -84,7 +134,11 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         XCTAssertEqual(mc1Marker.context[.absoluteStart], Self.tc("01:00:01:09", .fps23_976))
         XCTAssertEqual(mc1Marker.context[.occlusion], .notOccluded) // within mc-clip 1
         XCTAssertEqual(mc1Marker.context[.effectiveOcclusion], .notOccluded) // main timeline
-        // TODO: test roles
+        XCTAssertEqual(mc1Marker.context[.localRoles], []) // markers never contain roles
+        XCTAssertEqual(mc1Marker.context[.inheritedRoles], [
+            .defaulted(FinalCutPro.FCPXML.defaultAudioRole),
+            .defaulted(FinalCutPro.FCPXML.defaultVideoRole)
+        ])
         
         // mc-clip 2
         
@@ -103,6 +157,16 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         XCTAssertEqual(mcClip2.context[.absoluteStart], Self.tc("01:00:40:00", .fps23_976))
         XCTAssertEqual(mcClip2.context[.occlusion], .notOccluded)
         XCTAssertEqual(mcClip2.context[.effectiveOcclusion], .notOccluded)
+        XCTAssertEqual(mcClip2.context[.localRoles], [
+            FinalCutPro.FCPXML.defaultAudioRole,
+            FinalCutPro.FCPXML.defaultVideoRole
+        ])
+        XCTAssertEqual(mcClip2.context[.inheritedRoles], [
+            .defaulted(FinalCutPro.FCPXML.defaultAudioRole),
+            .defaulted(FinalCutPro.FCPXML.defaultVideoRole)
+        ])
+        
+        // mc-clip 2 marker on main timeline
         
         let mc2Markers = mcClip2.contents.annotations().markers()
         XCTAssertEqual(mc2Markers.count, 1)
@@ -112,7 +176,11 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         XCTAssertEqual(mc2Marker.context[.absoluteStart], Self.tc("01:00:44:08", .fps23_976))
         XCTAssertEqual(mc2Marker.context[.occlusion], .notOccluded) // within mc-clip 2
         XCTAssertEqual(mc2Marker.context[.effectiveOcclusion], .notOccluded) // main timeline
-        // TODO: test roles
+        XCTAssertEqual(mc2Marker.context[.localRoles], []) // markers never contain roles
+        XCTAssertEqual(mc2Marker.context[.inheritedRoles], [
+            .defaulted(FinalCutPro.FCPXML.defaultAudioRole),
+            .defaulted(FinalCutPro.FCPXML.defaultVideoRole)
+        ])
     }
     
     /// Test main timeline markers extraction with limited occlusion conditions.
@@ -192,17 +260,6 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
             "Marker in Multicam Clip on Angle D", // within mc-clip 2
             "Marker in Multicam Clip on Audio", // within mc-clip 2
         ])
-    }
-    
-    // MARK: - Utils
-    
-    func getSequence(
-        from refClip: FinalCutPro.FCPXML.RefClip
-    ) -> FinalCutPro.FCPXML.Sequence? {
-        guard case let .sequence(sequence) = refClip.mediaType
-        else { return nil }
-        
-        return sequence
     }
 }
 

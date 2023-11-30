@@ -15,7 +15,7 @@ extension FinalCutPro.FCPXML {
     /// Adds the following contextual information:
     ///
     /// - ``FinalCutPro/FCPXML/ContextKey/absoluteStart``
-    /// - ``FinalCutPro/FCPXML/ContextKey/roles``
+    /// - ``FinalCutPro/FCPXML/ContextKey/localRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/inheritedRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/occlusion``
     /// - ``FinalCutPro/FCPXML/ContextKey/effectiveOcclusion``
@@ -33,7 +33,7 @@ extension FinalCutPro.FCPXML {
             { element, breadcrumbs, resources, tools in
                 var dict: FinalCutPro.FCPXML.ElementContext = [:]
                 dict[.absoluteStart] = tools.absoluteStart
-                dict[.roles] = tools.roles(includeDefaultRoles: true)
+                dict[.localRoles] = tools.localRoles(includeDefaultRoles: true)
                 dict[.inheritedRoles] = tools.inheritedRoles
                 dict[.occlusion] = tools.occlusion
                 dict[.effectiveOcclusion] = tools.effectiveOcclusion
@@ -58,7 +58,7 @@ extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.DefaultCo
     /// Adds the following contextual information:
     ///
     /// - ``FinalCutPro/FCPXML/ContextKey/absoluteStart``
-    /// - ``FinalCutPro/FCPXML/ContextKey/roles``
+    /// - ``FinalCutPro/FCPXML/ContextKey/localRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/inheritedRoles``
     /// - ``FinalCutPro/FCPXML/ContextKey/occlusion``
     /// - ``FinalCutPro/FCPXML/ContextKey/effectiveOcclusion``
@@ -79,7 +79,7 @@ extension FCPXMLElementContextBuilder where Self == FinalCutPro.FCPXML.DefaultCo
 extension FinalCutPro.FCPXML.ContextKey {
     fileprivate enum Key: String {
         case absoluteStart
-        case roles
+        case localRoles
         case inheritedRoles
         case occlusion
         case effectiveOcclusion
@@ -97,10 +97,12 @@ extension FinalCutPro.FCPXML.ContextKey {
         .init(key: Key.absoluteStart)
     }
     
-    /// The element's own roles, if applicable or present.
+    /// The element's local roles, if applicable or present.
+    /// These roles are either attached to the element itself or in some cases are acquired from
+    /// the element's contents.
     /// Includes default roles if none are specified and if applicable.
-    public static var roles: FinalCutPro.FCPXML.ContextKey<[FinalCutPro.FCPXML.AnyRole]> {
-        .init(key: Key.roles)
+    public static var localRoles: FinalCutPro.FCPXML.ContextKey<[FinalCutPro.FCPXML.AnyRole]> {
+        .init(key: Key.localRoles)
     }
     
     /// Returns the effective roles of the element inherited from ancestors.

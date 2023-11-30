@@ -153,10 +153,12 @@ extension FinalCutPro.FCPXML {
             )
         }
         
-        /// The element's own roles, if applicable or present.
-        public func roles(includeDefaultRoles: Bool) -> [AnyRole] {
-            let elementRoles = FinalCutPro.FCPXML.roles(
-                of: xmlLeaf,
+        /// The element's local roles, if applicable or present.
+        /// These roles are either attached to the element itself or in some cases are acquired from
+        /// the element's contents.
+        public func localRoles(includeDefaultRoles: Bool) -> [AnyRole] {
+            let elementRoles = FinalCutPro.FCPXML.localRoles(
+                for: xmlLeaf,
                 resources: resources,
                 auditions: .active
             )

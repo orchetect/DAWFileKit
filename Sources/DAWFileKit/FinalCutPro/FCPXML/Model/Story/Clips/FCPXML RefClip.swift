@@ -33,9 +33,7 @@ extension FinalCutPro.FCPXML {
         public var audioRoleSources: [AudioRoleSource]
         
         @EquatableAndHashableExempt
-        public var refMedia: Media
-        @EquatableAndHashableExempt
-        public var mediaType: FinalCutPro.FCPXML.Media.MediaType
+        public var sequence: FinalCutPro.FCPXML.Sequence
         
         public var contents: [AnyStoryElement]
         
@@ -59,8 +57,7 @@ extension FinalCutPro.FCPXML {
             ref: String,
             useAudioSubroles: Bool,
             audioRoleSources: [AudioRoleSource],
-            refMedia: Media,
-            mediaType: FinalCutPro.FCPXML.Media.MediaType,
+            sequence: FinalCutPro.FCPXML.Sequence,
             contents: [AnyStoryElement],
             // FCPXMLAnchorableAttributes
             lane: Int?,
@@ -76,8 +73,7 @@ extension FinalCutPro.FCPXML {
             self.ref = ref
             self.useAudioSubroles = useAudioSubroles
             self.audioRoleSources = audioRoleSources
-            self.refMedia = refMedia
-            self.mediaType = mediaType
+            self.sequence = sequence
             self.contents = contents
             
             // FCPXMLAnchorableAttributes
@@ -122,14 +118,15 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLClip {
         
         // AFAIK `media` is the only resource type usable by a `ref-clip`
         guard case let .media(refMedia) = resources[ref] else { return nil }
-        self.refMedia = refMedia
         
+        // AFAIK `sequence` is the only resource container usable by a `ref-clip`
         guard let mediaType = refMedia.generateMediaType(
             breadcrumbs: breadcrumbs + [xmlLeaf],
             resources: resources,
             contextBuilder: contextBuilder
         ) else { return nil }
-        self.mediaType = mediaType
+        guard case let .sequence(sequence) = mediaType else { return nil }
+        self.sequence = sequence
         
         contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
             in: xmlLeaf,
@@ -174,11 +171,7 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLExtractable {
     }
     
     public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        // resource may contain story elements
-        let mtElements = mediaType.extractableElements()
-        let mtChildren = mediaType.extractableChildren()
-        
-        return contents.asAnyElements() + mtElements + mtChildren
+        contents.asAnyElements() + [sequence.asAnyElement()]
     }
 }
 

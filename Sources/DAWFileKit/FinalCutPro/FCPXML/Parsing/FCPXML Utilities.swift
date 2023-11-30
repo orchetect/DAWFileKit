@@ -292,6 +292,24 @@ extension FinalCutPro.FCPXML {
     /// Utility:
     /// If the resource with the given ID is a format, it is returned.
     /// Otherwise, references are followed until a format is found.
+    static func media(
+        forResourceID resourceID: String,
+        in resources: [String: FinalCutPro.FCPXML.AnyResource]
+    ) -> Media? {
+        guard let resource = resources[resourceID]
+        else { return nil }
+        
+        switch resource {
+        case let .media(media):
+            return media
+        default:
+            return nil
+        }
+    }
+    
+    /// Utility:
+    /// If the resource with the given ID is a format, it is returned.
+    /// Otherwise, references are followed until a format is found.
     static func format(
         forResourceID resourceID: String,
         in resources: [String: FinalCutPro.FCPXML.AnyResource]

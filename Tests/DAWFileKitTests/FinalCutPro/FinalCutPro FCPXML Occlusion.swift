@@ -33,7 +33,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // resources
-        let resources = fcpxml.resources()
+        // let resources = fcpxml.resources()
         
         // events
         let events = fcpxml.allEvents()
@@ -147,7 +147,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(refClip1.name, "Occlusion Clip 1")
         
-        let refClip1Sequence = try XCTUnwrap(getSequence(from: refClip1))
+        let refClip1Sequence = refClip1.sequence
         XCTAssertEqual(refClip1Sequence.context[.occlusion], .notOccluded)
         XCTAssertEqual(refClip1Sequence.context[.effectiveOcclusion], .notOccluded)
         
@@ -162,7 +162,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(refClip2.name, "Occlusion Clip 2")
         
-        let refClip2Sequence = try XCTUnwrap(getSequence(from: refClip2))
+        let refClip2Sequence = refClip2.sequence
         XCTAssertEqual(refClip2Sequence.context[.occlusion], .partiallyOccluded)
         XCTAssertEqual(refClip2Sequence.context[.effectiveOcclusion], .partiallyOccluded)
         
@@ -177,7 +177,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         else { XCTFail("Clip was not expected type.") ; return }
         XCTAssertEqual(refClip3.name, "Occlusion Clip 3")
         
-        let refClip3Sequence = try XCTUnwrap(getSequence(from: refClip3))
+        let refClip3Sequence = refClip3.sequence
         XCTAssertEqual(refClip3Sequence.context[.occlusion], .partiallyOccluded)
         XCTAssertEqual(refClip3Sequence.context[.effectiveOcclusion], .partiallyOccluded)
         
@@ -230,17 +230,6 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
             ["Marker on Start", "Marker in Middle", "Marker 1 Frame Before End", "Marker on End",
              "Marker Before Start", "Marker in Middle", "Marker Past End"]
         )
-    }
-    
-    // MARK: - Utils
-    
-    func getSequence(
-        from refClip: FinalCutPro.FCPXML.RefClip
-    ) -> FinalCutPro.FCPXML.Sequence? {
-        guard case let .sequence(sequence) = refClip.mediaType
-        else { return nil }
-        
-        return sequence
     }
 }
 

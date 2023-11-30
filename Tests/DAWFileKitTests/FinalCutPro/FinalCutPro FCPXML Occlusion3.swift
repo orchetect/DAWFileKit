@@ -33,7 +33,7 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // resources
-        let resources = fcpxml.resources()
+        // let resources = fcpxml.resources()
         
         // events
         let events = fcpxml.allEvents()
@@ -184,17 +184,6 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(extractedMarkers.map(\.name), ["Marker 1", "Marker 2"])
-    }
-    
-    // MARK: - Utils
-    
-    func getSequence(
-        from refClip: FinalCutPro.FCPXML.RefClip
-    ) -> FinalCutPro.FCPXML.Sequence? {
-        guard case let .sequence(sequence) = refClip.mediaType
-        else { return nil }
-        
-        return sequence
     }
 }
 

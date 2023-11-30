@@ -117,8 +117,8 @@ extension FinalCutPro.FCPXML {
         for index in elements.indices {
             let breadcrumb = elements[index]
             let isLastElement = index == elements.indices.last
-            let bcRoles = roles(
-                of: breadcrumb,
+            let bcRoles = localRoles(
+                for: breadcrumb,
                 resources: resources,
                 auditions: auditions
             )

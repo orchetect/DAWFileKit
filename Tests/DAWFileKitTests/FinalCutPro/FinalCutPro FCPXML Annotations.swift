@@ -250,7 +250,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(element1Caption0.enabled, false)
         XCTAssertEqual(element1Caption0.context[.absoluteStart], Self.tc("01:00:03:00", .fps25))
         XCTAssertEqual(
-            element1Caption0.context[.roles],
+            element1Caption0.context[.localRoles],
             [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
         )
         XCTAssertEqual(
@@ -291,7 +291,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(element1Caption1.enabled, true)
         XCTAssertEqual(element1Caption1.context[.absoluteStart], Self.tc("01:00:09:10", .fps25))
         XCTAssertEqual(
-            element1Caption1.context[.roles],
+            element1Caption1.context[.localRoles],
             [FinalCutPro.FCPXML.CaptionRole(rawValue: "iTT?captionFormat=ITT.en")!.asAnyRole()]
         )
         XCTAssertEqual(
