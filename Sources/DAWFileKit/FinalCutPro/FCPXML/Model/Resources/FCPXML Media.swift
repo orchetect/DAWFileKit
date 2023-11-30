@@ -61,10 +61,9 @@ extension FinalCutPro.FCPXML.Media: FCPXMLResource {
         name = rawValues[.name]
         
         // contents
-        if let multicamXML = xmlLeaf.first(childNamed: Children.multicam.rawValue),
-           let mc = Multicam(from: multicamXML)
+        if let multicamXML = xmlLeaf.first(childNamed: Children.multicam.rawValue)
         {
-            contents = .multicam(mc)
+            contents = .multicam(fromXML: multicamXML, parentMediaXML: xmlLeaf)
         }
         else if let sequenceXML = xmlLeaf.first(childNamed: Children.sequence.rawValue)
         {
@@ -82,9 +81,12 @@ extension FinalCutPro.FCPXML.Media: FCPXMLResource {
 
 extension FinalCutPro.FCPXML.Media {
     public enum IntermediateMediaType: Equatable, Hashable {
-        case multicam(_ multicam: Multicam)
+        // can't store `FinalCutPro.FCPXML.Multicam` because it requires resources to already have
+        // been parsed to construct. so as a workaround we'll store raw XML here so we can
+        // parse it later after the complete collection of resources have been parsed.
+        case multicam(fromXML: XMLElement, parentMediaXML: XMLElement)
         
-        // can't store FinalCutPro.FCPXML.Sequence because it requires resources to already have
+        // can't store `FinalCutPro.FCPXML.Sequence` because it requires resources to already have
         // been parsed to construct. so as a workaround we'll store raw XML here so we can
         // parse it later after the complete collection of resources have been parsed.
         case sequence(fromXML: XMLElement, parentMediaXML: XMLElement)
@@ -92,6 +94,7 @@ extension FinalCutPro.FCPXML.Media {
 }
 
 extension FinalCutPro.FCPXML.Media {
+    // TODO: factor out? RefClip AFAIK can only reference a Media resource containing a Sequence, and MCClip can only reference a Media resource containing a Multicam container.
     public enum MediaType: Equatable, Hashable {
         case multicam(_ multicam: FinalCutPro.FCPXML.Media.Multicam)
         case sequence(_ sequence: FinalCutPro.FCPXML.Sequence)
@@ -105,7 +108,13 @@ extension FinalCutPro.FCPXML.Media {
         guard let mediaContents = contents else { return nil }
         
         switch mediaContents {
-        case let .multicam(multicam): // TODO: AFAIK RefClip can never contain a `multicam` element
+        case let .multicam(sequenceXML, parentMediaXML):
+            guard let multicam = FinalCutPro.FCPXML.Media.Multicam(
+                from: sequenceXML,
+                breadcrumbs: breadcrumbs + [parentMediaXML],
+                resources: resources,
+                contextBuilder: contextBuilder
+            ) else { return nil }
             return .multicam(multicam)
             
         case let .sequence(sequenceXML, parentMediaXML):
@@ -127,9 +136,9 @@ extension FinalCutPro.FCPXML.Media.MediaType: FCPXMLExtractable {
     
     public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
         switch self {
-        case .multicam(_):
-            // TODO: AFAIK RefClip can never contain a `multicam` element
-            return []
+        case let .multicam(multicam):
+            // `Multicam` doesn't conform to FCPXMLElement and can't be wrapped with AnyElement
+            return multicam.extractableChildren()
             
         case let .sequence(sequence):
             return [sequence.asAnyElement()]
@@ -138,7 +147,8 @@ extension FinalCutPro.FCPXML.Media.MediaType: FCPXMLExtractable {
 }
 
 extension FinalCutPro.FCPXML.Media {
-    /// A multicam element contains one or more mc-angle elements that each manage a series of other story elements.
+    /// A multi-camera element contains one or more `mc-angle` elements that each manage a series of
+    /// other story elements.
     public struct Multicam: Equatable, Hashable {
         public var format: String?
         
@@ -164,7 +174,12 @@ extension FinalCutPro.FCPXML.Media.Multicam {
         case mcAngle = "mc-angle"
     }
     
-    public init?(from xmlLeaf: XMLElement) {
+    public init?(
+        from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
+    ) {
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         // validate element name
@@ -174,16 +189,29 @@ extension FinalCutPro.FCPXML.Media.Multicam {
         format = rawValues[.format]
         
         // angles
-        let angleChildren = xmlLeaf.children?
-            .filter { $0.name == Children.mcAngle.rawValue }
-            .compactMap { $0 as? XMLElement }
-        ?? []
-        angles = angleChildren.compactMap { Angle(from: $0) }
+        angles = Self.parseAngles( // adds xmlLeaf as breadcrumb
+            in: xmlLeaf,
+            breadcrumbs: breadcrumbs,
+            resources: resources,
+            contextBuilder: contextBuilder
+        )
+    }
+}
+
+extension FinalCutPro.FCPXML.Media.Multicam: FCPXMLExtractable {
+    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
+        []
+    }
+    
+    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
+        // `Multicam.Angle` doesn't conform to FCPXMLElement and can't be wrapped with AnyElement
+        angles.flatMap { $0.contents.asAnyElements() }
     }
 }
 
 extension FinalCutPro.FCPXML.Media.Multicam {
     /// A container of story elements organized sequentially in time.
+    /// Similar to a `sequence`.
     public struct Angle: Equatable, Hashable {
         /// Angle name.
         public var name: String?
@@ -195,7 +223,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
         // been parsed to construct. so as a workaround we'll store raw XML here so we can
         // parse it later after the complete collection of resources have been parsed.
         /// Story elements contained in the angle.
-        public var contents: [XMLElement]
+        public var contents: [FinalCutPro.FCPXML.AnyStoryElement]
         
         /// Indicates which source to use, if any, from the angle.
         /// Use one of the following: `audio`, `video`, `all`, or `none`.
@@ -204,7 +232,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
         public init(
             name: String? = nil,
             angleID: String? = nil,
-            contents: [XMLElement] = [],
+            contents: [FinalCutPro.FCPXML.AnyStoryElement] = [],
             srcEnable: String? = nil
         ) {
             self.name = name
@@ -212,6 +240,28 @@ extension FinalCutPro.FCPXML.Media.Multicam {
             self.contents = contents
             self.srcEnable = srcEnable
         }
+    }
+    
+    static func parseAngles(
+        in xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
+    ) -> [Angle] {
+        let angleChildren = xmlLeaf.children?
+            .filter { $0.name == Children.mcAngle.rawValue }
+            .compactMap { $0 as? XMLElement }
+        ?? []
+        
+        let angles = angleChildren.compactMap {
+            Angle(
+                from: $0,
+                breadcrumbs: breadcrumbs + [xmlLeaf],
+                resources: resources,
+                contextBuilder: contextBuilder
+            )
+        }
+        return angles
     }
 }
 
@@ -222,7 +272,12 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
         case srcEnable
     }
     
-    public init?(from xmlLeaf: XMLElement) {
+    public init?(
+        from xmlLeaf: XMLElement,
+        breadcrumbs: [XMLElement],
+        resources: [String: FinalCutPro.FCPXML.AnyResource],
+        contextBuilder: FCPXMLElementContextBuilder
+    ) {
         let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
         
         // validate element name
@@ -233,8 +288,12 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
         angleID = rawValues[.angleID]
         srcEnable = rawValues[.srcEnable]
         
-        contents = (xmlLeaf.children ?? [])
-            .compactMap { $0 as? XMLElement }
+        contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
+            in: xmlLeaf,
+            breadcrumbs: breadcrumbs,
+            resources: resources,
+            contextBuilder: contextBuilder
+        )
     }
 }
 
