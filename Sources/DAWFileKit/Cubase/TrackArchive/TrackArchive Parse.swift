@@ -60,9 +60,8 @@ extension Cubase.TrackArchive {
         
         // setup section
         
-        guard let setup = root.children?
-            .filter(nameAttribute: "Setup")
-            .first
+        guard let setup = root.childElements
+            .first(whereNameAttributeValue: "Setup")
         else {
             addParseMessage(.error(
                 "Could not extract global session information. Setup block could not be located."
@@ -71,23 +70,19 @@ extension Cubase.TrackArchive {
         }
         
         // frame rate
-        if let fRate = setup.children?
-            .filter(nameAttribute: "FrameType")
-            .first?
-            .attributeStringValue(forName: "value")?
+        if let fRate = setup.childElements
+            .first(whereNameAttributeValue: "FrameType")?
+            .stringValue(forAttributeNamed: "value")?
             .int
         {
             if let fr = Self.frameRateTable[fRate] { main.frameRate = fr }
         }
         
         // start time
-        if let dbl = setup.children?
-            .filter(nameAttribute: "Start")
-            .first?
-            .children?
-            .filter(nameAttribute: "Time")
-            .first?
-            .attributeStringValue(forName: "value")?
+        if let dbl = setup.childElements
+            .first(whereNameAttributeValue: "Start")?.childElements
+            .first(whereNameAttributeValue: "Time")?
+            .stringValue(forAttributeNamed: "value")?
             .double
         {
             main.startTimeSeconds = dbl
@@ -96,13 +91,10 @@ extension Cubase.TrackArchive {
         main.startTimecode = calculateStartTimecode(ofRealTimeValue: 0.0)
         
         // length
-        if let dbl = setup.children?
-            .filter(nameAttribute: "Length")
-            .first?
-            .children?
-            .filter(nameAttribute: "Time")
-            .first?
-            .attributeStringValue(forName: "value")?
+        if let dbl = setup.childElements
+            .first(whereNameAttributeValue: "Length")?.childElements
+            .first(whereNameAttributeValue: "Time")?
+            .stringValue(forAttributeNamed: "value")?
             .double
         {
             main.lengthTimecode = calculateLengthTimecode(ofRealTimeValue: dbl)
@@ -111,24 +103,21 @@ extension Cubase.TrackArchive {
         // TimeType - not implemented yet
         
         // bar offset
-        main.barOffset = setup.children?
-            .filter(nameAttribute: "BarOffset")
-            .first?
-            .attributeStringValue(forName: "value")?
+        main.barOffset = setup.childElements
+            .first(whereNameAttributeValue: "BarOffset")?
+            .stringValue(forAttributeNamed: "value")?
             .int
         
         // sample rate
-        main.sampleRate = setup.children?
-            .filter(nameAttribute: "SampleRate")
-            .first?
-            .attributeStringValue(forName: "value")?
+        main.sampleRate = setup.childElements
+            .first(whereNameAttributeValue: "SampleRate")?
+            .stringValue(forAttributeNamed: "value")?
             .double
         
         // bit depth
-        main.bitDepth = setup.children?
-            .filter(nameAttribute: "SampleSize")
-            .first?
-            .attributeStringValue(forName: "value")?
+        main.bitDepth = setup.childElements
+            .first(whereNameAttributeValue: "SampleSize")?
+            .stringValue(forAttributeNamed: "value")?
             .int
         
         // 'SampleFormatSize' - not implemented yet
@@ -144,10 +133,9 @@ extension Cubase.TrackArchive {
         // 'HmtType' - not implemented yet
         
         // 'HmtDepth'
-        main.hmtDepth = setup.children?
-            .filter(nameAttribute: "HmtDepth")
-            .first?
-            .attributeStringValue(forName: "value")?
+        main.hmtDepth = setup.childElements
+            .first(whereNameAttributeValue: "HmtDepth")?
+            .stringValue(forAttributeNamed: "value")?
             .int
     }
 }
@@ -170,10 +158,9 @@ extension Cubase.TrackArchive {
         // Cubase does not export the tempo track as a separate track in the XML as you might
         // expect.
         
-        guard let firstTrack = root.children?
-            .filter(nameAttribute: "track")
-            .first?
-            .children?
+        guard let firstTrack = root.childElements
+            .first(whereNameAttributeValue: "track")?
+            .childElements
             .first
         else {
             addParseMessage(.error(
@@ -182,50 +169,44 @@ extension Cubase.TrackArchive {
             return
         }
         
-        let eventTree = firstTrack.children?
-            .filter(classAttribute: "MListNode")
-            .filter(nameAttribute: "Node")
-            .first
+        let eventTree = firstTrack.childElements
+            .filter(whereClassAttributeValue: "MListNode")
+            .first(whereNameAttributeValue: "Node")
         
-        let domain = eventTree?.children?
-            .filter(elementName: "member")
-            .filter(nameAttribute: "Domain")
-            .first
+        let domain = eventTree?.childElements
+            .filter(whereNodeNamed: "member")
+            .first(whereNameAttributeValue: "Domain")
         
-        let getTempoTrack = domain?.children?
-            .filter(classAttribute: "MTempoTrackEvent")
-            .filter(nameAttribute: "Tempo Track")
-            .first
+        let getTempoTrack = domain?.childElements
+            .filter(whereClassAttributeValue: "MTempoTrackEvent")
+            .first(whereNameAttributeValue: "Tempo Track")
         
         // match both type and name
-        let getTempoEvents = getTempoTrack?.children?
-            .filter(elementName: "list")
-            .filter(nameAttribute: "TempoEvent")
-            .first
+        let getTempoEvents = getTempoTrack?.childElements
+            .filter(whereNodeNamed: "list")
+            .first(whereNameAttributeValue: "TempoEvent")
         
-        // FYI: contains tempo events as well as other meta-data keys
-        for event in getTempoEvents?.children ?? [] {
-            if event.attributeStringValue(forName: "class") == "MTempoEvent" {
-                let bpm = event.children?
-                    .filter(nameAttribute: "BPM")
-                    .first?
-                    .attributeStringValue(forName: "value")?
+        if let getTempoEvents = getTempoEvents {
+            // FYI: contains tempo events as well as other meta-data keys
+            for event in getTempoEvents.childElements {
+                guard event.stringValue(forAttributeNamed: "class") == "MTempoEvent" else { continue }
+                let bpm: Double? = event.childElements
+                    .first(whereNameAttributeValue: "BPM")?
+                    .stringValue(forAttributeNamed: "value")?
                     .double
                 
-                let ppq = event.children?
-                    .filter(nameAttribute: "PPQ")
-                    .first?
-                    .attributeStringValue(forName: "value")?
+                let ppq: Double? = event.childElements
+                    .first(whereNameAttributeValue: "PPQ")?
+                    .stringValue(forAttributeNamed: "value")?
                     .double
                 
                 // if Int attribute "Func" with value of 1 exists, then it's a ramp
                 // if the key doesn't exist, it's a jump (default)
-                let type: TempoTrack.Event.TempoEventType = event.children?
-                    .filter(nameAttribute: "Func")
-                    .first?
-                    .attributeStringValue(forName: "value")?
+                let type: TempoTrack.Event.TempoEventType = event.childElements
+                    .first(whereNameAttributeValue: "Func")?
+                    .stringValue(forAttributeNamed: "value")?
                     .int
-                    == 1 ? .ramp : .jump
+                == 1 ? .ramp : .jump
                 
                 if let bpm = bpm, let ppq = ppq {
                     let newTempoEvent = TempoTrack.Event(
@@ -251,11 +232,10 @@ extension Cubase.TrackArchive {
             messages.append(msg)
         }
         
-        guard let tracks = root.children?
-            .filter(elementName: "list")
-            .filter(nameAttribute: "track")
-            .first?
-            .children
+        guard let tracks = root.childElements
+            .filter(whereNodeNamed: "list")
+            .first(whereNameAttributeValue: "track")?
+            .childElements
         else {
             addParseMessage(.info("No tracks found."))
             return
@@ -267,7 +247,7 @@ extension Cubase.TrackArchive {
         for track in tracks {
             // get track type
             
-            let trackType = Self.trackTypeTable[track.attributeStringValue(forName: "class") ?? ""]
+            let trackType = Self.trackTypeTable[track.stringValue(forAttributeNamed: "class") ?? ""]
             
             // create new track object
             
@@ -303,20 +283,17 @@ extension Cubase.TrackArchive {
         // TODO: abstract common track metadata to a generic track parser, then specialize per track type for events
         
         // find list by matching both its name and class name
-        let eventTree = track.children?
-            .filter(nameAttribute: "Node")
-            .filter(classAttribute: "MListNode")
-            .first
+        let eventTree = track.childElements
+            .filter(whereNameAttributeValue: "Node")
+            .first(whereClassAttributeValue: "MListNode")
         
         let trackDomain: TrackTimeDomain
         
-        switch eventTree?.children?
-            .filter(nameAttribute: "Domain")
-            .first?
-            .children?
-            .filter(nameAttribute: "Type")
-            .first?
-            .attributeStringValue(forName: "value")?
+        switch eventTree?.childElements
+            .first(whereNameAttributeValue: "Domain")?
+            .childElements
+            .first(whereNameAttributeValue: "Type")?
+            .stringValue(forAttributeNamed: "value")?
             .int {
         case 0?: trackDomain = .musical
         case 1?: trackDomain = .linear
@@ -324,20 +301,18 @@ extension Cubase.TrackArchive {
         }
         
         // track name
-        newTrack.name = eventTree?.children?
-            .filter(nameAttribute: "Name")
-            .first?
-            .attributeStringValue(forName: "value")
+        newTrack.name = eventTree?.childElements
+            .first(whereNameAttributeValue: "Name")?
+            .stringValue(forAttributeNamed: "value")
         
         // track events
-        guard let events = eventTree?.children?
-            .filter(nameAttribute: "Events")
-            .first?
-            .children
+        guard let events = eventTree?.childElements
+            .first(whereNameAttributeValue: "Events")?
+            .childElements
         else { return }
         
         for event in events {
-            switch event.attributeStringValue(forName: "class") {
+            switch event.stringValue(forAttributeNamed: "class") {
             case "MMarkerEvent", "MRangeMarkerEvent": // all marker event types
                 var newMarker: CubaseTrackArchiveMarker?
                 
@@ -346,16 +321,14 @@ extension Cubase.TrackArchive {
                 var tcStartRealTime: TimeInterval?
                 
                 // marker name
-                name = event.children?
-                    .filter(nameAttribute: "Name")
-                    .first?
-                    .attributeStringValue(forName: "value")
+                name = event.childElements
+                    .first(whereNameAttributeValue: "Name")?
+                    .stringValue(forAttributeNamed: "value")
                 
                 // start time
-                if let str = event.children?
-                    .filter(nameAttribute: "Start")
-                    .first?
-                    .attributeStringValue(forName: "value")
+                if let str = event.childElements
+                    .first(whereNameAttributeValue: "Start")?
+                    .stringValue(forAttributeNamed: "value")
                 {
                     if let toNum = str.double {
                         switch trackDomain {
@@ -371,7 +344,7 @@ extension Cubase.TrackArchive {
                     }
                 }
                 
-                switch event.attributeStringValue(forName: "class") {
+                switch event.stringValue(forAttributeNamed: "class") {
                 case "MMarkerEvent": // single marker
                     guard let tcStart = tcStart else { continue }
                     newMarker = Marker(
@@ -385,10 +358,9 @@ extension Cubase.TrackArchive {
                     var tcLengthRealTime: TimeInterval?
                     
                     // length time
-                    if let str = event.children?
-                        .filter(nameAttribute: "Length")
-                        .first?
-                        .attributeStringValue(forName: "value")
+                    if let str = event.childElements
+                        .first(whereNameAttributeValue: "Length")?
+                        .stringValue(forAttributeNamed: "value")
                     {
                         if let toNum = str.double {
                             switch trackDomain {
