@@ -16,6 +16,9 @@ public enum ProTools {
     /// `Timecode` setting for `.upperLimit`.
     /// Pro Tools uses a 24-hour SMPTE timecode clock.
     public static let timecodeUpperLimit: Timecode.UpperLimit = .max24Hours
+    
+    /// `Timecode` setting for `.stringFormat`.
+    public static let timecodeStringFormat: Timecode.StringFormat = []
 }
 
 extension ProTools {
