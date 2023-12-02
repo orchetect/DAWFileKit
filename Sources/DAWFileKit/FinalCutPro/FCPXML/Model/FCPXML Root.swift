@@ -39,7 +39,7 @@ extension FinalCutPro.FCPXML {
     /// Returns the root `fcpxml` XML element if it exists.
     public var fcpxmlElement: XMLElement? {
         xml.childElements
-            .first(whereNodeNamed: RootChildren.fcpxml.rawValue)
+            .first(whereElementNamed: RootChildren.fcpxml.rawValue)
     }
     
     /// Utility:

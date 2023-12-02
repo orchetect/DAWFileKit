@@ -32,15 +32,6 @@ extension FinalCutPro.FCPXML.Media.Multicam {
 }
 
 extension FinalCutPro.FCPXML.Media.Multicam {
-    /// Returns the corresponding angle IDs for the given multicam source(s).
-    public func audioVideoAngleIDs(
-        forMulticamSources sources: [XMLElement]
-    ) -> (audioID: String?, videoID: String?) {
-        sources.audioVideoAngleIDs()
-    }
-}
-
-extension FinalCutPro.FCPXML.Media.Multicam {
     /// A container of story elements organized sequentially in time.
     /// Similar to a `sequence`.
     public enum Angle { }
@@ -59,43 +50,45 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
     // Children are story elements, similar to contents of a `sequence`
 }
 
-extension FinalCutPro.FCPXML {
-    static func mcAngles(in element: XMLElement) -> [XMLElement] {
-        element.childElements
-            .filter(\.isMCAngle)
+extension XMLElement { // Multicam
+    /// Returns child `mc-angle` elements.
+    /// Call on a `multicam` element.
+    public var fcpMCAngles: LazyFilterSequence<
+        LazyMapSequence<
+            LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>, XMLElement
+        >.Elements
+    > {
+        childElements
+            .filter(\.fcpIsMCAngle)
     }
     
-    static func audioVideoMCAnglesXMLFor(
-        in element: XMLElement,
+    /// Returns audio and video `mc-angle` elements for the given `mc-source` collection.
+    /// Call on a `multicam` element.
+    public func fcpAudioVideoMCAnglesFor(
         multicamSources sources: [XMLElement]
-    ) -> (audio: XMLElement?, video: XMLElement?) {
-        let (audioAngleID, videoAngleID) = sources.audioVideoAngleIDs()
+    ) -> (audioMCAngle: XMLElement?, videoMCAngle: XMLElement?) {
+        let (audioAngleID, videoAngleID) = sources.fcpAudioVideoAngleIDs()
         
-        let audioAngle = mcAngles(in: element, forAngleID: audioAngleID)
-        let videoAngle = mcAngles(in: element, forAngleID: videoAngleID)
+        let audioMCAngle = fcpMCAngle(forAngleID: audioAngleID)
+        let videoMCAngle = fcpMCAngle(forAngleID: videoAngleID)
         
-        return (audio: audioAngle, video: videoAngle)
+        return (audioMCAngle: audioMCAngle, videoMCAngle: videoMCAngle)
     }
     
-    static func mcAngles(
-        in element: XMLElement,
+    /// Returns the child `mc-angle` with the given angle identifier.
+    /// Call on a `multicam` element.
+    public func fcpMCAngle(
         forAngleID angleID: String?
     ) -> XMLElement? {
         guard let angleID = angleID else { return nil }
-        return mcAngles(in: element)
-            .first(where: { $0.angleID == angleID })
-    }
-}
-
-extension XMLElement {
-    fileprivate var isMCAngle: Bool {
-        name == FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue
+        return fcpMCAngles
+            .first(whereAttribute: FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue, 
+                   hasValue: angleID)
     }
     
-    fileprivate var angleID: String? {
-        stringValue(
-            forAttributeNamed: FinalCutPro.FCPXML.Media.Multicam.Angle.Attributes.angleID.rawValue
-        )
+    /// Returns `true` if element is an `mc-angle`.
+    public var fcpIsMCAngle: Bool {
+        name == FinalCutPro.FCPXML.Media.Multicam.Children.mcAngle.rawValue
     }
 }
 

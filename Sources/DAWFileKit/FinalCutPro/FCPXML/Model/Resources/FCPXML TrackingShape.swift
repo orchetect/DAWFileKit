@@ -29,9 +29,9 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.TrackingShape {
-    // TODO: Add attributes etc.
-    
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .trackingShape
+    
+    // TODO: Add attributes etc.
 }
 
 #endif

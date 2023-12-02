@@ -25,9 +25,9 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.ObjectTracker {
-    // TODO: Add attributes etc.
-    
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .objectTracker
+    
+    // TODO: Add attributes etc.
 }
 
 #endif
