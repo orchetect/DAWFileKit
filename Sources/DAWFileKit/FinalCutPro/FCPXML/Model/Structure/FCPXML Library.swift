@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-@_implementationOnly import OTCore
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Represents a library location on disk.

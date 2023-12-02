@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-@_implementationOnly import OTCore
+import OTCore
 
 // MARK: - Rational Time Value Utils
 
