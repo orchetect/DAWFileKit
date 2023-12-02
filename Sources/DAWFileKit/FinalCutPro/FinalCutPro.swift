@@ -23,7 +23,7 @@ public enum FinalCutPro {
 }
 
 extension FinalCutPro {
-    /// `Timecode` struct template.
+    /// `Timecode` template.
     public static func formTimecode(
         at rate: TimecodeFrameRate
     ) -> Timecode {
@@ -35,7 +35,7 @@ extension FinalCutPro {
         )
     }
     
-    /// `Timecode` struct template.
+    /// `Timecode` template.
     public static func formTimecode(
         rational: Fraction,
         at rate: TimecodeFrameRate
@@ -48,8 +48,7 @@ extension FinalCutPro {
         )
     }
     
-    
-    /// `Timecode` struct template.
+    /// `TimecodeInterval` template.
     public static func formTimecodeInterval(
         at rate: TimecodeFrameRate
     ) -> TimecodeInterval {
@@ -57,7 +56,7 @@ extension FinalCutPro {
         return TimecodeInterval(tc)
     }
     
-    /// `Timecode` struct template.
+    /// `TimecodeInterval` struct template.
     public static func formTimecodeInterval(
         rational: Fraction,
         at rate: TimecodeFrameRate
