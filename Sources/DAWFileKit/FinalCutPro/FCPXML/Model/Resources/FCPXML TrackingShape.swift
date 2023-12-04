@@ -25,13 +25,27 @@ extension FinalCutPro.FCPXML {
     /// > See [`tracking-shape`](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/tracking-shape
     /// > ).
-    public enum TrackingShape { }
+    public struct TrackingShape: Equatable, Hashable {
+        public let element: XMLElement
+        
+        public init(element: XMLElement) {
+            self.element = element
+        }
+    }
 }
 
 extension FinalCutPro.FCPXML.TrackingShape {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .trackingShape
     
     // TODO: Add attributes etc.
+}
+
+extension XMLElement { // TrackingShape
+    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/TrackingShape`` model object.
+    /// Call this on a `tracking-shape` element only.
+    public var asTrackingShape: FinalCutPro.FCPXML.TrackingShape {
+        .init(element: self)
+    }
 }
 
 #endif

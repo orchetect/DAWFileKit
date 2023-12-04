@@ -1,5 +1,5 @@
 //
-//  General FCPXML Properties.swift.swift
+//  FCPXML Attributes.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -13,6 +13,24 @@ import OTCore
 // MARK: - Basic Attributes
 
 extension XMLElement {
+    /// Get or set the value of the `format` attribute.
+    public var fcpFormat: String? {
+        get { stringValue(forAttributeNamed: "format") }
+        set { addAttribute(withName: "format", value: newValue) }
+    }
+    
+    /// Get or set the value of the `id` attribute.
+    public var fcpID: String? {
+        get { stringValue(forAttributeNamed: "id") }
+        set { addAttribute(withName: "id", value: newValue) }
+    }
+    
+    /// Get or set the value of the `uid` attribute.
+    public var fcpUID: String? {
+        get { stringValue(forAttributeNamed: "uid") }
+        set { addAttribute(withName: "uid", value: newValue) }
+    }
+    
     /// Get or set the value of the `name` attribute.
     public var fcpName: String? {
         get { stringValue(forAttributeNamed: "name") }
@@ -23,6 +41,18 @@ extension XMLElement {
     public var fcpNote: String? {
         get { stringValue(forAttributeNamed: "note") }
         set { addAttribute(withName: "note", value: newValue) }
+    }
+    
+    /// Get or set the value of the `ref` attribute.
+    public var fcpRef: String? {
+        get { stringValue(forAttributeNamed: "ref") }
+        set { addAttribute(withName: "ref", value: newValue) }
+    }
+    
+    /// Get or set the value of the `src` attribute.
+    public var fcpSRC: String? {
+        get { stringValue(forAttributeNamed: "src") }
+        set { addAttribute(withName: "src", value: newValue) }
     }
     
     /// Get or set the value of the `value` attribute.
@@ -41,6 +71,12 @@ extension XMLElement {
         set { set(fraction: newValue, forAttribute: "duration") }
     }
     
+    /// Get or set the value of the `frameDuration` attribute.
+    public var fcpFrameDuration: Fraction? {
+        get { getFraction(forAttribute: "frameDuration") }
+        set { set(fraction: newValue, forAttribute: "frameDuration") }
+    }
+    
     /// Get or set the value of the `start` attribute.
     public var fcpStart: Fraction? {
         get { getFraction(forAttribute: "start") }
@@ -57,6 +93,19 @@ extension XMLElement {
     public var fcpOffset: Fraction? {
         get { getFraction(forAttribute: "offset") }
         set { set(fraction: newValue, forAttribute: "offset") }
+    }
+    
+    /// Get or set the value of the `tcFormat` attribute.
+    public var fcpTCFormat: FinalCutPro.FCPXML.TimecodeFormat? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "tcFormat")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.TimecodeFormat(rawValue: value)
+        }
+        set {
+            addAttribute(withName: "tcFormat", value: newValue?.rawValue)
+        }
     }
 }
 
@@ -122,6 +171,7 @@ extension XMLElement {
         
         if newValue {
             // addAttribute(withName: "enabled", value: "1")
+            
             // the absence of true implies a default of true
             // so we don't need to store a true value
             addAttribute(withName: attributeName, value: nil)
@@ -139,6 +189,20 @@ extension XMLElement {
     func set(int newValue: Int?, forAttribute attributeName: String) {
         addAttribute(withName: attributeName, value: newValue?.string)
     }
+}
+
+extension XMLElement {
+    func getURL(forAttribute attributeName: String) -> URL? {
+        guard let value = stringValue(forAttributeNamed: attributeName)
+        else { return nil }
+        return URL(string: value)
+    }
+    
+    func set(url newValue: URL?, forAttribute attributeName: String) {
+        addAttribute(withName: attributeName, value: newValue?.absoluteString)
+    }
+    
+    // TODO: differentiate absolute URL from relative URL?
 }
 
 #endif

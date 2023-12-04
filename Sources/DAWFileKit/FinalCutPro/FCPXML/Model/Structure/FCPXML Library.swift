@@ -11,7 +11,29 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Represents a library location on disk.
-    public enum Library { }
+    public struct Library: Equatable, Hashable {
+        public let element: XMLElement
+        
+        /// Returns the library name, derived from the `location` URL.
+        public var name: String? {
+            element.fcpLibraryName
+        }
+        
+        public var location: URL? {
+            get { element.fcpLibraryLocation }
+            set { element.fcpLibraryLocation = newValue }
+        }
+        
+        public var events: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+            element.fcpEvents
+        }
+        
+        // TODO: add smart-collection iterator
+        
+        public init(element: XMLElement) {
+            self.element = element
+        }
+    }
 }
 
 extension FinalCutPro.FCPXML.Library {
@@ -58,13 +80,11 @@ extension XMLElement { // Library
         return libNameDecoded
     }
     
-    /// Returns the library `location` URL.
+    /// Get or set the library `location` URL.
     /// Call on a `library` element.
     public var fcpLibraryLocation: URL? {
-        guard let location = stringValue(
-            forAttributeNamed: FinalCutPro.FCPXML.Library.Attributes.location.rawValue
-        ) else { return nil }
-        return URL(string: location)
+        get { getURL(forAttribute: "location") }
+        set { set(url: newValue, forAttribute: "location") }
     }
 }
 
