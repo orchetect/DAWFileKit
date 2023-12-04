@@ -10,20 +10,44 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     /// Annotation element types.
-    public enum AnnotationType: String, CaseIterable {
+    public enum AnnotationType: Equatable, Hashable {
         /// Closed caption.
         case caption
         
         /// Keyword.
         case keyword
         
-        /// Marker. Includes standard and to-do markers.
-        case marker
+        /// Marker. Includes standard, to-do and chapter markers.
+        case marker(_ markerType: MarkerType)
+    }
+}
+
+extension FinalCutPro.FCPXML.AnnotationType: RawRepresentable {
+    public typealias RawValue = String
+    
+    public init?(rawValue: String) {
+        guard let match = Self.allCases.first(where: { $0.rawValue == rawValue })
+        else { return nil }
         
-        /// Chapter Marker.
-        case chapterMarker = "chapter-marker"
-        
-        // TODO: add `analysis-marker`?
+        self = match
+    }
+    
+    public var rawValue: String {
+        switch self {
+        case .caption:
+            return "caption"
+        case .keyword:
+            return "keyword"
+        case let .marker(variant):
+            return variant.rawValue
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.AnnotationType: CaseIterable {
+    public static var allCases: [FinalCutPro.FCPXML.AnnotationType] {
+        [.caption, .keyword]
+            + FinalCutPro.FCPXML.MarkerType.allCases.map { .marker($0) }
     }
 }
 
