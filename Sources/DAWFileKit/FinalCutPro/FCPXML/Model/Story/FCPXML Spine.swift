@@ -32,6 +32,8 @@ extension FinalCutPro.FCPXML {
             set { element.fcpOffset = newValue }
         }
         
+        // Children
+        
         /// Returns all child elements.
         public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
             element.childElements

@@ -112,6 +112,12 @@ extension XMLElement {
 // MARK: - Timeline Attributes
 
 extension XMLElement {
+    /// Get or set the value of the `active` attribute.
+    public var fcpActive: Bool? {
+        get { getBool(forAttribute: "active") }
+        set { set(bool: newValue, forAttribute: "active") }
+    }
+    
     /// Get or set the value of the `enabled` attribute.
     public var fcpEnabled: Bool? {
         get { getBool(forAttribute: "enabled") }
@@ -128,10 +134,43 @@ extension XMLElement {
 // MARK: - Role Attributes
 
 extension XMLElement {
-    /// Get or set the value of the `role` attribute.
-    public var fcpRole: String? {
-        get { stringValue(forAttributeNamed: "role") }
-        set { addAttribute(withName: "role", value: newValue) }
+    /// Get the value of the `role` attribute as a specific role type.
+    public func fcpRole<R: FCPXMLRole>(as roleType: R.Type) -> R? {
+        guard let value = stringValue(forAttributeNamed: "role")
+        else { return nil }
+        
+        return R(rawValue: value)
+    }
+    
+    /// Set the value of the `role` attribute.
+    public func fcpSet<R: FCPXMLRole>(role: R?) {
+        addAttribute(withName: "role", value: role?.rawValue)
+    }
+    
+    /// Get or set the value of the `audioRole` attribute.
+    public var fcpAudioRole: FinalCutPro.FCPXML.AudioRole? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "audioRole")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.AudioRole(rawValue: value)
+        }
+        set { 
+            addAttribute(withName: "audioRole", value: newValue?.rawValue)
+        }
+    }
+    
+    /// Get or set the value of the `videoRole` attribute.
+    public var fcpVideoRole: FinalCutPro.FCPXML.VideoRole? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "videoRole")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.VideoRole(rawValue: value)
+        }
+        set {
+            addAttribute(withName: "videoRole", value: newValue?.rawValue)
+        }
     }
 }
 
