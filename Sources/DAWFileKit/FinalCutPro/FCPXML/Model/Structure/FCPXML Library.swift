@@ -24,6 +24,7 @@ extension FinalCutPro.FCPXML {
             set { element.fcpLibraryLocation = newValue }
         }
         
+        /// Multiple `event` elements may exist within the `library` element.
         public var events: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
             element.fcpEvents
         }

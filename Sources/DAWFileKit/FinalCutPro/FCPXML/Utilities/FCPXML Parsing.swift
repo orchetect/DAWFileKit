@@ -10,12 +10,16 @@ import Foundation
 import TimecodeKit
 import OTCore
 
+// MARK: - Elements
+
 extension XMLElement {
     /// Returns the element type of the element.
     public var fcpElementType: FinalCutPro.FCPXML.ElementType? {
         FinalCutPro.FCPXML.ElementType(from: self)
     }
 }
+
+// MARK: - Story Elements
 
 extension XMLElement {
     /// Returns child story elements.
@@ -30,12 +34,16 @@ extension XMLElement {
     }
 }
 
+// MARK: - Events
+
 extension XMLElement {
     public var fcpEvents: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.fcpElementType == .structure(.event) }
     }
 }
+
+// MARK: - Resources
 
 extension XMLElement {
     /// Returns the root-level `fcpxml` element.
