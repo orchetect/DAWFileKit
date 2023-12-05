@@ -101,6 +101,19 @@ extension FinalCutPro.FCPXML.SyncClip {
     
     public enum Attributes: String, XMLParsableAttributesKey {
         case format
+        
+        case audioStart
+        case audioDuration
+        
+        // Anchorable Attributes
+        case lane
+        case offset
+        
+        // Clip Attributes
+        case name
+        case start
+        case duration
+        case enabled
     }
     
     public enum Children: String {

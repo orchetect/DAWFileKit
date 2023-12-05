@@ -32,6 +32,16 @@ extension FinalCutPro.FCPXML {
             set { element.fcpRef = newValue }
         }
         
+        public var audioStart: Fraction? {
+            get { element.fcpAudioStart }
+            set { element.fcpAudioStart = newValue }
+        }
+        
+        public var audioDuration: Fraction? {
+            get { element.fcpAudioDuration }
+            set { element.fcpAudioDuration = newValue }
+        }
+        
         // Anchorable Attributes
         
         public var lane: Int? {
@@ -96,6 +106,9 @@ extension FinalCutPro.FCPXML.MCClip {
         /// Required.
         /// Resource ID
         case ref
+        
+        case audioStart
+        case audioDuration
         
         // Anchorable Attributes
         case lane

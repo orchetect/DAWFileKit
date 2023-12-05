@@ -29,6 +29,16 @@ extension FinalCutPro.FCPXML {
     public struct Clip: Equatable, Hashable {
         public let element: XMLElement
         
+        public var audioStart: Fraction? {
+            get { element.fcpAudioStart }
+            set { element.fcpAudioStart = newValue }
+        }
+        
+        public var audioDuration: Fraction? {
+            get { element.fcpAudioDuration }
+            set { element.fcpAudioDuration = newValue }
+        }
+        
         // Anchorable Attributes
         
         public var lane: Int? {
@@ -87,6 +97,9 @@ extension FinalCutPro.FCPXML.Clip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .clip
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        case audioStart
+        case audioDuration
+        
         // Anchorable Attributes
         case lane
         case offset

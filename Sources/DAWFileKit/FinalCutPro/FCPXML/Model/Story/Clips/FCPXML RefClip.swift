@@ -43,6 +43,16 @@ extension FinalCutPro.FCPXML {
             set { element.set(bool: newValue, forAttribute: Attributes.useAudioSubroles.rawValue) }
         }
         
+        public var audioStart: Fraction? {
+            get { element.fcpAudioStart }
+            set { element.fcpAudioStart = newValue }
+        }
+        
+        public var audioDuration: Fraction? {
+            get { element.fcpAudioDuration }
+            set { element.fcpAudioDuration = newValue }
+        }
+        
         // Anchorable Attributes
         
         public var lane: Int? {
@@ -123,6 +133,9 @@ extension FinalCutPro.FCPXML.RefClip {
         case ref
         case role
         case useAudioSubroles // default false
+        
+        case audioStart
+        case audioDuration
         
         // Anchorable Attributes
         case lane

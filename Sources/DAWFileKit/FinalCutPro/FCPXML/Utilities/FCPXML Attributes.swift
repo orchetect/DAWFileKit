@@ -66,12 +66,14 @@ extension XMLElement {
 
 extension XMLElement {
     /// Get or set the value of the `audioStart` attribute.
+    /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioStart: Fraction? {
         get { getFraction(forAttribute: "audioStart") }
         set { set(fraction: newValue, forAttribute: "audioStart") }
     }
     
     /// Get or set the value of the `audioDuration` attribute.
+    /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioDuration: Fraction? {
         get { getFraction(forAttribute: "audioDuration") }
         set { set(fraction: newValue, forAttribute: "audioDuration") }
