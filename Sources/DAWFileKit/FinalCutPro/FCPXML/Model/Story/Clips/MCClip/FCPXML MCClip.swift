@@ -27,8 +27,8 @@ extension FinalCutPro.FCPXML {
         
         /// Required.
         /// Resource ID
-        public var ref: String? {
-            get { element.fcpRef }
+        public var ref: String {
+            get { element.fcpRef ?? "" }
             set { element.fcpRef = newValue }
         }
         
