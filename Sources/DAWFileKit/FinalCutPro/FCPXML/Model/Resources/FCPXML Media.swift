@@ -37,6 +37,16 @@ extension FinalCutPro.FCPXML {
             set { element.fcpName = newValue }
         }
         
+        /// Returns the `multicam` child element if one exists.
+        public var multicam: XMLElement? {
+            element.firstChildElement(named: Children.multicam.rawValue)
+        }
+        
+        /// Returns the `sequence` child element if one exists.
+        public var sequence: XMLElement? {
+            element.firstChildElement(named: Children.sequence.rawValue)
+        }
+        
         public init(element: XMLElement) {
             self.element = element
         }
@@ -66,9 +76,9 @@ extension FinalCutPro.FCPXML.Media {
 }
 
 extension XMLElement { // Media
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Media`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Media`` model object.
     /// Call this on a `media` element only.
-    public var asMedia: FinalCutPro.FCPXML.Media {
+    public var fcpAsMedia: FinalCutPro.FCPXML.Media {
         .init(element: self)
     }
 }

@@ -57,8 +57,8 @@ extension FinalCutPro.FCPXML {
         
         /// Audio sample rate in Hz.
         public var audioRate: Int? {
-            get { element.audioRate }
-            set { element.audioRate = newValue }
+            get { element.fcpAudioRate }
+            set { element.fcpAudioRate = newValue }
         }
         
         public var note: String? {
@@ -67,8 +67,8 @@ extension FinalCutPro.FCPXML {
         }
         
         public var renderFormat: String? {
-            get { element.renderFormat }
-            set { element.renderFormat = newValue }
+            get { element.fcpRenderFormat }
+            set { element.fcpRenderFormat = newValue }
         }
         
         public var keywords: String? { // only exists on sequence
@@ -114,15 +114,15 @@ extension FinalCutPro.FCPXML.Sequence {
 }
 
 extension XMLElement { // Sequence
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Sequence`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Sequence`` model object.
     /// Call this on a `sequence` element only.
-    public var asSequence: FinalCutPro.FCPXML.Sequence {
+    public var fcpAsSequence: FinalCutPro.FCPXML.Sequence {
         .init(element: self)
     }
     
     /// Returns `renderFormat` attribute value.
     /// Call this on a `sequence` or `multicam` element only.
-    public var renderFormat: String? {
+    public var fcpRenderFormat: String? {
         get { stringValue(forAttributeNamed: "renderFormat") }
         set { addAttribute(withName: "renderFormat", value: newValue) }
     }

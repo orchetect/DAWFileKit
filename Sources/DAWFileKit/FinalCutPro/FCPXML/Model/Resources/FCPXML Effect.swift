@@ -85,9 +85,9 @@ extension FinalCutPro.FCPXML.Effect {
 }
 
 extension XMLElement { // Effect
-    /// Returns the element wrapped in an ``/FinalCutPro/FCPXML/Effect`` model object.
+    /// Returns the element wrapped in an ``FinalCutPro/FCPXML/Effect`` model object.
     /// Call this on an `effect` element only.
-    public var asEffect: FinalCutPro.FCPXML.Effect {
+    public var fcpAsEffect: FinalCutPro.FCPXML.Effect {
         .init(element: self)
     }
 }

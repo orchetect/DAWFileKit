@@ -98,9 +98,9 @@ extension FinalCutPro.FCPXML.Caption {
 }
 
 extension XMLElement { // Caption
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Caption`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Caption`` model object.
     /// Call this on a `caption` element only.
-    public var asCaption: FinalCutPro.FCPXML.Caption {
+    public var fcpAsCaption: FinalCutPro.FCPXML.Caption {
         .init(element: self)
     }
 }

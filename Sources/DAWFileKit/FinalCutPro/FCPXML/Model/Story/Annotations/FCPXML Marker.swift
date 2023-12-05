@@ -85,9 +85,9 @@ extension FinalCutPro.FCPXML.Marker {
 }
 
 extension XMLElement { // Any Marker
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Marker`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Marker`` model object.
     /// Call this on a `marker` or `chapter-marker` element only.
-    public var asMarker: FinalCutPro.FCPXML.Marker {
+    public var fcpAsMarker: FinalCutPro.FCPXML.Marker {
         .init(element: self)
     }
     

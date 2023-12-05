@@ -52,9 +52,9 @@ extension FinalCutPro.FCPXML.Keyword {
 }
 
 extension XMLElement { // Keyword
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Keyword`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Keyword`` model object.
     /// Call this on a `keyword` element only.
-    public var asKeyword: FinalCutPro.FCPXML.Keyword {
+    public var fcpAsKeyword: FinalCutPro.FCPXML.Keyword {
         .init(element: self)
     }
 }

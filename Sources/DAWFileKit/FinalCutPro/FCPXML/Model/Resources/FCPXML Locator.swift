@@ -57,9 +57,9 @@ extension FinalCutPro.FCPXML.Locator {
 }
 
 extension XMLElement { // Locator
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Locator`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Locator`` model object.
     /// Call this on a `locator` element only.
-    public var asLocator: FinalCutPro.FCPXML.Locator {
+    public var fcpAsLocator: FinalCutPro.FCPXML.Locator {
         .init(element: self)
     }
 }

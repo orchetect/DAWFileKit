@@ -110,8 +110,8 @@ extension FinalCutPro.FCPXML {
         
         /// Audio sample rate in Hz.
         public var audioRate: Int? {
-            get { element.audioRate }
-            set { element.audioRate = newValue }
+            get { element.fcpAudioRate }
+            set { element.fcpAudioRate = newValue }
         }
         
         /// Number of video sources. Default is `0`.
@@ -175,15 +175,15 @@ extension FinalCutPro.FCPXML.Asset {
 }
 
 extension XMLElement { // Asset
-    /// Returns the element wrapped in an ``/FinalCutPro/FCPXML/Asset`` model object.
+    /// Returns the element wrapped in an ``FinalCutPro/FCPXML/Asset`` model object.
     /// Call this on an `asset` element only.
-    public var asAsset: FinalCutPro.FCPXML.Asset {
+    public var fcpAsAsset: FinalCutPro.FCPXML.Asset {
         .init(element: self)
     }
     
     /// Returns the `audioRate` attribute value (audio sample rate in Hz).
     /// Call this on an `asset` or `sequence` element only.
-    public var audioRate: Int? {
+    public var fcpAudioRate: Int? {
         get { getInt(forAttribute: "audioRate") }
         set { set(int: newValue, forAttribute: "audioRate") }
     }

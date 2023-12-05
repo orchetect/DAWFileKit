@@ -115,9 +115,9 @@ extension FinalCutPro.FCPXML.Format {
 }
 
 extension XMLElement { // Format
-    /// Returns the element wrapped in a ``/FinalCutPro/FCPXML/Format`` model object.
+    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Format`` model object.
     /// Call this on a `format` element only.
-    public var asFormat: FinalCutPro.FCPXML.Format {
+    public var fcpAsFormat: FinalCutPro.FCPXML.Format {
         .init(element: self)
     }
 }
