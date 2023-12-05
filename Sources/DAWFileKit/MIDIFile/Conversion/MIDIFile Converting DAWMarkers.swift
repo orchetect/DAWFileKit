@@ -196,9 +196,9 @@ extension MIDIFile {
                 != debugRoundTripTC.stringValue(format: [.showSubFrames])
             {
                 let errorString = "Warning: Marker origin "
-                    + markerTimecode.stringValue()
+                    + markerTimecode.stringValue(format: [.showSubFrames])
                     + " -> "
-                    + debugRoundTripTC.stringValue()
+                    + debugRoundTripTC.stringValue(format: [.showSubFrames])
                     + " read back from real time position."
                 messages.append(errorString)
             }
