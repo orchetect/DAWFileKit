@@ -101,7 +101,7 @@ extension FinalCutPro.FCPXML {
             element.childElements
         }
         
-        /// Returns child elements that are story elements.
+        /// Returns child story elements.
         public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
             element.fcpStoryElements
         }

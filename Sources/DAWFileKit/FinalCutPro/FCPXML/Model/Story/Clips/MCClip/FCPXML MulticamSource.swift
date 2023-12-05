@@ -26,6 +26,7 @@ extension FinalCutPro.FCPXML {
         ///
         /// When a `mc-clip` has the same angle selected for both video and audio, a single
         /// `mc-source` child element is used with a `srcEnable` attribute value of `all`.
+        ///
         /// When a `mc-clip` has different angles selected for video and audio, then two
         /// `mc-source` child elements are used where one will have a `srcEnable` attribute value of
         /// `video` and the other `audio`.
@@ -50,6 +51,7 @@ extension FinalCutPro.FCPXML.MulticamSource {
         ///
         /// When a `mc-clip` has the same angle selected for both video and audio, a single
         /// `mc-source` child element is used with a `srcEnable` attribute value of `all`.
+        /// 
         /// When a `mc-clip` has different angles selected for video and audio, then two
         /// `mc-source` child elements are used where one will have a `srcEnable` attribute value of
         /// `video` and the other `audio`.
@@ -73,6 +75,7 @@ extension FinalCutPro.FCPXML.MulticamSource {
     ///
     /// When a `mc-clip` has the same angle selected for both video and audio, a single
     /// `mc-source` child element is used with a `srcEnable` attribute value of `all`.
+    ///
     /// When a `mc-clip` has different angles selected for video and audio, then two
     /// `mc-source` child elements are used where one will have a `srcEnable` attribute value of
     /// `video` and the other `audio`.

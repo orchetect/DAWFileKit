@@ -18,7 +18,7 @@ extension XMLElement {
 }
 
 extension XMLElement {
-    /// Returns child elements that are story elements.
+    /// Returns child story elements.
     public var fcpStoryElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.fcpStoryElementType != nil }
