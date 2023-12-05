@@ -73,6 +73,16 @@ extension FinalCutPro.FCPXML {
             element.fcpMulticamSources
         }
         
+        /// Returns all child elements.
+        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+            element.childElements
+        }
+        
+        /// Returns child story elements.
+        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+            element.fcpStoryElements
+        }
+        
         public init(element: XMLElement) {
             self.element = element
         }
