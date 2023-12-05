@@ -1,5 +1,5 @@
 //
-//  FCPXML AssetClip.swift
+//  FCPXML Video.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,30 +11,12 @@ import TimecodeKit
 import OTCore
 
 extension FinalCutPro.FCPXML {
-    /// Asset Clip element.
+    /// Video element.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
-    /// > References a single media asset.
-    /// >
-    /// > Use an `asset-clip` element as a shorthand for a `clip` when it references the entire set
-    /// > of media components in a single media.
-    /// >
-    /// > Specify the timing of the edit through the Timing Attributes. The `start` and `duration`
-    /// > attributes of the `asset-clip` element apply to all media components in the asset.
-    /// >
-    /// > Use the `audioRole` and `videoRole` attributes to specify the main role. Generate
-    /// > subroles using the main role name, followed by a numerical suffix. For example,
-    /// > `dialogue.dialogue-1`, `dialogue.dialogue-2` and so on.
-    /// >
-    /// > Just as you do with the `clip` element, you can also use a `asset-clip` element as an
-    /// > immediate child element of an `event` element to represent a browser clip. In this case,
-    /// > use the Timeline Attributes to specify its format, etc.
-    /// >
-    /// > > Note:
-    /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
-    /// > > components from a media file as a clip.
-    public struct AssetClip: Equatable, Hashable {
+    /// > References video data from an `asset` or `effect` element.
+    public struct Video: Equatable, Hashable {
         public let element: XMLElement
         
         /// Required.
@@ -44,12 +26,7 @@ extension FinalCutPro.FCPXML {
             set { element.fcpRef = newValue }
         }
         
-        public var audioRole: AudioRole? {
-            get { element.fcpAudioRole }
-            set { element.fcpAudioRole = newValue }
-        }
-        
-        public var videoRole: VideoRole? {
+        public var role: VideoRole? {
             get { element.fcpVideoRole }
             set { element.fcpVideoRole = newValue }
         }
@@ -90,11 +67,6 @@ extension FinalCutPro.FCPXML {
         
         // Children
         
-        /// Returns child `audio-channel-source` elements.
-        public var audioChannelSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpAudioChannelSources
-        }
-        
         /// Returns all child elements.
         public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
             element.childElements
@@ -113,15 +85,14 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.AssetClip {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .assetClip
+extension FinalCutPro.FCPXML.Video {
+    public static let clipType: FinalCutPro.FCPXML.ClipType = .video
     
     public enum Attributes: String, XMLParsableAttributesKey {
-        /// Resource ID.
         /// Required.
+        /// Resource ID.
         case ref
-        case audioRole
-        case videoRole
+        case role
         
         // Anchorable Attributes
         case lane
@@ -134,21 +105,7 @@ extension FinalCutPro.FCPXML.AssetClip {
         case enabled
     }
     
-    public enum Children: String {
-        case audioChannelSource = "audio-channel-source"
-    }
-    
     // contains story elements
 }
 
-extension XMLElement { // AssetClip
-    /// Returns child `audio-channel-source` elements.
-    /// Use on `clip` or `asset-clip` elements.
-    public var fcpAudioChannelSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.AssetClip.Children.audioChannelSource.rawValue)
-    }
-}
-
 #endif
-
