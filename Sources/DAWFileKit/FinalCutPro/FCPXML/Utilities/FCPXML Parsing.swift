@@ -37,4 +37,41 @@ extension XMLElement {
     }
 }
 
+extension XMLElement {
+    /// Returns the root-level `fcpxml` element.
+    /// This may be called on any element within a FCPXML.
+    public var fcpRoot: XMLElement? {
+        rootDocument?
+            .rootElement()?
+            .firstChildElement(named: FinalCutPro.FCPXML.RootChildren.fcpxml.rawValue)
+    }
+    
+    /// Returns the root-level `fcpxml/resources` element.
+    /// This may be called on any element within a FCPXML.
+    public var fcpRootResources: XMLElement? {
+        fcpRoot?
+            .firstChildElement(named: FinalCutPro.FCPXML.Children.resources.rawValue)
+    }
+    
+    /// Returns the resource element for the given resource ID from within the root-level
+    /// `fcpxml/resources` element.
+    /// This may be called on any element within a FCPXML.
+    ///
+    /// - Parameters:
+    ///   - resourceID: Resource identifier string. (ie: "r1")
+    ///   - resources: Optionally supply a resources element.
+    ///     If `nil`, the resources from the XML document will be located and used.
+    ///     This may be useful with isolated testing when a full FCPXML document is not loaded and
+    ///     the document does not contain any resources to be found.
+    /// - Returns: Resource element for the given ID.
+    public func fcpResource(
+        forID resourceID: String,
+        in resources: XMLElement? = nil
+    ) -> XMLElement? {
+        (resources ?? fcpRootResources)?
+            .childElements
+            .first(whereAttribute: "id", hasValue: resourceID)
+    }
+}
+
 #endif
