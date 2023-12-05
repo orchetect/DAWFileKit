@@ -65,6 +65,18 @@ extension XMLElement {
 // MARK: - Time Attributes
 
 extension XMLElement {
+    /// Get or set the value of the `audioStart` attribute.
+    public var fcpAudioStart: Fraction? {
+        get { getFraction(forAttribute: "audioStart") }
+        set { set(fraction: newValue, forAttribute: "audioStart") }
+    }
+    
+    /// Get or set the value of the `audioDuration` attribute.
+    public var fcpAudioDuration: Fraction? {
+        get { getFraction(forAttribute: "audioDuration") }
+        set { set(fraction: newValue, forAttribute: "audioDuration") }
+    }
+    
     /// Get or set the value of the `duration` attribute.
     public var fcpDuration: Fraction? {
         get { getFraction(forAttribute: "duration") }
