@@ -45,7 +45,7 @@ extension FinalCutPro.FCPXML {
         
         /// Required.
         /// May be a full absolute URL to a local `file://` or remote `https://` resource.
-        /// May also be a relative URL based on the location of the FCPXML document itself, for example: "./Media/MyMovie.mov"
+        /// May also be a relative URL based on the location of the FCPXML document itself, for example: `./Media/MyMovie.mov`.
         public var src: URL? {
             get { element.getURL(forAttribute: Attributes.src.rawValue) }
             set { element.set(url: newValue, forAttribute: Attributes.src.rawValue) }
@@ -93,7 +93,7 @@ extension FinalCutPro.FCPXML.MediaRep {
         
         /// Required.
         /// May be a full absolute URL to a local `file://` or remote `https://` resource.
-        /// May also be a relative URL based on the location of the FCPXML document itself, for example: "./Media/MyMovie.mov"
+        /// May also be a relative URL based on the location of the FCPXML document itself, for example: `./Media/MyMovie.mov`.
         case src
         
         /// The filename string to use when Final Cut Pro manages the media representation file.
