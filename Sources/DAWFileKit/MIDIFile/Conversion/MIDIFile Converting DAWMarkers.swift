@@ -145,14 +145,8 @@ extension MIDIFile {
         var currentRealTimeOffset: Double
         var originRealTimeOffset: Double
         
-        switch frameRate {
-        case .fps29_97d, .fps59_94d, .fps119_88d:
-            currentRealTimeOffset = 1.500 // ms
-            originRealTimeOffset = 1.500 // ms
-        default:
-            currentRealTimeOffset = 1.000 // ms
-            originRealTimeOffset = 1.00 // ms
-        }
+        var currentRealTimeOffset: Double = frameRate.frameDuration.doubleValue / 32
+        let originRealTimeOffset: Double = frameRate.frameDuration.doubleValue / 32
         
         var realTimePosition = 0.0
         var tickPosition: UInt32 = 0
