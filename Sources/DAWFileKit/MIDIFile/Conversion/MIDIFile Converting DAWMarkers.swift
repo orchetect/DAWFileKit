@@ -67,7 +67,9 @@ extension MIDIFile {
         
         if inputTempo != tempo {
             messages.append(
-                "Input tempo \(inputTempo)bpm resolves to \(tempo)bpm after encoding in a MIDI file. Depending on variances in how DAWs interpret MIDI file tempos, after importing the MIDI file, markers may not exactly correspond to their timecodes in the DAW session. Stable tempos for retaining the highest level of MIDI file timing resolution include: 30, 60, 120, 125, 150, 160, 192, 200, 240, 250 bpm."
+                "Input tempo \(inputTempo)bpm resolves to \(tempo)bpm after encoding in a MIDI file. "
+                + "Depending on variances in how DAWs interpret MIDI file tempos, after importing the MIDI file, markers may not exactly correspond to their timecodes in the DAW session. "
+                + "Stable tempos for retaining the highest timing precision include: 30, 60, 120, 125, 150, 160, 192, 200, 240, 250 bpm."
             )
         }
         
@@ -180,7 +182,7 @@ extension MIDIFile {
             if currentRealTimeOffset !=
                 0.0 { currentRealTimeOffset = 0.0 } // only use offset the for the first marker
             let deltaTicks = UInt32(round((deltaAdvanceRealTime * ticksPerSecond) / 1000.0))
-            let deltaTime = MIDIFileEvent.DeltaTime.ticks(deltaTicks)
+            let deltaTime: MIDIFileEvent.DeltaTime = .ticks(deltaTicks)
             
             // do some self-validation to see if the event converts back into the same timecode as
             // the marker's input timecode
