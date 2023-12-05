@@ -114,27 +114,27 @@ extension FinalCutPro.FCPXML.Sequence {
 }
 
 extension XMLElement { // Sequence
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Sequence`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Sequence`` model object.
     /// Call this on a `sequence` element only.
     public var fcpAsSequence: FinalCutPro.FCPXML.Sequence {
         .init(element: self)
     }
     
-    /// Returns `renderFormat` attribute value.
+    /// FCPXML: Returns `renderFormat` attribute value.
     /// Call this on a `sequence` or `multicam` element only.
     public var fcpRenderFormat: String? {
         get { stringValue(forAttributeNamed: "renderFormat") }
         set { addAttribute(withName: "renderFormat", value: newValue) }
     }
     
-    /// Returns child `spine` elements.
+    /// FCPXML: Returns child `spine` elements.
     /// Typically called on a `sequence` element.
     public var fcpSpines: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter(whereElementNamed: FinalCutPro.FCPXML.Sequence.Children.spine.rawValue)
     }
     
-    /// Returns a child `spine` element if it exists.
+    /// FCPXML: Returns a child `spine` element if it exists.
     /// Typically called on a `sequence` element.
     public func fcpSpine() -> XMLElement? {
         guard let spine = fcpSpines.first else {

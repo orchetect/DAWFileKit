@@ -40,7 +40,14 @@ extension FinalCutPro.FCPXML {
         
         public var useAudioSubroles: Bool { // only used by `ref-clip`
             get { element.getBool(forAttribute: Attributes.useAudioSubroles.rawValue) ?? false }
-            set { element.set(bool: newValue, forAttribute: Attributes.useAudioSubroles.rawValue) }
+            set {
+                element.fcpSet(
+                    bool: newValue,
+                    forAttribute: Attributes.useAudioSubroles.rawValue,
+                    defaultValue: false,
+                    removeIfDefault: true
+                )
+            }
         }
         
         public var audioStart: Fraction? {
@@ -83,8 +90,8 @@ extension FinalCutPro.FCPXML {
         }
         
         public var enabled: Bool {
-            get { element.fcpEnabled ?? true }
-            set { element.fcpEnabled = newValue }
+            get { element.fcpGetEnabled(default: true) }
+            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Resource
@@ -132,7 +139,7 @@ extension FinalCutPro.FCPXML.RefClip {
         /// Resource ID
         case ref
         case role
-        case useAudioSubroles // default false
+        case useAudioSubroles // default `0` (false)
         
         case audioStart
         case audioDuration
@@ -154,7 +161,7 @@ extension FinalCutPro.FCPXML.RefClip {
 }
 
 extension XMLElement { // RefClip
-    /// Returns child `audio-role-source` elements.
+    /// FCPXML: Returns child `audio-role-source` elements.
     /// Use on `ref-clip`, `sync-source`, or `mc-source` elements.
     public var fcpAudioRoleSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements

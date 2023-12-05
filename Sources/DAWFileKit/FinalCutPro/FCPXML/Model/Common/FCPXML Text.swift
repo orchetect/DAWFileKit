@@ -103,7 +103,7 @@ extension FinalCutPro.FCPXML.Text {
 }
 
 extension XMLElement {
-    /// Returns child `text-style` elements.
+    /// FCPXML: Returns child `text-style` elements.
     /// Use on `text` elements.
     public var fcpTextStyles: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
@@ -171,7 +171,7 @@ extension FinalCutPro.FCPXML.Text.TextString {
 }
 
 extension XMLElement {
-    /// Get or set the value of the `position` attribute.
+    /// FCPXML: Get or set the value of the `position` attribute.
     /// Use on `text` element for a CEA-608 caption, or an `adjust-transform` element.
     public var fcpPosition: String? {
         get { stringValue(forAttributeNamed: "position") }

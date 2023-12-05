@@ -60,7 +60,7 @@ extension FinalCutPro.FCPXML.MulticamSource {
 }
 
 extension XMLElement { // MCClip
-    /// Returns child `mc-source` elements.
+    /// FCPXML: Returns child `mc-source` elements.
     /// Use on `multicam` elements.
     public var fcpMulticamSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
@@ -94,8 +94,8 @@ extension FinalCutPro.FCPXML.MulticamSource {
     }
 }
 
-extension [XMLElement] { // [Multicam Source]
-    /// Returns the corresponding angle IDs for the given multicam source(s).
+extension Sequence where Element == XMLElement { // [Multicam Source]
+    /// FCPXML: Returns the corresponding angle IDs for the given multicam source(s).
     /// Call on a `mc-source` element.
     public func fcpAudioVideoAngleIDs() -> (audioID: String?, videoID: String?) {
         var audioAngleID: String?
@@ -121,14 +121,14 @@ extension [XMLElement] { // [Multicam Source]
 }
 
 extension XMLElement { // Multicam Source
-    /// Returns value for attribute `angleID`.
+    /// FCPXML: Returns value for attribute `angleID`.
     /// Call on a `mc-angle` or `mc-source` element.
     public var fcpAngleID: String? {
         get { stringValue(forAttributeNamed: "angleID") }
         set { addAttribute(withName: "angleID", value: newValue) }
     }
     
-    /// Returns value for attribute `srcEnable`.
+    /// FCPXML: Returns value for attribute `srcEnable`.
     /// Call on a `mc-source` element.
     public var fcpSourceEnable: FinalCutPro.FCPXML.MulticamSource.SourceEnable? {
         get {

@@ -13,49 +13,49 @@ import OTCore
 // MARK: - Basic Attributes
 
 extension XMLElement {
-    /// Get or set the value of the `format` attribute.
+    /// FCPXML: Get or set the value of the `format` attribute.
     public var fcpFormat: String? {
         get { stringValue(forAttributeNamed: "format") }
         set { addAttribute(withName: "format", value: newValue) }
     }
     
-    /// Get or set the value of the `id` attribute.
+    /// FCPXML: Get or set the value of the `id` attribute.
     public var fcpID: String? {
         get { stringValue(forAttributeNamed: "id") }
         set { addAttribute(withName: "id", value: newValue) }
     }
     
-    /// Get or set the value of the `uid` attribute.
+    /// FCPXML: Get or set the value of the `uid` attribute.
     public var fcpUID: String? {
         get { stringValue(forAttributeNamed: "uid") }
         set { addAttribute(withName: "uid", value: newValue) }
     }
     
-    /// Get or set the value of the `name` attribute.
+    /// FCPXML: Get or set the value of the `name` attribute.
     public var fcpName: String? {
         get { stringValue(forAttributeNamed: "name") }
         set { addAttribute(withName: "name", value: newValue) }
     }
     
-    /// Get or set the value of the `note` attribute.
+    /// FCPXML: Get or set the value of the `note` attribute.
     public var fcpNote: String? {
         get { stringValue(forAttributeNamed: "note") }
         set { addAttribute(withName: "note", value: newValue) }
     }
     
-    /// Get or set the value of the `ref` attribute.
+    /// FCPXML: Get or set the value of the `ref` attribute.
     public var fcpRef: String? {
         get { stringValue(forAttributeNamed: "ref") }
         set { addAttribute(withName: "ref", value: newValue) }
     }
     
-    /// Get or set the value of the `src` attribute.
+    /// FCPXML: Get or set the value of the `src` attribute.
     public var fcpSRC: String? {
         get { stringValue(forAttributeNamed: "src") }
         set { addAttribute(withName: "src", value: newValue) }
     }
     
-    /// Get or set the value of the `value` attribute.
+    /// FCPXML: Get or set the value of the `value` attribute.
     public var fcpValue: String? {
         get { stringValue(forAttributeNamed: "value") }
         set { addAttribute(withName: "value", value: newValue) }
@@ -65,51 +65,51 @@ extension XMLElement {
 // MARK: - Time Attributes
 
 extension XMLElement {
-    /// Get or set the value of the `audioStart` attribute.
+    /// FCPXML: Get or set the value of the `audioStart` attribute.
     /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioStart: Fraction? {
-        get { getFraction(forAttribute: "audioStart") }
-        set { set(fraction: newValue, forAttribute: "audioStart") }
+        get { fcpGetFraction(forAttribute: "audioStart") }
+        set { fcpSet(fraction: newValue, forAttribute: "audioStart") }
     }
     
-    /// Get or set the value of the `audioDuration` attribute.
+    /// FCPXML: Get or set the value of the `audioDuration` attribute.
     /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioDuration: Fraction? {
-        get { getFraction(forAttribute: "audioDuration") }
-        set { set(fraction: newValue, forAttribute: "audioDuration") }
+        get { fcpGetFraction(forAttribute: "audioDuration") }
+        set { fcpSet(fraction: newValue, forAttribute: "audioDuration") }
     }
     
-    /// Get or set the value of the `duration` attribute.
+    /// FCPXML: Get or set the value of the `duration` attribute.
     public var fcpDuration: Fraction? {
-        get { getFraction(forAttribute: "duration") }
-        set { set(fraction: newValue, forAttribute: "duration") }
+        get { fcpGetFraction(forAttribute: "duration") }
+        set { fcpSet(fraction: newValue, forAttribute: "duration") }
     }
     
-    /// Get or set the value of the `frameDuration` attribute.
+    /// FCPXML: Get or set the value of the `frameDuration` attribute.
     public var fcpFrameDuration: Fraction? {
-        get { getFraction(forAttribute: "frameDuration") }
-        set { set(fraction: newValue, forAttribute: "frameDuration") }
+        get { fcpGetFraction(forAttribute: "frameDuration") }
+        set { fcpSet(fraction: newValue, forAttribute: "frameDuration") }
     }
     
-    /// Get or set the value of the `start` attribute.
+    /// FCPXML: Get or set the value of the `start` attribute.
     public var fcpStart: Fraction? {
-        get { getFraction(forAttribute: "start") }
-        set { set(fraction: newValue, forAttribute: "start") }
+        get { fcpGetFraction(forAttribute: "start") }
+        set { fcpSet(fraction: newValue, forAttribute: "start") }
     }
     
-    /// Get or set the value of the `tcStart` attribute.
+    /// FCPXML: Get or set the value of the `tcStart` attribute.
     public var fcpTCStart: Fraction? {
-        get { getFraction(forAttribute: "tcStart") }
-        set { set(fraction: newValue, forAttribute: "tcStart") }
+        get { fcpGetFraction(forAttribute: "tcStart") }
+        set { fcpSet(fraction: newValue, forAttribute: "tcStart") }
     }
     
-    /// Get or set the value of the `offset` attribute.
+    /// FCPXML: Get or set the value of the `offset` attribute.
     public var fcpOffset: Fraction? {
-        get { getFraction(forAttribute: "offset") }
-        set { set(fraction: newValue, forAttribute: "offset") }
+        get { fcpGetFraction(forAttribute: "offset") }
+        set { fcpSet(fraction: newValue, forAttribute: "offset") }
     }
     
-    /// Get or set the value of the `tcFormat` attribute.
+    /// FCPXML: Get or set the value of the `tcFormat` attribute.
     public var fcpTCFormat: FinalCutPro.FCPXML.TimecodeFormat? {
         get {
             guard let value = stringValue(forAttributeNamed: "tcFormat")
@@ -126,19 +126,43 @@ extension XMLElement {
 // MARK: - Timeline Attributes
 
 extension XMLElement {
-    /// Get or set the value of the `active` attribute.
-    public var fcpActive: Bool? {
-        get { getBool(forAttribute: "active") }
-        set { set(bool: newValue, forAttribute: "active") }
+    /// FCPXML: Get the value of the `active` attribute.
+    public func fcpGetActive(default defaultValue: Bool) -> Bool {
+        getBool(forAttribute: "active") ?? defaultValue
     }
     
-    /// Get or set the value of the `enabled` attribute.
-    public var fcpEnabled: Bool? {
-        get { getBool(forAttribute: "enabled") }
-        set { set(bool: newValue, forAttribute: "enabled") }
+    /// FCPXML: Set the value of the `active` attribute.
+    /// Removes the attribute if the new value equals the default value.
+    public func fcpSet(active newValue: Bool?, default defaultValue: Bool) {
+        fcpSet(
+            bool: newValue,
+            forAttribute: "active",
+            defaultValue: defaultValue,
+            removeIfDefault: true
+        )
+    }
+}
+
+extension XMLElement {
+    /// FCPXML: Get the value of the `enabled` attribute.
+    public func fcpGetEnabled(default defaultValue: Bool) -> Bool {
+        getBool(forAttribute: "enabled") ?? defaultValue
     }
     
-    /// Get or set the value of the `role` attribute.
+    /// FCPXML: Set the value of the `enabled` attribute.
+    /// Removes the attribute if the new value equals the default value.
+    public func fcpSet(enabled newValue: Bool?, default defaultValue: Bool) {
+        fcpSet(
+            bool: newValue,
+            forAttribute: "enabled",
+            defaultValue: defaultValue,
+            removeIfDefault: true
+        )
+    }
+}
+
+extension XMLElement {
+    /// FCPXML: Get or set the value of the `role` attribute.
     public var fcpLane: Int? {
         get { getInt(forAttribute: "lane") }
         set { set(int: newValue, forAttribute: "lane") }
@@ -148,7 +172,7 @@ extension XMLElement {
 // MARK: - Role Attributes
 
 extension XMLElement {
-    /// Get the value of the `role` attribute as a specific role type.
+    /// FCPXML: Get the value of the `role` attribute as a specific role type.
     public func fcpRole<R: FCPXMLRole>(as roleType: R.Type) -> R? {
         guard let value = stringValue(forAttributeNamed: "role")
         else { return nil }
@@ -156,12 +180,12 @@ extension XMLElement {
         return R(rawValue: value)
     }
     
-    /// Set the value of the `role` attribute.
+    /// FCPXML: Set the value of the `role` attribute.
     public func fcpSet<R: FCPXMLRole>(role: R?) {
         addAttribute(withName: "role", value: role?.rawValue)
     }
     
-    /// Get or set the value of the `audioRole` attribute.
+    /// FCPXML: Get or set the value of the `audioRole` attribute.
     public var fcpAudioRole: FinalCutPro.FCPXML.AudioRole? {
         get {
             guard let value = stringValue(forAttributeNamed: "audioRole")
@@ -174,7 +198,7 @@ extension XMLElement {
         }
     }
     
-    /// Get or set the value of the `videoRole` attribute.
+    /// FCPXML: Get or set the value of the `videoRole` attribute.
     public var fcpVideoRole: FinalCutPro.FCPXML.VideoRole? {
         get {
             guard let value = stringValue(forAttributeNamed: "videoRole")
@@ -191,71 +215,37 @@ extension XMLElement {
 // MARK: - Helpers
 
 extension XMLElement {
-    func getFraction(forAttribute attributeName: String) -> Fraction? {
+    /// FCPXML: Get an attribute time value as a `Fraction` instance.
+    func fcpGetFraction(forAttribute attributeName: String) -> Fraction? {
         guard let value = stringValue(forAttributeNamed: attributeName)
         else { return nil }
         
         return Fraction(fcpxmlString: value)
     }
     
-    func set(fraction newValue: Fraction?, forAttribute attributeName: String) {
+    /// FCPXML: Set an attribute time value from a `Fraction` instance.
+    func fcpSet(fraction newValue: Fraction?, forAttribute attributeName: String) {
         addAttribute(withName: attributeName,
                      value: newValue?.fcpxmlStringValue)
     }
 }
 
 extension XMLElement {
-    func getBool(forAttribute attributeName: String) -> Bool? {
-        guard let value = stringValue(forAttributeNamed: attributeName)
-        else { return nil }
-        
-        switch value {
-        case "0": return false
-        case "1": return true
-        default: return nil
-        }
+    /// FCPXML: Set a `Bool` attribute value.
+    func fcpSet(
+        bool newValue: Bool?,
+        forAttribute attributeName: String,
+        defaultValue: Bool,
+        removeIfDefault: Bool
+    ) {
+        set(
+            bool: newValue,
+            forAttribute: attributeName,
+            defaultValue: defaultValue,
+            removeIfDefault: removeIfDefault,
+            useInt: true // FCPXML always uses "1" or "0"
+        )
     }
-    
-    func set(bool newValue: Bool?, forAttribute attributeName: String) {
-        guard let newValue = newValue else {
-            addAttribute(withName: attributeName, value: nil)
-            return
-        }
-        
-        if newValue {
-            // addAttribute(withName: "enabled", value: "1")
-            
-            // the absence of true implies a default of true
-            // so we don't need to store a true value
-            addAttribute(withName: attributeName, value: nil)
-        } else {
-            addAttribute(withName: attributeName, value: "0")
-        }
-    }
-}
-
-extension XMLElement {
-    func getInt(forAttribute attributeName: String) -> Int? {
-        stringValue(forAttributeNamed: attributeName)?.int
-    }
-    
-    func set(int newValue: Int?, forAttribute attributeName: String) {
-        addAttribute(withName: attributeName, value: newValue?.string)
-    }
-}
-
-extension XMLElement {
-    func getURL(forAttribute attributeName: String) -> URL? {
-        guard let value = stringValue(forAttributeNamed: attributeName)
-        else { return nil }
-        return URL(string: value)
-    }
-    
-    func set(url newValue: URL?, forAttribute attributeName: String) {
-        addAttribute(withName: attributeName, value: newValue?.absoluteString)
-    }
-    
-    // TODO: differentiate absolute URL from relative URL?
 }
 
 #endif

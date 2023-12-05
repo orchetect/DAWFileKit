@@ -50,25 +50,30 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// TODO: remove these? might be better to explicitly have to access the active clip.
 extension FinalCutPro.FCPXML.Audition /* Clip Attributes */ {
-    /// Returns the active clip's `name` attribute.
+    /// Get or set the active clip's `name` attribute.
     public var name: String? {
-        activeClip?.name
+        get { activeClip?.fcpName }
+        set { activeClip?.fcpName = newValue }
     }
     
-    /// Returns the active clip's `start` attribute.
+    /// Get or set the active clip's `start` attribute.
     public var start: Fraction? {
-        activeClip?.fcpStart
+        get { activeClip?.fcpStart }
+        set { activeClip?.fcpStart = newValue }
     }
     
-    /// Returns the active clip's `duration` attribute.
+    /// Get or set the active clip's `duration` attribute.
     public var duration: Fraction? {
-        activeClip?.fcpDuration
+        get { activeClip?.fcpDuration }
+        set { activeClip?.fcpDuration = newValue }
     }
     
-    /// Returns the active clip's `enabled` attribute.
+    /// Get or set the active clip's `enabled` attribute.
     public var enabled: Bool {
-        activeClip?.fcpEnabled ?? true
+        get { activeClip?.fcpGetEnabled(default: true) ?? true }
+        set { activeClip?.fcpSet(enabled: newValue, default: true) }
     }
 }
 

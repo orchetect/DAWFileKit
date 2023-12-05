@@ -9,9 +9,13 @@
 import Foundation
 import OTCore
 
-// MARK: Ancestor Walking
+// MARK: - Ancestor Walking
+
+// TODO: remove or refactor?
 
 extension XMLElement {
+    /// Utility:
+    /// Walk ancestors of the element.
     func walkAncestorElements(
         includingSelf: Bool,
         _ block: (_ element: XMLElement) -> Bool
@@ -30,6 +34,8 @@ extension XMLElement {
         )
     }
     
+    /// Utility:
+    /// Walk ancestors of the element.
     func walkAncestorElements<T>(
         includingSelf: Bool,
         returning: T.Type,
@@ -42,6 +48,8 @@ extension XMLElement {
         )
     }
     
+    /// Utility Helper:
+    /// Walk ancestors of the element.
     private static func walkAncestorElements<T>(
         startingWith element: XMLElement?,
         returning: T.Type,

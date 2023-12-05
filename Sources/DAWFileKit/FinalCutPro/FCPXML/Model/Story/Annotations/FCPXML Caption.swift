@@ -58,8 +58,8 @@ extension FinalCutPro.FCPXML {
         }
         
         public var enabled: Bool {
-            get { element.fcpEnabled ?? true }
-            set { element.fcpEnabled = newValue }
+            get { element.fcpGetEnabled(default: true) }
+            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         public init(element: XMLElement) {
@@ -98,7 +98,7 @@ extension FinalCutPro.FCPXML.Caption {
 }
 
 extension XMLElement { // Caption
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Caption`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Caption`` model object.
     /// Call this on a `caption` element only.
     public var fcpAsCaption: FinalCutPro.FCPXML.Caption {
         .init(element: self)
@@ -106,13 +106,13 @@ extension XMLElement { // Caption
 }
 
 extension XMLElement { // Caption
-    /// Returns child `text` elements.
+    /// FCPXML: Returns child `text` elements.
     public func fcpTexts() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter(whereElementNamed: FinalCutPro.FCPXML.Caption.Children.text.rawValue)
     }
     
-    /// Returns child `text-style-def` elements.
+    /// FCPXML: Returns child `text-style-def` elements.
     public func fcpTextStyleDefinitions() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter(whereElementNamed: FinalCutPro.FCPXML.Caption.Children.textStyleDef.rawValue)

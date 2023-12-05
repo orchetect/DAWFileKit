@@ -72,8 +72,8 @@ extension FinalCutPro.FCPXML {
         }
         
         public var enabled: Bool {
-            get { element.fcpEnabled ?? true }
-            set { element.fcpEnabled = newValue }
+            get { element.fcpGetEnabled(default: true) }
+            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Children
@@ -127,7 +127,7 @@ extension FinalCutPro.FCPXML.MCClip {
 }
 
 extension XMLElement { // MCClip
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/MCClip`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/MCClip`` model object.
     /// Call this on a `mc-clip` element only.
     public var fcpAsMCClip: FinalCutPro.FCPXML.MCClip {
         .init(element: self)

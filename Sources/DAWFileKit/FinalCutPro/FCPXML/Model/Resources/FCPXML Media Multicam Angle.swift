@@ -53,7 +53,7 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
 }
 
 extension XMLElement { // Angle
-    /// Returns the element wrapped in an ``FinalCutPro/FCPXML/Media/Multicam/Angle`` model object.
+    /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Media/Multicam/Angle`` model object.
     /// Call this on a `mc-angle` element only.
     public var fcpAsMCAngle: FinalCutPro.FCPXML.Media.Multicam.Angle {
         .init(element: self)

@@ -68,23 +68,33 @@ extension FinalCutPro.FCPXML {
         
         // implied asset attributes
         
-        /// True if asset contains audio. Default is `false`.
+        /// True if asset contains audio. Default is `0` (false).
         public var hasAudio: Bool {
             get {
                 element.getBool(forAttribute: Attributes.hasAudio.rawValue) ?? false
             }
             set {
-                element.set(bool: newValue, forAttribute: Attributes.hasAudio.rawValue)
+                element.fcpSet(
+                    bool: newValue,
+                    forAttribute: Attributes.hasAudio.rawValue,
+                    defaultValue: false,
+                    removeIfDefault: true
+                )
             }
         }
         
-        /// True if asset contains video. Default is `false`.
+        /// True if asset contains video. Default is `0` (false).
         public var hasVideo: Bool {
             get {
                 element.getBool(forAttribute: Attributes.hasVideo.rawValue) ?? false
             }
             set {
-                element.set(bool: newValue, forAttribute: Attributes.hasVideo.rawValue)
+                element.fcpSet(
+                    bool: newValue,
+                    forAttribute: Attributes.hasVideo.rawValue,
+                    defaultValue: false,
+                    removeIfDefault: true
+                )
             }
         }
         
@@ -153,9 +163,9 @@ extension FinalCutPro.FCPXML.Asset {
         case uid
         
         // implied asset attributes
-        /// True if asset contains audio. Default is `false`.
+        /// True if asset contains audio. Default is `0` (false).
         case hasAudio
-        /// True if asset contains video. Default is `false`.
+        /// True if asset contains video. Default is `0` (false).
         case hasVideo
         /// Number of audio sources. Default is `0`.
         case audioSources
@@ -175,13 +185,13 @@ extension FinalCutPro.FCPXML.Asset {
 }
 
 extension XMLElement { // Asset
-    /// Returns the element wrapped in an ``FinalCutPro/FCPXML/Asset`` model object.
+    /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Asset`` model object.
     /// Call this on an `asset` element only.
     public var fcpAsAsset: FinalCutPro.FCPXML.Asset {
         .init(element: self)
     }
     
-    /// Returns the `audioRate` attribute value (audio sample rate in Hz).
+    /// FCPXML: Returns the `audioRate` attribute value (audio sample rate in Hz).
     /// Call this on an `asset` or `sequence` element only.
     public var fcpAudioRate: Int? {
         get { getInt(forAttribute: "audioRate") }

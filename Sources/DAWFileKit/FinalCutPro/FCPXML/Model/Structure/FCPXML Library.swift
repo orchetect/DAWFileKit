@@ -65,7 +65,7 @@ extension FinalCutPro.FCPXML.Library {
 }
 
 extension XMLElement { // Library
-    /// Returns the library name, derived from the `location` URL.
+    /// FCPXML: Returns the library name, derived from the `location` URL.
     /// Call on a `library` element.
     public var fcpLibraryName: String? {
         guard let libraryLocation = fcpLibraryLocation else { return nil }
@@ -81,7 +81,7 @@ extension XMLElement { // Library
         return libNameDecoded
     }
     
-    /// Get or set the library `location` URL.
+    /// FCPXML: Get or set the library `location` URL.
     /// Call on a `library` element.
     public var fcpLibraryLocation: URL? {
         get { getURL(forAttribute: "location") }

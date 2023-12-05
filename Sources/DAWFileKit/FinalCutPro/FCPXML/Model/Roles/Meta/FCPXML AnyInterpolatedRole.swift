@@ -64,9 +64,9 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: CustomDebugStringConvertible {
     }
 }
 
-// MARK: - Collection Methods
+// MARK: - Sequence Methods
 
-extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
+extension Sequence<FinalCutPro.FCPXML.AnyInterpolatedRole> {
     public var containsAudioRoles: Bool {
         contains(where: { $0.wrapped.isAudio })
     }
@@ -82,7 +82,7 @@ extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
 
 // MARK: - Filtering
 
-extension Collection<FinalCutPro.FCPXML.AnyInterpolatedRole> {
+extension Sequence<FinalCutPro.FCPXML.AnyInterpolatedRole> {
     public func audioRoles() -> [Element] {
         filter { $0.wrapped.isAudio }
     }

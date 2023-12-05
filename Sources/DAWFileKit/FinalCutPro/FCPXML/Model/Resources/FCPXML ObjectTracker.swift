@@ -37,7 +37,7 @@ extension FinalCutPro.FCPXML.ObjectTracker {
 }
 
 extension XMLElement { // ObjectTracker
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/ObjectTracker`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/ObjectTracker`` model object.
     /// Call this on a `object-tracker` element only.
     public var fcpAsObjectTracker: FinalCutPro.FCPXML.ObjectTracker {
         .init(element: self)

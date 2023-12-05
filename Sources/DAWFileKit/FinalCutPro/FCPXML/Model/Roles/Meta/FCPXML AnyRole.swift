@@ -160,9 +160,9 @@ extension FinalCutPro.FCPXML.AnyRole {
     }
 }
 
-// MARK: - Collection Methods
+// MARK: - Sequence Methods
 
-extension Collection<FinalCutPro.FCPXML.AnyRole> {
+extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     public var containsAudioRoles: Bool {
         contains(where: { $0.isAudio })
     }
@@ -178,7 +178,7 @@ extension Collection<FinalCutPro.FCPXML.AnyRole> {
 
 // MARK: - Filtering
 
-extension Collection<FinalCutPro.FCPXML.AnyRole> {
+extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     /// Convenience to filter the FCPXML role collection and return only audio roles.
     public func audioRoles() -> [Element] {
         filter(\.isAudio)

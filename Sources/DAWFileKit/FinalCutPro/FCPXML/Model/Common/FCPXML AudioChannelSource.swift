@@ -48,13 +48,13 @@ extension FinalCutPro.FCPXML {
         }
         
         public var enabled: Bool {
-            get { element.fcpEnabled ?? true }
-            set { element.fcpEnabled = newValue }
+            get { element.fcpGetEnabled(default: true) }
+            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         public var active: Bool {
-            get { element.fcpActive ?? true }
-            set { element.fcpActive = newValue }
+            get { element.fcpGetActive(default: true) }
+            set { element.fcpSet(active: newValue, default: true) }
         }
         
         // Children

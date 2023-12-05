@@ -37,7 +37,7 @@ extension FCPXMLRole {
 
 // MARK: - Collection Methods
 
-extension Collection<FinalCutPro.FCPXML.AnyRole> {
+extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     public func contains(_ element: any FCPXMLRole) -> Bool {
         contains(where: { $0.wrapped.isEqual(to: element) })
     }
@@ -49,7 +49,7 @@ extension Dictionary where Value == FinalCutPro.FCPXML.AnyRole {
     }
 }
 
-extension Collection where Element: FCPXMLRole {
+extension Sequence where Element: FCPXMLRole {
     public func contains(_ element: FinalCutPro.FCPXML.AnyRole) -> Bool {
         contains(where: { $0.asAnyRole() == element })
     }
@@ -63,13 +63,13 @@ extension Dictionary where Value: FCPXMLRole {
 
 // MARK: - Nested Type Erasure
 
-extension Collection where Element: FCPXMLRole {
+extension Sequence where Element: FCPXMLRole {
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         map { $0.asAnyRole() }
     }
 }
 
-extension Collection<FinalCutPro.FCPXML.AnyRole> {
+extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         map { $0.asAnyRole() }
     }

@@ -25,8 +25,8 @@ extension FinalCutPro.FCPXML {
         
         /// Active state of the audio role source.
         public var active: Bool {
-            get { element.fcpActive ?? true }
-            set { element.fcpActive = newValue }
+            get { element.fcpGetActive(default: true) }
+            set { element.fcpSet(active: newValue, default: true) }
         }
         
         // Children

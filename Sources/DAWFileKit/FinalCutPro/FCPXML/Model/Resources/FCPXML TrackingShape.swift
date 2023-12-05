@@ -41,7 +41,7 @@ extension FinalCutPro.FCPXML.TrackingShape {
 }
 
 extension XMLElement { // TrackingShape
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/TrackingShape`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/TrackingShape`` model object.
     /// Call this on a `tracking-shape` element only.
     public var fcpAsTrackingShape: FinalCutPro.FCPXML.TrackingShape {
         .init(element: self)

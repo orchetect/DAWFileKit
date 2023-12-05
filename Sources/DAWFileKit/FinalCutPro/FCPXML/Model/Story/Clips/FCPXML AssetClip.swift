@@ -84,8 +84,8 @@ extension FinalCutPro.FCPXML {
         }
         
         public var enabled: Bool {
-            get { element.fcpEnabled ?? true }
-            set { element.fcpEnabled = newValue }
+            get { element.fcpGetEnabled(default: true) }
+            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Children
@@ -142,7 +142,7 @@ extension FinalCutPro.FCPXML.AssetClip {
 }
 
 extension XMLElement { // AssetClip
-    /// Returns child `audio-channel-source` elements.
+    /// FCPXML: Returns child `audio-channel-source` elements.
     /// Use on `clip` or `asset-clip` elements.
     public var fcpAudioChannelSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements

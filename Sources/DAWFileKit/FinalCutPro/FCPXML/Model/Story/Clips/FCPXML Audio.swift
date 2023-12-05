@@ -73,8 +73,8 @@ extension FinalCutPro.FCPXML {
         }
         
         public var enabled: Bool {
-            get { element.fcpEnabled ?? true }
-            set { element.fcpEnabled = newValue }
+            get { element.fcpGetEnabled(default: true) }
+            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Children
@@ -125,14 +125,14 @@ extension FinalCutPro.FCPXML.Audio {
 }
 
 extension XMLElement { // Audio
-    /// Get or set the value of the `srcCh` attribute.
+    /// FCPXML: Get or set the value of the `srcCh` attribute.
     /// Use on `audio` and `audio-channel-source` elements.
     public var fcpSourceChannels: String? {
         get { stringValue(forAttributeNamed: "srcCh") }
         set { addAttribute(withName: "srcCh", value: newValue) }
     }
     
-    /// Get or set the value of the `outCh` attribute.
+    /// FCPXML: Get or set the value of the `outCh` attribute.
     /// Use on `audio` and `audio-channel-source` elements.
     public var fcpOutputChannels: String? {
         get { stringValue(forAttributeNamed: "outCh") }

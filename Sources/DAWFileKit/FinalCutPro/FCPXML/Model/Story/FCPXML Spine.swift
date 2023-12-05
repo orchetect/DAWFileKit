@@ -65,7 +65,7 @@ extension FinalCutPro.FCPXML.Spine {
 }
 
 extension XMLElement { // Spine
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Spine`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Spine`` model object.
     /// Call this on a `spine` element only.
     public var fcpAsSpine: FinalCutPro.FCPXML.Spine {
         .init(element: self)

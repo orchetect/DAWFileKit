@@ -85,19 +85,19 @@ extension FinalCutPro.FCPXML.Marker {
 }
 
 extension XMLElement { // Any Marker
-    /// Returns the element wrapped in a ``FinalCutPro/FCPXML/Marker`` model object.
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Marker`` model object.
     /// Call this on a `marker` or `chapter-marker` element only.
     public var fcpAsMarker: FinalCutPro.FCPXML.Marker {
         .init(element: self)
     }
     
-    /// Returns the marker type of the element, if the element is a marker.
+    /// FCPXML: Returns the marker type of the element, if the element is a marker.
     /// Call this on a `marker` or `chapter-marker` element.
     public var fcpMarkerType: FinalCutPro.FCPXML.MarkerType? {
         FinalCutPro.FCPXML.MarkerType(from: self)
     }
     
-    /// Returns the marker type and state.
+    /// FCPXML: Returns the marker type and state.
     /// Call on a `marker` or `chapter-marker` element.
     public var fcpMarkerState: FinalCutPro.FCPXML.Marker.MarkerState? {
         guard let fcpMarkerType = fcpMarkerType else { return nil }
@@ -130,7 +130,7 @@ extension XMLElement { // Any Marker
 }
 
 extension XMLElement { // Chapter Marker
-    /// Returns the value of the `isCompleted` attribute.
+    /// FCPXML: Returns the value of the `isCompleted` attribute.
     /// If `completed` attribute is present, the marker becomes a to-do item.
     /// If `nil` is returned, the marker is a standard marker.
     /// Call this on a `marker` element.
@@ -146,16 +146,16 @@ extension XMLElement { // Chapter Marker
         }
     }
     
-    /// Returns the value of the `posterOffset` attribute as a `CMTime` instance.
+    /// FCPXML: Returns the value of the `posterOffset` attribute as a `CMTime` instance.
     /// Call this on a `chapter-marker` element.
     public var fcpPosterOffset: Fraction? {
         get { 
-            getFraction(
+            fcpGetFraction(
                 forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue
             )
         }
         set {
-            set(
+            fcpSet(
                 fraction: newValue,
                 forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue
             )
@@ -203,7 +203,7 @@ extension FinalCutPro.FCPXML.Marker {
 }
 
 extension XMLElement { // Any Marker
-    /// Returns the marker kind.
+    /// FCPXML: Returns the marker kind.
     /// Call on `marker` or `chapter-marker` elements.
     public var fcpMarkerKind: FinalCutPro.FCPXML.Marker.MarkerKind? {
         guard let fcpMarkerState = fcpMarkerState else { return nil }
@@ -218,7 +218,7 @@ extension XMLElement { // Any Marker
 
 // MARK: - Model Structures
 
- extension Collection<FinalCutPro.FCPXML.Marker> {
+ extension Sequence<FinalCutPro.FCPXML.Marker> {
      /// Sorts collection by marker's `start` attribute.
      public func sortedByStart() -> [FinalCutPro.FCPXML.Marker] {
          sorted { lhs, rhs in

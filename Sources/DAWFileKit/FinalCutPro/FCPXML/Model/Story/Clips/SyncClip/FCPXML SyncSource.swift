@@ -61,7 +61,7 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
 }
 
 extension XMLElement { // SyncClip
-    /// Returns child `sync-source` elements.
+    /// FCPXML: Returns child `sync-source` elements.
     /// Use on `sync-clip` elements only.
     public var fcpSyncSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements

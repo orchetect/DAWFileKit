@@ -7,13 +7,13 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 import OTCore
+import TimecodeKit
 
 // MARK: - Elements
 
 extension XMLElement {
-    /// Returns the element type of the element.
+    /// FCPXML: Returns the element type of the element.
     public var fcpElementType: FinalCutPro.FCPXML.ElementType? {
         FinalCutPro.FCPXML.ElementType(from: self)
     }
@@ -22,13 +22,13 @@ extension XMLElement {
 // MARK: - Story Elements
 
 extension XMLElement {
-    /// Returns child story elements.
+    /// FCPXML: Returns child story elements.
     public var fcpStoryElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.fcpStoryElementType != nil }
     }
     
-    /// Returns the story element type of the element if the element is a story element.
+    /// FCPXML: Returns the story element type of the element if the element is a story element.
     public var fcpStoryElementType: FinalCutPro.FCPXML.StoryElementType? {
         FinalCutPro.FCPXML.StoryElementType(from: self)
     }
@@ -37,6 +37,7 @@ extension XMLElement {
 // MARK: - Events
 
 extension XMLElement {
+    /// FCPXML: Returns child `event` elements.
     public var fcpEvents: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.fcpElementType == .structure(.event) }
@@ -46,7 +47,7 @@ extension XMLElement {
 // MARK: - Resources
 
 extension XMLElement {
-    /// Returns the root-level `fcpxml` element.
+    /// FCPXML: Returns the root-level `fcpxml` element.
     /// This may be called on any element within a FCPXML.
     public var fcpRoot: XMLElement? {
         rootDocument?
@@ -54,14 +55,14 @@ extension XMLElement {
             .firstChildElement(named: FinalCutPro.FCPXML.RootChildren.fcpxml.rawValue)
     }
     
-    /// Returns the root-level `fcpxml/resources` element.
+    /// FCPXML: Returns the root-level `fcpxml/resources` element.
     /// This may be called on any element within a FCPXML.
     public var fcpRootResources: XMLElement? {
         fcpRoot?
             .firstChildElement(named: FinalCutPro.FCPXML.Children.resources.rawValue)
     }
     
-    /// Returns the resource element for the given resource ID from within the root-level
+    /// FCPXML: Returns the resource element for the given resource ID from within the root-level
     /// `fcpxml/resources` element.
     /// This may be called on any element within a FCPXML.
     ///
