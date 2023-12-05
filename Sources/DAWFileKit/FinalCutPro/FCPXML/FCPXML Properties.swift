@@ -65,10 +65,4 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension Sequence {
-    fileprivate var asAnySequence: AnySequence<Element> {
-        AnySequence(self)
-    }
-}
-
 #endif
