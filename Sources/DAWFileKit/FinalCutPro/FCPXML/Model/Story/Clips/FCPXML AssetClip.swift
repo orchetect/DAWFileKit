@@ -34,7 +34,7 @@ extension FinalCutPro.FCPXML {
     /// > > Note:
     /// > > FCPXML 1.6 added the `asset-clip` element to add both the audio and video media
     /// > > components from a media file as a clip.
-    public struct AssetClip {
+    public struct AssetClip: Equatable, Hashable {
         public let element: XMLElement
         
         /// Required.

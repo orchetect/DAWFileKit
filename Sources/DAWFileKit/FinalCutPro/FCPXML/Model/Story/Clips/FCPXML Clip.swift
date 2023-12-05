@@ -1,5 +1,5 @@
 //
-//  FCPXML Audio.swift
+//  FCPXML Clip.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,37 +11,23 @@ import TimecodeKit
 import OTCore
 
 extension FinalCutPro.FCPXML {
-    /// Audio element.
+    /// Represents a basic unit of editing.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
-    /// > References audio data from an `asset` or `effect` element.
-    public struct Audio: Equatable, Hashable {
+    /// > Use a `clip` element to describe a timeline sequence created from a source media file. A
+    /// > `clip` contains video and/or audio elements, each of which represents a media component
+    /// > (usually a track) in media. Specify the timing of the edit through the
+    /// > [Timing Attributes](
+    /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/clip
+    /// > ).
+    /// >
+    /// > You can also use a `clip` element as an immediate child element of an event element to
+    /// > represent a browser clip. In this case, use the [Timeline Attributes](
+    /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/clip
+    /// > ) to specify its format, etc.
+    public struct Clip: Equatable, Hashable {
         public let element: XMLElement
-        
-        /// Required.
-        /// Resource ID
-        public var ref: String? {
-            get { element.fcpRef }
-            set { element.fcpRef = newValue }
-        }
-        
-        public var role: AudioRole? {
-            get { element.fcpAudioRole }
-            set { element.fcpAudioRole = newValue }
-        }
-        
-        /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
-        public var sourceChannels: String? {
-            get { element.fcpSourceChannels }
-            set { element.fcpSourceChannels = newValue }
-        }
-        
-        /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
-        public var outputChannels: String? {
-            get { element.fcpOutputChannels }
-            set { element.fcpOutputChannels = newValue }
-        }
         
         // Anchorable Attributes
         
@@ -97,19 +83,10 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.Audio {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .audio
+extension FinalCutPro.FCPXML.Clip {
+    public static let clipType: FinalCutPro.FCPXML.ClipType = .clip
     
     public enum Attributes: String, XMLParsableAttributesKey {
-        /// Required.
-        /// Resource ID.
-        case ref
-        case role
-        /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
-        case srcCh
-        /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
-        case outCh
-        
         // Anchorable Attributes
         case lane
         case offset
@@ -122,22 +99,6 @@ extension FinalCutPro.FCPXML.Audio {
     }
     
     // contains story elements
-}
-
-extension XMLElement { // Audio
-    /// Get or set the value of the `srcCh` attribute.
-    /// Use on `audio` and `audio-channel-source` elements.
-    public var fcpSourceChannels: String? {
-        get { stringValue(forAttributeNamed: "srcCh") }
-        set { addAttribute(withName: "srcCh", value: newValue) }
-    }
-    
-    /// Get or set the value of the `outCh` attribute.
-    /// Use on `audio` and `audio-channel-source` elements.
-    public var fcpOutputChannels: String? {
-        get { stringValue(forAttributeNamed: "outCh") }
-        set { addAttribute(withName: "outCh", value: newValue) }
-    }
 }
 
 #endif
