@@ -12,6 +12,7 @@ import OTCore
 // MARK: - Rational Time Value Utils
 
 extension Sequence where Element == XMLElement {
+    /// Returns the sequence filtered by the given element type.
     public func filter(
         whereElementType elementType: FinalCutPro.FCPXML.ElementType
     ) -> LazyFilterSequence<Self> {
@@ -20,6 +21,7 @@ extension Sequence where Element == XMLElement {
 }
 
 extension LazySequence where Element == XMLElement {
+    /// Returns the sequence filtered by the given element type.
     public func filter(
         whereElementType elementType: FinalCutPro.FCPXML.ElementType
     ) -> LazyFilterSequence<LazySequence<Base>.Elements> {
