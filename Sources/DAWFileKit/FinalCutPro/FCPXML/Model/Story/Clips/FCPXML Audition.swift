@@ -105,6 +105,14 @@ extension FinalCutPro.FCPXML.Audition {
     }
 }
 
+extension XMLElement { // Audition
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Audition`` model object.
+    /// Call this on a `audition` element only.
+    public var fcpAsAudition: FinalCutPro.FCPXML.Audition {
+        .init(element: self)
+    }
+}
+
 extension FinalCutPro.FCPXML.Audition {
     public enum Mask: Equatable, Hashable, CaseIterable, Sendable {
         case active

@@ -59,9 +59,17 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
     // can contain filters
 }
 
+extension XMLElement { // AudioRoleSource
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AudioRoleSource`` model object.
+    /// Call this on a `audio-role-source` element only.
+    public var fcpAsAudioRoleSource: FinalCutPro.FCPXML.AudioRoleSource {
+        .init(element: self)
+    }
+}
+
 // MARK: - Collection Methods
 
-extension [FinalCutPro.FCPXML.AudioRoleSource] {
+extension Sequence where Element == FinalCutPro.FCPXML.AudioRoleSource {
     /// Convert and wrap the audio role source as ``FinalCutPro/FCPXML/AnyRole``
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         compactMap { $0.role }

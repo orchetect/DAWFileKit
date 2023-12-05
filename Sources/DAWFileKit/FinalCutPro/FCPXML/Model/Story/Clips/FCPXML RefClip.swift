@@ -161,6 +161,14 @@ extension FinalCutPro.FCPXML.RefClip {
 }
 
 extension XMLElement { // RefClip
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/RefClip`` model object.
+    /// Call this on a `ref-clip` element only.
+    public var fcpAsRefClip: FinalCutPro.FCPXML.RefClip {
+        .init(element: self)
+    }
+}
+
+extension XMLElement { // RefClip
     /// FCPXML: Returns child `audio-role-source` elements.
     /// Use on `ref-clip`, `sync-source`, or `mc-source` elements.
     public var fcpAudioRoleSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {

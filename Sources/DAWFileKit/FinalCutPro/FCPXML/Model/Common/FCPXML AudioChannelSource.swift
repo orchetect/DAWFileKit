@@ -98,9 +98,17 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
     // contains mutes
 }
 
+extension XMLElement { // AudioChannelSource
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AudioChannelSource`` model object.
+    /// Call this on a `audio-channel-source` element only.
+    public var fcpAsAudioChannelSource: FinalCutPro.FCPXML.AudioChannelSource {
+        .init(element: self)
+    }
+}
+
 // MARK: - Collection Methods
 
-extension [FinalCutPro.FCPXML.AudioChannelSource] {
+extension Sequence where Element == FinalCutPro.FCPXML.AudioChannelSource {
     /// Convert and wrap the audio channel source roles as ``FinalCutPro/FCPXML/AnyRole``
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         compactMap(\.role)

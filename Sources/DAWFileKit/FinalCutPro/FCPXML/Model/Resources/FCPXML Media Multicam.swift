@@ -42,8 +42,8 @@ extension FinalCutPro.FCPXML.Media {
         
         /// Returns audio and video `mc-angle` elements for the given `mc-source` collection.
         /// Call on a `multicam` element.
-        public func audioVideoMCAngles(
-            forMulticamSources sources: [XMLElement]
+        public func audioVideoMCAngles<S: Sequence<XMLElement>>(
+            forMulticamSources sources: S
         ) -> (audioMCAngle: XMLElement?, videoMCAngle: XMLElement?) {
             element.fcpAudioVideoMCAngles(forMulticamSources: sources)
         }
@@ -95,8 +95,8 @@ extension XMLElement { // Multicam
     
     /// FCPXML: Returns audio and video `mc-angle` elements for the given `mc-source` collection.
     /// Call on a `multicam` element.
-    public func fcpAudioVideoMCAngles(
-        forMulticamSources sources: [XMLElement]
+    public func fcpAudioVideoMCAngles<S: Sequence<XMLElement>>(
+        forMulticamSources sources: S
     ) -> (audioMCAngle: XMLElement?, videoMCAngle: XMLElement?) {
         let (audioAngleID, videoAngleID) = sources.fcpAudioVideoAngleIDs()
         

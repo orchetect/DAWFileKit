@@ -86,4 +86,12 @@ extension FinalCutPro.FCPXML.Gap {
     }
 }
 
+extension XMLElement { // Gap
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Gap`` model object.
+    /// Call this on a `gap` element only.
+    public var fcpAsGap: FinalCutPro.FCPXML.Gap {
+        .init(element: self)
+    }
+}
+
 #endif

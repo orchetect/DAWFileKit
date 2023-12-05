@@ -60,6 +60,14 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
     }
 }
 
+extension XMLElement { // SyncClip.SyncSource
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/SyncClip/SyncSource`` model object.
+    /// Call this on a `sync-source` element only.
+    public var fcpAsSyncSource: FinalCutPro.FCPXML.SyncClip.SyncSource {
+        .init(element: self)
+    }
+}
+
 extension XMLElement { // SyncClip
     /// FCPXML: Returns child `sync-source` elements.
     /// Use on `sync-clip` elements only.

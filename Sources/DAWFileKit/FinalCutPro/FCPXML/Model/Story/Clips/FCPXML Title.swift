@@ -108,4 +108,12 @@ extension FinalCutPro.FCPXML.Title {
     // contains story elements
 }
 
+extension XMLElement { // Title
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Title`` model object.
+    /// Call this on a `title` element only.
+    public var fcpAsTitle: FinalCutPro.FCPXML.Title {
+        .init(element: self)
+    }
+}
+
 #endif

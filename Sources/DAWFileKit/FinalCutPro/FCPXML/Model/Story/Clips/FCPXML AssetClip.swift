@@ -142,6 +142,14 @@ extension FinalCutPro.FCPXML.AssetClip {
 }
 
 extension XMLElement { // AssetClip
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AssetClip`` model object.
+    /// Call this on a `asset-clip` element only.
+    public var fcpAsAssetClip: FinalCutPro.FCPXML.AssetClip {
+        .init(element: self)
+    }
+}
+
+extension XMLElement { // AssetClip
     /// FCPXML: Returns child `audio-channel-source` elements.
     /// Use on `clip` or `asset-clip` elements.
     public var fcpAudioChannelSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {

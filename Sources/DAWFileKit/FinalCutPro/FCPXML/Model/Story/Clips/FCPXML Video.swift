@@ -108,4 +108,12 @@ extension FinalCutPro.FCPXML.Video {
     // contains story elements
 }
 
+extension XMLElement { // Video
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Video`` model object.
+    /// Call this on a `video` element only.
+    public var fcpAsVideo: FinalCutPro.FCPXML.Video {
+        .init(element: self)
+    }
+}
+
 #endif

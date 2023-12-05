@@ -114,4 +114,12 @@ extension FinalCutPro.FCPXML.Clip {
     // contains story elements
 }
 
+extension XMLElement { // Clip
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Clip`` model object.
+    /// Call this on a `clip` element only.
+    public var fcpAsClip: FinalCutPro.FCPXML.Clip {
+        .init(element: self)
+    }
+}
+
 #endif

@@ -123,4 +123,12 @@ extension FinalCutPro.FCPXML.SyncClip {
     // contains story elements
 }
 
+extension XMLElement { // SyncClip
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/SyncClip`` model object.
+    /// Call this on a `sync-clip` element only.
+    public var fcpAsSyncClip: FinalCutPro.FCPXML.SyncClip {
+        .init(element: self)
+    }
+}
+
 #endif
