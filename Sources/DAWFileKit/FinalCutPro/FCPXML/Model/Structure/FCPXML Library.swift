@@ -38,9 +38,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Library {
-    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
-        .library
-    }
+    public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .library
     
     public enum Attributes: String, XMLParsableAttributesKey {
         /// Specifies the URL of a library on export; Final Cut Pro ignores this option during the

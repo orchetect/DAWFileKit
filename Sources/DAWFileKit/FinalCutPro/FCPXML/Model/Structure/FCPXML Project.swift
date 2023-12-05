@@ -48,9 +48,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Project {
-    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
-        .project
-    }
+    public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .project
     
     public enum Attributes: String, XMLParsableAttributesKey {
         case name

@@ -42,9 +42,7 @@ extension FinalCutPro.FCPXML {
 }
 
 extension FinalCutPro.FCPXML.Event {
-    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
-        .event
-    }
+    public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .event
     
     public enum Attributes: String, XMLParsableAttributesKey {
         case name
