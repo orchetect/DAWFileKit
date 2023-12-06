@@ -16,7 +16,7 @@ extension XMLElement {
     /// These roles are either attached to the element itself or in some cases are acquired from the
     /// element's contents (in the case of `mc-clip`s, for example). These are never inherited from
     /// ancestors. No default roles are added and no interpolation is performed.
-    func localRoles(
+    func fcpLocalRoles(
         resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
     ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
@@ -97,7 +97,7 @@ extension XMLElement {
                     // does not have roles itself.
                     // instead, it inherits from its contents.
                     
-                    let childRoles = rolesForNearestDescendant(
+                    let childRoles = fcpRolesForNearestDescendant(
                         resources: resources,
                         auditions: auditions,
                         firstGenerationOnly: true,
@@ -149,7 +149,7 @@ extension XMLElement {
                     // use role from first story element within each angle
                     
                     if let angle = xmlAudioAngle {
-                        let roles = angle.rolesForNearestDescendant(
+                        let roles = angle.fcpRolesForNearestDescendant(
                             resources: resources,
                             auditions: auditions,
                             firstGenerationOnly: true,
@@ -162,7 +162,7 @@ extension XMLElement {
                     }
                     
                     if let angle = xmlVideoAngle {
-                        let roles = angle.rolesForNearestDescendant(
+                        let roles = angle.fcpRolesForNearestDescendant(
                             resources: resources,
                             auditions: auditions,
                             firstGenerationOnly: true,
@@ -197,7 +197,7 @@ extension XMLElement {
                     // instead, we derive the video role from the sync clip's first video media.
                     // we'll also add any audio roles found in case sync sources are missing and
                     // audio roles can't be derived from them.
-                    let childRoles = rolesForNearestDescendant(
+                    let childRoles = fcpRolesForNearestDescendant(
                         resources: resources,
                         auditions: auditions,
                         firstGenerationOnly: true,
@@ -263,7 +263,7 @@ extension XMLElement {
     }
     
     /// FCPXML: Attempts to extract assigned roles for the first child clip found.
-    func rolesForNearestDescendant(
+    func fcpRolesForNearestDescendant(
         resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask, // = .activeAudition
         firstGenerationOnly: Bool,
@@ -276,7 +276,7 @@ extension XMLElement {
             : storyElements.asAnySequence
         
         for storyElement in elements {
-            let roles = storyElement.localRoles(resources: resources, auditions: auditions)
+            let roles = storyElement.fcpLocalRoles(resources: resources, auditions: auditions)
             // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
             if !roles.isEmpty { return roles.map(\.wrapped) }
             
@@ -286,7 +286,7 @@ extension XMLElement {
                     : storyElement.childElements.asAnySequence
                 
                 for child in childElements {
-                    let childRoles = child.rolesForNearestDescendant(
+                    let childRoles = child.fcpRolesForNearestDescendant(
                         resources: resources,
                         auditions: auditions,
                         firstGenerationOnly: firstGenerationOnly,

@@ -18,6 +18,13 @@ extension Sequence where Element == XMLElement {
     ) -> LazyFilterSequence<Self> {
         self.lazy.filter(whereElementType: elementType)
     }
+    
+    /// Returns the sequence filtered by the given element type.
+    public func first(
+        whereElementType elementType: FinalCutPro.FCPXML.ElementType
+    ) -> Element? {
+        first { $0.fcpElementType == elementType }
+    }
 }
 
 extension LazySequence where Element == XMLElement {

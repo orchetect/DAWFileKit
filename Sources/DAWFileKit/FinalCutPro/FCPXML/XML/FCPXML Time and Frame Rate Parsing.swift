@@ -32,7 +32,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
     func fcpNearestDuration<S: Sequence<XMLElement>>(
-        ancestors: S? = nil,
+        ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
     ) -> Fraction? {
         let elements = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
@@ -49,7 +49,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
     func fcpNearestStart<S: Sequence<XMLElement>>(
-        ancestors: S? = nil,
+        ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
     ) -> Fraction? {
         let elements = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
@@ -66,7 +66,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
     func fcpNearestTCStart<S: Sequence<XMLElement>>(
-        ancestors: S? = nil,
+        ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
     ) -> Fraction? {
         let elements = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
@@ -81,9 +81,12 @@ extension XMLElement {
 // MARK: - Time Parsing & Calculations
 
 extension XMLElement {
-    /// FCPXML: Returns the absolute start time
+    /// FCPXML: Returns the absolute start time of the element in the outermost ancestor's timeline.
+    ///
+    /// - Parameters:
+    ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
     func fcpCalculateAbsoluteStart<S: Sequence<XMLElement>>(
-        ancestors: S? = nil
+        ancestors: S? = nil as [XMLElement]?
     ) -> Fraction? {
         var accum: Fraction?
         var lastStart: Fraction?

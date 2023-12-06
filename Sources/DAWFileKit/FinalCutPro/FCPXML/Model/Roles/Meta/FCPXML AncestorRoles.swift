@@ -117,7 +117,7 @@ extension XMLElement {
         for index in elements.indices {
             let breadcrumb = elements[index]
             let isLastElement = index == elements.indices.last
-            var bcRoles = breadcrumb.localRoles(
+            var bcRoles = breadcrumb.fcpLocalRoles(
                 resources: resources,
                 auditions: auditions
             )

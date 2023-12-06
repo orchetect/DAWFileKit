@@ -289,8 +289,7 @@ extension XMLElement {
         return resource
     }
     
-    /// FCPXML: Looks up the resource for the element and returns its
-    /// ``FinalCutPro/FCPXML/MediaRep`` instance, if any.
+    /// FCPXML: Looks up the resource for the element and returns its `media-rep` element, if any.
     ///
     /// - Returns: `media-rep` element.
     func fcpMediaRep(
