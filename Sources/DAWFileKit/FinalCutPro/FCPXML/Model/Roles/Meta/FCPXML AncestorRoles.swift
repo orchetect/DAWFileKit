@@ -107,7 +107,7 @@ extension XMLElement {
     /// FCPXML: Analyzes an element and its ancestors and returns typed information about their roles.
     func fcpInheritedRoles(
         breadcrumbs: [XMLElement],
-        resources: XMLElement?,
+        resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
     ) -> FinalCutPro.FCPXML.AncestorRoles {
         var ancestorRoles = FinalCutPro.FCPXML.AncestorRoles()

@@ -122,6 +122,13 @@ extension FinalCutPro.FCPXML.MediaRep {
     }
 }
 
+extension XMLElement { // MediaRep
+    /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/MediaRep`` model object.
+    /// Call this on an `media-rep` element only.
+    public var fcpAsMediaRep: FinalCutPro.FCPXML.MediaRep {
+        .init(element: self)
+    }
+}
 // MARK: - MediaRep Attribute: Kind
 
 extension FinalCutPro.FCPXML.MediaRep {

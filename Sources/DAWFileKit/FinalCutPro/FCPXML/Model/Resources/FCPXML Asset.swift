@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Asset shared resource.
@@ -132,6 +133,12 @@ extension FinalCutPro.FCPXML {
             set {
                 element.set(int: newValue, forAttribute: Attributes.videoSources.rawValue)
             }
+        }
+        
+        // Children
+        
+        public var mediaRep: XMLElement? { // only used by `asset`
+            element.firstChildElement(named: Children.mediaRep.rawValue)
         }
         
         public init(element: XMLElement) {

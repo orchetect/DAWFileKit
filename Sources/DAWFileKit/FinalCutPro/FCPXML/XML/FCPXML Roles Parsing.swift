@@ -17,7 +17,7 @@ extension XMLElement {
     /// element's contents (in the case of `mc-clip`s, for example). These are never inherited from
     /// ancestors. No default roles are added and no interpolation is performed.
     func localRoles(
-        resources: XMLElement?,
+        resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
     ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
         guard let elementType = fcpElementType else { return [] }
@@ -261,12 +261,10 @@ extension XMLElement {
         
         return mappedRoles
     }
-}
-
-extension XMLElement {
+    
     /// FCPXML: Attempts to extract assigned roles for the first child clip found.
     func rolesForNearestDescendant(
-        resources: XMLElement?,
+        resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask, // = .activeAudition
         firstGenerationOnly: Bool,
         firstElementEachGenerationOnly: Bool
@@ -300,37 +298,6 @@ extension XMLElement {
         }
         
         return []
-    }
-}
-
-extension FinalCutPro.FCPXML {
-    static func addDefaultRoles(
-        for elementType: FinalCutPro.FCPXML.ElementType,
-        to localRoles: [FinalCutPro.FCPXML.AnyRole]
-    ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
-        let localRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = localRoles.map { .assigned($0) }
-        return addDefaultRoles(for: elementType, to: localRoles)
-    }
-    
-    static func addDefaultRoles(
-        for elementType: FinalCutPro.FCPXML.ElementType,
-        to localRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole]
-    ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
-        var localRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = localRoles
-        
-        // add default roles if needed
-        let defaultRoles = defaultRoles(for: elementType)
-        if !localRoles.containsAudioRoles {
-            localRoles.append(contentsOf: defaultRoles.audioRoles().map { .defaulted($0) })
-        }
-        if !localRoles.containsVideoRoles {
-            localRoles.append(contentsOf: defaultRoles.videoRoles().map { .defaulted($0) })
-        }
-        if !localRoles.containsCaptionRoles {
-            localRoles.append(contentsOf: defaultRoles.captionRoles().map { .defaulted($0) })
-        }
-        
-        return localRoles
     }
 }
 
@@ -413,6 +380,35 @@ extension FinalCutPro.FCPXML {
             // N/A
             return []
         }
+    }
+    
+    static func addDefaultRoles(
+        for elementType: FinalCutPro.FCPXML.ElementType,
+        to localRoles: [FinalCutPro.FCPXML.AnyRole]
+    ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
+        let localRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = localRoles.map { .assigned($0) }
+        return addDefaultRoles(for: elementType, to: localRoles)
+    }
+    
+    static func addDefaultRoles(
+        for elementType: FinalCutPro.FCPXML.ElementType,
+        to localRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole]
+    ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
+        var localRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = localRoles
+        
+        // add default roles if needed
+        let defaultRoles = defaultRoles(for: elementType)
+        if !localRoles.containsAudioRoles {
+            localRoles.append(contentsOf: defaultRoles.audioRoles().map { .defaulted($0) })
+        }
+        if !localRoles.containsVideoRoles {
+            localRoles.append(contentsOf: defaultRoles.videoRoles().map { .defaulted($0) })
+        }
+        if !localRoles.containsCaptionRoles {
+            localRoles.append(contentsOf: defaultRoles.captionRoles().map { .defaulted($0) })
+        }
+        
+        return localRoles
     }
 }
 
