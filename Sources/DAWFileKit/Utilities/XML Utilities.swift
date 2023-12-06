@@ -85,4 +85,29 @@ extension XMLElement {
     }
 }
 
+extension XMLElement {
+    /// Utility:
+    /// Returns ancestor elements beginning from closest ancestor.
+    /// If `replacement` is non-nil it will be used instead of the element's ancestors.
+    /// 
+    /// - Parameters:
+    ///   - replacement: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
+    ///   - includingSelf: Include `self` as the first ancestor.
+    /// - Returns: Sequence of ancestors, optionally including `self`.
+    func ancestorElements<S: Sequence<XMLElement>>(
+        overrideWith replacement: S?,
+        includingSelf: Bool
+    ) -> AnySequence<XMLElement> {
+        if let replacement = replacement {
+            if includingSelf {
+                return ([self] + replacement).asAnySequence
+            } else {
+                return replacement.asAnySequence
+            }
+        } else {
+            return ancestorElements(includingSelf: includingSelf).asAnySequence
+        }
+    }
+}
+
 #endif
