@@ -77,7 +77,7 @@ extension FinalCutPro.FCPXML.CaptionRole: RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let parsed = try? FinalCutPro.FCPXML.parseRawCaptionRole(rawValue: rawValue)
+        guard let parsed = try? FinalCutPro.FCPXML._parseRawCaptionRole(rawValue: rawValue)
         else { return nil }
         
         role = parsed.role

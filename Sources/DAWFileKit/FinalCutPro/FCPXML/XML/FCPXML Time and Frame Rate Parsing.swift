@@ -15,7 +15,7 @@ import OTCore
 extension XMLElement {
     /// FCPXML: Traverses the parents of the element, including the element itself, and returns the
     /// first `tcFormat` attribute found.
-    func fcpTCFormatForElementOrAncestors() -> FinalCutPro.FCPXML.TimecodeFormat? {
+    func _fcpTCFormatForElementOrAncestors() -> FinalCutPro.FCPXML.TimecodeFormat? {
         let attributeName = FinalCutPro.FCPXML.TimecodeFormat.Element.name.rawValue
         
         guard let (_, tcFormatValue) = ancestorElements(includingSelf: true)
@@ -31,7 +31,7 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
-    func fcpNearestDuration<S: Sequence<XMLElement>>(
+    func _fcpNearestDuration<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
     ) -> Fraction? {
@@ -48,7 +48,7 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
-    func fcpNearestStart<S: Sequence<XMLElement>>(
+    func _fcpNearestStart<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
     ) -> Fraction? {
@@ -65,7 +65,7 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
-    func fcpNearestTCStart<S: Sequence<XMLElement>>(
+    func _fcpNearestTCStart<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
     ) -> Fraction? {
@@ -85,7 +85,7 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
-    func fcpCalculateAbsoluteStart<S: Sequence<XMLElement>>(
+    func _fcpCalculateAbsoluteStart<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?
     ) -> Fraction? {
         var accum: Fraction?
@@ -143,7 +143,6 @@ extension XMLElement {
                     // caption behaves like a clip and follows the same rules
                     break
                 }
-                
             }
             
             if let start = ancestor.fcpStart {

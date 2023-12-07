@@ -75,7 +75,7 @@ extension FinalCutPro.FCPXML {
                 element.getBool(forAttribute: Attributes.hasAudio.rawValue) ?? false
             }
             set {
-                element.fcpSet(
+                element._fcpSet(
                     bool: newValue,
                     forAttribute: Attributes.hasAudio.rawValue,
                     defaultValue: false,
@@ -90,7 +90,7 @@ extension FinalCutPro.FCPXML {
                 element.getBool(forAttribute: Attributes.hasVideo.rawValue) ?? false
             }
             set {
-                element.fcpSet(
+                element._fcpSet(
                     bool: newValue,
                     forAttribute: Attributes.hasVideo.rawValue,
                     defaultValue: false,

@@ -13,6 +13,8 @@ import OTCore
 // MARK: - Rational Time Value Utils
 
 extension FinalCutPro.FCPXML {
+    // TODO: can factor this out, as `Fraction` can do all of this work now
+    
     enum ParsedRational {
         case value(Int)
         case rational(Fraction)
@@ -58,39 +60,39 @@ extension FinalCutPro.FCPXML {
 
 extension XMLElement {
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
-    func fcpTimecode(
+    func _fcpTimecode(
         fromRational rawString: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat,
         resourceID: String,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
-        guard let frameRate = fcpTimecodeFrameRate(
+        guard let frameRate = _fcpTimecodeFrameRate(
             forResourceID: resourceID,
             tcFormat: tcFormat,
             in: resources
         )
         else { return nil }
         
-        return try FinalCutPro.FCPXML.timecode(fromRational: rawString, frameRate: frameRate)
+        return try FinalCutPro.FCPXML._timecode(fromRational: rawString, frameRate: frameRate)
     }
     
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
     /// Traverses the parents of the given XML leaf to determine frame rate.
-    func fcpTimecode(
+    func _fcpTimecode(
         fromRational rawString: String,
         xmlLeaf: XMLElement,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
-        guard let frameRate = fcpTimecodeFrameRate(in: resources)
+        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
         else { return nil }
         
-        return try FinalCutPro.FCPXML.timecode(fromRational: rawString, frameRate: frameRate)
+        return try FinalCutPro.FCPXML._timecode(fromRational: rawString, frameRate: frameRate)
     }
 }
 
 extension FinalCutPro.FCPXML {
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
-    static func timecode(
+    static func _timecode(
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
     ) throws -> Timecode? {
@@ -113,21 +115,21 @@ extension FinalCutPro.FCPXML {
 extension XMLElement {
     /// FCPXML: Convert raw time attribute value string to `TimecodeInterval`.
     /// Traverses the parents of the given XML leaf to determine frame rate.
-    func fcpTimecodeInterval(
+    func _fcpTimecodeInterval(
         fromRational rawString: String,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
-        guard let frameRate = fcpTimecodeFrameRate(in: resources)
+        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
         else { return nil }
         
-        return try FinalCutPro.FCPXML.timecodeInterval(fromRational: rawString, frameRate: frameRate)
+        return try FinalCutPro.FCPXML._timecodeInterval(fromRational: rawString, frameRate: frameRate)
     }
 }
 
 extension FinalCutPro.FCPXML {
     /// Utility:
     /// Convert raw time attribute value string to `TimecodeInterval`.
-    static func timecodeInterval(
+    static func _timecodeInterval(
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
     ) throws -> TimecodeInterval? {

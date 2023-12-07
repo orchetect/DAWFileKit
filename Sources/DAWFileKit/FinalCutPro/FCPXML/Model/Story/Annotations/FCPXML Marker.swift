@@ -150,12 +150,12 @@ extension XMLElement { // Chapter Marker
     /// Call this on a `chapter-marker` element.
     public var fcpPosterOffset: Fraction? {
         get { 
-            fcpGetFraction(
+            _fcpGetFraction(
                 forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue
             )
         }
         set {
-            fcpSet(
+            _fcpSet(
                 fraction: newValue,
                 forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue
             )

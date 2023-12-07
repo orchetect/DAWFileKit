@@ -12,7 +12,7 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Utility: Returns occlusion information.
-    static func occlusion(
+    static func _occlusion(
         containerTimeRange: ClosedRange<Fraction>,
         internalStartTime: Fraction,
         internalEndTime: Fraction?
@@ -49,12 +49,12 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
-    func fcpEffectiveOcclusion<S: Sequence<XMLElement>>(
+    func _fcpEffectiveOcclusion<S: Sequence<XMLElement>>(
         ancestors: S? = nil
     ) -> FinalCutPro.FCPXML.ElementOcclusion {
         let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: false)
         
-        guard var elementAbsStart = fcpCalculateAbsoluteStart(
+        guard var elementAbsStart = _fcpCalculateAbsoluteStart(
             ancestors: ancestors
         ) else { return .notOccluded }
         
@@ -78,10 +78,10 @@ extension XMLElement {
                 guard lane == getLastLane else { continue }
             }
             
-            guard let ancestorAbsStart = ancestor.fcpCalculateAbsoluteStart(
+            guard let ancestorAbsStart = ancestor._fcpCalculateAbsoluteStart(
                 ancestors: ancestors
             ),
-                let bcDuration = ancestor.fcpNearestDuration(
+                let bcDuration = ancestor._fcpNearestDuration(
                     ancestors: ancestors.prefix(ancestorWalkedCount),
                     includingSelf: true
                 )
@@ -90,7 +90,7 @@ extension XMLElement {
             let ancestorAbsEnd = ancestorAbsStart + bcDuration
             let ancestorRange = ancestorAbsStart ... ancestorAbsEnd
             
-            let o = FinalCutPro.FCPXML.occlusion(
+            let o = FinalCutPro.FCPXML._occlusion(
                 containerTimeRange: ancestorRange,
                 internalStartTime: elementAbsStart,
                 internalEndTime: elementAbsEnd

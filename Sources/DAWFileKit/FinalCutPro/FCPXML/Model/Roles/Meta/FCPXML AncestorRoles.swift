@@ -42,15 +42,15 @@ extension FinalCutPro.FCPXML.AncestorRoles {
         var outputRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = []
         
         let elementAudioRoles = elements.map { $0.roles.audioRoles() }
-        let audioRoles = flatten(singleRoleType: elementAudioRoles)
+        let audioRoles = _flatten(singleRoleType: elementAudioRoles)
         outputRoles.append(contentsOf: audioRoles)
         
         let elementVideoRoles = elements.map { $0.roles.videoRoles() }
-        let videoRoles = flatten(singleRoleType: elementVideoRoles)
+        let videoRoles = _flatten(singleRoleType: elementVideoRoles)
         outputRoles.append(contentsOf: videoRoles)
         
         let elementCaptionRoles = elements.map { $0.roles.captionRoles() }
-        let captionRoles = flatten(singleRoleType: elementCaptionRoles)
+        let captionRoles = _flatten(singleRoleType: elementCaptionRoles)
         outputRoles.append(contentsOf: captionRoles)
         
         outputRoles.removeDuplicates()
@@ -65,7 +65,7 @@ extension FinalCutPro.FCPXML.AncestorRoles {
     
     /// Only supply a collection containing roles of the same type, ie: only `.audio()` roles.
     /// This favors assigned roles and prevents defaulted roles from overriding them.
-    func flatten(
+    func _flatten(
         singleRoleType elementsRoles: [[FinalCutPro.FCPXML.AnyInterpolatedRole]]
     ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
         var effectiveRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = []
@@ -105,7 +105,7 @@ extension FinalCutPro.FCPXML.AncestorRoles {
 
 extension XMLElement {
     /// FCPXML: Analyzes an element and its ancestors and returns typed information about their roles.
-    func fcpInheritedRoles(
+    func _fcpInheritedRoles(
         breadcrumbs: [XMLElement],
         resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
@@ -117,7 +117,7 @@ extension XMLElement {
         for index in elements.indices {
             let breadcrumb = elements[index]
             let isLastElement = index == elements.indices.last
-            var bcRoles = breadcrumb.fcpLocalRoles(
+            var bcRoles = breadcrumb._fcpLocalRoles(
                 resources: resources,
                 auditions: auditions
             )
@@ -128,7 +128,7 @@ extension XMLElement {
             
             // differentiate assigned ancestor roles
             if !isLastElement {
-                bcRoles = bcRoles.replacingAssignedRolesWithInherited()
+                bcRoles = bcRoles._fcpReplacingAssignedRolesWithInherited()
             }
             
             if !bcRoles.isEmpty {
@@ -147,7 +147,7 @@ extension XMLElement {
 extension Sequence where Element == FinalCutPro.FCPXML.AnyInterpolatedRole {
     /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
     /// case instead.
-    func replacingAssignedRolesWithInherited() -> [Element] {
+    func _fcpReplacingAssignedRolesWithInherited() -> [Element] {
         let roles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = map {
             switch $0 {
             case let .assigned(role):
@@ -163,10 +163,10 @@ extension Sequence where Element == FinalCutPro.FCPXML.AnyInterpolatedRole {
 extension FinalCutPro.FCPXML.AncestorRoles.ElementRoles {
     /// Replaces any non-nil roles wrapped in `assigned` cases and re-wraps them in an `inherited`
     /// case instead.
-    func replacingAssignedRolesWithInherited() -> Self {
+    func _fcpReplacingAssignedRolesWithInherited() -> Self {
         Self(
             elementType: elementType,
-            roles: roles.replacingAssignedRolesWithInherited()
+            roles: roles._fcpReplacingAssignedRolesWithInherited()
         )
     }
 }

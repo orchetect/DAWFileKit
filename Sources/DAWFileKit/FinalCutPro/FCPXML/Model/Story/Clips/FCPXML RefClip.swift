@@ -41,7 +41,7 @@ extension FinalCutPro.FCPXML {
         public var useAudioSubroles: Bool { // only used by `ref-clip`
             get { element.getBool(forAttribute: Attributes.useAudioSubroles.rawValue) ?? false }
             set {
-                element.fcpSet(
+                element._fcpSet(
                     bool: newValue,
                     forAttribute: Attributes.useAudioSubroles.rawValue,
                     defaultValue: false,

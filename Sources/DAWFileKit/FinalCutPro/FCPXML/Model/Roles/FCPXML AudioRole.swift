@@ -72,7 +72,7 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
     }
     
     public var isSubRoleDerivedFromMainRole: Bool {
-        FinalCutPro.FCPXML.isSubRole(subRole, derivedFromMainRole: role)
+        FinalCutPro.FCPXML._isSubRole(subRole, derivedFromMainRole: role)
     }
 }
 
@@ -86,7 +86,7 @@ extension FinalCutPro.FCPXML.AudioRole: RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let parsed = try? FinalCutPro.FCPXML.parseRawStandardRole(rawValue: rawValue)
+        guard let parsed = try? FinalCutPro.FCPXML._parseRawStandardRole(rawValue: rawValue)
         else { return nil }
         
         role = parsed.role
@@ -102,7 +102,7 @@ extension FinalCutPro.FCPXML.AudioRole: CustomDebugStringConvertible {
 
 extension FinalCutPro.FCPXML.AudioRole: FCPXMLCollapsibleRole {
     public func collapsingSubRole() -> Self {
-        let collapsedValues = FinalCutPro.FCPXML.collapseStandardSubRole(
+        let collapsedValues = FinalCutPro.FCPXML._collapseStandardSubRole(
             role: role,
             subRole: subRole
         )

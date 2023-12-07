@@ -68,45 +68,45 @@ extension XMLElement {
     /// FCPXML: Get or set the value of the `audioStart` attribute.
     /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioStart: Fraction? {
-        get { fcpGetFraction(forAttribute: "audioStart") }
-        set { fcpSet(fraction: newValue, forAttribute: "audioStart") }
+        get { _fcpGetFraction(forAttribute: "audioStart") }
+        set { _fcpSet(fraction: newValue, forAttribute: "audioStart") }
     }
     
     /// FCPXML: Get or set the value of the `audioDuration` attribute.
     /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioDuration: Fraction? {
-        get { fcpGetFraction(forAttribute: "audioDuration") }
-        set { fcpSet(fraction: newValue, forAttribute: "audioDuration") }
+        get { _fcpGetFraction(forAttribute: "audioDuration") }
+        set { _fcpSet(fraction: newValue, forAttribute: "audioDuration") }
     }
     
     /// FCPXML: Get or set the value of the `duration` attribute.
     public var fcpDuration: Fraction? {
-        get { fcpGetFraction(forAttribute: "duration") }
-        set { fcpSet(fraction: newValue, forAttribute: "duration") }
+        get { _fcpGetFraction(forAttribute: "duration") }
+        set { _fcpSet(fraction: newValue, forAttribute: "duration") }
     }
     
     /// FCPXML: Get or set the value of the `frameDuration` attribute.
     public var fcpFrameDuration: Fraction? {
-        get { fcpGetFraction(forAttribute: "frameDuration") }
-        set { fcpSet(fraction: newValue, forAttribute: "frameDuration") }
+        get { _fcpGetFraction(forAttribute: "frameDuration") }
+        set { _fcpSet(fraction: newValue, forAttribute: "frameDuration") }
     }
     
     /// FCPXML: Get or set the value of the `start` attribute.
     public var fcpStart: Fraction? {
-        get { fcpGetFraction(forAttribute: "start") }
-        set { fcpSet(fraction: newValue, forAttribute: "start") }
+        get { _fcpGetFraction(forAttribute: "start") }
+        set { _fcpSet(fraction: newValue, forAttribute: "start") }
     }
     
     /// FCPXML: Get or set the value of the `tcStart` attribute.
     public var fcpTCStart: Fraction? {
-        get { fcpGetFraction(forAttribute: "tcStart") }
-        set { fcpSet(fraction: newValue, forAttribute: "tcStart") }
+        get { _fcpGetFraction(forAttribute: "tcStart") }
+        set { _fcpSet(fraction: newValue, forAttribute: "tcStart") }
     }
     
     /// FCPXML: Get or set the value of the `offset` attribute.
     public var fcpOffset: Fraction? {
-        get { fcpGetFraction(forAttribute: "offset") }
-        set { fcpSet(fraction: newValue, forAttribute: "offset") }
+        get { _fcpGetFraction(forAttribute: "offset") }
+        set { _fcpSet(fraction: newValue, forAttribute: "offset") }
     }
     
     /// FCPXML: Get or set the value of the `tcFormat` attribute.
@@ -134,7 +134,7 @@ extension XMLElement {
     /// FCPXML: Set the value of the `active` attribute.
     /// Removes the attribute if the new value equals the default value.
     public func fcpSet(active newValue: Bool?, default defaultValue: Bool) {
-        fcpSet(
+        _fcpSet(
             bool: newValue,
             forAttribute: "active",
             defaultValue: defaultValue,
@@ -152,7 +152,7 @@ extension XMLElement {
     /// FCPXML: Set the value of the `enabled` attribute.
     /// Removes the attribute if the new value equals the default value.
     public func fcpSet(enabled newValue: Bool?, default defaultValue: Bool) {
-        fcpSet(
+        _fcpSet(
             bool: newValue,
             forAttribute: "enabled",
             defaultValue: defaultValue,
@@ -212,11 +212,11 @@ extension XMLElement {
     }
 }
 
-// MARK: - Helpers
+// MARK: - Internal Helpers
 
 extension XMLElement {
     /// FCPXML: Get an attribute time value as a `Fraction` instance.
-    func fcpGetFraction(forAttribute attributeName: String) -> Fraction? {
+    func _fcpGetFraction(forAttribute attributeName: String) -> Fraction? {
         guard let value = stringValue(forAttributeNamed: attributeName)
         else { return nil }
         
@@ -224,7 +224,7 @@ extension XMLElement {
     }
     
     /// FCPXML: Set an attribute time value from a `Fraction` instance.
-    func fcpSet(fraction newValue: Fraction?, forAttribute attributeName: String) {
+    func _fcpSet(fraction newValue: Fraction?, forAttribute attributeName: String) {
         addAttribute(withName: attributeName,
                      value: newValue?.fcpxmlStringValue)
     }
@@ -232,7 +232,7 @@ extension XMLElement {
 
 extension XMLElement {
     /// FCPXML: Set a `Bool` attribute value.
-    func fcpSet(
+    func _fcpSet(
         bool newValue: Bool?,
         forAttribute attributeName: String,
         defaultValue: Bool,

@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML {
         /// The absolute start time of the current element.
         /// This is calculated based on ancestor elements.
         public var absoluteStart: Fraction? {
-            element.fcpCalculateAbsoluteStart(
+            element._fcpCalculateAbsoluteStart(
                 ancestors: breadcrumbs
             )
         }
@@ -87,7 +87,7 @@ extension FinalCutPro.FCPXML {
         
         /// Returns the effective `format` resource for the current element.
         public var effectiveFormat: XMLElement? {
-            element.fcpFirstFormatResourceForElementOrAncestors(in: resources)
+            element._fcpFirstFormatResourceForElementOrAncestors(in: resources)
         }
         
         /// Returns an event name if the current element is a descendent of an event.
@@ -118,7 +118,7 @@ extension FinalCutPro.FCPXML {
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteStart: Fraction? {
             guard let parent = parent else { return nil }
-            return parent.fcpCalculateAbsoluteStart(
+            return parent._fcpCalculateAbsoluteStart(
                 ancestors: breadcrumbs.dropFirst()
             )
         }
@@ -135,7 +135,7 @@ extension FinalCutPro.FCPXML {
         /// The parent element's duration.
         public var parentDuration: Fraction? {
             guard let parent = parent else { return nil }
-            return parent.fcpNearestDuration(
+            return parent._fcpNearestDuration(
                 ancestors: breadcrumbs.dropFirst(),
                 includingSelf: false
             )
@@ -145,7 +145,7 @@ extension FinalCutPro.FCPXML {
         /// These roles are either attached to the element itself or in some cases are acquired from
         /// the element's contents.
         public func localRoles(includeDefaultRoles: Bool) -> [AnyRole] {
-            var elementRoles = element.fcpLocalRoles(
+            var elementRoles = element._fcpLocalRoles(
                 resources: resources,
                 auditions: .active
             )
@@ -159,7 +159,7 @@ extension FinalCutPro.FCPXML {
         
         /// Returns the effective roles of the element inherited from ancestors.
         public var inheritedRoles: [AnyInterpolatedRole] {
-            element.fcpInheritedRoles(
+            element._fcpInheritedRoles(
                 breadcrumbs: breadcrumbs,
                 resources: resources,
                 auditions: .active
@@ -174,7 +174,7 @@ extension FinalCutPro.FCPXML {
                   let elementStart = absoluteStart
             else { return .notOccluded }
             
-            return FinalCutPro.FCPXML.occlusion(
+            return FinalCutPro.FCPXML._occlusion(
                 containerTimeRange: parentStart ... parentEnd,
                 internalStartTime: elementStart,
                 internalEndTime: absoluteEnd
@@ -183,7 +183,7 @@ extension FinalCutPro.FCPXML {
         
         /// Returns the effective occlusion for the current element with regards the main timeline.
         public var effectiveOcclusion: FinalCutPro.FCPXML.ElementOcclusion {
-            element.fcpEffectiveOcclusion(
+            element._fcpEffectiveOcclusion(
                 ancestors: breadcrumbs
             )
         }
@@ -203,7 +203,7 @@ extension FinalCutPro.FCPXML {
         /// The absolute start timecode of the element.
         /// This is calculated based on ancestor elements.
         public func absoluteStart(of element: XMLElement) -> Fraction? {
-            element.fcpCalculateAbsoluteStart(
+            element._fcpCalculateAbsoluteStart(
                 ancestors: breadcrumbs
             )
         }
@@ -213,24 +213,24 @@ extension FinalCutPro.FCPXML {
         /// Note that this is relative to the element's parent's timeline and may not be absolute
         /// timecode.
         public func nearestStart() -> Fraction? {
-            element.fcpNearestStart(includingSelf: true)
+            element._fcpNearestStart(includingSelf: true)
         }
         
         /// Return nearest `tcStart` attribute value as `Timecode`, starting from the element and
         /// traversing up through ancestors.
         public func nearestTCStart() -> Fraction? {
-            element.fcpNearestTCStart(includingSelf: true)
+            element._fcpNearestTCStart(includingSelf: true)
         }
         
         /// If the resource is a `format`, it is returned.
         /// Otherwise, references are followed until a `format` is found.
         public func format(for resource: XMLElement) -> XMLElement? {
-            resource.fcpFormatResource(in: resources)
+            resource._fcpFormatResource(in: resources)
         }
         
         /// Returns the resource element for the element.
         public var resource: XMLElement? {
-            element.fcpFirstResourceForElementOrAncestors(in: resources)
+            element._fcpFirstResourceForElementOrAncestors(in: resources)
         }
         
         /// The element's immediate parent, if any.
@@ -307,7 +307,7 @@ extension FinalCutPro.FCPXML {
         
         /// Looks up the resource for the element and returns its `media-rep` instance, if any.
         public var mediaRep: XMLElement? {
-            element.fcpMediaRep(in: resources)
+            element._fcpMediaRep(in: resources)
         }
         
         /// Looks up the resource for the element and returns its media url, if any.
