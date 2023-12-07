@@ -106,9 +106,7 @@ extension FinalCutPro.FCPXML {
         
         /// The parent element's type.
         public var parentType: ElementType? {
-            guard let parent = parent else { return nil }
-            guard let nameValue = parent.name else { return nil }
-            return FinalCutPro.FCPXML.ElementType(rawValue: nameValue)
+            parent?.fcpElementType
         }
         
         /// The parent element's name.
