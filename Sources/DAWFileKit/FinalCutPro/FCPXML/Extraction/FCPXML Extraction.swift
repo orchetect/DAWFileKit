@@ -10,10 +10,17 @@ import Foundation
 import OTCore
 import TimecodeKit
 
+extension FinalCutPro.FCPXML {
+    enum ExtractionChildren {
+        case immediateChildren
+        case immediateChildrenAnd(children: [XMLElement], ofDescendants: [XMLElement])
+    }
+}
+
 extension XMLElement { // parent/container
-    /// Extractable children contained one level under the element.
-    func _fcpExtractableChildren() -> any Sequence<XMLElement> {
-        guard let fcpElementType = fcpElementType else { return [] }
+    /// Extractable children contained within the element.
+    func _fcpExtractableChildren() -> FinalCutPro.FCPXML.ExtractionChildren? {
+        guard let fcpElementType = fcpElementType else { return nil }
         
         switch fcpElementType {
         case let .story(storyElementType):
@@ -21,34 +28,34 @@ extension XMLElement { // parent/container
             case let .annotation(annotationType):
                 switch annotationType {
                 case .caption:
-                    return childElements
+                    return .immediateChildren
                     
                 case .keyword:
-                    return []
+                    return nil
                     
                 case .marker:
-                    return []
+                    return nil
                 }
                 
             case let .clip(clipType):
                 switch clipType {
                 case .assetClip:
-                    return childElements
+                    return .immediateChildren
                     
                 case .audio:
-                    return childElements
+                    return .immediateChildren
                     
                 case .audition:
-                    return childElements
+                    return .immediateChildren
                     
                 case .clip:
-                    return childElements
+                    return .immediateChildren
                     
                 case .gap:
-                    return childElements
+                    return .immediateChildren
                     
                 case .liveDrawing:
-                    return childElements // TODO: ?
+                    return .immediateChildren // TODO: ?
                     
                 case .mcClip: // a.k.a. Multicam Clip
                     // points to a `media` resource which will contain one `multicam`.
@@ -60,83 +67,99 @@ extension XMLElement { // parent/container
                     // is referencing. they may be different angles or the same angle.
                     // then we extract from those angle's storylines, ignoring the
                     // other angles that may be present in the `multicam`.
+                    // so we can't just return the `media` resource and recurse, we need
+                    // to actually know which angles are used by the `mc-clip`.
                     
-                    #warning("> // TODO: refactor as per comments above.")
-                    if let resource = fcpResource() {
-                        return childElements + [resource]
-                    } else {
-                        return childElements
+                    let multicamSources = fcpAsMCClip.sources
+                    
+                    if
+                        let mediaResource = fcpResource(),
+                        let multicam = mediaResource.fcpAsMedia.multicam
+                    {
+                        let (audio, video) = multicam
+                            .fcpAudioVideoMCAngles(forMulticamSources: multicamSources)
+                        
+                        // remove nils and reduce any duplicate elements
+                        let reduced = [video, audio] // video first, audio second
+                            .compactMap { $0 }
+                            .removingDuplicates()
+                        
+                        let descendents = [mediaResource, multicam]
+                        return .immediateChildrenAnd(children: reduced, ofDescendants: descendents)
+                    }
+                    else {
+                        return .immediateChildren
                     }
                     
                 case .refClip: // a.k.a. Compound Clip
                     // points to a `media` resource which will contain one `sequence`
-                    if let resource = fcpResource() {
-                        return childElements + [resource]
+                    if let mediaResource = fcpResource() {
+                        return .immediateChildrenAnd(children: [mediaResource], ofDescendants: [])
                     } else {
-                        return childElements
+                        return .immediateChildren
                     }
                     
                 case .syncClip:
-                    return childElements
+                    return .immediateChildren
                     
                 case .title:
-                    return childElements
+                    return .immediateChildren
                     
                 case .video:
-                    return childElements
+                    return .immediateChildren
                 }
                 
             case .sequence:
                 // should only be a `spine` element, but return all children anyway
-                return childElements
+                return .immediateChildren
                 
             case .spine:
-                return childElements
+                return .immediateChildren
             }
             
         case let .structure(structureElementType):
             switch structureElementType {
             case .library:
                 // can contain one or more `event`s and `smart-collection`s
-                return childElements
+                return .immediateChildren
                 
             case .event:
                 // can contain `project`s and `clips`
                 // as well as collection folders, keyword collections, smart collections
-                return childElements
+                return .immediateChildren
                 
             case .project:
                 // contains a `sequence` element
-                return childElements
+                return .immediateChildren
             }
             
         case .resources:
-            return []
+            return nil
             
         case let .resource(resourceElementType):
             switch resourceElementType {
             case .asset:
-                return []
+                return nil
                 
             case .effect:
-                return []
+                return nil
                 
             case .format:
-                return []
+                return nil
                 
             case .locator:
-                return [] // TODO: ?
+                return nil // TODO: ?
                 
             case .media:
                 // used by `ref-clip` story element, media will contain a `sequence`
                 // used by `mc-clip` story element, media will contain a `multicam`
-                return childElements
+                return .immediateChildren
                 
             case .objectTracker:
-                return [] // TODO: ?
+                return nil // TODO: ?
                 
             case .trackingShape:
-                return [] // TODO: ?
+                return nil // TODO: ?
             }
         }
     }

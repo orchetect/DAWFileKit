@@ -126,6 +126,25 @@ extension FinalCutPro.FCPXML.MCClip {
     }
 }
 
+extension FinalCutPro.FCPXML.MCClip {
+    /// Locates the `media` resource used by the `mc-clip`, and returns the `multicam` element from
+    /// within it.
+    public var multicamResource: XMLElement? {
+        element.fcpResource()?.fcpAsMedia.multicam
+    }
+    /// Returns audio and video `mc-angle` elements from the `media` resource's `multicam` element
+    /// that correspond to the angles used by the `mc-clip`'s `mc-source` children.
+    ///
+    /// These angles may be different, or may be the same, depending on if separate audio and video
+    /// sources were selected in the `mc-source` element(s).
+    public var audioVideoMCAngles: (audioMCAngle: XMLElement?, videoMCAngle: XMLElement?) {
+        let (audio, video) = multicamResource?.fcpAudioVideoMCAngles(forMulticamSources: sources)
+            ?? (nil, nil)
+        
+        return (audio, video)
+    }
+}
+
 extension XMLElement { // MCClip
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/MCClip`` model object.
     /// Call this on a `mc-clip` element only.
