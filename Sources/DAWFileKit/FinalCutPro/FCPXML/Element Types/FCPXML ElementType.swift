@@ -23,7 +23,7 @@ extension FinalCutPro.FCPXML {
         case resources
         
         /// A resource element contained within the `resources` element.
-        case resource(ResourceType)
+        case resource(_ resourceElementType: ResourceType)
     }
 }
 
@@ -45,8 +45,8 @@ extension FinalCutPro.FCPXML.ElementType: RawRepresentable {
             return structureElementType.rawValue
         case .resources:
             return "resources"
-        case let .resource(resourceType):
-            return resourceType.rawValue
+        case let .resource(resourceElementType):
+            return resourceElementType.rawValue
         }
     }
 }

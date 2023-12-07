@@ -37,6 +37,14 @@ extension XMLElement {
             .childElements
             .first(whereAttribute: "id", hasValue: resourceID)
     }
+    
+    /// FCPXML: Returns the resource element referenced by the current element.
+    public func fcpResource(
+        in resources: XMLElement? = nil
+    ) -> XMLElement? {
+        _fcpFirstResourceForElementOrAncestors(in: resources)
+    }
+    
 }
 
 // MARK: - Video Frame Rate (from Format Resource)

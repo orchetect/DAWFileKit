@@ -47,7 +47,6 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
         case name = "audio-role-source"
     }
     
-    /// Attributes unique to ``AudioRoleSource``.
     public enum Attributes: String, XMLParsableAttributesKey {
         /// Role the audio component is associated with.
         case role
