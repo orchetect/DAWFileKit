@@ -1,5 +1,5 @@
 //
-//  FinalCutPro FCPXML BasicMarkers.swift
+//  FinalCutPro FCPXML BasicMarkers_1HourProjectStart.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
+final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
@@ -19,7 +19,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         // load file
         
         let rawData = try XCTUnwrap(loadFileContents(
-            forResource: "BasicMarkers",
+            forResource: "BasicMarkers_1HourProjectStart",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
@@ -32,19 +32,9 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         XCTAssertEqual(fcpxml.version, .ver1_9)
         
-        // resources (from XML document)
-        
-        // make sure these aren't nil and they point to the expected elements
-        let xml_fcpRoot1 = try XCTUnwrap(fcpxml.xml.rootElement()) // `fcpxml` element
-        let xml_fcpRoot2 = try XCTUnwrap(fcpxml.xml.rootElement()?.fcpRoot) // `fcpxml` element
-        XCTAssertEqual(xml_fcpRoot1, xml_fcpRoot2)
-        
-        // resources (from model)
+        // resources
         
         let resources = try XCTUnwrap(fcpxml.resourcesElement)
-        let xml_resources = try XCTUnwrap(fcpxml.xml.rootElement()?.fcpRootResources)
-        // make sure these aren't nil and they point to the expected elements
-        XCTAssertEqual(resources, xml_resources)
         
         XCTAssertEqual(resources.childElements.count, 2)
         
@@ -93,14 +83,14 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         let project = try XCTUnwrap(projects[safe: 0])
         XCTAssertEqual(project.name, "Test Project")
-        XCTAssertEqual(project.startTimecode, Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(project.startTimecode, Self.tc("01:00:00:00", .fps29_97))
         
         // sequence
         
         let sequence = try XCTUnwrap(projects[safe: 0]?.sequence).fcpAsSequence
         
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("01:00:00:00", .fps29_97))
         XCTAssertEqual(sequence.tcStartAsTimecode?.frameRate, .fps29_97)
         XCTAssertEqual(sequence.tcStartAsTimecode?.subFramesBase, .max80SubFrames)
         XCTAssertEqual(sequence.durationAsTimecode, Self.tc("00:01:03:29", .fps29_97))
@@ -116,9 +106,9 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         let element1 = try XCTUnwrap(spine.storyElements[safe: 0]).fcpAsTitle
         
         XCTAssertEqual(element1.ref, "r2")
-        XCTAssertEqual(element1.name, "Basic Title")
-        XCTAssertEqual(element1.offsetAsTimecode, Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(element1.offsetAsTimecode, Self.tc("01:00:00:00", .fps29_97))
         XCTAssertEqual(element1.offsetAsTimecode?.frameRate, .fps29_97)
+        XCTAssertEqual(element1.name, "Basic Title")
         XCTAssertEqual(element1.startAsTimecode, Self.tc("00:10:00:00", .fps29_97))
         XCTAssertEqual(element1.startAsTimecode?.frameRate, .fps29_97)
         XCTAssertEqual(element1.durationAsTimecode, Self.tc("00:01:03:29", .fps29_97))
@@ -135,13 +125,15 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         XCTAssertEqual(markers.count, 4)
         
         #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
-//        let expectedMarker0 = try XCTUnwrap(markers[safe: 0]).fcpAsMarker
+//        let expectedMarker0 = FinalCutPro.FCPXML.Marker(
 //            start: Self.tc("01:00:29:14", .fps29_97),
 //            duration: Self.tc("00:00:00:01", .fps29_97),
 //            name: "Standard Marker",
 //            metaData: .standard,
 //            note: "some notes here"
-        
+//        )
+//        XCTAssertEqual(markers[safe: 0], expectedMarker0)
+//        
 //        let expectedMarker1 = FinalCutPro.FCPXML.Marker(
 //            start: Self.tc("01:00:29:15", .fps29_97),
 //            duration: Self.tc("00:00:00:01", .fps29_97),
