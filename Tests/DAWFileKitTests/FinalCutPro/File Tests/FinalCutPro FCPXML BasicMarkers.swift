@@ -48,7 +48,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         XCTAssertEqual(resources.childElements.count, 2)
         
-        let r1 = try XCTUnwrap(resources.childElements[safe: 0]).fcpAsFormat
+        let r1 = try XCTUnwrap(resources.childElements[safe: 0]?.fcpAsFormat)
         XCTAssertEqual(r1.id, "r1")
         XCTAssertEqual(r1.name, "FFVideoFormat1080p2997")
         XCTAssertEqual(r1.frameDuration, Fraction(1001, 30000))
@@ -61,7 +61,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         XCTAssertEqual(r1.projection, nil)
         XCTAssertEqual(r1.stereoscopic, nil)
         
-        let r2 = try XCTUnwrap(resources.childElements[safe: 1]).fcpAsEffect
+        let r2 = try XCTUnwrap(resources.childElements[safe: 1]?.fcpAsEffect)
         XCTAssertEqual(r2.id, "r2")
         XCTAssertEqual(r2.name, "Basic Title")
         XCTAssertEqual(r2.uid, ".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti")
@@ -69,7 +69,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.libraryElement).fcpAsLibrary
+        let library = try XCTUnwrap(fcpxml.libraryElement?.fcpAsLibrary)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.name, "MyLibrary")
@@ -78,7 +78,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // events
         
-        let events = fcpxml.allEvents().map(\.fcpAsEvent)
+        let events = fcpxml.allEvents().map(\.fcpAsEvent!)
         
         XCTAssertEqual(events.count, 1)
         
@@ -87,7 +87,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // projects
         
-        let projects = try XCTUnwrap(events[safe: 0]).projects.map(\.fcpAsProject)
+        let projects = try XCTUnwrap(events[safe: 0]).projects.map(\.fcpAsProject!)
         
         XCTAssertEqual(projects.count, 1)
         
@@ -97,7 +97,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // sequence
         
-        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence).fcpAsSequence
+        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence?.fcpAsSequence)
         
         XCTAssertEqual(sequence.format, "r1")
         XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("00:00:00:00", .fps29_97))
@@ -109,11 +109,11 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // story elements (clips etc.)
         
-        let spine = try XCTUnwrap(sequence.spine).fcpAsSpine
+        let spine = try XCTUnwrap(sequence.spine.fcpAsSpine)
         
         XCTAssertEqual(spine.storyElements.count, 1)
         
-        let element1 = try XCTUnwrap(spine.storyElements[safe: 0]).fcpAsTitle
+        let element1 = try XCTUnwrap(spine.storyElements[safe: 0]?.fcpAsTitle)
         
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.name, "Basic Title")

@@ -60,7 +60,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let title = try XCTUnwrap(spine.firstChildElement(named: "title"))
         XCTAssertEqual(title.fcpStart, Fraction(1441440000, 2400000))
         XCTAssertEqual(
-            title.fcpAsTitle.startAsTimecode,
+            title.fcpAsTitle?.startAsTimecode,
             Self.tc("00:10:00:00", .fps29_97)
         )
         
@@ -68,7 +68,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let marker = try XCTUnwrap(title.firstChildElement(named: "marker"))
         XCTAssertEqual(marker.fcpStart, Fraction(27248221, 7500))
         XCTAssertEqual(
-            marker.fcpAsMarker.startAsTimecode,
+            marker.fcpAsMarker?.startAsTimecode,
             Self.tc("01:00:29:14", .fps29_97)
         )
     }
@@ -146,7 +146,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let sequence = try XCTUnwrap(project.firstChildElement(named: "sequence"))
         XCTAssertEqual(sequence.fcpTCStart, Fraction(8648640000, 2400000))
         XCTAssertEqual(
-            sequence.fcpAsSequence.tcStartAsTimecode,
+            sequence.fcpAsSequence?.tcStartAsTimecode,
             Self.tc("01:00:00:00", .fps29_97)
         )
         

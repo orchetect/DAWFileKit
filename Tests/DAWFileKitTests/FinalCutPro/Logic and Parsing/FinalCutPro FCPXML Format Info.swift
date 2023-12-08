@@ -36,7 +36,7 @@ final class FinalCutPro_FCPXML_FormatInfo: FCPXMLTestCase {
         
         XCTAssertEqual(resources.childElements.count, 2)
         
-        let r1 = try XCTUnwrap(resources.childElements[safe: 0]).fcpAsFormat
+        let r1 = try XCTUnwrap(resources.childElements[safe: 0]?.fcpAsFormat)
         XCTAssertEqual(r1.id, "r1")
         XCTAssertEqual(r1.name, "FFVideoFormat1080p2997")
         XCTAssertEqual(r1.frameDuration, Fraction(1001,30000))
