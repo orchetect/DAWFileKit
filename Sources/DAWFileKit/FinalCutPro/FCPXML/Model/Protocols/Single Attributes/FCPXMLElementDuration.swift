@@ -34,8 +34,8 @@ public protocol FCPXMLElementOptionalDuration: FCPXMLElement {
 
 extension FCPXMLElementOptionalDuration {
     public var duration: Fraction? {
-        get { element.fcpStart }
-        set { element.fcpStart = newValue }
+        get { element.fcpDuration }
+        set { element.fcpDuration = newValue }
     }
     
     /// Convenience:

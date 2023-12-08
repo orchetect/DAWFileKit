@@ -22,7 +22,7 @@ extension FinalCutPro.FCPXML {
     /// > use the [Timing Attributes](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/mc-clip
     /// > ).
-    public struct MCClip: Equatable, Hashable {
+    public struct MCClip: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

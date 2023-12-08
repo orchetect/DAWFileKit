@@ -16,7 +16,7 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Defines a placeholder element that has no intrinsic audio or video data.
-    public struct Gap: Equatable, Hashable {
+    public struct Gap: FCPXMLElement {
         public let element: XMLElement
         
         // Children

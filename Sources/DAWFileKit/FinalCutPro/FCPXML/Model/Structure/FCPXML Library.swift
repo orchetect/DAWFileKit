@@ -11,7 +11,7 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Represents a library location on disk.
-    public struct Library: Equatable, Hashable {
+    public struct Library: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

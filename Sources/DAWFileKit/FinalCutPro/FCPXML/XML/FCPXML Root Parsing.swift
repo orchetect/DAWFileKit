@@ -15,8 +15,7 @@ extension XMLElement {
     /// This may be called on any element within a FCPXML.
     public var fcpRoot: XMLElement? {
         rootDocument?
-            .rootElement()?
-            .firstChildElement(named: FinalCutPro.FCPXML.RootChildren.fcpxml.rawValue)
+            .rootElement() // `fcpxml` element
     }
 }
 

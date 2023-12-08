@@ -13,7 +13,7 @@ import CoreMedia
 extension FinalCutPro.FCPXML {
     /// Represents a marker event and its contents.
     /// Includes all marker types (standard, to-do, and chapter).
-    public struct Marker: Equatable, Hashable {
+    public struct Marker: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

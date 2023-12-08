@@ -22,7 +22,7 @@ extension FinalCutPro.FCPXML {
     /// > color effect, to a moving object in a video clip.
     /// >
     /// > See [`object-tracker`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/object-tracker).
-    public struct ObjectTracker: Equatable, Hashable {
+    public struct ObjectTracker: FCPXMLElement {
         public let element: XMLElement
         
         // Children

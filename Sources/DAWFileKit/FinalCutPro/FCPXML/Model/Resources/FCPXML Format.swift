@@ -24,7 +24,7 @@ extension FinalCutPro.FCPXML {
     /// > by the name attribute.
     /// >
     /// > See [`format`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/format).
-    public struct Format: Equatable, Hashable {
+    public struct Format: FCPXMLElement {
         public let element: XMLElement
         
         // shared resource attributes

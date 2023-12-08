@@ -13,7 +13,7 @@ import OTCore
 extension FinalCutPro.FCPXML.Media.Multicam {
     /// A container of story elements organized sequentially in time.
     /// Similar to a `sequence`.
-    public struct Angle: Equatable, Hashable {
+    public struct Angle: FCPXMLElement {
         public let element: XMLElement
         
         /// Angle name.

@@ -16,7 +16,7 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > References video data from an `asset` or `effect` element.
-    public struct Video: Equatable, Hashable {
+    public struct Video: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

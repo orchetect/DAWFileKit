@@ -25,7 +25,8 @@ extension XMLElement {
     /// FCPXML: Returns child `audio-role-source` elements.
     /// Use on `ref-clip`, `sync-source`, or `mc-source` elements.
     public func fcpAudioRoleSources() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements.filter(whereElementNamed: "audio-role-source")
+        childElements
+            .filter(whereElementNamed: "audio-role-source")
     }
 }
 #endif

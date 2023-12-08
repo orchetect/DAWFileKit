@@ -16,7 +16,7 @@ extension FinalCutPro.FCPXML {
     /// This is a FCP meta type and video is generated.
     /// Its frame rate is inferred from the sequence.
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
-    public struct Title: Equatable, Hashable {
+    public struct Title: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

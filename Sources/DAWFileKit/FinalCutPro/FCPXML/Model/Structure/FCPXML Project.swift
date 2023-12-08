@@ -12,7 +12,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Project element.
-    public struct Project: Equatable, Hashable {
+    public struct Project: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

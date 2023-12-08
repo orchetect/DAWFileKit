@@ -26,7 +26,7 @@ extension FinalCutPro.FCPXML {
     /// > represent a browser clip. In this case, use the [Timeline Attributes](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/clip
     /// > ) to specify its format, etc.
-    public struct Clip: Equatable, Hashable {
+    public struct Clip: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

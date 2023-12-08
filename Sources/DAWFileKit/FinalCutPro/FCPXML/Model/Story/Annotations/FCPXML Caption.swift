@@ -12,7 +12,7 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Represents a closed caption.
-    public struct Caption: Equatable, Hashable { 
+    public struct Caption: FCPXMLElement { 
         public let element: XMLElement
         
         // Element-Specific Attributes

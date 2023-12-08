@@ -18,7 +18,7 @@ extension FinalCutPro.FCPXML {
     /// >
     /// > When exported, the XML lists the currently active item as the first child in the audition
     /// > container.
-    public struct Audition: Equatable, Hashable {
+    public struct Audition: FCPXMLElement {
         public let element: XMLElement
         
         // Children

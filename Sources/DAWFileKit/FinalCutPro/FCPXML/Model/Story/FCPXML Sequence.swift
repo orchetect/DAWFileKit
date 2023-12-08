@@ -14,7 +14,7 @@ import OTCore
 extension FinalCutPro.FCPXML {
     /// A container that represents the top-level sequence for a Final Cut Pro project or compound
     /// clip.
-    public struct Sequence: FCPXMLElement, Equatable, Hashable {
+    public struct Sequence: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

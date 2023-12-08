@@ -16,7 +16,7 @@ extension FinalCutPro.FCPXML.SyncClip {
     /// > FCPXML 1.11 DTD:
     /// > A `sync-source` element defines the role-based audio components to be used
     /// > for a source of a synchronized clip.
-    public struct SyncSource: Equatable, Hashable {
+    public struct SyncSource: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

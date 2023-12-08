@@ -12,7 +12,7 @@ import OTCore
 extension FinalCutPro.FCPXML {
     /// Multicam source used in a `mc-clip`.
     /// A single source may be used for both video and audio, or separate sources may be used for each.
-    public struct MulticamSource: Equatable, Hashable {
+    public struct MulticamSource: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

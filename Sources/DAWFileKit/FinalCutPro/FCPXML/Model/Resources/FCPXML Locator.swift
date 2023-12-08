@@ -19,7 +19,7 @@ extension FinalCutPro.FCPXML {
     /// > FCPXML element.
     /// >
     /// > See [`locator`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/locator).
-    public struct Locator: Equatable, Hashable {
+    public struct Locator: FCPXMLElement {
         public let element: XMLElement
         
         /// Required.

@@ -25,7 +25,7 @@ extension FinalCutPro.FCPXML.ObjectTracker {
     /// > See [`tracking-shape`](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/tracking-shape
     /// > ).
-    public struct TrackingShape: Equatable, Hashable {
+    public struct TrackingShape: FCPXMLElement {
         public let element: XMLElement
         
         // TODO: add property getters/setters

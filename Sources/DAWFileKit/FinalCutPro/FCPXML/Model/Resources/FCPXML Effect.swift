@@ -22,7 +22,7 @@ extension FinalCutPro.FCPXML {
     /// > See [`effect`](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/effect
     /// > ).
-    public struct Effect: Equatable, Hashable {
+    public struct Effect: FCPXMLElement {
         public let element: XMLElement
         
         // shared resource attributes

@@ -19,7 +19,7 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.
-    public struct SyncClip: Equatable, Hashable {
+    public struct SyncClip: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

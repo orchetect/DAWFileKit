@@ -25,7 +25,7 @@ extension XMLElement {
     /// FCPXML: Returns child `text` elements.
     public func fcpTexts() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.Caption.Children.text.rawValue)
+            .filter(whereElementNamed: "text")
     }
 }
 #endif

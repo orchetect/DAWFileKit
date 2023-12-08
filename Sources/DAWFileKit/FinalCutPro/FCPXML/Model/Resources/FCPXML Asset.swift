@@ -22,7 +22,7 @@ extension FinalCutPro.FCPXML {
     /// > `media-rep` element along with file URLs for the media files.
     /// >
     /// > See [`asset`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset).
-    public struct Asset: Equatable, Hashable {
+    public struct Asset: FCPXMLElement {
         public let element: XMLElement
         
         // shared resource attributes

@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
     /// > An event may contain clips as story elements and projects, along with keyword collections
     /// > and smart collections. The keyword-collection and smart-collection elements organize clips
     /// > by keywords and other matching criteria listed under the Smart Collection Match Elements.
-    public struct Event: Equatable, Hashable {
+    public struct Event: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

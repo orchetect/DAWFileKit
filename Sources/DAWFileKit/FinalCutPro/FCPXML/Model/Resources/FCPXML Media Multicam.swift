@@ -13,7 +13,7 @@ import OTCore
 extension FinalCutPro.FCPXML.Media {
     /// A multi-camera element contains one or more `mc-angle` elements that each manage a series of
     /// other story elements.
-    public struct Multicam: Equatable, Hashable {
+    public struct Multicam: FCPXMLElement {
         public let element: XMLElement
         
         public var renderFormat: String? {

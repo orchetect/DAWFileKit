@@ -12,7 +12,7 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Contains elements ordered sequentially in time.
-    public struct Spine: Equatable, Hashable {
+    public struct Spine: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes

@@ -25,7 +25,7 @@ extension XMLElement {
     /// FCPXML: Returns child `text-style-def` elements.
     public func fcpTextStyleDefinitions() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.Caption.Children.textStyleDef.rawValue)
+            .filter(whereElementNamed: "text-style-def")
     }
 }
 #endif

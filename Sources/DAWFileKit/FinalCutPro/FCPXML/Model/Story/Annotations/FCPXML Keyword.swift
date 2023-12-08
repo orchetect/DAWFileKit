@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Represents a keyword.
-    public struct Keyword: Equatable, Hashable {
+    public struct Keyword: FCPXMLElement {
         public let element: XMLElement
         
         // Element-Specific Attributes
