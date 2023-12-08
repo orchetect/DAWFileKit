@@ -29,6 +29,7 @@ extension FinalCutPro.FCPXML {
         
         // shared resource attributes
         
+        /// Identifier. (Required)
         public var id: String {
             get { element.fcpID ?? "" }
             set { element.fcpID = newValue }

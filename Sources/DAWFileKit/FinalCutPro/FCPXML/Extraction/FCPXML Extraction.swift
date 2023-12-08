@@ -194,7 +194,7 @@ extension XMLElement { // parent/container
                 return nil
                 
             case .locator:
-                return nil // TODO: ?
+                return nil
                 
             case .media:
                 // used by `ref-clip` story element, media will contain a `sequence`
@@ -202,10 +202,7 @@ extension XMLElement { // parent/container
                 return .directChildren
                 
             case .objectTracker:
-                return nil // TODO: ?
-                
-            case .trackingShape:
-                return nil // TODO: ?
+                return nil
             }
         }
     }

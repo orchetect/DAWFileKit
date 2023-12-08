@@ -19,6 +19,8 @@ extension FinalCutPro.FCPXML {
     public struct Audio: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
         /// Required.
         /// Resource ID
         public var ref: String {
@@ -31,6 +33,12 @@ extension FinalCutPro.FCPXML {
             set { element.fcpAudioRole = newValue }
         }
         
+        /// Source/track identifier in asset (if not '1').
+        public var srcID: String? {
+            get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
+            set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
+        }
+        
         /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
         public var sourceChannels: String? {
             get { element.fcpSourceChannels }
@@ -41,40 +49,6 @@ extension FinalCutPro.FCPXML {
         public var outputChannels: String? {
             get { element.fcpOutputChannels }
             set { element.fcpOutputChannels = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Children
@@ -97,6 +71,10 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Audio: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.Audio: FCPXMLElementNoteChild { }
+
 extension FinalCutPro.FCPXML.Audio {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .audio
     
@@ -105,6 +83,8 @@ extension FinalCutPro.FCPXML.Audio {
         /// Resource ID.
         case ref
         case role
+        /// Source/track identifier in asset (if not '1').
+        case srcID
         /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
         case srcCh
         /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
@@ -121,7 +101,11 @@ extension FinalCutPro.FCPXML.Audio {
         case enabled
     }
     
-    // contains story elements
+    // contains DTD %timing-params
+    // contains DTD adjust-volume?
+    // contains DTD %anchor_item*
+    // contains markers
+    // contains DTD filter-audio*
 }
 
 extension XMLElement { // Audio

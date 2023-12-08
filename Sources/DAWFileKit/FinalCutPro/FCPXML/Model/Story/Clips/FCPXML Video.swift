@@ -19,50 +19,18 @@ extension FinalCutPro.FCPXML {
     public struct Video: Equatable, Hashable {
         public let element: XMLElement
         
-        /// Required.
-        /// Resource ID.
+        // Element-Specific Attributes
+        
+        /// Resource ID. (Required)
         public var ref: String {
             get { element.fcpRef ?? "" }
             set { element.fcpRef = newValue }
         }
         
+        /// Video role. (Default: Video)
         public var role: VideoRole? {
             get { element.fcpVideoRole }
             set { element.fcpVideoRole = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Children
@@ -85,6 +53,10 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Video: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
+
 extension FinalCutPro.FCPXML.Video {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .video
     
@@ -93,6 +65,7 @@ extension FinalCutPro.FCPXML.Video {
         /// Resource ID.
         case ref
         case role
+        case srcID
         
         // Anchorable Attributes
         case lane
@@ -105,7 +78,13 @@ extension FinalCutPro.FCPXML.Video {
         case enabled
     }
     
-    // contains story elements
+    // can contain DTD param*
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params-video
+    // can contain DTD %anchor_item*
+    // can contain markers
+    // can contain DTD %video_filter_item*
+    // con contain one or zero DTD reserved?
 }
 
 extension XMLElement { // Video

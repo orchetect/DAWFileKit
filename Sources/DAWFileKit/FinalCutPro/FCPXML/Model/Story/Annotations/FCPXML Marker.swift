@@ -16,21 +16,15 @@ extension FinalCutPro.FCPXML {
     public struct Marker: Equatable, Hashable {
         public let element: XMLElement
         
-        public var start: Fraction {
-            get { element.fcpStart ?? .zero }
-            set { element.fcpStart = newValue }
-        }
+        // Element-Specific Attributes
         
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
+        /// Name. (Required)
         public var name: String {
             get { element.fcpValue ?? "" }
             set { element.fcpValue = newValue }
         }
         
+        /// Optional note.
         public var note: String? {
             get { element.fcpNote }
             set { element.fcpNote = newValue }
@@ -41,6 +35,10 @@ extension FinalCutPro.FCPXML {
         }
     }
 }
+
+extension FinalCutPro.FCPXML.Marker: FCPXMLElementRequiredStart { }
+
+extension FinalCutPro.FCPXML.Marker: FCPXMLElementOptionalDuration { }
 
 extension FinalCutPro.FCPXML.Marker {
     public static func annotationType(
@@ -218,34 +216,20 @@ extension XMLElement { // Any Marker
 
 // MARK: - Model Structures
 
- extension Sequence<FinalCutPro.FCPXML.Marker> {
-     /// Sorts collection by marker's `start` attribute.
-     public func sortedByStart() -> [FinalCutPro.FCPXML.Marker] {
-         sorted { lhs, rhs in
-             lhs.start < rhs.start
-         }
-     }
-
-     // TODO: implement
-     // /// Sorts collection by marker's absolute start timecode.
-     // public func sortedByAbsoluteStart() -> [FinalCutPro.FCPXML.Marker] {
-     //     sorted { lhs, rhs in
-     //         guard let lhsAbsoluteStart = lhs.context[.absoluteStart],
-     //               let rhsAbsoluteStart = rhs.context[.absoluteStart]
-     //         else {
-     //             // sort by `start` attribute as fallback
-     //             return lhs.fcpStart < rhs.fcpStart
-     //         }
-     //         return lhsAbsoluteStart < rhsAbsoluteStart
-     //     }
-     // }
-
-     /// Sorts collection by marker's name.
-     public func sortedByName() -> [FinalCutPro.FCPXML.Marker] {
-         sorted { lhs, rhs in
-             lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
-         }
-     }
- }
+extension Sequence<FinalCutPro.FCPXML.Marker> {
+    /// Sort collection by marker `start` attribute.
+    public func sorted() -> [FinalCutPro.FCPXML.Marker] {
+        sorted { lhs, rhs in
+            lhs.start < rhs.start
+        }
+    }
+    
+    /// Sort collection by marker name.
+    public func sortedByName() -> [FinalCutPro.FCPXML.Marker] {
+        sorted { lhs, rhs in
+            lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
+        }
+    }
+}
 
 #endif

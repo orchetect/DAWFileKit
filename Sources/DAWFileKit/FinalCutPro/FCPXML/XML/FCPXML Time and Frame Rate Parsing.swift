@@ -57,7 +57,7 @@ extension XMLElement {
         guard let (durElement, _) = elements.first(withAttribute: "start")
         else { return nil }
         
-        return durElement.fcpDuration
+        return durElement.fcpStart
     }
     
     /// FCPXML: Return nearest `tcStart` attribute value, starting from the element and
@@ -74,7 +74,7 @@ extension XMLElement {
         guard let (durElement, _) = elements.first(withAttribute: "tcStart")
         else { return nil }
         
-        return durElement.fcpDuration
+        return durElement.fcpTCStart
     }
 }
 

@@ -43,7 +43,17 @@ extension FinalCutPro.FCPXML {
             return markers
         }
     }
-    
+}
+
+extension FCPXMLExtractionPreset where Self == FinalCutPro.FCPXML.MarkersExtractionPreset {
+    /// FCPXML extraction preset that extracts markers, applying appropriate settings and filters to
+    /// produce extraction results that will reflect what is shown on the Final Cut Pro timeline.
+    public static var markers: FinalCutPro.FCPXML.MarkersExtractionPreset {
+        FinalCutPro.FCPXML.MarkersExtractionPreset()
+    }
+}
+
+extension FinalCutPro.FCPXML {
     /// An extracted marker element with pertinent data.
     public struct ExtractedMarker {
         var extractedElement: ExtractedElement
@@ -104,11 +114,25 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FCPXMLExtractionPreset where Self == FinalCutPro.FCPXML.MarkersExtractionPreset {
-    /// FCPXML extraction preset that extracts markers, applying appropriate settings and filters to
-    /// produce extraction results that will reflect what is shown on the Final Cut Pro timeline.
-    public static var markers: FinalCutPro.FCPXML.MarkersExtractionPreset {
-        FinalCutPro.FCPXML.MarkersExtractionPreset()
+extension Sequence<FinalCutPro.FCPXML.ExtractedMarker> {
+    /// Sort collection by marker timecode.
+    public func sorted() -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        sorted { lhs, rhs in
+            guard let lhsTimecode = lhs.timecode,
+                  let rhsTimecode = rhs.timecode
+            else {
+                // sort by `start` attribute as fallback
+                return lhs.marker.start < rhs.marker.start
+            }
+            return lhsTimecode < rhsTimecode
+        }
+    }
+    
+    /// Sort collection by marker name.
+    public func sortedByName() -> [FinalCutPro.FCPXML.ExtractedMarker] {
+        sorted { lhs, rhs in
+            lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
+        }
     }
 }
 

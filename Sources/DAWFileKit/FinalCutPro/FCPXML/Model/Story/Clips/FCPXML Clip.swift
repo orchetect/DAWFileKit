@@ -29,48 +29,11 @@ extension FinalCutPro.FCPXML {
     public struct Clip: Equatable, Hashable {
         public let element: XMLElement
         
-        public var audioStart: Fraction? {
-            get { element.fcpAudioStart }
-            set { element.fcpAudioStart = newValue }
-        }
+        // Element-Specific Attributes
         
-        public var audioDuration: Fraction? {
-            get { element.fcpAudioDuration }
-            set { element.fcpAudioDuration = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
+        public var format: String? { // DTD: default is same as parent
+            get { element.fcpFormat }
+            set { element.fcpFormat = newValue }
         }
         
         // Children
@@ -93,12 +56,41 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCStart { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCFormat { }
+
+extension FinalCutPro.FCPXML.Clip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalModDate { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementAudioChannelSourceChildren { }
+
 extension FinalCutPro.FCPXML.Clip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .clip
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
+        case format
+        case tcStart
+        case tcFormat
         case audioStart
         case audioDuration
+        case modDate
         
         // Anchorable Attributes
         case lane
@@ -111,7 +103,12 @@ extension FinalCutPro.FCPXML.Clip {
         case enabled
     }
     
-    // contains story elements
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params
+    // contains spines, clips, captions
+    // contains markers
+    // contains DTD %video_filter_item*
+    // contains DTD filter-audio*
 }
 
 extension XMLElement { // Clip

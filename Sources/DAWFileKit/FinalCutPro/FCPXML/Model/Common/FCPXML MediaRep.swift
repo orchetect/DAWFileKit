@@ -66,17 +66,13 @@ extension FinalCutPro.FCPXML {
         
         // Children
         
-        /// Security-scoped bookmark data in a base64-encoded string.
-        /// Access the `stringValue` property on the returned element.
-        public var bookmark: XMLElement? {
-            element.firstChildElement(named: Children.bookmark.rawValue)
-        }
-        
         public init(element: XMLElement) {
             self.element = element
         }
     }
 }
+
+extension FinalCutPro.FCPXML.MediaRep: FCPXMLElementBookmarkChild { }
 
 extension FinalCutPro.FCPXML.MediaRep {
     public enum Element: String {
@@ -114,11 +110,6 @@ extension FinalCutPro.FCPXML.MediaRep {
     /// Convenience to returns the `src` filename.
     public func srcFilename() -> String? {
         src?.lastPathComponent
-    }
-    
-    /// Convenience to return the base64-encoded `bookmark` contents as decoded `Data`.
-    public func bookmarkData() -> Data? {
-        bookmark?.stringValue?.base64DecodedString?.data(using: .utf8)
     }
 }
 

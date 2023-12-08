@@ -16,23 +16,12 @@ extension FinalCutPro.FCPXML.Media {
     public struct Multicam: Equatable, Hashable {
         public let element: XMLElement
         
-        /// Format ID.
-        public var format: String? {
-            get { element.fcpFormat }
-            set { element.fcpFormat = newValue }
+        public var renderFormat: String? {
+            get { element.stringValue(forAttributeNamed: Attributes.renderFormat.rawValue) }
+            set { element.addAttribute(withName: Attributes.renderFormat.rawValue, value: newValue) }
         }
         
-        /// Local timeline start.
-        public var tcStart: Fraction? {
-            get { element.fcpTCStart }
-            set { element.fcpTCStart = newValue }
-        }
-        
-        /// Local timeline timecode format.
-        public var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? {
-            get { element.fcpTCFormat }
-            set { element.fcpTCFormat = newValue }
-        }
+        // Children
         
         /// Returns child `mc-angle` elements.
         /// Call on a `multicam` element.
@@ -62,15 +51,18 @@ extension FinalCutPro.FCPXML.Media {
     }
 }
 
+extension FinalCutPro.FCPXML.Media.Multicam: FCPXMLElementMediaAttributes { }
+
+extension FinalCutPro.FCPXML.Media.Multicam: FCPXMLElementMetadataChild { }
+
 extension FinalCutPro.FCPXML.Media.Multicam {
     public enum Attributes: String, XMLParsableAttributesKey {
-        /// Multicam format.
+        case renderFormat
+        
+        // Media Attributes
         case format
-        
-        /// Multicam local timeline start.
+        case duration
         case tcStart
-        
-        /// Multicam local timeline timecode format.
         case tcFormat
     }
     

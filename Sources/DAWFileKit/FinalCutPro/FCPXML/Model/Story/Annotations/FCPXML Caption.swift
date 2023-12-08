@@ -15,51 +15,12 @@ extension FinalCutPro.FCPXML {
     public struct Caption: Equatable, Hashable { 
         public let element: XMLElement
         
-        public var note: String? {
-            get { element.fcpNote }
-            set { element.fcpNote = newValue }
-        }
+        // Element-Specific Attributes
         
-        public var texts: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpTexts()
-        }
-        
-        public var textStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpTextStyleDefinitions()
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
+        /// Role.
+        public var role: CaptionRole? {
+            get { element.fcpRole(as: CaptionRole.self) }
+            set { element.fcpSet(role: newValue) }
         }
         
         public init(element: XMLElement) {
@@ -67,6 +28,14 @@ extension FinalCutPro.FCPXML {
         }
     }
 }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextChildren { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextStyleDefinitionChildren { }
 
 extension FinalCutPro.FCPXML.Caption {
     public static let annotationType: FinalCutPro.FCPXML.AnnotationType = .caption
@@ -102,20 +71,6 @@ extension XMLElement { // Caption
     /// Call this on a `caption` element only.
     public var fcpAsCaption: FinalCutPro.FCPXML.Caption {
         .init(element: self)
-    }
-}
-
-extension XMLElement { // Caption
-    /// FCPXML: Returns child `text` elements.
-    public func fcpTexts() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.Caption.Children.text.rawValue)
-    }
-    
-    /// FCPXML: Returns child `text-style-def` elements.
-    public func fcpTextStyleDefinitions() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.Caption.Children.textStyleDef.rawValue)
     }
 }
 

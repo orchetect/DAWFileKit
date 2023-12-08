@@ -19,37 +19,6 @@ extension FinalCutPro.FCPXML {
     public struct Gap: Equatable, Hashable {
         public let element: XMLElement
         
-        // Anchorable Attributes
-        
-        // (no lane)
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
-        }
-        
         // Children
         
         /// Returns all child elements.
@@ -62,13 +31,23 @@ extension FinalCutPro.FCPXML {
             element.fcpStoryElements
         }
         
-        // TODO: add missing attributes and protocols
-        
         public init(element: XMLElement) {
             self.element = element
         }
     }
 }
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementClipAttributes {
+    // A kludge since Gap uses 5 of the 6 clip attributes, except `lane`.
+    public var lane: Int? {
+        get { nil }
+        set { assertionFailure("Can't set lane attribute on gap clip.") }
+    }
+}
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.Gap {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .gap
@@ -84,6 +63,9 @@ extension FinalCutPro.FCPXML.Gap {
         case duration
         case enabled
     }
+    
+    // can contain DTD anchor_item*
+    // can contain markers
 }
 
 extension XMLElement { // Gap

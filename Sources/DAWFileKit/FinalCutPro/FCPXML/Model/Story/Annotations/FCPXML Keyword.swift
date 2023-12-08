@@ -14,21 +14,15 @@ extension FinalCutPro.FCPXML {
     public struct Keyword: Equatable, Hashable {
         public let element: XMLElement
         
-        public var start: Fraction {
-            get { element.fcpStart ?? .zero }
-            set { element.fcpStart = newValue }
-        }
+        // Element-Specific Attributes
         
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var name: String {
+        /// Comma-separated list of keywords.
+        public var keywords: String {
             get { element.fcpValue ?? "" }
             set { element.fcpValue = newValue }
         }
         
+        /// Optional note.
         public var note: String? {
             get { element.fcpNote }
             set { element.fcpNote = newValue }
@@ -40,13 +34,18 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Keyword: FCPXMLElementRequiredStart { }
+
+extension FinalCutPro.FCPXML.Keyword: FCPXMLElementOptionalDuration { }
+
 extension FinalCutPro.FCPXML.Keyword {
     public static let annotationType: FinalCutPro.FCPXML.AnnotationType = .keyword
     
     public enum Attributes: String, XMLParsableAttributesKey {
-        case value // the keyword name
+        // Element-Specific Attributes
         case start
         case duration
+        case value // comma-separated list of keywords, required
         case note
     }
 }

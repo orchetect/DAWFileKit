@@ -14,34 +14,10 @@ import OTCore
 extension FinalCutPro.FCPXML {
     /// A container that represents the top-level sequence for a Final Cut Pro project or compound
     /// clip.
-    public struct Sequence: Equatable, Hashable {
+    public struct Sequence: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
         
-        /// Format ID.
-        public var format: String? {
-            get { element.fcpFormat }
-            set { element.fcpFormat = newValue }
-        }
-        
-        /// Local timeline start.
-        public var tcStart: Fraction? {
-            get { element.fcpTCStart }
-            set { element.fcpTCStart = newValue }
-        }
-        
-        /// Local timeline timecode format.
-        public var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? {
-            get { element.fcpTCFormat }
-            set { element.fcpTCFormat = newValue }
-        }
-        
-        /// Local timeline duration.
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        // sequence attributes
+        // Element-Specific Attributes
         
         public var audioLayout: AudioLayout? { // only exists on sequence
             get {
@@ -56,14 +32,9 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Audio sample rate in Hz.
-        public var audioRate: Int? {
+        public var audioRate: AudioRate? {
             get { element.fcpAudioRate }
             set { element.fcpAudioRate = newValue }
-        }
-        
-        public var note: String? {
-            get { element.fcpNote }
-            set { element.fcpNote = newValue }
         }
         
         public var renderFormat: String? {
@@ -80,7 +51,12 @@ extension FinalCutPro.FCPXML {
             }
         }
         
-        // TODO: add metadata
+        // Children
+        
+        /// Returns the child `spine` element. (Required)
+        public var spine: XMLElement {
+            element.fcpSpine() ?? XMLElement(name: Children.spine.rawValue)
+        }
         
         public init(element: XMLElement) {
             self.element = element
@@ -88,29 +64,34 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMediaAttributes { }
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetadataChild { }
+
 extension FinalCutPro.FCPXML.Sequence {
     public static let storyElementType: FinalCutPro.FCPXML.StoryElementType = .sequence
     
     public enum Attributes: String, XMLParsableAttributesKey {
-        // Timeline Attributes
-        case format
-        case tcStart
-        case tcFormat
-        case duration
-        
-        // sequence attributes
+        // Element-Specific Attributes
         case audioLayout
         case audioRate
-        case note
         case renderFormat
         case keywords
+        
+        // Media Attributes
+        case format
+        case duration
+        case tcStart
+        case tcFormat
     }
     
     public enum Children: String {
-        case spine
+        case spine // must contain one `spine`
+        case note // can contain one `note`
+        case metadata // can contain one `metadata`
     }
-    
-    // can contain metadata
 }
 
 extension XMLElement { // Sequence
@@ -142,6 +123,20 @@ extension XMLElement { // Sequence
             return nil
         }
         return spine
+    }
+}
+
+extension FinalCutPro.FCPXML.Sequence {
+    /// Convenience:
+    /// Returns the start time of the `sequence` as timecode.
+    public var startTimecode: Timecode? {
+        tcStartAsTimecode
+    }
+    
+    /// Convenience:
+    /// Returns the duration of the `sequence` as timecode.
+    public var durationTimecode: Timecode? {
+        durationAsTimecode
     }
 }
 

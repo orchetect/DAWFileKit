@@ -19,6 +19,8 @@ extension FinalCutPro.FCPXML.SyncClip {
     public struct SyncSource: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
         public var sourceID: SourceID? { // only used in `sync-source`
             get {
                 guard let value = element.stringValue(forAttributeNamed: Attributes.sourceID.rawValue)
@@ -35,7 +37,7 @@ extension FinalCutPro.FCPXML.SyncClip {
         
         /// Returns child `audio-role-source` elements.
         public var audioRoleSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpAudioRoleSources
+            element.fcpAudioRoleSources()
         }
         
         public init(element: XMLElement) {
@@ -50,6 +52,8 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
     }
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
+        
         /// Required.
         /// Synchronization source ID.
         case sourceID // required
@@ -71,7 +75,7 @@ extension XMLElement { // SyncClip.SyncSource
 extension XMLElement { // SyncClip
     /// FCPXML: Returns child `sync-source` elements.
     /// Use on `sync-clip` elements only.
-    public var fcpSyncSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public func fcpSyncSources() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.name == FinalCutPro.FCPXML.SyncClip.Children.syncSource.rawValue }
     }

@@ -20,6 +20,8 @@ extension FinalCutPro.FCPXML {
     public struct Event: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
         public var name: String {
             get { element.fcpName ?? "" }
             set { element.fcpName = newValue }
@@ -28,6 +30,20 @@ extension FinalCutPro.FCPXML {
         public var uid: String? {
             get { element.fcpUID }
             set { element.fcpUID = newValue }
+        }
+        
+        // Children
+        
+        /// Returns child `project` elements.
+        public var projects: LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>> {
+            element
+                .childElements
+                .filter(whereElementType: .structure(.project))
+        }
+        
+        /// Returns child story elements.
+        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+            element.fcpStoryElements
         }
         
         /// Returns all child elements.
@@ -45,15 +61,15 @@ extension FinalCutPro.FCPXML.Event {
     public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .event
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
         case name
         case uid
     }
     
-    // contains projects
-    // contains clips
-    // contains collection folders
-    // contains keyword collections
-    // contains smart collections
+    // can contain one or more of any:
+    //   clip | audition | mc-clip | ref-clip | sync-clip | asset-clip | project
+    // can contain one or more of any DTD %collection_item:
+    //   collection-folder | keyword-collection | smart-collection
 }
 
 extension XMLElement { // Event
@@ -63,4 +79,5 @@ extension XMLElement { // Event
         .init(element: self)
     }
 }
+
 #endif

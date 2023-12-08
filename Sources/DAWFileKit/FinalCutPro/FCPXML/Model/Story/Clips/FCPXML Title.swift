@@ -19,6 +19,9 @@ extension FinalCutPro.FCPXML {
     public struct Title: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
+        /// Effect ID (resource ID) for a Motion template. (Required)
         public var ref: String {
             get { element.fcpRef ?? "" }
             set { element.fcpRef = newValue }
@@ -27,40 +30,6 @@ extension FinalCutPro.FCPXML {
         public var role: VideoRole? {
             get { element.fcpVideoRole }
             set { element.fcpVideoRole = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
         }
         
         // Children
@@ -85,13 +54,19 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Title: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementTextChildren { }
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementTextStyleDefinitionChildren { }
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementNoteChild { }
+
 extension FinalCutPro.FCPXML.Title {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .title
     
     public enum Attributes: String, XMLParsableAttributesKey {
-        /// Required.
-        /// Resource ID.
-        case ref
+        case ref // effect ID for a Motion template
         case role
         
         // Anchorable Attributes
@@ -105,7 +80,11 @@ extension FinalCutPro.FCPXML.Title {
         case enabled
     }
     
-    // contains story elements
+    // can contain DTD param*
+    // contains DTD %intrinsic-params-video
+    // can contain DTD %anchor_item*
+    // can contain markers
+    // can contain DTD %video_filter_item*
 }
 
 extension XMLElement { // Title

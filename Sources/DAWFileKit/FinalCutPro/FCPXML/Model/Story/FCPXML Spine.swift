@@ -15,29 +15,19 @@ extension FinalCutPro.FCPXML {
     public struct Spine: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
         public var name: String? {
             get { element.fcpName }
             set { element.fcpName = newValue }
         }
         
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
+        public var format: String? {
+            get { element.fcpFormat }
+            set { element.fcpFormat = newValue }
         }
         
         // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
         
         /// Returns child story elements.
         public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
@@ -50,18 +40,23 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Spine: FCPXMLElementAnchorableAttributes { }
+
 extension FinalCutPro.FCPXML.Spine {
     public static let storyElementType: FinalCutPro.FCPXML.StoryElementType = .spine
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
         case name
+        case format
         
         // Anchorable Attributes
         case lane
         case offset
     }
     
-    // contains story elements
+    // contains clips
+    // contains transitions
 }
 
 extension XMLElement { // Spine

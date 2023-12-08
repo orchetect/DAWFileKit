@@ -21,20 +21,6 @@ extension FinalCutPro.FCPXML {
     public struct Audition: Equatable, Hashable {
         public let element: XMLElement
         
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // TODO: public var dateModified: Date?
-        
         // Children
         
         /// Returns the audition clips.
@@ -49,6 +35,10 @@ extension FinalCutPro.FCPXML {
         }
     }
 }
+
+extension FinalCutPro.FCPXML.Audition: FCPXMLElementAnchorableAttributes { }
+
+extension FinalCutPro.FCPXML.Audition: FCPXMLElementOptionalModDate { }
 
 // TODO: remove these? might be better to explicitly have to access the active clip.
 extension FinalCutPro.FCPXML.Audition /* Clip Attributes */ {
@@ -81,14 +71,15 @@ extension FinalCutPro.FCPXML.Audition {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .audition
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
+        case modDate
+        
         // Anchorable Attributes
         case lane
         case offset
-        
-        case modDate
     }
     
-    // contains one or more clips
+    // can only contain one or more clips
 }
 
 extension FinalCutPro.FCPXML.Audition {

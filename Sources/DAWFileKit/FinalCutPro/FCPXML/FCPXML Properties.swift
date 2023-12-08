@@ -21,15 +21,14 @@ extension FinalCutPro.FCPXML {
     /// - the `fcpxml` element
     /// - the `fcpxml/library` element if it exists
     public func allEvents() -> FlattenSequence<[AnySequence<XMLElement>]> {
-        let rootEvents = fcpxmlElement?.childElements
-            .filter(whereElementType: .structure(.event))
+        let rootEvents = fcpxmlElement?.fcpEvents
             
         // technically there can only be one or zero `library` elements,
         // and FCP will not allow exporting more than one library to FCPXML at a time.
         // but there is nothing stopping us from having more than one.
         let libraryEvents = fcpxmlElement?.childElements
             .filter(whereElementType: .structure(.library))
-            .filter(whereElementType: .structure(.event))
+            .flatMap(\.fcpEvents)
         
         // need type erasure since the two sequence types are different
         let combined = [rootEvents?.asAnySequence, libraryEvents?.asAnySequence]
@@ -48,13 +47,11 @@ extension FinalCutPro.FCPXML {
     /// - an `fcpxml/event` element
     /// - an `fcpxml/library/event` element
     public func allProjects() -> FlattenSequence<[AnySequence<XMLElement>]> {
-        let rootProjects = fcpxmlElement?.childElements
-            .filter(whereElementType: .structure(.project))
+        let rootProjects = fcpxmlElement?.fcpProjects
         
         // will get all events and return their projects
-        let eventsProjects = allEvents() // [XMLElement]
-            .lazy
-            .flatMap { $0.childElements.filter(whereElementType: .structure(.project)) }
+        let eventsProjects = allEvents()
+            .flatMap(\.fcpProjects)
             
         // need type erasure since the two sequence types are different
         let combined = [rootProjects?.asAnySequence, eventsProjects.asAnySequence]

@@ -17,7 +17,6 @@ extension FinalCutPro.FCPXML {
         case effect
         case locator
         case objectTracker = "object-tracker"
-        case trackingShape = "tracking-shape"
     }
 }
 

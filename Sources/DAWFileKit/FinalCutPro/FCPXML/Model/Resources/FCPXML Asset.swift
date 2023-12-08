@@ -27,8 +27,7 @@ extension FinalCutPro.FCPXML {
         
         // shared resource attributes
         
-        /// Required.
-        /// Identifier.
+        /// Identifier. (Required)
         public var id: String {
             get { element.fcpID ?? "" }
             set { element.fcpID = newValue }
@@ -41,18 +40,6 @@ extension FinalCutPro.FCPXML {
         }
         
         // base attributes
-        
-        /// Local timeline start.
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        /// Asset duration.
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
         
         /// Asset format ID.
         public var format: String? {
@@ -120,7 +107,7 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Audio sample rate in Hz.
-        public var audioRate: Int? {
+        public var audioRate: AudioRate? {
             get { element.fcpAudioRate }
             set { element.fcpAudioRate = newValue }
         }
@@ -147,13 +134,18 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Asset: FCPXMLElementOptionalStart { }
+
+extension FinalCutPro.FCPXML.Asset: FCPXMLElementOptionalDuration { }
+
+extension FinalCutPro.FCPXML.Asset: FCPXMLElementMetadataChild { }
+
 extension FinalCutPro.FCPXML.Asset {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .asset
     
     public enum Attributes: String, XMLParsableAttributesKey {
         // shared resource attributes
-        /// Required.
-        /// Identifier.
+        /// Identifier. (Required)
         case id // required
         /// Name.
         case name
@@ -182,6 +174,11 @@ extension FinalCutPro.FCPXML.Asset {
         case audioRate
         /// Number of video sources. Default is `0`.
         case videoSources
+        
+        case customLUTOverride
+        case colorSpaceOverride
+        case projectionOverride
+        case stereoscopicOverride
         case auxVideoFlags
     }
     
@@ -200,9 +197,16 @@ extension XMLElement { // Asset
     
     /// FCPXML: Returns the `audioRate` attribute value (audio sample rate in Hz).
     /// Call this on an `asset` or `sequence` element only.
-    public var fcpAudioRate: Int? {
-        get { getInt(forAttribute: "audioRate") }
-        set { set(int: newValue, forAttribute: "audioRate") }
+    public var fcpAudioRate: FinalCutPro.FCPXML.AudioRate? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "audioRate")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.AudioRate(rawValue: value)
+        }
+        set {
+            addAttribute(withName: "audioRate", value: newValue?.rawValue)
+        }
     }
 }
 

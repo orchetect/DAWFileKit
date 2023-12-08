@@ -27,8 +27,7 @@ extension FinalCutPro.FCPXML {
         
         // shared resource attributes
         
-        /// Required.
-        /// Identifier.
+        /// Identifier. (Required)
         public var id: String {
             get { element.fcpID ?? "" }
             set { element.fcpID = newValue }
@@ -42,8 +41,7 @@ extension FinalCutPro.FCPXML {
         
         // effect attributes
         
-        /// Required.
-        /// UID.
+        /// UID. (Required)
         public var uid: String {
             get { element.fcpUID ?? "" }
             set { element.fcpUID = newValue }
@@ -66,8 +64,7 @@ extension FinalCutPro.FCPXML.Effect {
     
     public enum Attributes: String, XMLParsableAttributesKey {
         // shared resource attributes
-        /// Required.
-        /// Identifier.
+        /// Identifier. (Required)
         case id
         
         /// Name.
@@ -75,8 +72,7 @@ extension FinalCutPro.FCPXML.Effect {
         
         // effect attributes
         
-        /// Required.
-        /// UID.
+        /// UID. (Required)
         case uid // required
         
         /// Source.

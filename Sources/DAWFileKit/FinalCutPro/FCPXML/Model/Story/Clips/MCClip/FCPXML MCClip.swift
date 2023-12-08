@@ -25,63 +25,21 @@ extension FinalCutPro.FCPXML {
     public struct MCClip: Equatable, Hashable {
         public let element: XMLElement
         
-        /// Required.
-        /// Resource ID
+        // Element-Specific Attributes
+        
+        /// Resource ID. (Required)
         public var ref: String {
             get { element.fcpRef ?? "" }
             set { element.fcpRef = newValue }
         }
         
-        public var audioStart: Fraction? {
-            get { element.fcpAudioStart }
-            set { element.fcpAudioStart = newValue }
-        }
-        
-        public var audioDuration: Fraction? {
-            get { element.fcpAudioDuration }
-            set { element.fcpAudioDuration = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
+        /// Sources to enable for audio and video. (Default: `.all`)
+        public var srcEnable: ClipSourceEnable {
+            get { element.fcpClipSourceEnable }
+            set { element.fcpClipSourceEnable = newValue }
         }
         
         // Children
-        
-        /// Returns child `mc-source` elements.
-        public var sources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpMulticamSources
-        }
         
         /// Returns all child elements.
         public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
@@ -99,16 +57,43 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.MCClip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementOptionalModDate { }
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
+    /// Returns child `mc-source` elements.
+    public var sources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpMulticamSources
+    }
+}
+
 extension FinalCutPro.FCPXML.MCClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .mcClip
     
     public enum Attributes: String, XMLParsableAttributesKey {
-        /// Required.
-        /// Resource ID
-        case ref
-        
+        // Element-Specific Attributes
+        case ref // required
         case audioStart
         case audioDuration
+        case srcEnable // (all, audio, video) default: all
+        case modDate
         
         // Anchorable Attributes
         case lane
@@ -124,6 +109,11 @@ extension FinalCutPro.FCPXML.MCClip {
     public enum Children: String {
         case mcSource = "mc-source"
     }
+    
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params-audio
+    // can contain markers
+    // can contain filter-audio
 }
 
 extension FinalCutPro.FCPXML.MCClip {

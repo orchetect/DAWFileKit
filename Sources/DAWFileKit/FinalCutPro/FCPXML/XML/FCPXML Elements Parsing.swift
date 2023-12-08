@@ -73,6 +73,28 @@ extension XMLElement {
     }
 }
 
+// MARK: - Child Elements
+
+extension XMLElement {
+    /// Updates the `stringValue` of a child if it exists.
+    /// If the new value is `nil`, the child element is removed.
+    func _updateChildElement(named childName: String, newStringValue: String?) {
+        if let existingChild = firstChildElement(named: childName) {
+            if let newStringValue = newStringValue {
+                existingChild.stringValue = newStringValue
+            } else {
+                existingChild.detach()
+            }
+        } else {
+            if let newStringValue = newStringValue {
+                let newNote = XMLElement(name: childName)
+                newNote.stringValue = newStringValue
+                addChild(newNote)
+            }
+        }
+    }
+}
+
 // MARK: - Attributes Gathering
 
 extension XMLElement {

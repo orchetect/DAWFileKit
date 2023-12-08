@@ -37,6 +37,20 @@ extension FinalCutPro.FCPXML {
             set { element.fcpName = newValue }
         }
         
+        public var projectRef: String? {
+            get { element.stringValue(forAttributeNamed: Attributes.projectRef.rawValue) }
+            set { element.addAttribute(withName: Attributes.projectRef.rawValue, value: newValue) }
+        }
+        
+        // asset attributes
+        
+        public var uid: String? {
+            get { element.fcpUID }
+            set { element.fcpUID = newValue }
+        }
+        
+        // Children
+        
         /// Returns the `multicam` child element if one exists.
         public var multicam: XMLElement? {
             element.firstChildElement(named: Children.multicam.rawValue)
@@ -53,6 +67,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Media: FCPXMLElementOptionalModDate { }
+
 extension FinalCutPro.FCPXML.Media {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .media
     
@@ -60,6 +76,10 @@ extension FinalCutPro.FCPXML.Media {
         // shared resource attributes
         case id
         case name
+        
+        // asset attributes
+        case uid
+        case projectRef
     }
     
     public enum Children: String {

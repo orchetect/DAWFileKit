@@ -202,18 +202,9 @@ extension XMLElement {
             return nil // effects don't carry format info
             
         case .locator:
-            // TODO: finish this
-            print("Error: 'locator' resource parsing not yet implemented.")
             return nil
             
         case .objectTracker:
-            // TODO: finish this
-            print("Error: 'objectTracker' resource parsing not yet implemented.")
-            return nil
-            
-        case .trackingShape:
-            // TODO: finish this
-            print("Error: 'trackingShape' resource parsing not yet implemented.")
             return nil
         }
     }
@@ -314,7 +305,6 @@ extension XMLElement {
         case .locator: return nil // contains a URL but not a `media-rep`
         case .media: return nil // TODO: can contain `sequence` or `multicam`
         case .objectTracker: return nil
-        case .trackingShape: return nil
         }
     }
     
@@ -333,7 +323,6 @@ extension XMLElement {
         case .locator: return resource.fcpAsLocator.url
         case .media: return nil // TODO: can contain `sequence` or `multicam`
         case .objectTracker: return nil
-        case .trackingShape: return nil
         }
     }
 }

@@ -31,6 +31,8 @@ extension FinalCutPro.FCPXML {
     public struct RefClip: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
         /// Required.
         /// Resource ID
         public var ref: String {
@@ -50,48 +52,10 @@ extension FinalCutPro.FCPXML {
             }
         }
         
-        public var audioStart: Fraction? {
-            get { element.fcpAudioStart }
-            set { element.fcpAudioStart = newValue }
-        }
-        
-        public var audioDuration: Fraction? {
-            get { element.fcpAudioDuration }
-            set { element.fcpAudioDuration = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
+        /// Sources to enable for audio and video. (Default: `.all`)
+        public var srcEnable: ClipSourceEnable {
+            get { element.fcpClipSourceEnable }
+            set { element.fcpClipSourceEnable = newValue }
         }
         
         // Resource
@@ -107,11 +71,6 @@ extension FinalCutPro.FCPXML {
         }
         
         // Children
-        
-        /// Returns child `audio-role-source` elements.
-        public var audioRoleSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpAudioRoleSources
-        }
         
         /// Returns all child elements.
         public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
@@ -131,6 +90,28 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.RefClip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementOptionalModDate { }
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetadataChild { }
+
 extension FinalCutPro.FCPXML.RefClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .refClip
     
@@ -139,10 +120,11 @@ extension FinalCutPro.FCPXML.RefClip {
         /// Resource ID
         case ref
         case role
-        case useAudioSubroles // default `0` (false)
-        
+        case srcEnable
         case audioStart
         case audioDuration
+        case useAudioSubroles // default `0` (false)
+        case modDate
         
         // Anchorable Attributes
         case lane
@@ -158,6 +140,12 @@ extension FinalCutPro.FCPXML.RefClip {
     public enum Children: String {
         case audioRoleSource = "audio-role-source"
     }
+    
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params
+    // can contain DTD %anchor_item*
+    // can contain markers
+    // can contain filter-audio
 }
 
 extension XMLElement { // RefClip
@@ -168,13 +156,4 @@ extension XMLElement { // RefClip
     }
 }
 
-extension XMLElement { // RefClip
-    /// FCPXML: Returns child `audio-role-source` elements.
-    /// Use on `ref-clip`, `sync-source`, or `mc-source` elements.
-    public var fcpAudioRoleSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.RefClip.Children.audioRoleSource.rawValue)
-    }
-    
-}
 #endif

@@ -28,6 +28,8 @@ extension FinalCutPro.FCPXML.Media.Multicam {
             set { element.addAttribute(withName: Attributes.angleID.rawValue, value: newValue) }
         }
         
+        // Children
+        
         /// Story elements contained within the angle.
         public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
             element.childElements
@@ -41,6 +43,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
 
 extension FinalCutPro.FCPXML.Media.Multicam.Angle {
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-specific Attributes
         /// Angle name.
         case name
         
@@ -49,7 +52,8 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
         case angleID
     }
     
-    // Children are story elements, similar to contents of a `sequence`
+    // contains clips
+    // contains transitions
 }
 
 extension XMLElement { // Angle

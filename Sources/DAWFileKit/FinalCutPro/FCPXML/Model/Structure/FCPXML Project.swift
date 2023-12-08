@@ -8,14 +8,17 @@
 
 import CoreMedia
 import Foundation
+import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Project element.
     public struct Project: Equatable, Hashable {
         public let element: XMLElement
         
-        public var name: String {
-            get { element.fcpName ?? "" }
+        // Element-Specific Attributes
+        
+        public var name: String? {
+            get { element.fcpName }
             set { element.fcpName = newValue }
         }
         
@@ -29,8 +32,10 @@ extension FinalCutPro.FCPXML {
             set { element.fcpUID = newValue }
         }
         
+        // Children
+        
         public var sequence: XMLElement? {
-            get { element.firstChildElement(named: Attributes.sequence.rawValue) }
+            get { element.firstChildElement(named: Children.sequence.rawValue) }
             set {
                 if let sequence = sequence, let newValue = newValue {
                     sequence.detach()
@@ -39,23 +44,43 @@ extension FinalCutPro.FCPXML {
             }
         }
         
-        // TODO: add modDate
-        
         public init(element: XMLElement) {
             self.element = element
         }
     }
 }
 
+extension FinalCutPro.FCPXML.Project: FCPXMLElementOptionalModDate { }
+
 extension FinalCutPro.FCPXML.Project {
     public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .project
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
         case name
         case id
         case uid
         case modDate
+    }
+    
+    public enum Children: String {
         case sequence
+    }
+}
+
+extension XMLElement { // Project
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Project`` model object.
+    /// Call this on a `project` element only.
+    public var fcpAsProject: FinalCutPro.FCPXML.Project {
+        .init(element: self)
+    }
+}
+
+extension FinalCutPro.FCPXML.Project {
+    /// Convenience:
+    /// Returns the start timecode of the `sequence` contained within the project.
+    public var startTimecode: Timecode? {
+        sequence?.fcpAsSequence.tcStartAsTimecode
     }
 }
 

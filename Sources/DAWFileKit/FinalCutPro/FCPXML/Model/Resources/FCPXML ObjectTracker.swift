@@ -7,6 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Object tracker shared resource.
@@ -24,6 +25,13 @@ extension FinalCutPro.FCPXML {
     public struct ObjectTracker: Equatable, Hashable {
         public let element: XMLElement
         
+        // Children
+        
+        /// Returns child `tracking-shape` elements.
+        public var trackingShapes: LazyCompactMapSequence<[XMLNode], XMLElement> {
+            element.childElements
+        }
+        
         public init(element: XMLElement) {
             self.element = element
         }
@@ -33,7 +41,9 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.ObjectTracker {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .objectTracker
     
-    // TODO: Add attributes etc.
+    // no Attributes
+    
+    // contains 1 or more `tracking-shape`
 }
 
 extension XMLElement { // ObjectTracker

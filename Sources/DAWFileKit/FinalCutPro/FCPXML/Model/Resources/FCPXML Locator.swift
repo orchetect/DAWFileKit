@@ -42,6 +42,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.Locator: FCPXMLElementBookmarkChild { }
+
 extension FinalCutPro.FCPXML.Locator {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .locator
     

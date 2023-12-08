@@ -22,61 +22,14 @@ extension FinalCutPro.FCPXML {
     public struct SyncClip: Equatable, Hashable {
         public let element: XMLElement
         
+        // Element-Specific Attributes
+        
         public var format: String? { // DTD: default is same as parent
             get { element.fcpFormat }
             set { element.fcpFormat = newValue }
         }
         
-        public var audioStart: Fraction? {
-            get { element.fcpAudioStart }
-            set { element.fcpAudioStart = newValue }
-        }
-        
-        public var audioDuration: Fraction? {
-            get { element.fcpAudioDuration }
-            set { element.fcpAudioDuration = newValue }
-        }
-        
-        // Anchorable Attributes
-        
-        public var lane: Int? {
-            get { element.fcpLane }
-            set { element.fcpLane = newValue }
-        }
-        
-        public var offset: Fraction? {
-            get { element.fcpOffset }
-            set { element.fcpOffset = newValue }
-        }
-        
-        // Clip Attributes
-        
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var start: Fraction? {
-            get { element.fcpStart }
-            set { element.fcpStart = newValue }
-        }
-        
-        public var duration: Fraction? {
-            get { element.fcpDuration }
-            set { element.fcpDuration = newValue }
-        }
-        
-        public var enabled: Bool {
-            get { element.fcpGetEnabled(default: true) }
-            set { element.fcpSet(enabled: newValue, default: true) }
-        }
-        
         // Children
-        
-        /// Returns child `sync-source` elements.
-        public var syncSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpSyncSources
-        }
         
         /// Returns all child elements.
         public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
@@ -96,14 +49,48 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalTCStart { }
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalTCFormat { }
+
+extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
+
+extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
+    /// Returns child `sync-source` elements.
+    public var syncSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpSyncSources()
+    }
+}
+
 extension FinalCutPro.FCPXML.SyncClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .syncClip
     
     public enum Attributes: String, XMLParsableAttributesKey {
+        // Element-Specific Attributes
         case format
-        
         case audioStart
         case audioDuration
+        case tcStart
+        case tcFormat
+        case modDate
         
         // Anchorable Attributes
         case lane
@@ -120,7 +107,12 @@ extension FinalCutPro.FCPXML.SyncClip {
         case syncSource = "sync-source"
     }
     
-    // contains story elements
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params
+    // contains captions
+    // contains markers
+    // contains DTD %video_filter_item*
+    // contains DTD filter-audio*
 }
 
 extension XMLElement { // SyncClip
