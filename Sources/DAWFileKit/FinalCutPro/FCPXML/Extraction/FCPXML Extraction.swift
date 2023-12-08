@@ -257,14 +257,13 @@ extension XMLElement {
         )
     }
     
-    // TODO: finish this
-    // /// Extract elements using a preset.
-    // public func fcpExtractElements<Result>(
-    //     preset: some FCPXMLExtractionPreset<Result>,
-    //     settings: FinalCutPro.FCPXML.ExtractionSettings = .mainTimeline
-    // ) -> Result {
-    //     preset.perform(on: self, baseSettings: settings)
-    // }
+    /// Extract elements using a preset.
+    public func fcpExtractElements<Result>(
+        preset: some FCPXMLExtractionPreset<Result>,
+        settings: FinalCutPro.FCPXML.ExtractionSettings = .mainTimeline
+    ) -> Result {
+        preset.perform(on: self, baseSettings: settings)
+    }
 }
 
 // MARK: - Recursive Extraction Logic
