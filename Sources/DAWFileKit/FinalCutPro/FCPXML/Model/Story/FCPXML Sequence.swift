@@ -126,18 +126,4 @@ extension XMLElement { // Sequence
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence {
-    /// Convenience:
-    /// Returns the start time of the `sequence` as timecode.
-    public var startTimecode: Timecode? {
-        tcStartAsTimecode
-    }
-    
-    /// Convenience:
-    /// Returns the duration of the `sequence` as timecode.
-    public var durationTimecode: Timecode? {
-        durationAsTimecode
-    }
-}
-
 #endif
