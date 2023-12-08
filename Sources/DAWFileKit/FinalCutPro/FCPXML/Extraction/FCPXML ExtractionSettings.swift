@@ -20,6 +20,7 @@ extension FinalCutPro.FCPXML {
         public var occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion>
         
         /// Element types to filter during extraction.
+        /// This includes elements to triage and elements to return.
         /// Any other element types will be excluded.
         /// This rule is superseded by ``excludedTypes`` or ``excludedAncestorTypes`` in the event
         /// the same type is in both.
@@ -28,6 +29,7 @@ extension FinalCutPro.FCPXML {
         public var filteredTypes: Set<FinalCutPro.FCPXML.ElementType>?
         
         /// Element types to exclude during extraction.
+        /// These types will be excluded from both triage and returned types.
         /// This rule supersedes ``filteredTypes`` in the event the same type is in both.
         public var excludedTypes: Set<FinalCutPro.FCPXML.ElementType>
         
