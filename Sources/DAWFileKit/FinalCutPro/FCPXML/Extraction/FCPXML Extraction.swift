@@ -76,7 +76,7 @@ extension XMLElement { // parent/container
                 case .audition:
                     switch auditions {
                     case .active:
-                        return .specificChildren([fcpAsAudition.activeClip].compactMap { $0 })
+                        return .specificChildren([fcpAsAudition?.activeClip].compactMap { $0 })
                     case .activeAndAlternates:
                         return .directChildren
                     }
@@ -103,10 +103,11 @@ extension XMLElement { // parent/container
                     // so we can't just return the `media` resource and recurse, we need
                     // to actually know which angles are used by the `mc-clip`.
                     
-                    let multicamSources = fcpAsMCClip.sources
                     
-                    if let mediaResource = fcpResource(),
-                       let multicam = mediaResource.fcpAsMedia.multicam
+                    
+                    if let multicamSources = fcpAsMCClip?.sources,
+                       let mediaResource = fcpResource(),
+                       let multicam = mediaResource.fcpAsMedia?.multicam
                     {
                         let (audio, video) = multicam
                             .fcpAudioVideoMCAngles(forMulticamSources: multicamSources)

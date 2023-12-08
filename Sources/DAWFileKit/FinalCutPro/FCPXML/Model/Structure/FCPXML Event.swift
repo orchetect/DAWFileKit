@@ -19,6 +19,7 @@ extension FinalCutPro.FCPXML {
     /// > by keywords and other matching criteria listed under the Smart Collection Match Elements.
     public struct Event: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "event"
         
         // Element-Specific Attributes
         
@@ -51,8 +52,15 @@ extension FinalCutPro.FCPXML {
             element.childElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -75,7 +83,7 @@ extension FinalCutPro.FCPXML.Event {
 extension XMLElement { // Event
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Event`` model object.
     /// Call this on an `event` element only.
-    public var fcpAsEvent: FinalCutPro.FCPXML.Event {
+    public var fcpAsEvent: FinalCutPro.FCPXML.Event? {
         .init(element: self)
     }
 }

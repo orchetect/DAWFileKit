@@ -20,6 +20,7 @@ extension FinalCutPro.FCPXML {
     /// > container.
     public struct Audition: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "audition"
         
         // Children
         
@@ -30,8 +31,15 @@ extension FinalCutPro.FCPXML {
             element.fcpStoryElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -99,7 +107,7 @@ extension FinalCutPro.FCPXML.Audition {
 extension XMLElement { // Audition
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Audition`` model object.
     /// Call this on a `audition` element only.
-    public var fcpAsAudition: FinalCutPro.FCPXML.Audition {
+    public var fcpAsAudition: FinalCutPro.FCPXML.Audition? {
         .init(element: self)
     }
 }

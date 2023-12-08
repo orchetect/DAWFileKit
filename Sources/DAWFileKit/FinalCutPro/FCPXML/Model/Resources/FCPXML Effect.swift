@@ -24,6 +24,7 @@ extension FinalCutPro.FCPXML {
     /// > ).
     public struct Effect: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "effect"
         
         // shared resource attributes
         
@@ -53,8 +54,15 @@ extension FinalCutPro.FCPXML {
             set { element.fcpSRC = newValue }
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -83,7 +91,7 @@ extension FinalCutPro.FCPXML.Effect {
 extension XMLElement { // Effect
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Effect`` model object.
     /// Call this on an `effect` element only.
-    public var fcpAsEffect: FinalCutPro.FCPXML.Effect {
+    public var fcpAsEffect: FinalCutPro.FCPXML.Effect? {
         .init(element: self)
     }
 }

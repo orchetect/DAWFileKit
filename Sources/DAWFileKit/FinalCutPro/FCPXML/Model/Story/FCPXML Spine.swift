@@ -14,6 +14,7 @@ extension FinalCutPro.FCPXML {
     /// Contains elements ordered sequentially in time.
     public struct Spine: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "spine"
         
         // Element-Specific Attributes
         
@@ -34,8 +35,15 @@ extension FinalCutPro.FCPXML {
             element.fcpStoryElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -62,7 +70,7 @@ extension FinalCutPro.FCPXML.Spine {
 extension XMLElement { // Spine
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Spine`` model object.
     /// Call this on a `spine` element only.
-    public var fcpAsSpine: FinalCutPro.FCPXML.Spine {
+    public var fcpAsSpine: FinalCutPro.FCPXML.Spine? {
         .init(element: self)
     }
 }

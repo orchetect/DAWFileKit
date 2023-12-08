@@ -21,6 +21,7 @@ extension FinalCutPro.FCPXML {
     /// > See [`locator`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/locator).
     public struct Locator: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "locator"
         
         /// Required.
         /// Identifier.
@@ -36,8 +37,15 @@ extension FinalCutPro.FCPXML {
             set { element.set(url: newValue, forAttribute: Attributes.url.rawValue) }
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -61,7 +69,7 @@ extension FinalCutPro.FCPXML.Locator {
 extension XMLElement { // Locator
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Locator`` model object.
     /// Call this on a `locator` element only.
-    public var fcpAsLocator: FinalCutPro.FCPXML.Locator {
+    public var fcpAsLocator: FinalCutPro.FCPXML.Locator? {
         .init(element: self)
     }
 }

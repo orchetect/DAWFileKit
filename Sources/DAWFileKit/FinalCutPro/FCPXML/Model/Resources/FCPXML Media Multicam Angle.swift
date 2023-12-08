@@ -15,6 +15,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
     /// Similar to a `sequence`.
     public struct Angle: FCPXMLElement {
         public let element: XMLElement
+        public var elementName: String = "mc-angle"
         
         /// Angle name.
         public var name: String? {
@@ -35,8 +36,15 @@ extension FinalCutPro.FCPXML.Media.Multicam {
             element.childElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -59,7 +67,7 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
 extension XMLElement { // Angle
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Media/Multicam/Angle`` model object.
     /// Call this on a `mc-angle` element only.
-    public var fcpAsMCAngle: FinalCutPro.FCPXML.Media.Multicam.Angle {
+    public var fcpAsMCAngle: FinalCutPro.FCPXML.Media.Multicam.Angle? {
         .init(element: self)
     }
 }

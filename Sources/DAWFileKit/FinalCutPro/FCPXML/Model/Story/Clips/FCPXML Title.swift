@@ -18,6 +18,7 @@ extension FinalCutPro.FCPXML {
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
     public struct Title: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "title"
         
         // Element-Specific Attributes
         
@@ -48,8 +49,15 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -90,7 +98,7 @@ extension FinalCutPro.FCPXML.Title {
 extension XMLElement { // Title
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Title`` model object.
     /// Call this on a `title` element only.
-    public var fcpAsTitle: FinalCutPro.FCPXML.Title {
+    public var fcpAsTitle: FinalCutPro.FCPXML.Title? {
         .init(element: self)
     }
 }

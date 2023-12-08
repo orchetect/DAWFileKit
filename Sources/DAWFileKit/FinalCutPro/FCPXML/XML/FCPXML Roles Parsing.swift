@@ -58,7 +58,7 @@ extension XMLElement {
                 case .assetClip:
                     // asset clip can have `audioRole` and/or `videoRole` attributes.
                     
-                    let assetClip = fcpAsAssetClip
+                    guard let assetClip = fcpAsAssetClip else { break }
                     
                     // it can also have roles in `audio-channel-source` children which may or may
                     // not contain a time range. if there is no time range it applies to the entire
@@ -69,7 +69,7 @@ extension XMLElement {
                     }
                     
                     let audioChannelSources = assetClip.audioChannelSources
-                        .map(\.fcpAsAudioChannelSource)
+                        .compactMap(\.fcpAsAudioChannelSource)
                         .filter(\.active)
                     
                     if audioChannelSources.isEmpty {
@@ -83,7 +83,7 @@ extension XMLElement {
                     }
                     
                 case .audio:
-                    let audio = fcpAsAudio
+                    guard let audio = fcpAsAudio else { break }
                     if let role = audio.role {
                         add(role: .audio(role), isInherited: false)
                     }
@@ -127,7 +127,7 @@ extension XMLElement {
                     
                     // get multicam sources for `mc-clip`
                     
-                    let mcClip = fcpAsMCClip
+                    guard let mcClip = fcpAsMCClip else { break }
                     
                     let sources = mcClip.sources
                     guard !sources.isEmpty else { break }
@@ -137,7 +137,7 @@ extension XMLElement {
                     let ref = mcClip.ref
                     
                     guard let multicam = fcpResource(forID: ref, in: resources)?
-                        .fcpAsMedia
+                        .fcpAsMedia?
                         .multicam?
                         .fcpAsMulticam
                     else { break }
@@ -179,11 +179,11 @@ extension XMLElement {
                     // clips with their own roles.
                     // has audio subroles that are enable-able.
                     
-                    let refClip = fcpAsRefClip
+                    guard let refClip = fcpAsRefClip else { break }
                     
                     if refClip.useAudioSubroles {
                         let audioRoleSources = refClip.audioRoleSources
-                            .map(\.fcpAsAudioRoleSource)
+                            .compactMap(\.fcpAsAudioRoleSource)
                             .filter(\.active)
                         let audioRoles = audioRoleSources.asAnyRoles()
                         add(roles: audioRoles, isInherited: false)
@@ -192,7 +192,7 @@ extension XMLElement {
                 case .syncClip:
                     // sync clip does not have video/audio roles itself.
                     
-                    let syncClip = fcpAsSyncClip
+                    guard let syncClip = fcpAsSyncClip else { break }
                     
                     // instead, we derive the video role from the sync clip's first video media.
                     // we'll also add any audio roles found in case sync sources are missing and
@@ -208,12 +208,12 @@ extension XMLElement {
                     // the audio role may be present in a `sync-source` child of the sync clip.
                     let syncSources = syncClip
                         .syncSources
-                        .map(\.fcpAsSyncSource)
+                        .compactMap(\.fcpAsSyncSource)
                     
                     if !syncSources.isEmpty {
                         let audioRoleSources = syncSources
                             .flatMap(\.audioRoleSources)
-                            .map(\.fcpAsAudioRoleSource)
+                            .compactMap(\.fcpAsAudioRoleSource)
                             .filter(\.active)
                         let audioRoles = audioRoleSources
                             .compactMap(\.role)
@@ -221,13 +221,13 @@ extension XMLElement {
                         add(roles: audioRoles, isInherited: true)
                     }
                 case .title:
-                    let title = fcpAsTitle
+                    guard let title = fcpAsTitle else { break }
                     if let role = title.role {
                         add(role: .video(role), isInherited: false)
                     }
                     
                 case .video:
-                    let video = fcpAsVideo
+                    guard let video = fcpAsVideo else { break }
                     if let role = video.role {
                         add(role: .video(role), isInherited: false)
                     }

@@ -15,6 +15,7 @@ extension FinalCutPro.FCPXML.Media {
     /// other story elements.
     public struct Multicam: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "multicam"
         
         public var renderFormat: String? {
             get { element.stringValue(forAttributeNamed: Attributes.renderFormat.rawValue) }
@@ -45,8 +46,15 @@ extension FinalCutPro.FCPXML.Media {
             element.fcpMCAngle(forAngleID: angleID)
         }
                             
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -74,7 +82,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
 extension XMLElement { // Multicam
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Media/Multicam`` model object.
     /// Call this on a `multicam` element only.
-    public var fcpAsMulticam: FinalCutPro.FCPXML.Media.Multicam {
+    public var fcpAsMulticam: FinalCutPro.FCPXML.Media.Multicam? {
         .init(element: self)
     }
     

@@ -24,6 +24,7 @@ extension FinalCutPro.FCPXML {
     /// > ).
     public struct MCClip: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "mc-clip"
         
         // Element-Specific Attributes
         
@@ -51,8 +52,15 @@ extension FinalCutPro.FCPXML {
             element.fcpStoryElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -120,7 +128,7 @@ extension FinalCutPro.FCPXML.MCClip {
     /// Locates the `media` resource used by the `mc-clip`, and returns the `multicam` element from
     /// within it.
     public var multicamResource: XMLElement? {
-        element.fcpResource()?.fcpAsMedia.multicam
+        element.fcpResource()?.fcpAsMedia?.multicam
     }
     /// Returns audio and video `mc-angle` elements from the `media` resource's `multicam` element
     /// that correspond to the angles used by the `mc-clip`'s `mc-source` children.
@@ -138,7 +146,7 @@ extension FinalCutPro.FCPXML.MCClip {
 extension XMLElement { // MCClip
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/MCClip`` model object.
     /// Call this on a `mc-clip` element only.
-    public var fcpAsMCClip: FinalCutPro.FCPXML.MCClip {
+    public var fcpAsMCClip: FinalCutPro.FCPXML.MCClip? {
         .init(element: self)
     }
 }

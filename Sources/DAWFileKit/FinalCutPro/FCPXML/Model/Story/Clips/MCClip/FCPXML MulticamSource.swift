@@ -14,6 +14,7 @@ extension FinalCutPro.FCPXML {
     /// A single source may be used for both video and audio, or separate sources may be used for each.
     public struct MulticamSource: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "mc-source"
         
         // Element-Specific Attributes
         
@@ -37,8 +38,15 @@ extension FinalCutPro.FCPXML {
             set { element.fcpMulticamSourceSourceEnable = newValue }
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -128,6 +136,12 @@ extension Sequence where Element == XMLElement { // [Multicam Source]
 }
 
 extension XMLElement { // Multicam Source
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/MulticamSource`` model object.
+    /// Call this on a `mc-source` element only.
+    public var fcpAsMCSource: FinalCutPro.FCPXML.MulticamSource? {
+        .init(element: self)
+    }
+    
     /// FCPXML: Returns value for attribute `angleID`.
     /// Call on a `mc-angle` or `mc-source` element.
     public var fcpAngleID: String? {

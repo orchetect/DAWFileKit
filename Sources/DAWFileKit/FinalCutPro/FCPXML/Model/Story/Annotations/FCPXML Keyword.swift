@@ -13,6 +13,7 @@ extension FinalCutPro.FCPXML {
     /// Represents a keyword.
     public struct Keyword: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "keyword"
         
         // Element-Specific Attributes
         
@@ -28,8 +29,15 @@ extension FinalCutPro.FCPXML {
             set { element.fcpNote = newValue }
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -53,7 +61,7 @@ extension FinalCutPro.FCPXML.Keyword {
 extension XMLElement { // Keyword
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Keyword`` model object.
     /// Call this on a `keyword` element only.
-    public var fcpAsKeyword: FinalCutPro.FCPXML.Keyword {
+    public var fcpAsKeyword: FinalCutPro.FCPXML.Keyword? {
         .init(element: self)
     }
 }

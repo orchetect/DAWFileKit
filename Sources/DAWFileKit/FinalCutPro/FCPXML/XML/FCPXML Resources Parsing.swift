@@ -71,7 +71,7 @@ extension XMLElement {
         // TODO: More than just `format` resource can contain frame rate info?
         guard fcpElementType == .resource(.format) else { return nil }
         
-        let format = fcpAsFormat
+        guard let format = fcpAsFormat else { return nil }
         
         let interlaced = format.fieldOrder != nil
         
@@ -299,7 +299,7 @@ extension XMLElement {
         else { return nil }
         
         switch resourceType {
-        case .asset: return resource.fcpAsAsset.mediaRep
+        case .asset: return resource.fcpAsAsset?.mediaRep
         case .effect: return nil
         case .format: return nil
         case .locator: return nil // contains a URL but not a `media-rep`
@@ -317,10 +317,10 @@ extension XMLElement {
         else { return nil }
         
         switch resourceType {
-        case .asset: return resource.fcpAsAsset.mediaRep?.fcpAsMediaRep.src
+        case .asset: return resource.fcpAsAsset?.mediaRep?.fcpAsMediaRep?.src
         case .effect: return nil
         case .format: return nil
-        case .locator: return resource.fcpAsLocator.url
+        case .locator: return resource.fcpAsLocator?.url
         case .media: return nil // TODO: can contain `sequence` or `multicam`
         case .objectTracker: return nil
         }

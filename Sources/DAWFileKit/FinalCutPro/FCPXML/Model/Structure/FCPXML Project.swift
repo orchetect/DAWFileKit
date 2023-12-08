@@ -14,6 +14,7 @@ extension FinalCutPro.FCPXML {
     /// Project element.
     public struct Project: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "project"
         
         // Element-Specific Attributes
         
@@ -44,8 +45,15 @@ extension FinalCutPro.FCPXML {
             }
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -71,7 +79,7 @@ extension FinalCutPro.FCPXML.Project {
 extension XMLElement { // Project
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Project`` model object.
     /// Call this on a `project` element only.
-    public var fcpAsProject: FinalCutPro.FCPXML.Project {
+    public var fcpAsProject: FinalCutPro.FCPXML.Project? {
         .init(element: self)
     }
 }
@@ -80,7 +88,7 @@ extension FinalCutPro.FCPXML.Project {
     /// Convenience:
     /// Returns the start timecode of the `sequence` contained within the project.
     public var startTimecode: Timecode? {
-        sequence?.fcpAsSequence.tcStartAsTimecode
+        sequence?.fcpAsSequence?.tcStartAsTimecode
     }
 }
 

@@ -24,6 +24,7 @@ extension FinalCutPro.FCPXML {
     /// > See [`asset`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset).
     public struct Asset: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "asset"
         
         // shared resource attributes
         
@@ -128,8 +129,15 @@ extension FinalCutPro.FCPXML {
             element.firstChildElement(named: Children.mediaRep.rawValue)
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -191,7 +199,7 @@ extension FinalCutPro.FCPXML.Asset {
 extension XMLElement { // Asset
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Asset`` model object.
     /// Call this on an `asset` element only.
-    public var fcpAsAsset: FinalCutPro.FCPXML.Asset {
+    public var fcpAsAsset: FinalCutPro.FCPXML.Asset? {
         .init(element: self)
     }
     

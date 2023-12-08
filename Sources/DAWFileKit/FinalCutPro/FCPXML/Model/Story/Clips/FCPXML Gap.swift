@@ -18,6 +18,7 @@ extension FinalCutPro.FCPXML {
     /// > Defines a placeholder element that has no intrinsic audio or video data.
     public struct Gap: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "gap"
         
         // Children
         
@@ -31,8 +32,15 @@ extension FinalCutPro.FCPXML {
             element.fcpStoryElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -71,7 +79,7 @@ extension FinalCutPro.FCPXML.Gap {
 extension XMLElement { // Gap
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Gap`` model object.
     /// Call this on a `gap` element only.
-    public var fcpAsGap: FinalCutPro.FCPXML.Gap {
+    public var fcpAsGap: FinalCutPro.FCPXML.Gap? {
         .init(element: self)
     }
 }

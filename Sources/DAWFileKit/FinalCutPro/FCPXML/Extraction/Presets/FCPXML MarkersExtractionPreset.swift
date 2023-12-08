@@ -66,7 +66,12 @@ extension FinalCutPro.FCPXML {
         
         /// Returns the marker XML element wrapped in a model struct.
         public var marker: Marker {
-            extractedElement.element.fcpAsMarker
+            // this guard only necessary because `fcpAsMarker` returns an Optional
+            guard let markerModel = extractedElement.element.fcpAsMarker else {
+                assertionFailure("Could not form marker model struct.")
+                return Marker()
+            }
+            return markerModel
         }
         
         public func value<Value>(forContext: ElementContext<Value>) -> Value {

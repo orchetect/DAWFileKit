@@ -16,7 +16,7 @@ extension XMLElement {
     /// FCPXML: Traverses the parents of the element, including the element itself, and returns the
     /// first `tcFormat` attribute found.
     func _fcpTCFormatForElementOrAncestors() -> FinalCutPro.FCPXML.TimecodeFormat? {
-        let attributeName = FinalCutPro.FCPXML.TimecodeFormat.Element.name.rawValue
+        let attributeName = FinalCutPro.FCPXML.TimecodeFormat.attributeName
         
         guard let (_, tcFormatValue) = ancestorElements(includingSelf: true)
             .first(withAttribute: attributeName),

@@ -24,6 +24,7 @@ extension FinalCutPro.FCPXML {
     /// > ).
     public struct Media: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "media"
         
         // shared resource attributes
         
@@ -61,8 +62,15 @@ extension FinalCutPro.FCPXML {
             element.firstChildElement(named: Children.sequence.rawValue)
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -98,7 +106,7 @@ extension FinalCutPro.FCPXML.Media {
 extension XMLElement { // Media
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Media`` model object.
     /// Call this on a `media` element only.
-    public var fcpAsMedia: FinalCutPro.FCPXML.Media {
+    public var fcpAsMedia: FinalCutPro.FCPXML.Media? {
         .init(element: self)
     }
 }

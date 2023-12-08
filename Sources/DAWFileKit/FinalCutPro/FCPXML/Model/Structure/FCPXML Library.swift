@@ -13,6 +13,7 @@ extension FinalCutPro.FCPXML {
     /// Represents a library location on disk.
     public struct Library: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "library"
         
         // Element-Specific Attributes
         
@@ -46,8 +47,23 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add smart-collection iterator
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
+        }
+        
+        // Custom inits
+        
+        /// Initialize an empty library with a location URL.
+        public init(location: URL) {
+            self.init()
+            self.location = location
         }
     }
 }
@@ -87,7 +103,7 @@ extension FinalCutPro.FCPXML.Library {
 extension XMLElement { // Library
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Library`` model object.
     /// Call this on a `library` element only.
-    public var fcpAsLibrary: FinalCutPro.FCPXML.Library {
+    public var fcpAsLibrary: FinalCutPro.FCPXML.Library? {
         .init(element: self)
     }
 }

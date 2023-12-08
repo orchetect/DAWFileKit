@@ -28,6 +28,7 @@ extension FinalCutPro.FCPXML {
     /// > ) to specify its format, etc.
     public struct Clip: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "clip"
         
         // Element-Specific Attributes
         
@@ -50,8 +51,15 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -114,7 +122,7 @@ extension FinalCutPro.FCPXML.Clip {
 extension XMLElement { // Clip
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Clip`` model object.
     /// Call this on a `clip` element only.
-    public var fcpAsClip: FinalCutPro.FCPXML.Clip {
+    public var fcpAsClip: FinalCutPro.FCPXML.Clip? {
         .init(element: self)
     }
 }

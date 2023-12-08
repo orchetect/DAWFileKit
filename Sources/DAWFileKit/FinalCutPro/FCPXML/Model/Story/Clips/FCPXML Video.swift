@@ -18,6 +18,7 @@ extension FinalCutPro.FCPXML {
     /// > References video data from an `asset` or `effect` element.
     public struct Video: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "video"
         
         // Element-Specific Attributes
         
@@ -47,8 +48,15 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -90,7 +98,7 @@ extension FinalCutPro.FCPXML.Video {
 extension XMLElement { // Video
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Video`` model object.
     /// Call this on a `video` element only.
-    public var fcpAsVideo: FinalCutPro.FCPXML.Video {
+    public var fcpAsVideo: FinalCutPro.FCPXML.Video? {
         .init(element: self)
     }
 }

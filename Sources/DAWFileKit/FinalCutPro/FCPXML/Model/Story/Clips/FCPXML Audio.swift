@@ -18,6 +18,7 @@ extension FinalCutPro.FCPXML {
     /// > References audio data from an `asset` or `effect` element.
     public struct Audio: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "audio"
         
         // Element-Specific Attributes
         
@@ -65,8 +66,15 @@ extension FinalCutPro.FCPXML {
         
         // TODO: add missing attributes and protocols
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -127,7 +135,7 @@ extension XMLElement { // Audio
 extension XMLElement { // Audio
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Audio`` model object.
     /// Call this on a `audio` element only.
-    public var fcpAsAudio: FinalCutPro.FCPXML.Audio {
+    public var fcpAsAudio: FinalCutPro.FCPXML.Audio? {
         .init(element: self)
     }
 }

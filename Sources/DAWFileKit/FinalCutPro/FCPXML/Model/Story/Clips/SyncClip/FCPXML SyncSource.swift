@@ -18,6 +18,7 @@ extension FinalCutPro.FCPXML.SyncClip {
     /// > for a source of a synchronized clip.
     public struct SyncSource: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "sync-source"
         
         // Element-Specific Attributes
         
@@ -40,8 +41,15 @@ extension FinalCutPro.FCPXML.SyncClip {
             element.fcpAudioRoleSources()
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -67,7 +75,7 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
 extension XMLElement { // SyncClip.SyncSource
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/SyncClip/SyncSource`` model object.
     /// Call this on a `sync-source` element only.
-    public var fcpAsSyncSource: FinalCutPro.FCPXML.SyncClip.SyncSource {
+    public var fcpAsSyncSource: FinalCutPro.FCPXML.SyncClip.SyncSource? {
         .init(element: self)
     }
 }

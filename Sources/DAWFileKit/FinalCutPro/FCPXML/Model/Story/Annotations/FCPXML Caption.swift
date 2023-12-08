@@ -14,6 +14,7 @@ extension FinalCutPro.FCPXML {
     /// Represents a closed caption.
     public struct Caption: FCPXMLElement { 
         public let element: XMLElement
+        public let elementName: String = "caption"
         
         // Element-Specific Attributes
         
@@ -23,8 +24,15 @@ extension FinalCutPro.FCPXML {
             set { element.fcpSet(role: newValue) }
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -69,7 +77,7 @@ extension FinalCutPro.FCPXML.Caption {
 extension XMLElement { // Caption
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Caption`` model object.
     /// Call this on a `caption` element only.
-    public var fcpAsCaption: FinalCutPro.FCPXML.Caption {
+    public var fcpAsCaption: FinalCutPro.FCPXML.Caption? {
         .init(element: self)
     }
 }

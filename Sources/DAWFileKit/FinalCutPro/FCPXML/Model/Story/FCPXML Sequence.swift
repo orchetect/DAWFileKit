@@ -16,6 +16,7 @@ extension FinalCutPro.FCPXML {
     /// clip.
     public struct Sequence: FCPXMLElement {
         public let element: XMLElement
+        public let elementName: String = "sequence"
         
         // Element-Specific Attributes
         
@@ -58,8 +59,15 @@ extension FinalCutPro.FCPXML {
             element.fcpSpine() ?? XMLElement(name: Children.spine.rawValue)
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -97,7 +105,7 @@ extension FinalCutPro.FCPXML.Sequence {
 extension XMLElement { // Sequence
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Sequence`` model object.
     /// Call this on a `sequence` element only.
-    public var fcpAsSequence: FinalCutPro.FCPXML.Sequence {
+    public var fcpAsSequence: FinalCutPro.FCPXML.Sequence? {
         .init(element: self)
     }
     
