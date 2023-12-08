@@ -13,10 +13,10 @@ extension FinalCutPro.FCPXML {
     /// Wrapper for a dictionary key name that also contains strong type information about its
     /// expected value.
     public struct ElementContext<Value> {
-        public let valueBuilder: ValueBuilder<Value>
+        public let valueBuilder: ValueBuilder
         
         public init(
-            value: @escaping ValueBuilder<Value>
+            value: @escaping ValueBuilder
         ) {
             valueBuilder = value
         }
@@ -63,12 +63,12 @@ extension FinalCutPro.FCPXML.ElementContext {
     ///     Ordered nearest to furthest ancestor.
     ///   - resources: The document's `resources` container element provided for convenience.
     ///   - tools: Convenience methods for building context.
-    public typealias ValueBuilder<T> = (
+    public typealias ValueBuilder = (
         _ element: XMLElement,
         _ breadcrumbs: [XMLElement],
         _ resources: XMLElement, // `resources` container element
         _ tools: Tools
-    ) -> T
+    ) -> Value
 }
 
 #endif

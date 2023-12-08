@@ -10,52 +10,6 @@ import Foundation
 import TimecodeKit
 import OTCore
 
-// MARK: - Rational Time Value Utils
-
-extension FinalCutPro.FCPXML {
-    // TODO: can factor this out, as `Fraction` can do all of this work now
-    
-    enum ParsedRational {
-        case value(Int)
-        case rational(Fraction)
-    }
-    
-    /// Parse a raw rational time string (ie: "100/3000s", "-11/30s" or "10s").
-    /// Note that the string may be either a rational fraction or a whole number.
-    /// It may also be negative when a minus sign ("-") prefixes the string.
-    static func parse(
-        rationalTimeString: String
-    ) -> ParsedRational? {
-        // first test for rational fraction
-        let fractionPattern = #"^([\-]{0,1}[0-9]+)/([0-9]+)s$"#
-        
-        var groups = rationalTimeString
-            .regexMatches(captureGroupsFromPattern: fractionPattern)
-        
-        if groups.count == 3,
-           let n = groups[1]?.int,
-           let d = groups[2]?.int
-        {
-            return .rational(Fraction(n, d))
-        }
-        
-        // otherwise, try as a single integer (not a fraction)
-        
-        let singleIntPattern = #"^([0-9]+)s$"#
-        
-        groups = rationalTimeString
-            .regexMatches(captureGroupsFromPattern: singleIntPattern)
-        
-        if groups.count == 2,
-           let value = groups[1]?.int
-        {
-            return .value(value)
-        }
-        
-        return nil
-    }
-}
-
 // MARK: - Timecode Utils
 
 extension XMLElement {
@@ -77,16 +31,47 @@ extension XMLElement {
     }
     
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
+    func _fcpTimecode(
+        fromRational fraction: Fraction,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat,
+        resourceID: String,
+        resources: XMLElement? = nil
+    ) throws -> Timecode? {
+        guard let frameRate = _fcpTimecodeFrameRate(
+            forResourceID: resourceID,
+            tcFormat: tcFormat,
+            in: resources
+        )
+        else { return nil }
+        
+        return try FinalCutPro.FCPXML._timecode(fromRational: fraction, frameRate: frameRate)
+    }
+    
+    /// FCPXML: Convert raw time attribute value string to `Timecode`.
     /// Traverses the parents of the given XML leaf to determine frame rate.
     func _fcpTimecode(
         fromRational rawString: String,
-        xmlLeaf: XMLElement,
+        resources: XMLElement? = nil
+    ) throws -> Timecode? {
+        guard let fraction = Fraction(fcpxmlString: rawString)
+        else { return nil }
+        
+        return try _fcpTimecode(
+            fromRational: fraction,
+            resources: resources
+        )
+    }
+    
+    /// FCPXML: Convert raw time attribute value string to `Timecode`.
+    /// Traverses the parents of the given XML leaf to determine frame rate.
+    func _fcpTimecode(
+        fromRational fraction: Fraction,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
         guard let frameRate = _fcpTimecodeFrameRate(in: resources)
         else { return nil }
         
-        return try FinalCutPro.FCPXML._timecode(fromRational: rawString, frameRate: frameRate)
+        return try FinalCutPro.FCPXML._timecode(fromRational: fraction, frameRate: frameRate)
     }
 }
 
@@ -96,17 +81,18 @@ extension FinalCutPro.FCPXML {
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
     ) throws -> Timecode? {
-        guard let parsedStr = FinalCutPro.FCPXML.parse(rationalTimeString: rawString)
+        guard let fraction = Fraction(fcpxmlString: rawString)
         else { return nil }
         
-        switch parsedStr {
-        case let .rational(fraction):
-            return try FinalCutPro.formTimecode(rational: fraction, at: frameRate)
-            
-        case let .value(value):
-            // this could also work using Timecode(.realTime(), at:)
-            return try FinalCutPro.formTimecode(rational: Fraction(value, 1), at: frameRate)
-        }
+        return try _timecode(fromRational: fraction, frameRate: frameRate)
+    }
+    
+    /// FCPXML: Convert raw time attribute value string to `Timecode`.
+    static func _timecode(
+        fromRational fraction: Fraction,
+        frameRate: TimecodeFrameRate
+    ) throws -> Timecode? {
+        try FinalCutPro.formTimecode(rational: fraction, at: frameRate)
     }
 }
 
@@ -119,10 +105,22 @@ extension XMLElement {
         fromRational rawString: String,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
+        guard let fraction = Fraction(fcpxmlString: rawString)
+        else { return nil }
+        
+        return try _fcpTimecodeInterval(fromRational: fraction, resources: resources)
+    }
+    
+    /// FCPXML: Convert raw time attribute value string to `TimecodeInterval`.
+    /// Traverses the parents of the given XML leaf to determine frame rate.
+    func _fcpTimecodeInterval(
+        fromRational fraction: Fraction,
+        resources: XMLElement? = nil
+    ) throws -> TimecodeInterval? {
         guard let frameRate = _fcpTimecodeFrameRate(in: resources)
         else { return nil }
         
-        return try FinalCutPro.FCPXML._timecodeInterval(fromRational: rawString, frameRate: frameRate)
+        return try FinalCutPro.FCPXML._timecodeInterval(fromRational: fraction, frameRate: frameRate)
     }
 }
 
@@ -133,17 +131,19 @@ extension FinalCutPro.FCPXML {
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
     ) throws -> TimecodeInterval? {
-        guard let parsedStr = FinalCutPro.FCPXML.parse(rationalTimeString: rawString)
+        guard let fraction = Fraction(fcpxmlString: rawString)
         else { return nil }
         
-        switch parsedStr {
-        case let .rational(fraction):
-            return try FinalCutPro.formTimecodeInterval(rational: fraction, at: frameRate)
-            
-        case let .value(value):
-            // this could also work using Timecode(.realTime(), at:)
-            return try FinalCutPro.formTimecodeInterval(rational: Fraction(value, 1), at: frameRate)
-        }
+        return try _timecodeInterval(fromRational: fraction, frameRate: frameRate)
+    }
+    
+    /// Utility:
+    /// Convert raw time attribute value string to `TimecodeInterval`.
+    static func _timecodeInterval(
+        fromRational fraction: Fraction,
+        frameRate: TimecodeFrameRate
+    ) throws -> TimecodeInterval? {
+        try FinalCutPro.formTimecodeInterval(rational: fraction, at: frameRate)
     }
 }
 
