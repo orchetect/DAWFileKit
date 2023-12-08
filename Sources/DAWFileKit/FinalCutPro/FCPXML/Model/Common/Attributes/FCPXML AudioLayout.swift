@@ -17,4 +17,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.AudioLayout: FCPXMLAttribute {
+    public static let attributeName: String = "audioLayout"
+}
+
 #endif

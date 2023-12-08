@@ -23,6 +23,7 @@ extension FinalCutPro.FCPXML {
     /// > media representation, as a child element of the asset element.
     public struct MediaRep: Equatable, Hashable {
         public let element: XMLElement
+        public let elementName: String = "media-rep"
         
         /// The kind of media representation.
         /// Default: `original-media`
@@ -66,8 +67,15 @@ extension FinalCutPro.FCPXML {
         
         // Children
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -116,7 +124,7 @@ extension FinalCutPro.FCPXML.MediaRep {
 extension XMLElement { // MediaRep
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/MediaRep`` model object.
     /// Call this on an `media-rep` element only.
-    public var fcpAsMediaRep: FinalCutPro.FCPXML.MediaRep {
+    public var fcpAsMediaRep: FinalCutPro.FCPXML.MediaRep? {
         .init(element: self)
     }
 }

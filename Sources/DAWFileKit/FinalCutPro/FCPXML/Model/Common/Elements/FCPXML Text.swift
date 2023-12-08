@@ -11,8 +11,11 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Text element.
-    public struct Text: Equatable, Hashable {
+    public struct Text: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
+        public let elementName: String = "text"
+        
+        // Element-specific Attributes
         
         /// For a CEA-608 caption text block.
         public var displayStyle: DisplayStyle? { // used only with `text`
@@ -69,8 +72,15 @@ extension FinalCutPro.FCPXML {
             element.fcpTextStyles
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -102,7 +112,13 @@ extension FinalCutPro.FCPXML.Text {
     }
 }
 
-extension XMLElement {
+extension XMLElement { // Text
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Text`` model object.
+    /// Call this on a `text` element only.
+    public var fcpAsText: FinalCutPro.FCPXML.Text? {
+        .init(element: self)
+    }
+    
     /// FCPXML: Returns child `text-style` elements.
     /// Use on `text` elements.
     public var fcpTextStyles: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {

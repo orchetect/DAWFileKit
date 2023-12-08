@@ -16,8 +16,9 @@ extension FinalCutPro.FCPXML {
     /// audio component in a clip's primary audio layout.
     /// The primary audio layout is comprised of all audio from elements in the primary (lane 0)
     /// storyline."
-    public struct AudioChannelSource: Equatable, Hashable {
+    public struct AudioChannelSource: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
+        public let elementName: String = "audio-channel-source"
         
         /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
         public var sourceChannels: String? {
@@ -68,8 +69,15 @@ extension FinalCutPro.FCPXML {
         // TODO: public var filters: []
         // TODO: public var mutes: []
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -101,7 +109,7 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
 extension XMLElement { // AudioChannelSource
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AudioChannelSource`` model object.
     /// Call this on a `audio-channel-source` element only.
-    public var fcpAsAudioChannelSource: FinalCutPro.FCPXML.AudioChannelSource {
+    public var fcpAsAudioChannelSource: FinalCutPro.FCPXML.AudioChannelSource? {
         .init(element: self)
     }
 }

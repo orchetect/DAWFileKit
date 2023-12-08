@@ -22,6 +22,10 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.ClipSourceEnable: FCPXMLAttribute {
+    public static let attributeName: String = "srcEnable"
+}
+
 extension XMLElement {
     /// FCPXML: Returns value for attribute `srcEnable`. (Default: `.all`)
     /// Call on a `asset-clip` or `mc-clip` element only.
@@ -29,13 +33,14 @@ extension XMLElement {
         get {
             let defaultValue: FinalCutPro.FCPXML.ClipSourceEnable = .all
             
-            guard let value = stringValue(forAttributeNamed: "srcEnable")
+            guard let value = stringValue(forAttributeNamed: FinalCutPro.FCPXML.ClipSourceEnable.attributeName)
             else { return defaultValue }
             
             return FinalCutPro.FCPXML.ClipSourceEnable(rawValue: value) ?? defaultValue
         }
         set {
-            addAttribute(withName: "srcEnable", value: newValue.rawValue)
+            addAttribute(withName: FinalCutPro.FCPXML.ClipSourceEnable.attributeName,
+                         value: newValue.rawValue)
         }
     }
 }

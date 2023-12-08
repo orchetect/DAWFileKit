@@ -14,8 +14,9 @@ extension FinalCutPro.FCPXML {
     /// FCPXML 1.11 DTD:
     /// "An `audio-role-source` element adjusts playback settings for a single role-based audio
     /// component in a clip."
-    public struct AudioRoleSource: Equatable, Hashable {
+    public struct AudioRoleSource: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
+        public let elementName: String = "audio-role-source"
         
         /// Role the audio component is associated with.
         public var role: AudioRole? {
@@ -36,8 +37,15 @@ extension FinalCutPro.FCPXML {
             element.childElements
         }
         
-        public init(element: XMLElement) {
+        // MARK: FCPXMLElement inits
+        
+        public init() {
+            element = XMLElement(name: elementName)
+        }
+        
+        public init?(element: XMLElement) {
             self.element = element
+            guard _isElementValid(element: element) else { return nil }
         }
     }
 }
@@ -61,7 +69,7 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
 extension XMLElement { // AudioRoleSource
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AudioRoleSource`` model object.
     /// Call this on a `audio-role-source` element only.
-    public var fcpAsAudioRoleSource: FinalCutPro.FCPXML.AudioRoleSource {
+    public var fcpAsAudioRoleSource: FinalCutPro.FCPXML.AudioRoleSource? {
         .init(element: self)
     }
 }

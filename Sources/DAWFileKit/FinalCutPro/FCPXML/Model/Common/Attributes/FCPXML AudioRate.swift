@@ -22,4 +22,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.AudioRate: FCPXMLAttribute {
+    public static let attributeName: String = "audioRate"
+}
+
 #endif
