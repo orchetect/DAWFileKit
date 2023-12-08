@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p2398" frameDuration="1001/24000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <media id="r2" name="MC" uid="+6nPDPjPQhuLm8OfjkTLIQ" modDate="2023-11-29 17:01:13 -0800">
+            <multicam format="r1" tcStart="0s" tcFormat="NDF">
+                <mc-angle name="A" angleID="+L5xmXXnRXOGdjFq1Eo7EQ">
+                    <gap name="Gap" offset="0s" start="86400314/24000s" duration="90090/24000s"/>
+                    <asset-clip ref="r3" offset="90090/24000s" name="Cam 1" duration="5801796/24000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <marker start="233233/8000s" duration="1001/24000s" value="Marker in Multicam Clip on Angle A"/>
+                        <metadata>
+                            <md key="com.apple.proapps.studio.angle" value="A"/>
+                        </metadata>
+                    </asset-clip>
+                </mc-angle>
+                <mc-angle name="B" angleID="FCw5EnkUQcOHu8fwK2TiQQ">
+                    <gap name="Gap" offset="0s" start="86400314/24000s" duration="125125/24000s"/>
+                    <clip offset="125125/24000s" name="Cam 2" duration="5766761/24000s" tcFormat="NDF">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <video ref="r4" offset="0s" name="Cam 2 - v1" duration="5766761/24000s" role="Custom Video Role.Custom Video Role A">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <audio ref="r4" lane="-1" offset="0s" name="Cam 2 - a1" duration="173002830/720000s" role="dialogue.dialogue-1" srcCh="1, 2"/>
+                        </video>
+                        <marker start="689689/24000s" duration="1001/24000s" value="Marker in Multicam Clip on Angle B"/>
+                        <metadata>
+                            <md key="com.apple.proapps.studio.angle" value="B"/>
+                        </metadata>
+                    </clip>
+                </mc-angle>
+                <mc-angle name="C" angleID="LphqqelgRX6/pXqi35MoGA">
+                    <gap name="Gap" offset="0s" start="86400314/24000s" duration="164164/24000s"/>
+                    <asset-clip ref="r5" offset="164164/24000s" name="Cam 3" duration="5727722/24000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <marker start="231231/8000s" duration="1001/24000s" value="Marker in Multicam Clip on Angle C"/>
+                        <metadata>
+                            <md key="com.apple.proapps.studio.angle" value="C"/>
+                        </metadata>
+                    </asset-clip>
+                </mc-angle>
+                <mc-angle name="D" angleID="gA31yYbYRRSetqQyxAwC8g">
+                    <gap name="Gap" offset="0s" start="86400314/24000s" duration="101101/24000s"/>
+                    <asset-clip ref="r6" offset="101101/24000s" name="Cam 4" duration="5790785/24000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <marker start="857857/24000s" duration="1001/24000s" value="Marker in Multicam Clip on Angle D"/>
+                        <metadata>
+                            <md key="com.apple.proapps.studio.angle" value="D"/>
+                        </metadata>
+                    </asset-clip>
+                </mc-angle>
+                <mc-angle name="Music Angle" angleID="9jilYFZRQZ+GI27X4ckxpQ">
+                    <asset-clip ref="r7" offset="0s" name="Music Track" start="172972800/48000s" duration="11527516/48000s" audioRole="dialogue">
+                        <marker start="2630771953/720000s" duration="1/48000s" value="Marker in Multicam Clip on Music Angle"/>
+                        <audio-channel-source srcCh="1, 2" role="music.music-1"/>
+                    </asset-clip>
+                </mc-angle>
+                <mc-angle name="Sound FX Angle" angleID="u6FMsIKMT/eATN52hY2/rA">
+                    <gap name="Gap" offset="0s" start="86400314/24000s" duration="164164/24000s"/>
+                    <asset-clip ref="r8" offset="164164/24000s" name="TestAudio" duration="124124/24000s" audioRole="dialogue"/>
+                </mc-angle>
+            </multicam>
+        </media>
+        <asset id="r3" name="Cam 1" uid="1EA25267F6D3D42BB06493C883B080F2" start="0s" duration="21756735/90000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="1EA25267F6D3D42BB06493C883B080F2" src="file:///Users/user/Movies/Cam%201.mp4"/>
+        </asset>
+        <asset id="r4" name="Cam 2" uid="9DB92EE551D9EE471A952385E36BA014" start="0s" duration="5766761/24000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="9DB92EE551D9EE471A952385E36BA014" src="file:///Users/user/Movies/Cam%202.mp4"/>
+        </asset>
+        <asset id="r5" name="Cam 3" uid="7E06DA5B380EBA299164199093608DB0" start="0s" duration="5727722/24000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="7E06DA5B380EBA299164199093608DB0" src="file:///Users/user/Movies/Cam%203.mp4"/>
+        </asset>
+        <asset id="r6" name="Cam 4" uid="1C9C215ED827D17033D843484F2A21E9" start="0s" duration="5790785/24000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="1C9C215ED827D17033D843484F2A21E9" src="file:///Users/user/Movies/Cam%204.mp4"/>
+        </asset>
+        <asset id="r7" name="Music Track" uid="D608CF0BD8B401FC6C1A2389AFCCD4FD" start="172972800/48000s" duration="11527776/48000s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="D608CF0BD8B401FC6C1A2389AFCCD4FD" src="file:///Users/user/Music/Music%20Track.wav"/>
+        </asset>
+        <asset id="r8" name="Sound FX Track" uid="EB954597EA90C50869FFC27E7277E368" start="0s" duration="114688/22050s" hasAudio="1" audioSources="1" audioChannels="1" audioRate="22050">
+            <media-rep kind="original-media" sig="EB954597EA90C50869FFC27E7277E368" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Test%20Event/Original%20Media/Sound%20FX%20Track.wav">
+            </media-rep>
+        </asset>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="A3D142C1-CF04-4516-B5D6-74B58CE4317D">
+            <project name="Test Project" uid="E63E44F6-3AD8-4BC5-898F-A6802073B961" modDate="2023-11-29 19:51:15 -0800">
+                <sequence format="r1" duration="19219200/1920000s" tcStart="6918912000/1920000s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <mc-clip ref="r2" offset="6918912000/1920000s" name="MC" start="25065040/1920000s" duration="19219200/1920000s">
+                            <mc-source angleID="9jilYFZRQZ+GI27X4ckxpQ" srcEnable="audio"/>
+                            <mc-source angleID="FCw5EnkUQcOHu8fwK2TiQQ" srcEnable="video">
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            </mc-source>
+                            <marker start="139139/8000s" duration="1001/24000s" value="Marker on Multicam Clip"/>
+                        </mc-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>

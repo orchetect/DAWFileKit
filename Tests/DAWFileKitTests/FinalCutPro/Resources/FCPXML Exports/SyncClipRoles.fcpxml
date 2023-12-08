@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" frameDuration="100/2500s" width="1920" height="960" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <format id="r4" name="FFVideoFormatRateUndefined"/>
+        <format id="r15" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <format id="r19" name="FFVideoFormat3840x2160p25" frameDuration="100/2500s" width="3840" height="2160" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r51" name="C003C003_200304_R27P" uid="30DF6BB9BE3E2CB451303E8149576E69" start="964094/25s" duration="35680/1000s" hasVideo="1" format="r15" videoSources="1" customLUTOverride="0 (None)">
+            <media-rep kind="original-media" sig="30DF6BB9BE3E2CB451303E8149576E69" src="file:///Users/user/Movies/C003C003_200304_R27P.mov"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2023-11-22 05:26:44 -0800"/>
+            </metadata>
+        </asset>
+        <asset id="r52" name="GM7873P7" uid="516BFCA9796F9AD6FB71DE6CBCE9EE74" start="38541s" duration="3187040/48000s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="516BFCA9796F9AD6FB71DE6CBCE9EE74" src="file:///Users/user/Music/GM7873P7.WAV"/>
+            <metadata>
+                <md key="com.apple.proapps.mio.ingestDate" value="2023-11-22 05:26:44 -0800"/>
+            </metadata>
+        </asset>
+        <asset id="r53" name="ILA_002_0010_techfinal_v001" uid="7F07CBF086905CCE5F059377256BDEE7" start="493890560/12800s" duration="2800/1000s" hasVideo="1" format="r19" videoSources="1">
+            <media-rep kind="original-media" sig="7F07CBF086905CCE5F059377256BDEE7" src="file:///Users/user/Movies/ILA_002_0010_techfinal_v001.mov"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.mio.ingestDate" value="2021-05-03 00:53:17 -0700"/>
+            </metadata>
+        </asset>
+    </resources>
+    <library location="file:///Users/user/Movies/MyLibrary.fcpbundle/">
+        <event name="TestEvent" uid="AE0E3222-9235-45E2-BBB2-D902AE1B04A6">
+            <project name="TestProject" uid="0D598DDA-ACB1-4DB2-9A6C-32F057004917" modDate="2023-11-22 14:47:17 -0800">
+                <sequence format="r1" duration="10123200/30000s" tcStart="3590s" tcFormat="NDF" renderFormat="FFRenderFormatProRes422LT" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <sync-clip offset="109947600/30000s" name="Sync Clip 1" start="96464100/2500s" duration="4900/2500s" audioStart="27781660800/720000s" audioDuration="403200/720000s" tcFormat="NDF">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <adjust-volume amount="-9dB"/>
+                            <clip offset="964094/25s" name="Clip 1.1" start="964094/25s" duration="89200/2500s" format="r15" tcFormat="NDF">
+                                <adjust-conform type="fill"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <video ref="r51" offset="96409400/2500s" start="96409400/2500s" duration="89200/2500s" role="VFX.VFX-Background">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                </video>
+                                <clip lane="-1" offset="38541s" name="Clip 1.1.1" start="38541s" duration="292/5s" format="r4" tcFormat="NDF">
+                                    <audio ref="r52" offset="38541s" start="38541s" duration="3187040/48000s" role="dialogue.MixL" srcCh="1">
+                                        <audio ref="r52" lane="-1" offset="38541s" start="38541s" duration="3187040/48000s" role="dialogue.MixR" srcCh="2"/>
+                                    </audio>
+                                    <keyword start="38541s" duration="3187040/48000s" value="circled"/>
+                                    <metadata>
+                                        <md key="com.apple.proapps.studio.reel" value="0304"/>
+                                        <md key="com.apple.proapps.studio.scene" value="2A/2"/>
+                                        <md key="com.apple.proapps.studio.shot" value="t3"/>
+                                    </metadata>
+                                </clip>
+                                <metadata>
+                                    <md key="com.apple.proapps.studio.reel" value="TestVideo"/>
+                                </metadata>
+                            </clip>
+                            <caption lane="1" offset="964615/25s" name="Caption 1" start="3600s" duration="11300/2500s" role="SRT?captionFormat=SRT.de-DE">
+                                <text placement="bottom">
+                                    <text-style ref="ts22">Caption 1</text-style>
+                                </text>
+                                <text-style-def id="ts22">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13.01" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1" tabStops="28L 56L 84L 112L 140L 168L 196L 224L 252L 280L 308L 336L"/>
+                                </text-style-def>
+                            </caption>
+                            <caption lane="1" offset="964641/25s" name="Caption 2" start="3600s" duration="4900/2500s" role="SRT?captionFormat=SRT.zu">
+                                <text placement="bottom">
+                                    <text-style ref="ts23">Caption 2</text-style>
+                                </text>
+                                <text-style-def id="ts23">
+                                    <text-style font=".AppleSystemUIFont" fontSize="13.01" fontFace="Regular" fontColor="1 1 1 1" backgroundColor="0 0 0 1"/>
+                                </text-style-def>
+                            </caption>
+                            <asset-clip ref="r53" lane="1" offset="12347404800/320000s" name="Asset Clip 1.1" start="12347404800/320000s" duration="627200/320000s" format="r19" tcFormat="NDF" videoRole="VFX Scanline DI Final">
+                                <adjust-conform type="fill"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <keyword start="192926/5s" duration="35840/12800s" value="20210430_final, vfx final"/>
+                                <metadata>
+                                    <md key="com.apple.proapps.studio.reel" value="TestVideo"/>
+                                </metadata>
+                            </asset-clip>
+                            <title ref="r2" lane="2" offset="96464100/2500s" name="Basic Title" start="8919100/2500s" duration="4900/2500s" role="Titles VFX.Titles VFX-1">
+                                <param name="Position" key="9999/999166631/999166633/1/100/101" value="-950 450"/>
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="disableDRT" key="3733" value="1"/>
+                                <text>
+                                    <text-style ref="ts24">Basic Title</text-style>
+                                </text>
+                                <text-style-def id="ts24">
+                                    <text-style font="Helvetica" fontSize="28" fontFace="Regular" fontColor="1 1 1 1" shadowColor="0 0 0 0.75" shadowOffset="5 315"/>
+                                </text-style-def>
+                                <adjust-blend amount="0.75"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            </title>
+                            <marker start="964641/25s" duration="100/2500s" value="Marker 1"/>
+                            <sync-source sourceID="connected">
+                                <audio-role-source role="dialogue.MixL"/>
+                                <audio-role-source role="Blank" active="0"/>
+                                <audio-role-source role="dialogue.MixR"/>
+                                <audio-role-source role="LavMic" active="0"/>
+                            </sync-source>
+                            <metadata>
+                                <md key="com.apple.proapps.studio.reel" value="TestVideo; 0304"/>
+                                <md key="com.apple.proapps.studio.scene" value="2A/2"/>
+                                <md key="com.apple.proapps.studio.shot" value="t3"/>
+                            </metadata>
+                        </sync-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>

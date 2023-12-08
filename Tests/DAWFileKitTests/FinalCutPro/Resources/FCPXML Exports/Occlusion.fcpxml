@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p24" frameDuration="100/2400s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <media id="r3" name="Occlusion Clip 1" uid="1Rla1u3RRZ+zIqvU6LaFrA" modDate="2023-11-28 14:59:24 -0800">
+            <sequence format="r1" duration="30s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <title ref="r2" offset="0s" name="Basic Title 3" start="3600s" duration="30s">
+                        <text>
+                            <text-style ref="ts3">Title</text-style>
+                        </text>
+                        <text-style-def id="ts3">
+                            <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                        </text-style-def>
+                    </title>
+                </spine>
+            </sequence>
+        </media>
+        <media id="r4" name="Occlusion Clip 2" uid="wKImnXZnRQCU3usltWtGFg" modDate="2023-11-28 15:00:02 -0800">
+            <sequence format="r1" duration="30s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <title ref="r2" offset="0s" name="Basic Title 4" start="3600s" duration="30s">
+                        <text>
+                            <text-style ref="ts4">Title</text-style>
+                        </text>
+                        <text-style-def id="ts4">
+                            <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                        </text-style-def>
+                    </title>
+                </spine>
+            </sequence>
+        </media>
+        <media id="r5" name="Occlusion Clip 3" uid="7IJynunnQqKgXfSoTXGTZw" modDate="2023-11-28 15:03:18 -0800">
+            <sequence format="r1" duration="30s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <gap name="Gap" offset="0s" start="3600s" duration="20s"/>
+                    <title ref="r2" offset="20s" name="Basic Title 5" start="3600s" duration="10s">
+                        <text>
+                            <text-style ref="ts5">Title</text-style>
+                        </text>
+                        <text-style-def id="ts5">
+                            <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                        </text-style-def>
+                    </title>
+                </spine>
+            </sequence>
+        </media>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
+            <project name="Occlusion" uid="0B31ED0A-78FA-460F-BEA8-FCEEF73CD68C" modDate="2023-11-28 15:06:36 -0800">
+                <sequence format="r1" duration="312100/2400s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <title ref="r2" offset="0s" name="Basic Title 1" start="3600s" duration="30s">
+                            <text>
+                                <text-style ref="ts1">Title</text-style>
+                            </text>
+                            <text-style-def id="ts1">
+                                <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                            </text-style-def>
+                            <marker start="3600s" duration="100/2400s" value="Marker on Start"/>
+                            <marker start="3615s" duration="100/2400s" value="Marker in Middle"/>
+                            <marker start="87119/24s" duration="100/2400s" value="Marker 1 Frame Before End"/>
+                            <marker start="3630s" duration="100/2400s" value="Marker on End"/>
+                        </title>
+                        <gap name="Gap" offset="30s" start="3600s" duration="10s"/>
+                        <title ref="r2" offset="40s" name="Basic Title 2" start="3610s" duration="10s">
+                            <text>
+                                <text-style ref="ts2">Title</text-style>
+                            </text>
+                            <text-style-def id="ts2">
+                                <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                            </text-style-def>
+                            <marker start="3600s" duration="100/2400s" value="Marker Before Start"/>
+                            <marker start="3615s" duration="100/2400s" value="Marker in Middle"/>
+                            <marker start="3630s" duration="100/2400s" value="Marker Past End"/>
+                        </title>
+                        <gap name="Gap" offset="50s" start="3600s" duration="10s"/>
+                        <ref-clip ref="r3" offset="60s" name="Occlusion Clip 1" duration="30s"/>
+                        <gap name="Gap" offset="90s" start="3600s" duration="10s"/>
+                        <ref-clip ref="r4" offset="100s" name="Occlusion Clip 2" start="10s" duration="10s"/>
+                        <gap name="Gap" offset="110s" start="3600s" duration="10s"/>
+                        <ref-clip ref="r5" offset="120s" name="Occlusion Clip 3" duration="24100/2400s"/>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>

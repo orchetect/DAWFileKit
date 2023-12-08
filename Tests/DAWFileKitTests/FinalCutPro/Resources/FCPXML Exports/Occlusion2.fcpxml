@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <format id="r2" name="FFVideoFormat640x480p25" frameDuration="100/2500s" width="640" height="480" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="AE0E3222-9235-45E2-BBB2-D902AE1B04A6">
+            <project name="Test Project" uid="0D598DDA-ACB1-4DB2-9A6C-32F057004917" modDate="2023-11-22 14:47:17 -0800">
+                <sequence format="r1" duration="10123200/30000s" tcStart="3590s" tcFormat="NDF" renderFormat="FFRenderFormatProRes422LT" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <title ref="r2" offset="3590s" name="Basic Title 1" start="3600s" duration="151200/30000s">
+                            <title ref="r2" lane="1" offset="3600s" name="Basic Title 2" start="3600s" duration="10123200/30000s">
+                                <marker start="3611s" duration="100/2500s" value="Visible on Main Timeline" completed="0"/>
+                                <marker start="3700s" duration="100/2500s" value="Not Visible on Main Timeline" completed="0"/>
+                            </title>
+                        </title>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
