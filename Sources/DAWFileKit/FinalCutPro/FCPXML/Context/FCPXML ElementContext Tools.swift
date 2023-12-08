@@ -1,5 +1,5 @@
 //
-//  FCPXMLElementContext.swift
+//  FCPXML ElementContext Tools.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,51 +10,17 @@ import Foundation
 import TimecodeKit
 import OTCore
 
-public protocol FCPXMLElementContext {
-    /// Additional contextual metadata for the element.
-    /// This is generated during FCPXML parsing by using the context builder.
-    var context: FinalCutPro.FCPXML.ElementContext { get }
-}
-
-public protocol FCPXMLElementContextBuilder {
-    var contextBuilder: FinalCutPro.FCPXML.ElementContextClosure { get }
-}
-
-extension FCPXMLElementContextBuilder {
-    /// Internal: builds the context for the element.
-    func buildContext(
-        from element: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: XMLElement
-    ) -> FinalCutPro.FCPXML.ElementContext {
-        let tools = FinalCutPro.FCPXML.ContextTools(element: element, breadcrumbs: breadcrumbs, resources: resources)
-        return contextBuilder(element, breadcrumbs, resources, tools)
-    }
-}
-
-extension FinalCutPro.FCPXML {
-    /// Context for a model element.
-    public typealias ElementContext = [String: Any]
-    
-    /// Context builder closure for a model element.
-    /// `breadcrumbs` (ancestors) are ordered nearest to furthest ancestor.
-    public typealias ElementContextClosure = (
-        _ element: XMLElement,
-        _ breadcrumbs: [XMLElement],
-        _ resources: XMLElement,
-        _ tools: FinalCutPro.FCPXML.ContextTools
-    ) -> ElementContext
-    
+extension FinalCutPro.FCPXML.ElementContext {
     /// Class instance that provides useful context for a FCPXML element.
-    public struct ContextTools {
+    public struct Tools {
         var element: XMLElement
         var breadcrumbs: [XMLElement]
-        var resources: XMLElement
+        var resources: XMLElement? // `resources` container element
         
         init(
             element: XMLElement,
             breadcrumbs: [XMLElement],
-            resources: XMLElement
+            resources: XMLElement? // `resources` container element
         ) {
             self.element = element
             self.breadcrumbs = breadcrumbs
@@ -64,7 +30,7 @@ extension FinalCutPro.FCPXML {
         // MARK: - Properties
         
         /// The current element type.
-        public var elementType: ElementType? {
+        public var elementType: FinalCutPro.FCPXML.ElementType? {
             element.fcpElementType
         }
         
@@ -105,7 +71,7 @@ extension FinalCutPro.FCPXML {
         }
         
         /// The parent element's type.
-        public var parentType: ElementType? {
+        public var parentType: FinalCutPro.FCPXML.ElementType? {
             parent?.fcpElementType
         }
         
@@ -144,7 +110,7 @@ extension FinalCutPro.FCPXML {
         /// The element's local roles, if applicable or present.
         /// These roles are either attached to the element itself or in some cases are acquired from
         /// the element's contents.
-        public func localRoles(includeDefaultRoles: Bool) -> [AnyRole] {
+        public func localRoles(includeDefaultRoles: Bool) -> [FinalCutPro.FCPXML.AnyRole] {
             var elementRoles = element._fcpLocalRoles(
                 resources: resources,
                 auditions: .active
@@ -158,7 +124,7 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Returns the effective roles of the element inherited from ancestors.
-        public var inheritedRoles: [AnyInterpolatedRole] {
+        public var inheritedRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] {
             element._fcpInheritedRoles(
                 breadcrumbs: breadcrumbs,
                 resources: resources,
@@ -244,7 +210,10 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Returns the first ancestor element of the given type.
-        public func firstAncestor(ofType: ElementType, includeSelf: Bool) -> XMLElement? {
+        public func firstAncestor(
+            ofType: FinalCutPro.FCPXML.ElementType,
+            includeSelf: Bool
+        ) -> XMLElement? {
             element
                 .ancestorElements(includingSelf: includeSelf)
                 .first(whereElementType: ofType)
@@ -274,35 +243,31 @@ extension FinalCutPro.FCPXML {
                 .first(withAttribute: attrName)?.element
         }
         
-        /// Types of the element's ancestors (breadcrumbs).
-        public var ancestorElementTypes: [(lane: Int?, type: FinalCutPro.FCPXML.ElementType)] {
-            breadcrumbs.compactMap {
-                guard let type = $0.fcpElementType else { return nil }
-                let laneStr = $0.fcpLane
-                let lane: Int? = laneStr != nil ? Int(laneStr!) : nil
-                return (lane: lane, type: type)
-            }
+        /// Types and lanes of the element's ancestors (breadcrumbs).
+        public func ancestorElementTypesAndLanes() -> some Swift.Sequence<
+            (type: FinalCutPro.FCPXML.ElementType, lane: Int?)
+        > {
+            element._fcpAncestorElementTypesAndLanes(ancestors: breadcrumbs, includingSelf: false)
         }
         
         /// Returns the ancestor `event`, if the element is an `event` or contained within a `event`.
         public func ancestorEvent() -> XMLElement? {
-            return firstAncestor(ofType: .structure(.event), includeSelf: true)
+            firstAncestor(ofType: .structure(.event), includeSelf: true)
         }
         
         /// Returns the ancestor `project`, if the element is a `project` or contained within a `project`.
         public func ancestorProject() -> XMLElement? {
-            return firstAncestor(ofType: .structure(.project), includeSelf: true)
+            firstAncestor(ofType: .structure(.project), includeSelf: true)
         }
         
         /// Returns the ancestor `sequence`, if the element is a `sequence` or contained within a `sequence`.
         public func ancestorSequence() -> XMLElement? {
-            return firstAncestor(ofType: .story(.sequence), includeSelf: true)
+            firstAncestor(ofType: .story(.sequence), includeSelf: true)
         }
         
         /// Returns the first ancestor clip, if the element is contained within a clip.
         public func ancestorClip(includeSelf: Bool) -> XMLElement? {
-            let clipTypeStrings = ClipType.allCases.map(\.rawValue)
-            return firstAncestor(named: clipTypeStrings, includeSelf: includeSelf)
+            element.fcpAncestorClip(includeSelf: includeSelf)
         }
         
         /// Looks up the resource for the element and returns its `media-rep` instance, if any.

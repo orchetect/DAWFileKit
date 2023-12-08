@@ -73,4 +73,32 @@ extension XMLElement {
     }
 }
 
+// MARK: - Attributes Gathering
+
+extension XMLElement {
+    /// Returns the first ancestor clip, if the element is contained within a clip.
+    public func fcpAncestorClip(includeSelf: Bool) -> XMLElement? {
+        let clipTypeStrings = FinalCutPro.FCPXML.ClipType.allCases.map(\.rawValue)
+        return ancestorElements(includingSelf: includeSelf)
+            .first(whereElementNamed: clipTypeStrings)
+    }
+    
+    /// FCPXML: Returns type and lane for each of the element's ancestors.
+    func _fcpAncestorElementTypesAndLanes<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        includingSelf: Bool
+    ) -> some Sequence<(type: FinalCutPro.FCPXML.ElementType, lane: Int?)> {
+        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
+        return ancestors
+            .lazy
+            .compactMap { ancestor /* -> (type: FinalCutPro.FCPXML.ElementType, lane: Int?)? */ in
+                guard let type = ancestor.fcpElementType else { return nil }
+                let laneStr = ancestor.fcpLane
+                let lane: Int? = laneStr != nil ? Int(laneStr!) : nil
+                return (type: type, lane: lane)
+            }
+    }
+}
+
+
 #endif

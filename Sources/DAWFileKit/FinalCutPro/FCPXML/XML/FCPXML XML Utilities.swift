@@ -11,15 +11,17 @@ import OTCore
 
 // MARK: - Rational Time Value Utils
 
+// TODO: rename methods so they're clearly for FCPXML
+
 extension Sequence where Element == XMLElement {
-    /// Returns the sequence filtered by the given element type.
+    /// FCPXML: Returns the sequence filtered by the given element type.
     public func filter(
         whereElementType elementType: FinalCutPro.FCPXML.ElementType
     ) -> LazyFilterSequence<Self> {
         self.lazy.filter(whereElementType: elementType)
     }
     
-    /// Returns the sequence filtered by the given element type.
+    /// FCPXML: Returns the sequence filtered by the given element type.
     public func first(
         whereElementType elementType: FinalCutPro.FCPXML.ElementType
     ) -> Element? {
@@ -28,7 +30,7 @@ extension Sequence where Element == XMLElement {
 }
 
 extension LazySequence where Element == XMLElement {
-    /// Returns the sequence filtered by the given element type.
+    /// FCPXML: Returns the sequence filtered by the given element type.
     public func filter(
         whereElementType elementType: FinalCutPro.FCPXML.ElementType
     ) -> LazyFilterSequence<LazySequence<Base>.Elements> {
