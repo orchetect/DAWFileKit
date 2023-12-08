@@ -109,8 +109,8 @@ extension FinalCutPro.FCPXML {
         
         /// Audio sample rate in Hz.
         public var audioRate: AudioRate? {
-            get { element.fcpAudioRate }
-            set { element.fcpAudioRate = newValue }
+            get { element.fcpAssetAudioRate }
+            set { element.fcpAssetAudioRate = newValue }
         }
         
         /// Number of video sources. Default is `0`.
@@ -121,6 +121,11 @@ extension FinalCutPro.FCPXML {
             set {
                 element.set(int: newValue, forAttribute: Attributes.videoSources.rawValue)
             }
+        }
+        
+        public var auxVideoFlags: String? { // only used by `asset`
+            get { element.stringValue(forAttributeNamed: Attributes.auxVideoFlags.rawValue) }
+            set { element.addAttribute(withName: Attributes.auxVideoFlags.rawValue, value: newValue) }
         }
         
         // Children
@@ -202,18 +207,36 @@ extension XMLElement { // Asset
     public var fcpAsAsset: FinalCutPro.FCPXML.Asset? {
         .init(element: self)
     }
-    
+}
+
+extension XMLElement { // Asset
     /// FCPXML: Returns the `audioRate` attribute value (audio sample rate in Hz).
-    /// Call this on an `asset` or `sequence` element only.
-    public var fcpAudioRate: FinalCutPro.FCPXML.AudioRate? {
+    /// Call this on a `asset` element only.
+    public var fcpAssetAudioRate: FinalCutPro.FCPXML.AudioRate? {
         get {
             guard let value = stringValue(forAttributeNamed: "audioRate")
             else { return nil }
             
-            return FinalCutPro.FCPXML.AudioRate(rawValue: value)
+            return FinalCutPro.FCPXML.AudioRate(rawValueForAsset: value)
         }
         set {
-            addAttribute(withName: "audioRate", value: newValue?.rawValue)
+            addAttribute(withName: "audioRate", value: newValue?.rawValueForAsset)
+        }
+    }
+}
+
+extension XMLElement { // Sequence
+    /// FCPXML: Returns the `audioRate` attribute value (audio sample rate in Hz).
+    /// Call this on a `sequence` element only.
+    public var fcpSequenceAudioRate: FinalCutPro.FCPXML.AudioRate? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "audioRate")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.AudioRate(rawValueForSequence: value)
+        }
+        set {
+            addAttribute(withName: "audioRate", value: newValue?.rawValueForSequence)
         }
     }
 }

@@ -42,7 +42,10 @@ extension FinalCutPro.FCPXML {
         }
         
         /// The unique identifier of a media representation, assigned by Final Cut Pro.
-        public var sig: String?
+        public var sig: String? {
+            get { element.stringValue(forAttributeNamed: Attributes.sig.rawValue) }
+            set { element.addAttribute(withName: Attributes.sig.rawValue, value: newValue) }
+        }
         
         /// Required.
         /// May be a full absolute URL to a local `file://` or remote `https://` resource.

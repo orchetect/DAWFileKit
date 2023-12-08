@@ -34,8 +34,8 @@ extension FinalCutPro.FCPXML {
         
         /// Audio sample rate in Hz.
         public var audioRate: AudioRate? {
-            get { element.fcpAudioRate }
-            set { element.fcpAudioRate = newValue }
+            get { element.fcpSequenceAudioRate }
+            set { element.fcpSequenceAudioRate = newValue }
         }
         
         public var renderFormat: String? {
