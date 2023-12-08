@@ -81,12 +81,12 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         let events = fcpxml.allEvents().map(\.fcpAsEvent!)
         XCTAssertEqual(events.count, 1)
         
-        let event = try XCTUnwrap(events[safe: 0])
+        let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
         
         // projects
         
-        let projects = try XCTUnwrap(events[safe: 0]).projects.map(\.fcpAsProject!)
+        let projects = event.projects.map(\.fcpAsProject!).zeroIndexed
         XCTAssertEqual(projects.count, 1)
         
         let project = try XCTUnwrap(projects[safe: 0])
@@ -95,7 +95,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // sequence
         
-        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence?.fcpAsSequence)
+        let sequence = try XCTUnwrap(project.sequence?.fcpAsSequence)
         XCTAssertEqual(sequence.format, "r1")
         XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("00:00:00:00", .fps29_97))
         XCTAssertEqual(sequence.tcStartAsTimecode?.frameRate, .fps29_97)
@@ -109,7 +109,9 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         let spine = try XCTUnwrap(sequence.spine.fcpAsSpine)
         XCTAssertEqual(spine.storyElements.count, 1)
         
-        let element1 = try XCTUnwrap(spine.storyElements[safe: 0]?.fcpAsTitle)
+        let storyElements = spine.storyElements.zeroIndexed
+        
+        let element1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsTitle)
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.name, "Basic Title")
         XCTAssertEqual(element1.offsetAsTimecode, Self.tc("00:00:00:00", .fps29_97))
