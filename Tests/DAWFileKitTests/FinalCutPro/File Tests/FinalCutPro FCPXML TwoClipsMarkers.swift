@@ -260,7 +260,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludedTypes: [.story(.clip(.title))]
+            excludedTraversalTypes: [.story(.clip(.title))]
         )
         let extractedMarkers = event
             .extractElements(preset: .markers, settings: settings)
@@ -283,7 +283,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludedTypes: [.story(.clip(.gap))]
+            excludedTraversalTypes: [.story(.clip(.gap))]
         )
         let extractedMarkers = event
             .extractElements(preset: .markers, settings: settings)
@@ -309,7 +309,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludedTypes: [.story(.clip(.gap)), .story(.clip(.title))]
+            excludedTraversalTypes: [.story(.clip(.gap)), .story(.clip(.title))]
         )
         let extractedMarkers = event
             .extractElements(preset: .markers, settings: settings)

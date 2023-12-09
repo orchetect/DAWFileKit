@@ -244,17 +244,6 @@ extension FCPXMLElement {
         element.fcpExtractElements(settings: settings)
     }
     
-    /// Extract elements from the element and recursively from all sub-elements.
-    public func extractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
-        element.fcpExtractElements(
-            settings: settings,
-            matching: predicate
-        )
-    }
-    
     /// Extract elements using a preset.
     public func extractElements<Result>(
         preset: some FCPXMLExtractionPreset<Result>,
@@ -271,17 +260,8 @@ extension XMLElement {
     public func fcpExtractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
-        fcpExtractElements(settings: settings) { _ in true }
-    }
-    
-    /// Extract elements from the element and recursively from all sub-elements.
-    public func fcpExtractElements(
-        settings: FinalCutPro.FCPXML.ExtractionSettings,
-        matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
         _fcpExtractElements(
             settings: settings,
-            matching: predicate,
             ancestors: ancestorElements(includingSelf: false),
             resources: nil
         )
@@ -303,7 +283,6 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - settings: Extraction settings.
-    ///   - matching: A closure which allows filtering an element based on custom logic.
     ///   - ancestors: Ancestors, ordered nearest to furthest ancestor.
     ///   - resources: The document's `resources` container element.
     ///     If `nil`, the `resources` found in the document will be used if present.
@@ -311,26 +290,51 @@ extension XMLElement {
     ///     rule for the element type.
     func _fcpExtractElements<A: Sequence<XMLElement>>(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool,
         ancestors: A,
         resources: XMLElement?,
         overrideDirectChildren: FinalCutPro.FCPXML.ExtractionChildren? = nil
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
         // self
         
-        if !_fcpShouldKeepForExtraction(settings: settings, ancestors: ancestors) {
-            return []
+        let selfExtractedElement = FinalCutPro.FCPXML.ExtractedElement(
+            element: self,
+            breadcrumbs: Array(ancestors),
+            resources: resources
+        )
+        
+        let keepForExtraction = Self._fcpShouldKeepForExtraction(
+            extractedElement: selfExtractedElement,
+            settings: settings,
+            ancestors: ancestors
+        )
+        
+        let keepForTraversal = Self._fcpShouldKeepForTraversal(
+            extractedElement: selfExtractedElement,
+            settings: settings,
+            ancestors: ancestors
+        )
+        
+        var extractedElements: [FinalCutPro.FCPXML.ExtractedElement] = []
+        
+        // occlusion - apply to both traversal and extraction
+        let occlusion = _fcpEffectiveOcclusion(ancestors: ancestors)
+        if !settings.occlusions.contains(occlusion) {
+            return extractedElements
         }
         
-        var result: [FinalCutPro.FCPXML.ExtractedElement] = []
+        if keepForExtraction {
+            extractedElements.append(contentsOf: [selfExtractedElement])
+        }
         
-        let selfEE = FinalCutPro.FCPXML.ExtractedElement(element: self, breadcrumbs: Array(ancestors), resources: resources)
-        result.append(contentsOf: [selfEE].filter(predicate))
+        if !keepForTraversal {
+            return extractedElements
+        }
         
         // get recursing information
         
-        guard let recurse = overrideDirectChildren ?? _fcpExtractableChildren(auditions: settings.auditions)
-        else { return result }
+        guard let recurse = overrideDirectChildren 
+              ?? _fcpExtractableChildren(auditions: settings.auditions)
+        else { return extractedElements }
         
         // direct children, if any
         
@@ -338,11 +342,10 @@ extension XMLElement {
             let extractedChildren = _fcpExtractDirectChildren(
                 childrenRule: childrenRule,
                 settings: settings,
-                matching: predicate,
                 ancestors: ancestors,
                 resources: resources
             )
-            result.append(contentsOf: extractedChildren) // already filtered by predicate
+            extractedElements.append(contentsOf: extractedChildren) // already filtered by predicate
         }
         
         // explicit descendants that are not automatically recursive, if any
@@ -351,21 +354,19 @@ extension XMLElement {
             let extractedDescendants = _fcpExtractDescendants(
                 descendants: descendants,
                 settings: settings,
-                matching: predicate,
                 ancestors: ancestors,
                 resources: resources
             )
-            result.append(contentsOf: extractedDescendants) // already filtered by predicate
+            extractedElements.append(contentsOf: extractedDescendants) // already filtered by predicate
         }
         
-        return result
+        return extractedElements
     }
     
     /// Helper
     private func _fcpExtractDirectChildren<A: Sequence<XMLElement>>(
         childrenRule: FinalCutPro.FCPXML.ExtractionChildren.DirectChildren,
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool,
         ancestors: A,
         resources: XMLElement?
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
@@ -381,19 +382,17 @@ extension XMLElement {
         let extractedChildren = childrenSource.flatMap {
             $0._fcpExtractElements(
                 settings: settings,
-                matching: predicate,
                 ancestors: [self] + ancestors,
                 resources: resources
             )
         }
-        return extractedChildren.filter(predicate)
+        return extractedChildren
     }
     
     /// Helper
     private func _fcpExtractDescendants<A: Sequence<XMLElement>>(
         descendants: [FinalCutPro.FCPXML.ExtractionChildren.Descendant],
         settings: FinalCutPro.FCPXML.ExtractionSettings,
-        matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool,
         ancestors: A,
         resources: XMLElement?
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
@@ -405,51 +404,93 @@ extension XMLElement {
         for descendant in descendants {
             defer { descendantAccum.insert(descendant.element, at: 0) }
             
-            let e = descendant.element._fcpExtractElements(
+            let extractedDescendants = descendant.element._fcpExtractElements(
                 settings: settings,
-                matching: predicate,
-                ancestors: descendantAccum + ancestors,
+                ancestors: [self] + descendantAccum + ancestors,
                 resources: resources,
                 overrideDirectChildren: descendant.children
             )
-            extracted.append(contentsOf: e.filter(predicate))
+            extracted.append(contentsOf: extractedDescendants)
         }
         
         return extracted
     }
     
-    /// Returns `true` if the element should be filtered out of the returned elements.
+    /// Returns `true` if the element should be filtered (kept) in returned elements.
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
-    func _fcpShouldKeepForExtraction<S: Sequence<XMLElement>>(
+    static func _fcpShouldKeepForExtraction<S: Sequence<XMLElement>>(
+        extractedElement: FinalCutPro.FCPXML.ExtractedElement,
         settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestors: S
     ) -> Bool {
-        if let fcpElementType = fcpElementType {
-            if let filteredTypes = settings.filteredTypes,
-               !filteredTypes.contains(fcpElementType)
-            {
-                return false
-            }
-            
-            if settings.excludedTypes.contains(fcpElementType)
-            {
-                return false
-            }
-        }
-        
-        if !settings.excludedAncestorTypes.isEmpty {
-            for t in settings.excludedAncestorTypes {
-                let lane = _fcpEffectiveLane(ancestors: ancestors)
-                if _fcpHasAncestorExcludingParent(elementLane: lane, ofType: t, ancestors: ancestors) {
+        // we can apply inclusion-filter even if we don't know the element type
+        if let filteredExtractionTypes = settings.filteredExtractionTypes {
+            if let elementType = extractedElement.element.fcpElementType {
+                if !filteredExtractionTypes.contains(elementType) {
                     return false
                 }
+            } else if !filteredExtractionTypes.isEmpty {
+                // we have an element without a ElementType case, but the filter is non-nil
+                // so we know it has to get filtered out
+                return false
+            }
+                
+        }
+        
+        // we can only exclude element types if has a type concretely known to us
+        if let elementType = extractedElement.element.fcpElementType {
+            if settings.excludedExtractionTypes.contains(elementType) {
+                return false
             }
         }
         
-        let occlusion = _fcpEffectiveOcclusion(ancestors: ancestors)
-        if !settings.occlusions.contains(occlusion) {
+        if !settings.excludedAncestorTypesOfParentForExtraction.isEmpty {
+            let lane = extractedElement.element._fcpEffectiveLane(ancestors: ancestors)
+            if extractedElement.element._fcpHasAncestorExcludingParent(
+                elementLane: lane,
+                ofTypes: settings.excludedAncestorTypesOfParentForExtraction,
+                ancestors: ancestors
+            ) {
+                return false
+            }
+        }
+        
+        if let predicate = settings.extractionPredicate,
+           !predicate(extractedElement)
+        {
             return false
+        }
+        
+        return true
+    }
+    
+    /// Returns `true` if the element should be filtered (kept) and further traversed.
+    ///
+    /// Ancestors are ordered nearest to furthest ancestor.
+    static func _fcpShouldKeepForTraversal<S: Sequence<XMLElement>>(
+        extractedElement: FinalCutPro.FCPXML.ExtractedElement,
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        ancestors: S
+    ) -> Bool {
+        // we can apply inclusion-filter even if we don't know the element type
+        if let filteredTraversalTypes = settings.filteredTraversalTypes {
+            if let elementType = extractedElement.element.fcpElementType {
+                if !filteredTraversalTypes.contains(elementType) {
+                    return false
+                }
+            } else if !filteredTraversalTypes.isEmpty {
+                // we have an element without a ElementType case, but the filter is non-nil
+                // so we know it has to get filtered out
+                return false
+            }
+        }
+        
+        // we can only exclude element types if has a type concretely known to us
+        if let elementType = extractedElement.element.fcpElementType {
+            if settings.excludedTraversalTypes.contains(elementType) {
+                return false
+            }
         }
         
         return true
@@ -459,8 +500,7 @@ extension XMLElement {
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
     func _fcpEffectiveLane<S: Sequence<XMLElement>>(ancestors: S) -> Int? {
-        _fcpAncestorElementTypesAndLanes(ancestors: ancestors, includeSelf: false)
-            .reversed()
+        _fcpAncestorElementTypesAndLanes(ancestors: ancestors, includeSelf: true)
             .first(where: { $0.lane != nil })?
             .lane
     }
@@ -469,13 +509,13 @@ extension XMLElement {
 // MARK: - Helpers
 
 extension XMLElement {
-    /// Returns `true` if element has an ancestor with the specified element type, excluding its
-    /// immediate parent.
+    /// Returns `true` if element has an ancestor, excluding its immediate parent, with the any of
+    /// specified element type(s).
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
     func _fcpHasAncestorExcludingParent<S: Sequence<XMLElement>>(
         elementLane: Int?,
-        ofType elementType: FinalCutPro.FCPXML.ElementType,
+        ofTypes elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
         ancestors: S
     ) -> Bool {
         let ancestorTypesOfClip = _fcpAncestorElementTypesAndLanes(
@@ -484,10 +524,14 @@ extension XMLElement {
         )
         .dropFirst() // remove ancestor the element is directly attached to
         
-        return ancestorTypesOfClip
-            .contains { type, lane in
-                lane == elementLane && type == elementType
-            }
+        // print(ancestorTypesOfClip.map(\.type).map(\.rawValue).joined(separator: " - "))
+        
+        for ancestor in ancestorTypesOfClip {
+            guard ancestor.lane == elementLane else { return false }
+            if elementTypes.contains(ancestor.type) { return true }
+        }
+        
+        return false
     }
 }
 

@@ -19,15 +19,23 @@ extension FinalCutPro.FCPXML {
             on extractable: XMLElement,
             baseSettings settings: FinalCutPro.FCPXML.ExtractionSettings
         ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+            var settings = settings
+            
+            if settings.filteredExtractionTypes == nil {
+                settings.filteredExtractionTypes = []
+            }
+            settings.filteredExtractionTypes?.insert(.story(.annotation(.caption)))
+            
             let extracted = extractable.fcpExtractElements(
                 settings: settings
-            ) { element in
+            ) /*{ element in
                 element.element.fcpElementType == .story(.annotation(.caption))
-            }
+            }*/
             
-            let captions = extracted.filter {
-                $0.element.fcpElementType == .story(.annotation(.caption))
-            }
+            let captions = extracted
+                // .filter {
+                //     $0.element.fcpElementType == .story(.annotation(.caption))
+                // }
             
             return captions
         }

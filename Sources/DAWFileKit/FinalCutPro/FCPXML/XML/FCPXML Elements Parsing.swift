@@ -119,6 +119,8 @@ extension XMLElement {
 
 extension XMLElement {
     /// Returns the first ancestor clip, if the element is contained within a clip.
+    ///
+    /// Ancestors are ordered nearest to furthest.
     public func fcpAncestorClip<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
         includeSelf: Bool
@@ -130,6 +132,8 @@ extension XMLElement {
     }
     
     /// FCPXML: Returns type and lane for each of the element's ancestors.
+    ///
+    /// Ancestors are ordered nearest to furthest.
     func _fcpAncestorElementTypesAndLanes<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
         includeSelf: Bool

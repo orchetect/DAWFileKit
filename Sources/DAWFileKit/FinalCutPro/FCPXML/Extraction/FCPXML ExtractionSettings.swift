@@ -19,36 +19,64 @@ extension FinalCutPro.FCPXML {
         /// By default, all are included.
         public var occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion>
         
-        /// Element types to filter during extraction.
-        /// This includes elements to triage and elements to return.
-        /// Any other element types will be excluded.
-        /// This rule is superseded by ``excludedTypes`` or ``excludedAncestorTypes`` in the event
-        /// the same type is in both.
+        /// Element types to filter during traversal.
+        /// This applies to elements that are walked and does not apply to elements that are
+        /// extracted.
         ///
         /// - Note: If this set is non-nil and empty, no elements will be extracted.
-        public var filteredTypes: Set<FinalCutPro.FCPXML.ElementType>?
+        public var filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>?
+        
+        /// Extracted element types to filter during extraction.
+        /// This applies to extracted (returned result) types and does not affect
+        /// element traversal.
+        ///
+        /// - Note: If this set is non-nil and empty, no elements will be extracted.
+        public var filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>?
+        
+        /// Element types to exclude during traversal.
+        /// These types will be excluded from XML traversal and does not apply to elements that are
+        /// extracted.
+        /// This rule supersedes ``filteredTraversalTypes`` in the event the same type is in both.
+        public var excludedTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>
         
         /// Element types to exclude during extraction.
-        /// These types will be excluded from both triage and returned types.
-        /// This rule supersedes ``filteredTypes`` in the event the same type is in both.
-        public var excludedTypes: Set<FinalCutPro.FCPXML.ElementType>
+        /// This rule supersedes ``filteredExtractionTypes`` in the event the same type exists in
+        /// both.
+        public var excludedExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>
         
-        /// Exclude elements that have ancestors with these element types.
-        /// This rule supersedes ``filteredTypes`` in the event the same type is in both.
-        public var excludedAncestorTypes: Set<FinalCutPro.FCPXML.ElementType>
+        /// Elements will be excluded from extraction if their parent's ancestors have one of these
+        /// element types.
+        /// This rule supersedes ``filteredExtractionTypes`` in the event the same type exists in both.
+        public var excludedAncestorTypesOfParentForExtraction: Set<FinalCutPro.FCPXML.ElementType>
+        
+        /// Predicate to apply to element traversal.
+        /// This predicate is applied last after all other filters and exclusions.
+        public var traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
+        
+        /// Predicate to apply to element traversal.
+        /// This predicate is applied last after all other filters and exclusions.
+        public var extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
         
         public init(
             auditions: FinalCutPro.FCPXML.Audition.Mask = .active,
             occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion> = .allCases,
-            filteredTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
-            excludedTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
-            excludedAncestorTypes: Set<FinalCutPro.FCPXML.ElementType> = []
+            filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
+            filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
+            excludedTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
+            excludedExtractionTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
+            excludedAncestorTypesOfParentForExtraction: Set<FinalCutPro.FCPXML.ElementType> = [],
+            traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil,
+            extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil
         ) {
             self.auditions = auditions
             self.occlusions = occlusions
-            self.filteredTypes = filteredTypes
-            self.excludedTypes = excludedTypes
-            self.excludedAncestorTypes = excludedAncestorTypes
+            self.filteredTraversalTypes = filteredTraversalTypes
+            self.filteredExtractionTypes = filteredExtractionTypes
+            self.excludedTraversalTypes = excludedTraversalTypes
+            self.excludedExtractionTypes = excludedExtractionTypes
+            self.excludedAncestorTypesOfParentForExtraction = excludedAncestorTypesOfParentForExtraction
+            self.traversalPredicate = traversalPredicate
+            self.extractionPredicate = extractionPredicate
         }
     }
 }
@@ -63,9 +91,13 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
         FinalCutPro.FCPXML.ExtractionSettings(
             auditions: .active,
             occlusions: .allCases,
-            filteredTypes: nil,
-            excludedTypes: [],
-            excludedAncestorTypes: []
+            filteredTraversalTypes: nil,
+            filteredExtractionTypes: nil,
+            excludedTraversalTypes: [],
+            excludedExtractionTypes: [],
+            excludedAncestorTypesOfParentForExtraction: [],
+            traversalPredicate: nil,
+            extractionPredicate: nil
         )
     }
     
@@ -74,13 +106,17 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     public static let mainTimeline = FinalCutPro.FCPXML.ExtractionSettings(
         auditions: .active,
         occlusions: [.notOccluded, .partiallyOccluded],
-        filteredTypes: nil,
-        excludedTypes: [],
-        excludedAncestorTypes: [
+        filteredTraversalTypes: nil,
+        filteredExtractionTypes: nil,
+        excludedTraversalTypes: [],
+        excludedExtractionTypes: [],
+        excludedAncestorTypesOfParentForExtraction: [
             .story(.clip(.refClip)),
             .story(.clip(.syncClip)),
             .story(.clip(.mcClip))
-        ]
+        ],
+        traversalPredicate: nil,
+        extractionPredicate: nil
     )
 }
 

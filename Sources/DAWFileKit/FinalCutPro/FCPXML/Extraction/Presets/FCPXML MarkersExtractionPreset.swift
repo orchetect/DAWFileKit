@@ -19,25 +19,33 @@ extension FinalCutPro.FCPXML {
             on extractable: XMLElement,
             baseSettings settings: FinalCutPro.FCPXML.ExtractionSettings
         ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-            let elementTypes: [ElementType] = [
-                .story(.annotation(.marker(.marker))),
-                .story(.annotation(.marker(.chapterMarker)))
-            ]
+            var settings = settings
+            
+            if settings.filteredExtractionTypes == nil {
+                settings.filteredExtractionTypes = []
+            }
+            settings.filteredExtractionTypes?.insert(.story(.annotation(.marker(.marker))))
+            settings.filteredExtractionTypes?.insert(.story(.annotation(.marker(.chapterMarker))))
+            
+//            let elementTypes: [ElementType] = [
+//                .story(.annotation(.marker(.marker))),
+//                .story(.annotation(.marker(.chapterMarker)))
+//            ]
             
             let extracted = extractable.fcpExtractElements(
                 settings: settings
-            ) { element in
+            ) /*{ element in
                 guard let elementType = element.element.fcpElementType
                 else { return false }
                 return elementTypes.contains(elementType)
-            }
+            }*/
             
             let markers = extracted
-                .filter { element in
-                    guard let elementType = element.element.fcpElementType
-                    else { return false }
-                    return elementTypes.contains(elementType)
-                }
+                // .filter { element in
+                //     guard let elementType = element.element.fcpElementType
+                //     else { return false }
+                //     return elementTypes.contains(elementType)
+                // }
                 .compactMap { ExtractedMarker($0) }
             
             return markers
