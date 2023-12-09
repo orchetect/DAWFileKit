@@ -169,145 +169,153 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(title2Marker.note, nil)
     }
     
-//    func testExtractMarkers() throws {
-//        // load file
-//        
-//        let rawData = try fileContents
-//        
-//        // load
-//        
-//        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-//        
-//        // event
-//        
-//        let event = try XCTUnwrap(fcpxml.allEvents().first)
-//        
-//        // extract markers
-//        
-//        let settings = FinalCutPro.FCPXML.ExtractionSettings(auditions: .active)
-//        let extractedMarkers = event.fcpExtractElements(preset: .markers, settings: settings)
-//        XCTAssertEqual(extractedMarkers.count, 3)
-//        
-//        let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
-//        XCTAssertEqual(extractedTitle1Marker, try expectedTitle1Marker)
-//        XCTAssertEqual(extractedTitle1Marker.context[.ancestorEventName], "Test Event")
-//        XCTAssertEqual(extractedTitle1Marker.context[.ancestorProjectName], "TwoClipsMarkers")
-//        XCTAssertEqual(
-//            extractedTitle1Marker.context[.absoluteStart],
-//            Self.tc("01:00:04:15", .fps29_97)
-//        )
-//        XCTAssertEqual(extractedTitle1Marker.context[.parentType], .story(.anyClip(.title)))
-//        XCTAssertEqual(extractedTitle1Marker.context[.parentName], "Basic Title 1")
-//        XCTAssertEqual(
-//            extractedTitle1Marker.context[.parentAbsoluteStart],
-//            Self.tc("01:00:00:00", .fps29_97)
-//        )
-//        XCTAssertEqual(
-//            extractedTitle1Marker.context[.parentDuration],
-//            Self.tc("00:00:10:00", .fps29_97)
-//        )
-//        
-//        let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 1])
-//        XCTAssertEqual(extractedGapMarker, try expectedGapMarker)
-//        XCTAssertEqual(extractedGapMarker.context[.ancestorEventName], "Test Event")
-//        XCTAssertEqual(extractedGapMarker.context[.ancestorProjectName], "TwoClipsMarkers")
-//        XCTAssertEqual(
-//            extractedGapMarker.context[.absoluteStart],
-//            Self.tc("01:00:15:00", .fps29_97)
-//        )
-//        XCTAssertEqual(extractedGapMarker.context[.parentType], .story(.anyClip(.gap)))
-//        XCTAssertEqual(extractedGapMarker.context[.parentName], "Gap")
-//        XCTAssertEqual(
-//            extractedGapMarker.context[.parentAbsoluteStart],
-//            Self.tc("01:00:10:00", .fps29_97)
-//        )
-//        XCTAssertEqual(
-//            extractedGapMarker.context[.parentDuration],
-//            Self.tc("00:00:10:00", .fps29_97)
-//        )
-//        
-//        let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 2])
-//        XCTAssertEqual(extractedTitle2Marker, try expectedTitle2Marker)
-//        XCTAssertEqual(extractedTitle2Marker.context[.ancestorEventName], "Test Event")
-//        XCTAssertEqual(extractedTitle2Marker.context[.ancestorProjectName], "TwoClipsMarkers")
-//        XCTAssertEqual(
-//            extractedTitle2Marker.context[.absoluteStart],
-//            Self.tc("01:00:27:00", .fps29_97)
-//        )
-//        XCTAssertEqual(extractedTitle2Marker.context[.parentType], .story(.anyClip(.title)))
-//        XCTAssertEqual(extractedTitle2Marker.context[.parentName], "Basic Title 2")
-//        XCTAssertEqual(
-//            extractedTitle2Marker.context[.parentAbsoluteStart],
-//            Self.tc("01:00:20:00", .fps29_97)
-//        )
-//        XCTAssertEqual(
-//            extractedTitle2Marker.context[.parentDuration],
-//            Self.tc("00:00:10:00", .fps29_97)
-//        )
-//    }
+    func testExtractMarkers() throws {
+        // load file
+        
+        let rawData = try fileContents
+        
+        // load
+        
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        
+        // extract markers
+        
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(auditions: .active)
+        let extractedMarkers = event
+            .extractElements(preset: .markers, settings: settings)
+            .zeroIndexed
+        XCTAssertEqual(extractedMarkers.count, 3)
+        
+        let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
+        XCTAssertEqual(extractedTitle1Marker.name, "Marker 1") // basic identity check
+        XCTAssertEqual(extractedTitle1Marker.value(forContext: .ancestorEventName), "Test Event")
+        XCTAssertEqual(extractedTitle1Marker.value(forContext: .ancestorProjectName), "TwoClipsMarkers")
+        XCTAssertEqual(
+            extractedTitle1Marker.value(forContext: .absoluteStartAsTimecode),
+            Self.tc("01:00:04:15", .fps29_97)
+        )
+        XCTAssertEqual(extractedTitle1Marker.value(forContext: .parentType), .story(.clip(.title)))
+        XCTAssertEqual(extractedTitle1Marker.value(forContext: .parentName), "Basic Title 1")
+        XCTAssertEqual(
+            extractedTitle1Marker.value(forContext: .parentAbsoluteStartAsTimecode),
+            Self.tc("01:00:00:00", .fps29_97)
+        )
+        XCTAssertEqual(
+            extractedTitle1Marker.value(forContext: .parentDurationAsTimecode),
+            Self.tc("00:00:10:00", .fps29_97)
+        )
+        
+        let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 1])
+        XCTAssertEqual(extractedGapMarker.name, "Marker 2") // basic identity check
+        XCTAssertEqual(extractedGapMarker.value(forContext: .ancestorEventName), "Test Event")
+        XCTAssertEqual(extractedGapMarker.value(forContext: .ancestorProjectName), "TwoClipsMarkers")
+        XCTAssertEqual(
+            extractedGapMarker.value(forContext: .absoluteStartAsTimecode),
+            Self.tc("01:00:15:00", .fps29_97)
+        )
+        XCTAssertEqual(extractedGapMarker.value(forContext: .parentType), .story(.clip(.gap)))
+        XCTAssertEqual(extractedGapMarker.value(forContext: .parentName), "Gap")
+        XCTAssertEqual(
+            extractedGapMarker.value(forContext: .parentAbsoluteStartAsTimecode),
+            Self.tc("01:00:10:00", .fps29_97)
+        )
+        XCTAssertEqual(
+            extractedGapMarker.value(forContext: .parentDurationAsTimecode),
+            Self.tc("00:00:10:00", .fps29_97)
+        )
+        
+        let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 2])
+        XCTAssertEqual(extractedTitle2Marker.name, "Marker 3")
+        XCTAssertEqual(extractedTitle2Marker.value(forContext: .ancestorEventName), "Test Event")
+        XCTAssertEqual(extractedTitle2Marker.value(forContext: .ancestorProjectName), "TwoClipsMarkers")
+        XCTAssertEqual(
+            extractedTitle2Marker.value(forContext: .absoluteStartAsTimecode),
+            Self.tc("01:00:27:00", .fps29_97)
+        )
+        XCTAssertEqual(extractedTitle2Marker.value(forContext: .parentType), .story(.clip(.title)))
+        XCTAssertEqual(extractedTitle2Marker.value(forContext: .parentName), "Basic Title 2")
+        XCTAssertEqual(
+            extractedTitle2Marker.value(forContext: .parentAbsoluteStartAsTimecode),
+            Self.tc("01:00:20:00", .fps29_97)
+        )
+        XCTAssertEqual(
+            extractedTitle2Marker.value(forContext: .parentDurationAsTimecode),
+            Self.tc("00:00:10:00", .fps29_97)
+        )
+    }
     
-//    func testExtractMarkers_ExcludeTitle() throws {
-//        // load file
-//        let rawData = try fileContents
-//        
-//        // load
-//        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-//        
-//        // event
-//        let event = try XCTUnwrap(fcpxml.allEvents().first)
-//        
-//        // extract markers
-//        let settings = FinalCutPro.FCPXML.ExtractionSettings(
-//            excludedTypes: [.story(.anyClip(.title))]
-//        )
-//        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
-//        XCTAssertEqual(extractedMarkers.count, 1)
-//        
-//        let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 0])
-//        XCTAssertEqual(extractedGapMarker, try expectedGapMarker)
-//    }
+    func testExtractMarkers_ExcludeTitle() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        
+        // extract markers
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludedTypes: [.story(.clip(.title))]
+        )
+        let extractedMarkers = event
+            .extractElements(preset: .markers, settings: settings)
+            .zeroIndexed
+        XCTAssertEqual(extractedMarkers.count, 1)
+        
+        let extractedGapMarker = try XCTUnwrap(extractedMarkers[safe: 0])
+        XCTAssertEqual(extractedGapMarker.name, "Marker 2")
+    }
     
-//    func testExtractMarkers_ExcludeGap() throws {
-//        // load file
-//        let rawData = try fileContents
-//        
-//        // load
-//        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-//        
-//        // event
-//        let event = try XCTUnwrap(fcpxml.allEvents().first)
-//        
-//        // extract markers
-//        let settings = FinalCutPro.FCPXML.ExtractionSettings(
-//            excludedTypes: [.story(.anyClip(.gap))]
-//        )
-//        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
-//        XCTAssertEqual(extractedMarkers.count, 2)
-//        
-//        let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
-//        XCTAssertEqual(extractedTitle1Marker, try expectedTitle1Marker)
-//        
-//        let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 1])
-//        XCTAssertEqual(extractedTitle2Marker, try expectedTitle2Marker)
-//    }
+    func testExtractMarkers_ExcludeGap() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        
+        // extract markers
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludedTypes: [.story(.clip(.gap))]
+        )
+        let extractedMarkers = event
+            .extractElements(preset: .markers, settings: settings)
+            .zeroIndexed
+        XCTAssertEqual(extractedMarkers.count, 2)
+        
+        let extractedTitle1Marker = try XCTUnwrap(extractedMarkers[safe: 0])
+        XCTAssertEqual(extractedTitle1Marker.name, "Marker 1")
+        
+        let extractedTitle2Marker = try XCTUnwrap(extractedMarkers[safe: 1])
+        XCTAssertEqual(extractedTitle2Marker.name, "Marker 3")
+    }
     
-//    func testExtractMarkers_ExcludeGapAndTitle() throws {
-//        // load file
-//        let rawData = try fileContents
-//        
-//        // load
-//        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
-//        
-//        // event
-//        let event = try XCTUnwrap(fcpxml.allEvents().first)
-//        
-//        // extract markers
-//        let settings = FinalCutPro.FCPXML.ExtractionSettings(
-//            excludedTypes: [.story(.anyClip(.gap)), .story(.anyClip(.title))]
-//        )
-//        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
-//        XCTAssertEqual(extractedMarkers.count, 0)
-//    }
+    func testExtractMarkers_ExcludeGapAndTitle() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        
+        // extract markers
+        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+            excludedTypes: [.story(.clip(.gap)), .story(.clip(.title))]
+        )
+        let extractedMarkers = event
+            .extractElements(preset: .markers, settings: settings)
+            .zeroIndexed
+        XCTAssertEqual(extractedMarkers.count, 0)
+    }
 }
 
 #endif
