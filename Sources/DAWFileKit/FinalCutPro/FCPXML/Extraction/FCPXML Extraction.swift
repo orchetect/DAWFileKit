@@ -238,14 +238,14 @@ extension FinalCutPro.FCPXML {
 
 extension FCPXMLElement {
     /// Extract elements from the element and recursively from all sub-elements.
-    public func fcpExtractElements(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
         element.fcpExtractElements(settings: settings)
     }
     
     /// Extract elements from the element and recursively from all sub-elements.
-    public func fcpExtractElements(
+    public func extractElements(
         settings: FinalCutPro.FCPXML.ExtractionSettings,
         matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
@@ -256,7 +256,7 @@ extension FCPXMLElement {
     }
     
     /// Extract elements using a preset.
-    public func fcpExtractElements<Result>(
+    public func extractElements<Result>(
         preset: some FCPXMLExtractionPreset<Result>,
         settings: FinalCutPro.FCPXML.ExtractionSettings = .mainTimeline
     ) -> Result {
@@ -459,7 +459,7 @@ extension XMLElement {
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
     func _fcpEffectiveLane<S: Sequence<XMLElement>>(ancestors: S) -> Int? {
-        _fcpAncestorElementTypesAndLanes(ancestors: ancestors, includingSelf: false)
+        _fcpAncestorElementTypesAndLanes(ancestors: ancestors, includeSelf: false)
             .reversed()
             .first(where: { $0.lane != nil })?
             .lane
@@ -480,7 +480,7 @@ extension XMLElement {
     ) -> Bool {
         let ancestorTypesOfClip = _fcpAncestorElementTypesAndLanes(
             ancestors: ancestors,
-            includingSelf: false
+            includeSelf: false
         )
         .dropFirst() // remove ancestor the element is directly attached to
         

@@ -97,13 +97,11 @@ extension XMLElement {
             accum = newTC + other
         }
         
-        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: false)
+        // iterate from root to current element
         
-        var ancestorWalkedCount = 0
+        var ancestors = Array(ancestorElements(overrideWith: ancestors, includingSelf: true))
         
-        for ancestor in ancestors {
-            defer { ancestorWalkedCount += 1 }
-            
+        while let ancestor = ancestors.popLast() {
             if let tcStart = ancestor.fcpTCStart {
                 assert(ancestor.fcpStart == nil)
                 add(tcStart)

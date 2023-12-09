@@ -42,6 +42,13 @@ extension FinalCutPro.FCPXML.ElementContext {
             )
         }
         
+        /// The absolute start time of the current element expressed as timecode.
+        /// This is calculated based on ancestor elements.
+        public var absoluteStartAsTimecode: Timecode? {
+            guard let absoluteStart = absoluteStart else { return nil }
+            return try? element._fcpTimecode(fromRational: absoluteStart, resources: resources)
+        }
+        
         /// The absolute end timecode of the current element.
         /// This is calculated based on ancestor elements.
         public var absoluteEnd: Fraction? {
@@ -49,6 +56,13 @@ extension FinalCutPro.FCPXML.ElementContext {
                   let duration = element.fcpDuration
             else { return nil }
             return absoluteStart + duration
+        }
+        
+        /// The absolute end time of the current element expressed as timecode.
+        /// This is calculated based on ancestor elements.
+        public var absoluteEndAsTimecode: Timecode? {
+            guard let absoluteEnd = absoluteEnd else { return nil }
+            return try? element._fcpTimecode(fromRational: absoluteEnd, resources: resources)
         }
         
         /// Returns the effective `format` resource for the current element.
@@ -89,6 +103,13 @@ extension FinalCutPro.FCPXML.ElementContext {
             )
         }
         
+        /// The parent element's absolute start time expressed as timecode.
+        /// This is calculated based on ancestor elements.
+        public var parentAbsoluteStartAsTimecode: Timecode? {
+            guard let parentAbsoluteStart = parentAbsoluteStart else { return nil }
+            return try? element._fcpTimecode(fromRational: parentAbsoluteStart, resources: resources)
+        }
+        
         /// The parent element's absolute end time.
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteEnd: Fraction? {
@@ -98,13 +119,26 @@ extension FinalCutPro.FCPXML.ElementContext {
             return parentAbsoluteStart + parentDuration
         }
         
+        /// The parent element's absolute end time expressed as timecode.
+        /// This is calculated based on ancestor elements.
+        public var parentAbsoluteEndAsTimecode: Timecode? {
+            guard let parentAbsoluteEnd = parentAbsoluteEnd else { return nil }
+            return try? element._fcpTimecode(fromRational: parentAbsoluteEnd, resources: resources)
+        }
+        
         /// The parent element's duration.
         public var parentDuration: Fraction? {
             guard let parent = parent else { return nil }
             return parent._fcpNearestDuration(
                 ancestors: breadcrumbs.dropFirst(),
-                includingSelf: false
+                includingSelf: true
             )
+        }
+        
+        /// The parent element's duration expressed as timecode.
+        public var parentDurationAsTimecode: Timecode? {
+            guard let parentDuration = parentDuration else { return nil }
+            return try? element._fcpTimecode(fromRational: parentDuration, resources: resources)
         }
         
         /// The element's local roles, if applicable or present.
@@ -178,14 +212,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// traversing up through ancestors.
         /// Note that this is relative to the element's parent's timeline and may not be absolute
         /// timecode.
-        public func nearestStart() -> Fraction? {
-            element._fcpNearestStart(includingSelf: true)
+        public func nearestStart(includingSelf: Bool = true) -> Fraction? {
+            element._fcpNearestStart(includingSelf: includingSelf)
         }
         
         /// Return nearest `tcStart` attribute value as `Timecode`, starting from the element and
         /// traversing up through ancestors.
-        public func nearestTCStart() -> Fraction? {
-            element._fcpNearestTCStart(includingSelf: true)
+        public func nearestTCStart(includingSelf: Bool = true) -> Fraction? {
+            element._fcpNearestTCStart(includingSelf: includingSelf)
         }
         
         /// If the resource is a `format`, it is returned.
@@ -221,15 +255,13 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// Returns the first ancestor element with the given name.
         public func firstAncestor(named name: String, includeSelf: Bool) -> XMLElement? {
-            element
-                .ancestorElements(includingSelf: includeSelf)
+            ((includeSelf ? [element] : []) + breadcrumbs)
                 .first(whereElementNamed: name)
         }
         
         /// Returns the first ancestor element with the given name.
         public func firstAncestor(named names: [String], includeSelf: Bool) -> XMLElement? {
-            element
-                .ancestorElements(includingSelf: includeSelf)
+            ((includeSelf ? [element] : []) + breadcrumbs)
                 .first {
                     guard let name = $0.name else { return false }
                     return names.contains(name)
@@ -238,8 +270,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// Returns the first ancestor element containing an attribute with the given name.
         public func firstAncestor(withAttribute attrName: String, includeSelf: Bool) -> XMLElement? {
-            element
-                .ancestorElements(includingSelf: includeSelf)
+            ((includeSelf ? [element] : []) + breadcrumbs)
                 .first(withAttribute: attrName)?.element
         }
         
@@ -247,7 +278,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         public func ancestorElementTypesAndLanes() -> some Swift.Sequence<
             (type: FinalCutPro.FCPXML.ElementType, lane: Int?)
         > {
-            element._fcpAncestorElementTypesAndLanes(ancestors: breadcrumbs, includingSelf: false)
+            element._fcpAncestorElementTypesAndLanes(ancestors: breadcrumbs, includeSelf: false)
         }
         
         /// Returns the ancestor `event`, if the element is an `event` or contained within a `event`.
@@ -270,7 +301,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// Returns the first ancestor clip, if the element is contained within a clip.
         public func ancestorClip(includeSelf: Bool) -> XMLElement? {
-            element.fcpAncestorClip(includeSelf: includeSelf)
+            element.fcpAncestorClip(ancestors: breadcrumbs, includeSelf: includeSelf)
         }
         
         /// Looks up the resource for the element and returns its `media-rep` instance, if any.

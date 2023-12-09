@@ -119,16 +119,20 @@ extension XMLElement {
 
 extension XMLElement {
     /// Returns the first ancestor clip, if the element is contained within a clip.
-    public func fcpAncestorClip(includeSelf: Bool) -> XMLElement? {
+    public func fcpAncestorClip<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        includeSelf: Bool
+    ) -> XMLElement? {
+        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includeSelf)
         let clipTypeStrings = FinalCutPro.FCPXML.ClipType.allCases.map(\.rawValue)
-        return ancestorElements(includingSelf: includeSelf)
+        return ancestors
             .first(whereElementNamed: clipTypeStrings)
     }
     
     /// FCPXML: Returns type and lane for each of the element's ancestors.
     func _fcpAncestorElementTypesAndLanes<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
-        includingSelf: Bool
+        includeSelf: Bool
     ) -> LazyMapSequence<
         LazyFilterSequence<
             LazyMapSequence<
@@ -138,7 +142,7 @@ extension XMLElement {
         >,
         (type: FinalCutPro.FCPXML.ElementType, lane: Int?)
     > {
-        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
+        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includeSelf)
         return ancestors
             .lazy
             .compactMap { ancestor -> (type: FinalCutPro.FCPXML.ElementType, lane: Int?)? in

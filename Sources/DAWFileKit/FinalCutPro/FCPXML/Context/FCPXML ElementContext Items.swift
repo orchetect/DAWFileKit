@@ -19,6 +19,27 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
     }
     
+    /// The absolute start timecode of the element expressed as timecode.
+    public static var absoluteStartAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.absoluteStartAsTimecode
+        }
+    }
+    
+    /// The absolute end timecode of the element.
+    public static var absoluteEnd: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.absoluteEnd
+        }
+    }
+    
+    /// The absolute end timecode of the element expressed as timecode.
+    public static var absoluteEndAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.absoluteEndAsTimecode
+        }
+    }
+    
     /// The element's local roles, if applicable or present.
     /// These roles are either attached to the element itself or in some cases are acquired from
     /// the element's contents.
@@ -87,10 +108,38 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
     }
     
+    /// The parent element's absolute start time expressed as timecode.
+    public static var parentAbsoluteStartAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.parentAbsoluteStartAsTimecode
+        }
+    }
+    
+    /// The parent clip's absolute end time.
+    public static var parentAbsoluteEnd: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.parentAbsoluteEnd
+        }
+    }
+    
+    /// The parent element's absolute end time expressed as timecode.
+    public static var parentAbsoluteEndAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.parentAbsoluteEndAsTimecode
+        }
+    }
+    
     /// The parent clip's duration.
     public static var parentDuration: FinalCutPro.FCPXML.ElementContext<Fraction?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
             tools.parentDuration
+        }
+    }
+    
+    /// The parent element's duration expressed as timecode.
+    public static var parentDurationAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.parentDurationAsTimecode
         }
     }
 }
