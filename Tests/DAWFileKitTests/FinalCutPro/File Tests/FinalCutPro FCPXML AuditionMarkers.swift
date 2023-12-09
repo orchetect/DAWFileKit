@@ -40,23 +40,23 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         XCTAssertEqual(resources.childElements.count, 2)
         
         // events
-        let events = fcpxml.allEvents().map(\.fcpAsEvent!)
+        let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
         
         // project
-        let projects = event.projects.map(\.fcpAsProject!).zeroIndexed
+        let projects = event.projects.zeroIndexed
         XCTAssertEqual(projects.count, 1)
         
         // let project = try XCTUnwrap(projects[safe: 0])
         
         // sequence
-        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence?.fcpAsSequence)
+        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence)
         
         // story elements (clips etc.)
         
-        let spine = try XCTUnwrap(sequence.spine.fcpAsSpine)
+        let spine = try XCTUnwrap(sequence.spine)
         XCTAssertEqual(spine.storyElements.count, 1)
         
         let storyElements = spine.storyElements.zeroIndexed
@@ -142,7 +142,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        let event: XMLElement = try XCTUnwrap(fcpxml.allEvents().first)
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(

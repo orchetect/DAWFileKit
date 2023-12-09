@@ -55,7 +55,7 @@ extension FinalCutPro.FCPXML.Locator: FCPXMLElementBookmarkChild { }
 extension FinalCutPro.FCPXML.Locator {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .locator
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Required.
         /// Identifier.
         case id

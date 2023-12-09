@@ -90,7 +90,7 @@ extension FinalCutPro.FCPXML.MediaRep {
         case name = "media-rep"
     }
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// The kind of media representation.
         /// Default: `original-media`
         case kind

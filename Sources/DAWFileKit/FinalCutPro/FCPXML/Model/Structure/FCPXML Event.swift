@@ -36,10 +36,19 @@ extension FinalCutPro.FCPXML {
         // Children
         
         /// Returns child `project` elements.
-        public var projects: LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>> {
+        public var projects: LazyMapSequence<
+            LazyFilterSequence<
+                LazyMapSequence<
+                    LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+                    FinalCutPro.FCPXML.Project?
+                >
+            >,
+            FinalCutPro.FCPXML.Project
+        > {
             element
                 .childElements
-                .filter(whereElementType: .structure(.project))
+                .filter(whereFCPElementType: .structure(.project))
+                .compactMap(\.fcpAsProject)
         }
         
         /// Returns child story elements.
@@ -68,7 +77,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Event {
     public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .event
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case name
         case uid

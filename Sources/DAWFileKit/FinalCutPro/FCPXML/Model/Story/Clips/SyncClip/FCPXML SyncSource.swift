@@ -37,7 +37,13 @@ extension FinalCutPro.FCPXML.SyncClip {
         // Children
         
         /// Returns child `audio-role-source` elements.
-        public var audioRoleSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        public var audioRoleSources: LazyMapSequence<
+            LazyFilterSequence<LazyMapSequence<
+                LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+                FinalCutPro.FCPXML.AudioRoleSource?
+            >>,
+            FinalCutPro.FCPXML.AudioRoleSource
+        > {
             element.fcpAudioRoleSources()
         }
         
@@ -59,7 +65,7 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
         case name = "sync-source"
     }
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         
         /// Required.
@@ -83,9 +89,14 @@ extension XMLElement { // SyncClip.SyncSource
 extension XMLElement { // SyncClip
     /// FCPXML: Returns child `sync-source` elements.
     /// Use on `sync-clip` elements only.
-    public func fcpSyncSources() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public func fcpSyncSources() -> LazyMapSequence<LazyFilterSequence<LazyMapSequence<
+        LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+        FinalCutPro.FCPXML.SyncClip.SyncSource?
+    >>, FinalCutPro.FCPXML.SyncClip.SyncSource
+    > {
         childElements
-            .filter { $0.name == FinalCutPro.FCPXML.SyncClip.Children.syncSource.rawValue }
+            .filter(whereElementNamed: FinalCutPro.FCPXML.SyncClip.Children.syncSource.rawValue)
+            .compactMap(\.fcpAsSyncSource)
     }
 }
 

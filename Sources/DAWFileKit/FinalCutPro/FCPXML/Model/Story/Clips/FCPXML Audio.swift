@@ -86,7 +86,7 @@ extension FinalCutPro.FCPXML.Audio: FCPXMLElementNoteChild { }
 extension FinalCutPro.FCPXML.Audio {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .audio
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Required.
         /// Resource ID.
         case ref

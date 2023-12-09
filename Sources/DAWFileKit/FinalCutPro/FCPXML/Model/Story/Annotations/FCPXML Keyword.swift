@@ -49,7 +49,7 @@ extension FinalCutPro.FCPXML.Keyword: FCPXMLElementOptionalDuration { }
 extension FinalCutPro.FCPXML.Keyword {
     public static let annotationType: FinalCutPro.FCPXML.AnnotationType = .keyword
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case start
         case duration

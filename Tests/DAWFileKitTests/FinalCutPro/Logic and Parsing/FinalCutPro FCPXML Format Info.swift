@@ -62,7 +62,7 @@ final class FinalCutPro_FCPXML_FormatInfo: FCPXMLTestCase {
             XCTAssertNil(tcFormat)
         }
         
-        let libraryElement = try XCTUnwrap(fcpxml.libraryElement)
+        let libraryElement = try XCTUnwrap(xmlRoot.firstChildElement(named: "library"))
         
         // `library` element will never have `format` or `tcFormat` attributes
         do {

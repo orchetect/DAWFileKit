@@ -52,21 +52,21 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
         
         /// Returns the effective `format` resource for the current element.
-        public var effectiveFormat: XMLElement? {
+        public var effectiveFormat: FinalCutPro.FCPXML.Format? {
             element._fcpFirstFormatResourceForElementOrAncestors(in: resources)
         }
         
         /// Returns an event name if the current element is a descendent of an event.
         public var ancestorEventName: String? {
             let ancestorEvent = element.ancestorElements(includingSelf: false)
-                .first(whereElementType: .structure(.event))
+                .first(whereFCPElementType: .structure(.event))
             return ancestorEvent?.fcpName
         }
         
         /// Returns a project name if the current element is a descendent of a project.
         public var ancestorProjectName: String? {
             let ancestorEvent = element.ancestorElements(includingSelf: false)
-                .first(whereElementType: .structure(.project))
+                .first(whereFCPElementType: .structure(.project))
             return ancestorEvent?.fcpName
         }
         
@@ -190,7 +190,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// If the resource is a `format`, it is returned.
         /// Otherwise, references are followed until a `format` is found.
-        public func format(for resource: XMLElement) -> XMLElement? {
+        public func format(for resource: XMLElement) -> FinalCutPro.FCPXML.Format? {
             resource._fcpFormatResource(in: resources)
         }
         
@@ -216,7 +216,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         ) -> XMLElement? {
             element
                 .ancestorElements(includingSelf: includeSelf)
-                .first(whereElementType: ofType)
+                .first(whereFCPElementType: ofType)
         }
         
         /// Returns the first ancestor element with the given name.
@@ -251,18 +251,21 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
         
         /// Returns the ancestor `event`, if the element is an `event` or contained within a `event`.
-        public func ancestorEvent() -> XMLElement? {
-            firstAncestor(ofType: .structure(.event), includeSelf: true)
+        public func ancestorEvent() -> FinalCutPro.FCPXML.Event? {
+            firstAncestor(ofType: .structure(.event), includeSelf: true)?
+                .fcpAsEvent
         }
         
         /// Returns the ancestor `project`, if the element is a `project` or contained within a `project`.
-        public func ancestorProject() -> XMLElement? {
-            firstAncestor(ofType: .structure(.project), includeSelf: true)
+        public func ancestorProject() -> FinalCutPro.FCPXML.Project? {
+            firstAncestor(ofType: .structure(.project), includeSelf: true)?
+                .fcpAsProject
         }
         
         /// Returns the ancestor `sequence`, if the element is a `sequence` or contained within a `sequence`.
-        public func ancestorSequence() -> XMLElement? {
-            firstAncestor(ofType: .story(.sequence), includeSelf: true)
+        public func ancestorSequence() -> FinalCutPro.FCPXML.Sequence? {
+            firstAncestor(ofType: .story(.sequence), includeSelf: true)?
+                .fcpAsSequence
         }
         
         /// Returns the first ancestor clip, if the element is contained within a clip.
@@ -271,7 +274,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
         
         /// Looks up the resource for the element and returns its `media-rep` instance, if any.
-        public var mediaRep: XMLElement? {
+        public var mediaRep: FinalCutPro.FCPXML.MediaRep? {
             element._fcpMediaRep(in: resources)
         }
         

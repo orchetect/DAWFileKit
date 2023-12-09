@@ -31,12 +31,12 @@ final class FinalCutPro_FCPXML_Structure: FCPXMLTestCase {
         
         // events
         
-        let events = Set(fcpxml.allEvents().map(\.fcpAsEvent!).map(\.name))
+        let events = Set(fcpxml.allEvents().map(\.name))
         XCTAssertEqual(events, ["Test Event", "Test Event 2"])
                 
         // projects
         
-        let projects = Set(fcpxml.allProjects().map(\.fcpAsProject!).map(\.name))
+        let projects = Set(fcpxml.allProjects().map(\.name))
         XCTAssertEqual(projects, ["Test Project", "Test Project 2", "Test Project 3"])
         
         // TODO: it may be possible for story elements (sequence, clips, etc.) to be in the root `fcpxml` element

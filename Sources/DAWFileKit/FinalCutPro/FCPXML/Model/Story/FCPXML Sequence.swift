@@ -55,8 +55,8 @@ extension FinalCutPro.FCPXML {
         // Children
         
         /// Returns the child `spine` element. (Required)
-        public var spine: XMLElement {
-            element.fcpSpine() ?? XMLElement(name: Children.spine.rawValue)
+        public var spine: Spine {
+            element.fcpSpine() ?? Spine()
         }
         
         // MARK: FCPXMLElement inits
@@ -81,7 +81,7 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetadataChild { }
 extension FinalCutPro.FCPXML.Sequence {
     public static let storyElementType: FinalCutPro.FCPXML.StoryElementType = .sequence
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case audioLayout
         case audioRate
@@ -118,14 +118,23 @@ extension XMLElement { // Sequence
     
     /// FCPXML: Returns child `spine` elements.
     /// Typically called on a `sequence` element.
-    public var fcpSpines: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var fcpSpines: LazyMapSequence<
+        LazyFilterSequence<
+            LazyMapSequence<
+                LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+                FinalCutPro.FCPXML.Spine?
+            >
+        >,
+        FinalCutPro.FCPXML.Spine
+    > {
         childElements
             .filter(whereElementNamed: FinalCutPro.FCPXML.Sequence.Children.spine.rawValue)
+            .compactMap(\.fcpAsSpine)
     }
     
     /// FCPXML: Returns a child `spine` element if it exists.
     /// Typically called on a `sequence` element.
-    public func fcpSpine() -> XMLElement? {
+    public func fcpSpine() -> FinalCutPro.FCPXML.Spine? {
         guard let spine = fcpSpines.first else {
             print("Expected one spine within sequence but found none.")
             return nil

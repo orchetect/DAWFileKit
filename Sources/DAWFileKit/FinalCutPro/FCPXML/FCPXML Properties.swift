@@ -20,11 +20,11 @@ extension FinalCutPro.FCPXML {
     /// Events may exist within:
     /// - the `fcpxml` element
     /// - the `fcpxml/library` element if it exists
-    public func allEvents() -> [XMLElement] {
+    public func allEvents() -> [Event] {
         // there is appreciable gain by using lazy sequences here
         // so just return [XMLElement] array
         
-        var events: [XMLElement] = []
+        var events: [Event] = []
         
         if let rootEvents = fcpxmlElement?.fcpEvents {
             events.append(contentsOf: rootEvents)
@@ -34,7 +34,7 @@ extension FinalCutPro.FCPXML {
         // and FCP will not allow exporting more than one library to FCPXML at a time.
         // but there is nothing stopping us from having more than one.
         if let libraryEvents = fcpxmlElement?.childElements
-            .filter(whereElementType: .structure(.library))
+            .filter(whereFCPElementType: .structure(.library))
             .flatMap(\.fcpEvents) {
             events.append(contentsOf: libraryEvents)
         }
@@ -50,18 +50,18 @@ extension FinalCutPro.FCPXML {
     /// - the `fcpxml` element
     /// - an `fcpxml/event` element
     /// - an `fcpxml/library/event` element
-    public func allProjects() -> [XMLElement] {
+    public func allProjects() -> [Project] {
         // there is appreciable gain by using lazy sequences here
         // so just return [XMLElement] array
         
-        var projects: [XMLElement] = []
+        var projects: [Project] = []
         
         if let rootProjects = fcpxmlElement?.fcpProjects {
             projects.append(contentsOf: rootProjects)
         }
         
         // will get all events and return their projects
-        let eventsProjects = allEvents().flatMap(\.fcpProjects)
+        let eventsProjects = allEvents().flatMap(\.projects)
         projects.append(contentsOf: eventsProjects)
         
         return projects

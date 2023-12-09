@@ -83,7 +83,11 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
 
 extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
     /// Returns child `sync-source` elements.
-    public var syncSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var syncSources: LazyMapSequence<LazyFilterSequence<LazyMapSequence<
+        LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+        FinalCutPro.FCPXML.SyncClip.SyncSource?
+    >>, FinalCutPro.FCPXML.SyncClip.SyncSource
+    > {
         element.fcpSyncSources()
     }
 }
@@ -91,7 +95,7 @@ extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
 extension FinalCutPro.FCPXML.SyncClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .syncClip
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case format
         case audioStart

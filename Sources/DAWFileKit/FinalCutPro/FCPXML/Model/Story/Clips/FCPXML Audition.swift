@@ -78,7 +78,7 @@ extension FinalCutPro.FCPXML.Audition /* Clip Attributes */ {
 extension FinalCutPro.FCPXML.Audition {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .audition
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case modDate
         

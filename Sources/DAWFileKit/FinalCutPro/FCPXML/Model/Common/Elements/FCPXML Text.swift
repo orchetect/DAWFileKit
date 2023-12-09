@@ -90,7 +90,7 @@ extension FinalCutPro.FCPXML.Text {
         case name = "text"
     }
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// For a CEA-608 caption text block.
         case displayStyle = "display-style"
         
@@ -181,7 +181,7 @@ extension FinalCutPro.FCPXML.Text {
 }
 
 extension FinalCutPro.FCPXML.Text.TextString {
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         case ref // optional
     }
 }

@@ -87,7 +87,7 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
         case name = "audio-channel-source"
     }
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
         case sourceChannels = "srcCh"
         /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)

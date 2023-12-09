@@ -70,7 +70,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Effect {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .effect
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // shared resource attributes
         /// Identifier. (Required)
         case id

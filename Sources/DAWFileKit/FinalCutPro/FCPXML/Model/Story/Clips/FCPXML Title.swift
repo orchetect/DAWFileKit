@@ -73,7 +73,7 @@ extension FinalCutPro.FCPXML.Title: FCPXMLElementNoteChild { }
 extension FinalCutPro.FCPXML.Title {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .title
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         case ref // effect ID for a Motion template
         case role
         

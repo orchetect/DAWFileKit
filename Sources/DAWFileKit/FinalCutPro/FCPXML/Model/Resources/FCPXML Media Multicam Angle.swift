@@ -50,7 +50,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
 }
 
 extension FinalCutPro.FCPXML.Media.Multicam.Angle {
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-specific Attributes
         /// Angle name.
         case name

@@ -68,7 +68,7 @@ extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
 extension FinalCutPro.FCPXML.Video {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .video
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Required.
         /// Resource ID.
         case ref

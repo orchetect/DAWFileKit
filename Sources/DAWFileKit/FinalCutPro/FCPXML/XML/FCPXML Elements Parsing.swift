@@ -46,15 +46,35 @@ extension XMLElement {
 
 extension XMLElement {
     /// FCPXML: Returns child `event` elements.
-    public var fcpEvents: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var fcpEvents: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyMapSequence<
+                LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>,
+                XMLElement
+            >.Elements>.Elements,
+            FinalCutPro.FCPXML.Event?
+        >>,
+        FinalCutPro.FCPXML.Event
+    > {
         childElements
             .filter { $0.fcpElementType == .structure(.event) }
+            .compactMap(\.fcpAsEvent)
     }
     
     /// FCPXML: Returns child `project` elements.
-    public var fcpProjects: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var fcpProjects: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyMapSequence<
+                LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>,
+                XMLElement
+            >.Elements>.Elements,
+            FinalCutPro.FCPXML.Project?
+        >>,
+        FinalCutPro.FCPXML.Project
+    > {
         childElements
             .filter { $0.fcpElementType == .structure(.project) }
+            .compactMap(\.fcpAsProject)
     }
 }
 
@@ -109,11 +129,19 @@ extension XMLElement {
     func _fcpAncestorElementTypesAndLanes<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
         includingSelf: Bool
-    ) -> some Sequence<(type: FinalCutPro.FCPXML.ElementType, lane: Int?)> {
+    ) -> LazyMapSequence<
+        LazyFilterSequence<
+            LazyMapSequence<
+                LazySequence<AnySequence<XMLElement>>.Elements,
+                (type: FinalCutPro.FCPXML.ElementType, lane: Int?)?
+            >
+        >,
+        (type: FinalCutPro.FCPXML.ElementType, lane: Int?)
+    > {
         let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
         return ancestors
             .lazy
-            .compactMap { ancestor /* -> (type: FinalCutPro.FCPXML.ElementType, lane: Int?)? */ in
+            .compactMap { ancestor -> (type: FinalCutPro.FCPXML.ElementType, lane: Int?)? in
                 guard let type = ancestor.fcpElementType else { return nil }
                 let laneStr = ancestor.fcpLane
                 let lane: Int? = laneStr != nil ? Int(laneStr!) : nil
@@ -121,6 +149,5 @@ extension XMLElement {
             }
     }
 }
-
 
 #endif

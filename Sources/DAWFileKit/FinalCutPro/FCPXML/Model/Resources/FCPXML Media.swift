@@ -53,13 +53,17 @@ extension FinalCutPro.FCPXML {
         // Children
         
         /// Returns the `multicam` child element if one exists.
-        public var multicam: XMLElement? {
-            element.firstChildElement(named: Children.multicam.rawValue)
+        public var multicam: Multicam? {
+            element
+                .firstChildElement(named: Children.multicam.rawValue)?
+                .fcpAsMulticam
         }
         
         /// Returns the `sequence` child element if one exists.
-        public var sequence: XMLElement? {
-            element.firstChildElement(named: Children.sequence.rawValue)
+        public var sequence: Sequence? {
+            element
+                .firstChildElement(named: Children.sequence.rawValue)?
+                .fcpAsSequence
         }
         
         // MARK: FCPXMLElement inits
@@ -80,7 +84,7 @@ extension FinalCutPro.FCPXML.Media: FCPXMLElementOptionalModDate { }
 extension FinalCutPro.FCPXML.Media {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .media
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // shared resource attributes
         case id
         case name

@@ -53,7 +53,7 @@ extension FinalCutPro.FCPXML.Spine: FCPXMLElementAnchorableAttributes { }
 extension FinalCutPro.FCPXML.Spine {
     public static let storyElementType: FinalCutPro.FCPXML.StoryElementType = .spine
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case name
         case format

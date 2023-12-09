@@ -45,7 +45,7 @@ extension FinalCutPro.FCPXML.ObjectTracker {
 }
 
 extension FinalCutPro.FCPXML.ObjectTracker.TrackingShape {
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         case id // required
         case name
         case offsetEnabled // 0 or 1, Default: 0

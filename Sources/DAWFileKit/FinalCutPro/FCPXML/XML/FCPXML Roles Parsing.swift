@@ -69,7 +69,6 @@ extension XMLElement {
                     }
                     
                     let audioChannelSources = assetClip.audioChannelSources
-                        .compactMap(\.fcpAsAudioChannelSource)
                         .filter(\.active)
                     
                     if audioChannelSources.isEmpty {
@@ -138,18 +137,17 @@ extension XMLElement {
                     
                     guard let multicam = fcpResource(forID: ref, in: resources)?
                         .fcpAsMedia?
-                        .multicam?
-                        .fcpAsMulticam
+                        .multicam
                     else { break }
                     
                     // fetch angles being used
                     
-                    let (xmlAudioAngle, xmlVideoAngle) = multicam.audioVideoMCAngles(forMulticamSources: sources)
+                    let (audioAngle, videoAngle) = multicam.audioVideoMCAngles(forMulticamSources: sources)
                     
                     // use role from first story element within each angle
                     
-                    if let angle = xmlAudioAngle {
-                        let roles = angle._fcpRolesForNearestDescendant(
+                    if let angle = audioAngle {
+                        let roles = angle.element._fcpRolesForNearestDescendant(
                             resources: resources,
                             auditions: auditions,
                             firstGenerationOnly: true,
@@ -161,8 +159,8 @@ extension XMLElement {
                         add(roles: roles, isInherited: true)
                     }
                     
-                    if let angle = xmlVideoAngle {
-                        let roles = angle._fcpRolesForNearestDescendant(
+                    if let angle = videoAngle {
+                        let roles = angle.element._fcpRolesForNearestDescendant(
                             resources: resources,
                             auditions: auditions,
                             firstGenerationOnly: true,
@@ -183,7 +181,6 @@ extension XMLElement {
                     
                     if refClip.useAudioSubroles {
                         let audioRoleSources = refClip.audioRoleSources
-                            .compactMap(\.fcpAsAudioRoleSource)
                             .filter(\.active)
                         let audioRoles = audioRoleSources.asAnyRoles()
                         add(roles: audioRoles, isInherited: false)
@@ -208,12 +205,10 @@ extension XMLElement {
                     // the audio role may be present in a `sync-source` child of the sync clip.
                     let syncSources = syncClip
                         .syncSources
-                        .compactMap(\.fcpAsSyncSource)
                     
                     if !syncSources.isEmpty {
                         let audioRoleSources = syncSources
                             .flatMap(\.audioRoleSources)
-                            .compactMap(\.fcpAsAudioRoleSource)
                             .filter(\.active)
                         let audioRoles = audioRoleSources
                             .compactMap(\.role)

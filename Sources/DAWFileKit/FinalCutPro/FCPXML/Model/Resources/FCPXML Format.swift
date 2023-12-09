@@ -105,7 +105,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Format {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .format
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // shared resource attributes
         case id // required
         case name

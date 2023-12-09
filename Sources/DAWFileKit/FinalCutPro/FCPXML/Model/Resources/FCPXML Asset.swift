@@ -130,8 +130,10 @@ extension FinalCutPro.FCPXML {
         
         // Children
         
-        public var mediaRep: XMLElement? { // only used by `asset`
-            element.firstChildElement(named: Children.mediaRep.rawValue)
+        public var mediaRep: MediaRep? { // only used by `asset`
+            element
+                .firstChildElement(named: Children.mediaRep.rawValue)?
+                .fcpAsMediaRep
         }
         
         // MARK: FCPXMLElement inits
@@ -156,7 +158,7 @@ extension FinalCutPro.FCPXML.Asset: FCPXMLElementMetadataChild { }
 extension FinalCutPro.FCPXML.Asset {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .asset
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // shared resource attributes
         /// Identifier. (Required)
         case id // required

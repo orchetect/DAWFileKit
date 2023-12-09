@@ -41,7 +41,16 @@ extension FinalCutPro.FCPXML {
         // Children
         
         /// Multiple `event` elements may exist within the `library` element.
-        public var events: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        public var events: LazyMapSequence<
+            LazyFilterSequence<LazyMapSequence<
+                LazyFilterSequence<LazyMapSequence<
+                    LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>,
+                    XMLElement
+                >.Elements>.Elements,
+                FinalCutPro.FCPXML.Event?
+            >>,
+            FinalCutPro.FCPXML.Event
+        > {
             element.fcpEvents
         }
         
@@ -71,7 +80,7 @@ extension FinalCutPro.FCPXML {
 extension FinalCutPro.FCPXML.Library {
     public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .library
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Specifies the URL of a library on export; Final Cut Pro ignores this option during the
         /// XML import. To specify the target library for the XML import, see the `library` location
         /// key listed under the `[import-options`](

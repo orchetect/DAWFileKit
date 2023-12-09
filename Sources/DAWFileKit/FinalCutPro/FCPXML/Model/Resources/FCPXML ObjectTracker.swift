@@ -29,8 +29,10 @@ extension FinalCutPro.FCPXML {
         // Children
         
         /// Returns child `tracking-shape` elements.
-        public var trackingShapes: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        public var trackingShapes: some Swift.Sequence<TrackingShape> {
             element.childElements
+                .filter(whereElementNamed: Children.trackingShape.rawValue)
+                .compactMap(\.fcpAsTrackingShape)
         }
         
         // MARK: FCPXMLElement inits
@@ -50,6 +52,10 @@ extension FinalCutPro.FCPXML.ObjectTracker {
     public static let resourceType: FinalCutPro.FCPXML.ResourceType = .objectTracker
     
     // no Attributes
+    
+    public enum Children: String {
+        case trackingShape = "tracking-shape"
+    }
     
     // contains 1 or more `tracking-shape`
 }

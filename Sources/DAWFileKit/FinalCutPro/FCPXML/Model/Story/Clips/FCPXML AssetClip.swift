@@ -126,7 +126,7 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioChannelSourceChildren 
 extension FinalCutPro.FCPXML.AssetClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .assetClip
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case ref
         case format

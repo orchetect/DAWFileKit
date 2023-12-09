@@ -60,7 +60,7 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLElementNoteChild { }
 extension FinalCutPro.FCPXML.Gap {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .gap
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Anchorable Attributes
         // (no lane)
         case offset

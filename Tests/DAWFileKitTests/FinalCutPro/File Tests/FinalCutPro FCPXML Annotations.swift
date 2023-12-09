@@ -74,7 +74,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(r2.videoSources, 1)
         XCTAssertEqual(r2.auxVideoFlags, nil)
         
-        let r2MediaRep = try XCTUnwrap(r2.mediaRep?.fcpAsMediaRep)
+        let r2MediaRep = try XCTUnwrap(r2.mediaRep)
         XCTAssertEqual(r2MediaRep.kind, .originalMedia)
         XCTAssertEqual(r2MediaRep.sig, "30C3729DCEE936129873D803DC13B623")
         XCTAssertEqual(r2MediaRep.src, URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/Test%20Event/Original%20Media/TestVideo.m4v")!)
@@ -97,7 +97,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
             """
         )
         let r2Metadata = FinalCutPro.FCPXML.Metadata(element: r2MetadataXML)
-        XCTAssertEqual(r2.metadata?.fcpAsMetadata, r2Metadata)
+        XCTAssertEqual(r2.metadata, r2Metadata)
         
         let r3 = try XCTUnwrap(resources.childElements[safe: 2]?.fcpAsFormat)
         XCTAssertEqual(r3.id, "r3")
@@ -114,14 +114,14 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.libraryElement?.fcpAsLibrary)
+        let library = try XCTUnwrap(fcpxml.library)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.location, libraryURL)
         
         // events
         
-        let events = fcpxml.allEvents().map(\.fcpAsEvent!)
+        let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
@@ -129,8 +129,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // projects
         
-        let projects = try XCTUnwrap(events.zeroIndexed[safe: 0])
-            .projects.map(\.fcpAsProject!).zeroIndexed
+        let projects = try XCTUnwrap(events.zeroIndexed[safe: 0]).projects.zeroIndexed
         XCTAssertEqual(projects.count, 1)
 
         let project = try XCTUnwrap(projects[safe: 0])
@@ -139,7 +138,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // sequence
         
-        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence?.fcpAsSequence)
+        let sequence = try XCTUnwrap(projects[safe: 0]?.sequence)
         XCTAssertEqual(sequence.format, "r1")
         XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("01:00:00:00", .fps25))
         XCTAssertEqual(sequence.tcStartAsTimecode?.frameRate, .fps25)
@@ -150,7 +149,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // story elements (clips etc.)
         
-        let spine = try XCTUnwrap(sequence.spine.fcpAsSpine)
+        let spine = try XCTUnwrap(sequence.spine)
         XCTAssertEqual(spine.storyElements.count, 1)
         
         let storyElements = spine.storyElements.zeroIndexed

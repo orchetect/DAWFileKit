@@ -87,7 +87,12 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetadataChild { }
 
 extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
     /// Returns child `mc-source` elements.
-    public var sources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var sources: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.MulticamSource?
+        >>, FinalCutPro.FCPXML.MulticamSource
+    > {
         element.fcpMulticamSources
     }
 }
@@ -95,7 +100,7 @@ extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
 extension FinalCutPro.FCPXML.MCClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .mcClip
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case ref // required
         case audioStart
@@ -127,7 +132,7 @@ extension FinalCutPro.FCPXML.MCClip {
 extension FinalCutPro.FCPXML.MCClip {
     /// Locates the `media` resource used by the `mc-clip`, and returns the `multicam` element from
     /// within it.
-    public var multicamResource: XMLElement? {
+    public var multicamResource: FinalCutPro.FCPXML.Media.Multicam? {
         element.fcpResource()?.fcpAsMedia?.multicam
     }
     /// Returns audio and video `mc-angle` elements from the `media` resource's `multicam` element
@@ -135,8 +140,11 @@ extension FinalCutPro.FCPXML.MCClip {
     ///
     /// These angles may be different, or may be the same, depending on if separate audio and video
     /// sources were selected in the `mc-source` element(s).
-    public var audioVideoMCAngles: (audioMCAngle: XMLElement?, videoMCAngle: XMLElement?) {
-        let (audio, video) = multicamResource?.fcpAudioVideoMCAngles(forMulticamSources: sources)
+    public var audioVideoMCAngles: (
+        audioMCAngle: FinalCutPro.FCPXML.Media.Multicam.Angle?,
+        videoMCAngle: FinalCutPro.FCPXML.Media.Multicam.Angle?
+    ) {
+        let (audio, video) = multicamResource?.audioVideoMCAngles(forMulticamSources: sources)
             ?? (nil, nil)
         
         return (audio, video)

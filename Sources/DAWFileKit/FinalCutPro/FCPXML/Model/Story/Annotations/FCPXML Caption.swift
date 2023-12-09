@@ -48,7 +48,7 @@ extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextStyleDefinitionChildren {
 extension FinalCutPro.FCPXML.Caption {
     public static let annotationType: FinalCutPro.FCPXML.AnnotationType = .caption
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// The format is `role-name?captionFormat=captionFormat.subrole`.
         /// ie: `iTT?captionFormat=ITT.en`.
         case role

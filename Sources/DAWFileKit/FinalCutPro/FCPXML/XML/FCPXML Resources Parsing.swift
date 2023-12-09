@@ -130,7 +130,7 @@ extension XMLElement {
               let tcFormat = _fcpTCFormatForElementOrAncestors()
         else { return nil }
         
-        return format._fcpTimecodeFrameRate(tcFormat: tcFormat)
+        return format.element._fcpTimecodeFrameRate(tcFormat: tcFormat)
     }
 }
 
@@ -168,7 +168,7 @@ extension XMLElement {
     func _fcpFormatResource(
         forResourceID resourceID: String,
         in resources: XMLElement? = nil
-    ) -> XMLElement? {
+    ) -> FinalCutPro.FCPXML.Format? {
         guard let resource = fcpResource(forID: resourceID, in: resources)
         else { return nil }
         
@@ -181,7 +181,7 @@ extension XMLElement {
     /// - Returns: `format` resource element.
     func _fcpFormatResource(
         in resources: XMLElement? = nil
-    ) -> XMLElement? {
+    ) -> FinalCutPro.FCPXML.Format? {
         guard let fcpResourceType = fcpResourceType else { return nil }
         switch fcpResourceType {
         case .asset:
@@ -196,7 +196,7 @@ extension XMLElement {
             return nil
             
         case .format:
-            return self
+            return self.fcpAsFormat
             
         case .effect:
             return nil // effects don't carry format info
@@ -215,9 +215,9 @@ extension XMLElement {
     /// - Returns: `format` resource element.
     func _fcpFirstFormatResourceForElementOrAncestors(
         in resources: XMLElement? = nil
-    ) -> XMLElement? {
+    ) -> FinalCutPro.FCPXML.Format? {
         if let (_, resourceID) = ancestorElements(includingSelf: true).first(withAttribute: "format") {
-            return fcpResource(forID: resourceID, in: resources)
+            return fcpResource(forID: resourceID, in: resources)?.fcpAsFormat
         }
         
         // `ref` could point to any resource and not just format, ie: asset or effect.
@@ -226,7 +226,7 @@ extension XMLElement {
            let refResource = fcpResource(forID: refResourceID, in: resources)
         {
             if refResource.fcpElementType == .resource(.format) {
-                return refResource
+                return refResource.fcpAsFormat
             } else {
                 // recurse
                 return refResource._fcpFirstFormatResourceForElementOrAncestors(in: resources)
@@ -241,13 +241,13 @@ extension XMLElement {
     /// - Returns: `format` resource element.
     func _fcpFirstDefinedFormatResourceForElementOrAncestors(
         in resources: XMLElement? = nil
-    ) -> XMLElement? {
+    ) -> FinalCutPro.FCPXML.Format? {
         // note that an audio clip may point to a resource with name `FFVideoFormatRateUndefined`.
         // this should not be an error case; instead, continue traversing.
         
         let result = walkAncestorElements(
             includingSelf: true,
-            returning: XMLElement.self
+            returning: FinalCutPro.FCPXML.Format.self
         ) { element in
             guard let foundFormat = element._fcpFirstFormatResourceForElementOrAncestors(in: resources)
             else { return .failure }
@@ -280,12 +280,12 @@ extension XMLElement {
     func _fcpMediaResource(
         forResourceID resourceID: String,
         in resources: XMLElement? = nil
-    ) -> XMLElement? {
+    ) -> FinalCutPro.FCPXML.Media? {
         guard let resource = fcpResource(forID: resourceID, in: resources),
               resource.fcpResourceType == .media
         else { return nil }
         
-        return resource
+        return resource.fcpAsMedia
     }
     
     /// FCPXML: Looks up the resource for the element and returns its `media-rep` element, if any.
@@ -293,7 +293,7 @@ extension XMLElement {
     /// - Returns: `media-rep` element.
     func _fcpMediaRep(
         in resources: XMLElement? = nil
-    ) -> XMLElement? {
+    ) -> FinalCutPro.FCPXML.MediaRep? {
         guard let resource = _fcpFirstResourceForElementOrAncestors(in: resources),
               let resourceType = resource.fcpResourceType
         else { return nil }
@@ -317,7 +317,7 @@ extension XMLElement {
         else { return nil }
         
         switch resourceType {
-        case .asset: return resource.fcpAsAsset?.mediaRep?.fcpAsMediaRep?.src
+        case .asset: return resource.fcpAsAsset?.mediaRep?.src
         case .effect: return nil
         case .format: return nil
         case .locator: return resource.fcpAsLocator?.url

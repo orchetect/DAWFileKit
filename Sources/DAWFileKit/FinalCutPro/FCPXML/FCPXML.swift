@@ -63,7 +63,7 @@ extension FinalCutPro {
     /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/
     /// )
     public struct FCPXML {
-        /// Direct access to the FCPXML document.
+        /// The FCPXML document.
         public var xml: XMLDocument
     }
 }

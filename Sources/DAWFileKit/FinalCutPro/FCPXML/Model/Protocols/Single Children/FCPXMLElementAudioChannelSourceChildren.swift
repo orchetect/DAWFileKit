@@ -7,16 +7,28 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 import OTCore
+import TimecodeKit
 
 public protocol FCPXMLElementAudioChannelSourceChildren: FCPXMLElement {
     /// Child `audio-channel-source` elements.
-    var audioChannelSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> { get }
+    var audioChannelSources: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.AudioChannelSource?
+        >>,
+        FinalCutPro.FCPXML.AudioChannelSource
+    > { get }
 }
 
 extension FCPXMLElementAudioChannelSourceChildren {
-    public var audioChannelSources: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var audioChannelSources: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.AudioChannelSource?
+        >>,
+        FinalCutPro.FCPXML.AudioChannelSource
+    > {
         element.fcpAudioChannelSources()
     }
 }
@@ -24,9 +36,16 @@ extension FCPXMLElementAudioChannelSourceChildren {
 extension XMLElement {
     /// FCPXML: Returns child `audio-channel-source` elements.
     /// Use on `clip` or `asset-clip` elements.
-    public func fcpAudioChannelSources() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public func fcpAudioChannelSources() -> LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.AudioChannelSource?
+        >>,
+        FinalCutPro.FCPXML.AudioChannelSource
+    > {
         childElements
             .filter(whereElementNamed: "audio-channel-source")
+            .compactMap(\.fcpAsAudioChannelSource)
     }
 }
 #endif

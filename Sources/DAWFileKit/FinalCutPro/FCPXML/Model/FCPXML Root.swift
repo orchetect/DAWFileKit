@@ -50,10 +50,12 @@ extension FinalCutPro.FCPXML {
     }
     
     /// Utility:
-    /// Returns the `fcpxml/library` XML element if it exists.
+    /// Returns the `fcpxml/library` element if it exists.
     /// One or zero of these elements may be present within the `fcpxml` element.
-    public var libraryElement: XMLElement? {
-        fcpxmlElement?.firstChildElement(named: Children.library.rawValue)
+    public var library: Library? {
+        fcpxmlElement?
+            .firstChildElement(named: Children.library.rawValue)?
+            .fcpAsLibrary
     }
 }
 

@@ -7,25 +7,44 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 import OTCore
+import TimecodeKit
 
 public protocol FCPXMLElementTextChildren: FCPXMLElement {
     /// Child `text` elements.
-    var texts: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> { get }
+    var texts: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.Text?
+        >>,
+        FinalCutPro.FCPXML.Text
+    > { get }
 }
 
 extension FCPXMLElementTextChildren {
-    public var texts: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var texts: LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.Text?
+        >>,
+        FinalCutPro.FCPXML.Text
+    > {
         element.fcpTexts()
     }
 }
 
 extension XMLElement {
     /// FCPXML: Returns child `text` elements.
-    public func fcpTexts() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public func fcpTexts() -> LazyMapSequence<
+        LazyFilterSequence<LazyMapSequence<
+            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
+            FinalCutPro.FCPXML.Text?
+        >>,
+        FinalCutPro.FCPXML.Text
+    > {
         childElements
             .filter(whereElementNamed: "text")
+            .compactMap(\.fcpAsText)
     }
 }
 #endif

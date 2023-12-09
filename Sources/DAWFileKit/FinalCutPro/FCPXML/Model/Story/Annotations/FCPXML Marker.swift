@@ -116,7 +116,7 @@ extension FinalCutPro.FCPXML.Marker {
         Self.annotationType(for: element)
     }
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Start time.
         /// Common for all marker types.
         case start

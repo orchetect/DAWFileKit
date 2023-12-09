@@ -35,12 +35,16 @@ extension FinalCutPro.FCPXML {
         
         // Children
         
-        public var sequence: XMLElement? {
-            get { element.firstChildElement(named: Children.sequence.rawValue) }
+        public var sequence: Sequence? {
+            get { 
+                element
+                    .firstChildElement(named: Children.sequence.rawValue)?
+                    .fcpAsSequence
+            }
             set {
                 if let sequence = sequence, let newValue = newValue {
-                    sequence.detach()
-                    element.addChild(newValue)
+                    sequence.element.detach()
+                    element.addChild(newValue.element)
                 }
             }
         }
@@ -63,7 +67,7 @@ extension FinalCutPro.FCPXML.Project: FCPXMLElementOptionalModDate { }
 extension FinalCutPro.FCPXML.Project {
     public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .project
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         // Element-Specific Attributes
         case name
         case id
@@ -88,7 +92,7 @@ extension FinalCutPro.FCPXML.Project {
     /// Convenience:
     /// Returns the start timecode of the `sequence` contained within the project.
     public var startTimecode: Timecode? {
-        sequence?.fcpAsSequence?.tcStartAsTimecode
+        sequence?.tcStartAsTimecode
     }
 }
 

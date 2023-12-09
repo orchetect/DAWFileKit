@@ -9,6 +9,7 @@
 import Foundation
 import TimecodeKit
 
+/// Protocol which all FCPXML wrapper model objects conform.
 public protocol FCPXMLElement where Self: Equatable, Self: Hashable {
     /// The wrapped XML element.
     var element: XMLElement { get }

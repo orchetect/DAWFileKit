@@ -62,13 +62,13 @@ extension FinalCutPro.FCPXML {
         // Resource
         
         /// Returns the `media` resource element for `ref` resource ID.
-        public var mediaResource: XMLElement? {
-            element.fcpResource(forID: ref)
+        public var mediaResource: Media? {
+            element.fcpResource(forID: ref)?.fcpAsMedia
         }
         
         /// Returns the `sequence` contained in the `media` resource.
-        public var mediaSequence: XMLElement? {
-            mediaResource?.fcpAsMedia?.sequence
+        public var mediaSequence: Sequence? {
+            mediaResource?.sequence
         }
         
         // Children
@@ -123,7 +123,7 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetadataChild { }
 extension FinalCutPro.FCPXML.RefClip {
     public static let clipType: FinalCutPro.FCPXML.ClipType = .refClip
     
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public enum Attributes: String {
         /// Required.
         /// Resource ID
         case ref

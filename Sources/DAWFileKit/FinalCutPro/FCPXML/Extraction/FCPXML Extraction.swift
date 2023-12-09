@@ -106,22 +106,22 @@ extension XMLElement { // parent/container
                     
                     
                     if let multicamSources = fcpAsMCClip?.sources,
-                       let mediaResource = fcpResource(),
-                       let multicam = mediaResource.fcpAsMedia?.multicam
+                       let mediaResource = fcpResource()?.fcpAsMedia,
+                       let multicam = mediaResource.multicam
                     {
                         let (audio, video) = multicam
-                            .fcpAudioVideoMCAngles(forMulticamSources: multicamSources)
+                            .audioVideoMCAngles(forMulticamSources: multicamSources)
                         
                         // remove nils and reduce any duplicate elements
                         let reducedMCAngles = [video, audio] // video first, audio second
-                            .compactMap { $0 }
+                            .compactMap(\.?.element)
                             .removingDuplicates()
                         
                         // provide explicit descendants
                         let descendants: [FinalCutPro.FCPXML.ExtractionChildren.Descendant] = [
                             // .init(element: mcSource, children: nil), - can omit, not really important
-                            .init(element: mediaResource, children: nil),
-                            .init(element: multicam, children: .specificChildren(reducedMCAngles))
+                            .init(element: mediaResource.element, children: nil),
+                            .init(element: multicam.element, children: .specificChildren(reducedMCAngles))
                         ]
                         
                         let ec = FinalCutPro.FCPXML.ExtractionChildren(
@@ -234,7 +234,37 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-// MARK: - Public Methods
+// MARK: - FCPXMLElement Public Methods
+
+extension FCPXMLElement {
+    /// Extract elements from the element and recursively from all sub-elements.
+    public func fcpExtractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings
+    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+        element.fcpExtractElements(settings: settings)
+    }
+    
+    /// Extract elements from the element and recursively from all sub-elements.
+    public func fcpExtractElements(
+        settings: FinalCutPro.FCPXML.ExtractionSettings,
+        matching predicate: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool
+    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+        element.fcpExtractElements(
+            settings: settings,
+            matching: predicate
+        )
+    }
+    
+    /// Extract elements using a preset.
+    public func fcpExtractElements<Result>(
+        preset: some FCPXMLExtractionPreset<Result>,
+        settings: FinalCutPro.FCPXML.ExtractionSettings = .mainTimeline
+    ) -> Result {
+        element.fcpExtractElements(preset: preset, settings: settings)
+    }
+}
+
+// MARK: - XMLElement Public Methods
 
 extension XMLElement {
     /// Extract elements from the element and recursively from all sub-elements.

@@ -11,20 +11,22 @@ import TimecodeKit
 
 public protocol FCPXMLElementMetadataChild: FCPXMLElement {
     /// Metadata for the element.
-    var metadata: XMLElement? { get set }
+    var metadata: FinalCutPro.FCPXML.Metadata? { get set }
 }
 
 extension FCPXMLElementMetadataChild {
-    public var metadata: XMLElement? {
+    public var metadata: FinalCutPro.FCPXML.Metadata? {
         get {
-            element.firstChildElement(named: "metadata")
+            element
+                .firstChildElement(named: "metadata")?
+                .fcpAsMetadata
         }
         set {
             if let existingElement = element.firstChildElement(named: "metadata") {
                 existingElement.detach()
             }
             if let newValue = newValue {
-                element.addChild(newValue)
+                element.addChild(newValue.element)
             }
         }
     }
