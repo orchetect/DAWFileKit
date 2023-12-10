@@ -73,14 +73,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// Returns an event name if the current element is a descendent of an event.
         public var ancestorEventName: String? {
             let ancestorEvent = element.ancestorElements(includingSelf: false)
-                .first(whereFCPElementType: .structure(.event))
+                .first(whereFCPElementType: .event)
             return ancestorEvent?.fcpName
         }
         
         /// Returns a project name if the current element is a descendent of a project.
         public var ancestorProjectName: String? {
             let ancestorEvent = element.ancestorElements(includingSelf: false)
-                .first(whereFCPElementType: .structure(.project))
+                .first(whereFCPElementType: .project)
             return ancestorEvent?.fcpName
         }
         
@@ -283,19 +283,19 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// Returns the ancestor `event`, if the element is an `event` or contained within a `event`.
         public func ancestorEvent() -> FinalCutPro.FCPXML.Event? {
-            firstAncestor(ofType: .structure(.event), includeSelf: true)?
+            firstAncestor(ofType: .event, includeSelf: true)?
                 .fcpAsEvent
         }
         
         /// Returns the ancestor `project`, if the element is a `project` or contained within a `project`.
         public func ancestorProject() -> FinalCutPro.FCPXML.Project? {
-            firstAncestor(ofType: .structure(.project), includeSelf: true)?
+            firstAncestor(ofType: .project, includeSelf: true)?
                 .fcpAsProject
         }
         
         /// Returns the ancestor `sequence`, if the element is a `sequence` or contained within a `sequence`.
         public func ancestorSequence() -> FinalCutPro.FCPXML.Sequence? {
-            firstAncestor(ofType: .story(.sequence), includeSelf: true)?
+            firstAncestor(ofType: .sequence, includeSelf: true)?
                 .fcpAsSequence
         }
         

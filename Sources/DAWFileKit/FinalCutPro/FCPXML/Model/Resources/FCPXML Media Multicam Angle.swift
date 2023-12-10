@@ -15,39 +15,23 @@ extension FinalCutPro.FCPXML.Media.Multicam {
     /// Similar to a `sequence`.
     public struct Angle: FCPXMLElement {
         public let element: XMLElement
-        public var elementName: String = "mc-angle"
         
-        /// Angle name.
-        public var name: String? {
-            get { element.fcpName }
-            set { element.fcpName = newValue }
-        }
+        public let elementType: FinalCutPro.FCPXML.ElementType = .mcAngle
         
-        /// Angle ID.
-        public var angleID: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.angleID.rawValue) }
-            set { element.addAttribute(withName: Attributes.angleID.rawValue, value: newValue) }
-        }
-        
-        // Children
-        
-        /// Story elements contained within the angle.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<FinalCutPro.FCPXML.ElementType> = [.mcAngle]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
+
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Media.Multicam.Angle {
     public enum Attributes: String {
@@ -64,7 +48,35 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
     // contains transitions
 }
 
-extension XMLElement { // Angle
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Media.Multicam.Angle {
+    /// Angle name.
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    /// Angle ID.
+    public var angleID: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.angleID.rawValue) }
+        set { element.addAttribute(withName: Attributes.angleID.rawValue, value: newValue) }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Media.Multicam.Angle {
+    /// Story elements contained within the angle.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+}
+
+// MARK: - Typing
+
+// Angle
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Media/Multicam/Angle`` model object.
     /// Call this on a `mc-angle` element only.
     public var fcpAsMCAngle: FinalCutPro.FCPXML.Media.Multicam.Angle? {

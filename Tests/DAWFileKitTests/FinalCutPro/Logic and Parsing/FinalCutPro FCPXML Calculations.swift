@@ -33,7 +33,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // root
-        let fcpxmlElement = try XCTUnwrap(fcpxml.fcpxmlElement)
+        let fcpxmlElement = fcpxml.root.element
         XCTAssertEqual(fcpxmlElement.fcpStart, nil)
         
         // library
@@ -81,7 +81,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // root
-        let fcpxmlElement = try XCTUnwrap(fcpxml.fcpxmlElement)
+        let fcpxmlElement = fcpxml.root.element
         XCTAssertEqual(fcpxmlElement._fcpNearestStart(includingSelf: true), nil)
         
         // library
@@ -127,7 +127,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // root
-        let fcpxmlElement = try XCTUnwrap(fcpxml.fcpxmlElement)
+        let fcpxmlElement = fcpxml.root.element
         XCTAssertEqual(fcpxmlElement.fcpTCStart, nil)
         
         // library
@@ -171,7 +171,7 @@ final class FinalCutPro_FCPXML_Calculations: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // root
-        let fcpxmlElement = try XCTUnwrap(fcpxml.fcpxmlElement)
+        let fcpxmlElement = fcpxml.root.element
         XCTAssertEqual(fcpxmlElement._fcpNearestTCStart(includingSelf: true), nil)
         
         // library

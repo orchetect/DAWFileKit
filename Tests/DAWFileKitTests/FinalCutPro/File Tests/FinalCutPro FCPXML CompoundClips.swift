@@ -91,8 +91,8 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
             )
         )
         .filter {
-            $0.element.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.element.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
+            $0.element.fcpElementType == .marker ||
+            $0.element.fcpElementType == .chapterMarker
         }
         .zeroIndexed
         

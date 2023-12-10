@@ -34,7 +34,7 @@ final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
         
         // resources
         
-        let resources = try XCTUnwrap(fcpxml.resourcesElement)
+        let resources = fcpxml.root.resources
         XCTAssertEqual(resources.childElements.count, 2)
         
         let r1 = try XCTUnwrap(resources.childElements[safe: 0]?.fcpAsFormat)
@@ -58,7 +58,7 @@ final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.library)
+        let library = try XCTUnwrap(fcpxml.root.library)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.name, "MyLibrary")
@@ -70,7 +70,7 @@ final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
-        let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
+        let event = try XCTUnwrap(events[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
         
         // projects
@@ -112,12 +112,9 @@ final class FinalCutPro_FCPXML_BasicMarkers_1HourProjectStart: FCPXMLTestCase {
         
         // markers
         
-        // TODO: make this a more convenient global method
-        let markers = element1.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }
-        
+        let markers = element1.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         XCTAssertEqual(markers.count, 4)
         
         #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")

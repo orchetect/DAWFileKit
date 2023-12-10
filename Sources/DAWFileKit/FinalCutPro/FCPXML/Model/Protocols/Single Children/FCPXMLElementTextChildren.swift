@@ -12,39 +12,19 @@ import TimecodeKit
 
 public protocol FCPXMLElementTextChildren: FCPXMLElement {
     /// Child `text` elements.
-    var texts: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-            FinalCutPro.FCPXML.Text?
-        >>,
-        FinalCutPro.FCPXML.Text
-    > { get }
+    var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> { get }
 }
 
 extension FCPXMLElementTextChildren {
-    public var texts: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-            FinalCutPro.FCPXML.Text?
-        >>,
-        FinalCutPro.FCPXML.Text
-    > {
+    public var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
         element.fcpTexts()
     }
 }
 
 extension XMLElement {
     /// FCPXML: Returns child `text` elements.
-    public func fcpTexts() -> LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-            FinalCutPro.FCPXML.Text?
-        >>,
-        FinalCutPro.FCPXML.Text
-    > {
-        childElements
-            .filter(whereElementNamed: "text")
-            .compactMap(\.fcpAsText)
+    public func fcpTexts() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
+        children(whereFCPElement: .text)
     }
 }
 #endif

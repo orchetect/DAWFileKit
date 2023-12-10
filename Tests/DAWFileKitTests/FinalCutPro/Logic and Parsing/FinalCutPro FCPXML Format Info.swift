@@ -32,7 +32,7 @@ final class FinalCutPro_FCPXML_FormatInfo: FCPXMLTestCase {
         
         // resources
         
-        let resources = try XCTUnwrap(fcpxml.resourcesElement)
+        let resources = fcpxml.root.resources
         
         XCTAssertEqual(resources.childElements.count, 2)
         
@@ -51,7 +51,7 @@ final class FinalCutPro_FCPXML_FormatInfo: FCPXMLTestCase {
         
         // format and tcFormat
         
-        let xmlRoot = try XCTUnwrap(fcpxml.fcpxmlElement)
+        let xmlRoot = fcpxml.root.element
         
         // `fcpxml` element will never have `format` or `tcFormat` attributes
         do {

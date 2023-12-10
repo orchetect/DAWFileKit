@@ -20,29 +20,38 @@ extension FinalCutPro.FCPXML {
     /// > container.
     public struct Audition: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "audition"
         
-        // Children
+        public let elementType: ElementType = .audition
         
-        /// Returns the audition clips.
-        /// The first clip is the active audition and subsequent clips are inactive.
-        /// The convenience property ``activeClip`` is also available to return the first clip.
-        public var clips: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.audition]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Audition {
+    public enum Attributes: String {
+        // Element-Specific Attributes
+        case modDate
+        
+        // Anchorable Attributes
+        case lane
+        case offset
+    }
+    
+    // can only contain one or more clips
+}
+
+// MARK: - Attributes
 
 extension FinalCutPro.FCPXML.Audition: FCPXMLElementAnchorableAttributes { }
 
@@ -75,22 +84,16 @@ extension FinalCutPro.FCPXML.Audition /* Clip Attributes */ {
     }
 }
 
-extension FinalCutPro.FCPXML.Audition {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .audition
-    
-    public enum Attributes: String {
-        // Element-Specific Attributes
-        case modDate
-        
-        // Anchorable Attributes
-        case lane
-        case offset
-    }
-    
-    // can only contain one or more clips
-}
+// MARK: - Children
 
 extension FinalCutPro.FCPXML.Audition {
+    /// Returns the audition clips.
+    /// The first clip is the active audition and subsequent clips are inactive.
+    /// The convenience property ``activeClip`` is also available to return the first clip.
+    public var clips: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+    
     /// Convenience to return the active audition clip.
     public var activeClip: XMLElement? {
         clips.first
@@ -104,13 +107,18 @@ extension FinalCutPro.FCPXML.Audition {
     }
 }
 
-extension XMLElement { // Audition
+// MARK: - Typing
+
+// Audition
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Audition`` model object.
     /// Call this on a `audition` element only.
     public var fcpAsAudition: FinalCutPro.FCPXML.Audition? {
         .init(element: self)
     }
 }
+
+// MARK: - Supporting Types
 
 extension FinalCutPro.FCPXML.Audition {
     public enum Mask: Equatable, Hashable, CaseIterable, Sendable {

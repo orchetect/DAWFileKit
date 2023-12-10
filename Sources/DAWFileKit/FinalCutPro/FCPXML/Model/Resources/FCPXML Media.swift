@@ -24,66 +24,25 @@ extension FinalCutPro.FCPXML {
     /// > ).
     public struct Media: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "media"
         
-        // shared resource attributes
+        public let elementType: ElementType = .media
         
-        public var id: String {
-            get { element.fcpID ?? "" }
-            set { element.fcpID = newValue }
-        }
-        
-        public var name: String? {
-            get { element.fcpName }
-            set { element.fcpName = newValue }
-        }
-        
-        public var projectRef: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.projectRef.rawValue) }
-            set { element.addAttribute(withName: Attributes.projectRef.rawValue, value: newValue) }
-        }
-        
-        // asset attributes
-        
-        public var uid: String? {
-            get { element.fcpUID }
-            set { element.fcpUID = newValue }
-        }
-        
-        // Children
-        
-        /// Returns the `multicam` child element if one exists.
-        public var multicam: Multicam? {
-            element
-                .firstChildElement(named: Children.multicam.rawValue)?
-                .fcpAsMulticam
-        }
-        
-        /// Returns the `sequence` child element if one exists.
-        public var sequence: Sequence? {
-            element
-                .firstChildElement(named: Children.sequence.rawValue)?
-                .fcpAsSequence
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.media]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Media: FCPXMLElementOptionalModDate { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Media {
-    public static let resourceType: FinalCutPro.FCPXML.ResourceType = .media
-    
     public enum Attributes: String {
         // shared resource attributes
         case id
@@ -94,24 +53,70 @@ extension FinalCutPro.FCPXML.Media {
         case projectRef
     }
     
-    public enum Children: String {
-        case multicam
-        case sequence
+    // can contain either one `multicam` or one `sequence`
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Media {
+    // shared resource attributes
+    
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
+    }
+    
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    public var projectRef: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.projectRef.rawValue) }
+        set { element.addAttribute(withName: Attributes.projectRef.rawValue, value: newValue) }
+    }
+    
+    // asset attributes
+    
+    public var uid: String? {
+        get { element.fcpUID }
+        set { element.fcpUID = newValue }
     }
 }
+
+extension FinalCutPro.FCPXML.Media: FCPXMLElementOptionalModDate { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Media {
+    /// Returns the `multicam` child element if one exists.
+    public var multicam: Multicam? {
+        element.firstChild(whereFCPElement: .multicam)
+    }
+    
+    /// Returns the `sequence` child element if one exists.
+    public var sequence: FinalCutPro.FCPXML.Sequence? {
+        element.firstChild(whereFCPElement: .sequence)
+    }
+}
+
+// MARK: - Typing
+
+// Media
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Media`` model object.
+    /// Call this on a `media` element only.
+    public var fcpAsMedia: FinalCutPro.FCPXML.Media? {
+        .init(element: self)
+    }
+}
+
+// MARK: - Supporting Types
 
 extension FinalCutPro.FCPXML.Media {
     public enum MediaType: Equatable, Hashable {
         case multicam
         case sequence
-    }
-}
-
-extension XMLElement { // Media
-    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Media`` model object.
-    /// Call this on a `media` element only.
-    public var fcpAsMedia: FinalCutPro.FCPXML.Media? {
-        .init(element: self)
     }
 }
 

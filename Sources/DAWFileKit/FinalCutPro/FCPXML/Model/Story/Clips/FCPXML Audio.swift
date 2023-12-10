@@ -18,74 +18,25 @@ extension FinalCutPro.FCPXML {
     /// > References audio data from an `asset` or `effect` element.
     public struct Audio: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "audio"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .audio
         
-        /// Required.
-        /// Resource ID
-        public var ref: String {
-            get { element.fcpRef ?? "" }
-            set { element.fcpRef = newValue }
-        }
-        
-        public var role: AudioRole? {
-            get { element.fcpAudioRole }
-            set { element.fcpAudioRole = newValue }
-        }
-        
-        /// Source/track identifier in asset (if not '1').
-        public var srcID: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
-            set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
-        }
-        
-        /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
-        public var sourceChannels: String? {
-            get { element.fcpSourceChannels }
-            set { element.fcpSourceChannels = newValue }
-        }
-        
-        /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
-        public var outputChannels: String? {
-            get { element.fcpOutputChannels }
-            set { element.fcpOutputChannels = newValue }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.audio]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Audio: FCPXMLElementClipAttributes { }
-
-extension FinalCutPro.FCPXML.Audio: FCPXMLElementNoteChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Audio {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .audio
-    
     public enum Attributes: String {
         /// Required.
         /// Resource ID.
@@ -116,7 +67,62 @@ extension FinalCutPro.FCPXML.Audio {
     // contains DTD filter-audio*
 }
 
-extension XMLElement { // Audio
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Audio {
+    /// Required.
+    /// Resource ID
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    public var role: FinalCutPro.FCPXML.AudioRole? {
+        get { element.fcpAudioRole }
+        set { element.fcpAudioRole = newValue }
+    }
+    
+    /// Source/track identifier in asset (if not '1').
+    public var srcID: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
+        set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
+    }
+    
+    /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
+    public var sourceChannels: String? {
+        get { element.fcpSourceChannels }
+        set { element.fcpSourceChannels = newValue }
+    }
+    
+    /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
+    public var outputChannels: String? {
+        get { element.fcpOutputChannels }
+        set { element.fcpOutputChannels = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Audio: FCPXMLElementClipAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Audio {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Audio: FCPXMLElementNoteChild { }
+
+// MARK: - Properties
+
+// Audio
+extension XMLElement {
     /// FCPXML: Get or set the value of the `srcCh` attribute.
     /// Use on `audio` and `audio-channel-source` elements.
     public var fcpSourceChannels: String? {
@@ -132,7 +138,10 @@ extension XMLElement { // Audio
     }
 }
 
-extension XMLElement { // Audio
+// MARK: - Typing
+
+// Audio
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Audio`` model object.
     /// Call this on a `audio` element only.
     public var fcpAsAudio: FinalCutPro.FCPXML.Audio? {

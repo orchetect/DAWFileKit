@@ -15,7 +15,7 @@ extension XMLElement {
     /// This may be called on any element within a FCPXML.
     public var fcpRootResources: XMLElement? {
         fcpRoot?
-            .firstChildElement(named: FinalCutPro.FCPXML.Children.resources.rawValue)
+            .firstChildElement(whereFCPElementType: .resources)
     }
     
     /// FCPXML: Returns the resource element for the given resource ID from within the root-level
@@ -60,7 +60,7 @@ extension XMLElement {
         guard let resource = fcpResource(forID: id, in: resources) else { return nil }
         
         // TODO: More than just `format` resource can contain frame rate info?
-        guard resource.fcpElementType == .resource(.format) else { return nil }
+        guard resource.fcpElementType == .format else { return nil }
         
         return resource._fcpVideoFrameRate()
     }
@@ -69,7 +69,7 @@ extension XMLElement {
     /// Call this on a `format` resource element.
     func _fcpVideoFrameRate() -> VideoFrameRate? {
         // TODO: More than just `format` resource can contain frame rate info?
-        guard fcpElementType == .resource(.format) else { return nil }
+        guard fcpElementType == .format else { return nil }
         
         guard let format = fcpAsFormat else { return nil }
         
@@ -182,8 +182,11 @@ extension XMLElement {
     func _fcpFormatResource(
         in resources: XMLElement? = nil
     ) -> FinalCutPro.FCPXML.Format? {
-        guard let fcpResourceType = fcpResourceType else { return nil }
-        switch fcpResourceType {
+        guard let elementType = fcpElementType,
+              elementType.isResource
+        else { return nil }
+        
+        switch elementType {
         case .asset:
             // an asset should contain a format attribute that we can use to look up the actual
             // format resource
@@ -206,6 +209,9 @@ extension XMLElement {
             
         case .objectTracker:
             return nil
+            
+        default:
+            return nil
         }
     }
     
@@ -216,16 +222,19 @@ extension XMLElement {
     func _fcpFirstFormatResourceForElementOrAncestors(
         in resources: XMLElement? = nil
     ) -> FinalCutPro.FCPXML.Format? {
-        if let (_, resourceID) = ancestorElements(includingSelf: true).first(withAttribute: "format") {
+        if let (_, resourceID) = ancestorElements(includingSelf: true)
+            .first(withAttribute: "format")
+        {
             return fcpResource(forID: resourceID, in: resources)?.fcpAsFormat
         }
         
         // `ref` could point to any resource and not just format, ie: asset or effect.
         // we need to continue drilling into it.
-        if let (_, refResourceID) = ancestorElements(includingSelf: true).first(withAttribute: "ref"),
+        if let (_, refResourceID) = ancestorElements(includingSelf: true)
+            .first(withAttribute: "ref"),
            let refResource = fcpResource(forID: refResourceID, in: resources)
         {
-            if refResource.fcpElementType == .resource(.format) {
+            if refResource.fcpElementType == .format {
                 return refResource.fcpAsFormat
             } else {
                 // recurse
@@ -282,7 +291,7 @@ extension XMLElement {
         in resources: XMLElement? = nil
     ) -> FinalCutPro.FCPXML.Media? {
         guard let resource = fcpResource(forID: resourceID, in: resources),
-              resource.fcpResourceType == .media
+              resource.fcpElementType == .media
         else { return nil }
         
         return resource.fcpAsMedia
@@ -295,16 +304,18 @@ extension XMLElement {
         in resources: XMLElement? = nil
     ) -> FinalCutPro.FCPXML.MediaRep? {
         guard let resource = _fcpFirstResourceForElementOrAncestors(in: resources),
-              let resourceType = resource.fcpResourceType
+              let elementType = resource.fcpElementType,
+              elementType.isResource
         else { return nil }
         
-        switch resourceType {
+        switch elementType {
         case .asset: return resource.fcpAsAsset?.mediaRep
         case .effect: return nil
         case .format: return nil
         case .locator: return nil // contains a URL but not a `media-rep`
         case .media: return nil // TODO: can contain `sequence` or `multicam`
         case .objectTracker: return nil
+        default: return nil
         }
     }
     
@@ -313,16 +324,18 @@ extension XMLElement {
         in resources: XMLElement? = nil
     ) -> URL? {
         guard let resource = _fcpFirstResourceForElementOrAncestors(in: resources),
-              let resourceType = resource.fcpResourceType
+              let elementType = resource.fcpElementType,
+              elementType.isResource
         else { return nil }
         
-        switch resourceType {
+        switch elementType {
         case .asset: return resource.fcpAsAsset?.mediaRep?.src
         case .effect: return nil
         case .format: return nil
         case .locator: return resource.fcpAsLocator?.url
         case .media: return nil // TODO: can contain `sequence` or `multicam`
         case .objectTracker: return nil
+        default: return nil
         }
     }
 }

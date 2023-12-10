@@ -30,99 +30,25 @@ extension FinalCutPro.FCPXML {
     /// > ) to specify its format and other attributes.
     public struct RefClip: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "ref-clip"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .refClip
         
-        /// Required.
-        /// Resource ID
-        public var ref: String {
-            get { element.fcpRef ?? "" }
-            set { element.fcpRef = newValue }
-        }
-        
-        public var useAudioSubroles: Bool { // only used by `ref-clip`
-            get { element.getBool(forAttribute: Attributes.useAudioSubroles.rawValue) ?? false }
-            set {
-                element._fcpSet(
-                    bool: newValue,
-                    forAttribute: Attributes.useAudioSubroles.rawValue,
-                    defaultValue: false,
-                    removeIfDefault: true
-                )
-            }
-        }
-        
-        /// Sources to enable for audio and video. (Default: `.all`)
-        public var srcEnable: ClipSourceEnable {
-            get { element.fcpClipSourceEnable }
-            set { element.fcpClipSourceEnable = newValue }
-        }
-        
-        // Resource
-        
-        /// Returns the `media` resource element for `ref` resource ID.
-        public var mediaResource: Media? {
-            element.fcpResource(forID: ref)?.fcpAsMedia
-        }
-        
-        /// Returns the `sequence` contained in the `media` resource.
-        public var mediaSequence: Sequence? {
-            mediaResource?.sequence
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.refClip]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementClipAttributes { }
-
-extension FinalCutPro.FCPXML.RefClip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
-
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementOptionalModDate { }
-
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
-
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementNoteChild { }
-
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetadataChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.RefClip {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .refClip
-    
     public enum Attributes: String {
         /// Required.
         /// Resource ID
@@ -145,10 +71,7 @@ extension FinalCutPro.FCPXML.RefClip {
         case enabled
     }
     
-    public enum Children: String {
-        case audioRoleSource = "audio-role-source"
-    }
-    
+    // contains audio-role-source*
     // contains DTD %timing-params
     // contains DTD %intrinsic-params
     // can contain DTD %anchor_item*
@@ -156,7 +79,89 @@ extension FinalCutPro.FCPXML.RefClip {
     // can contain filter-audio
 }
 
-extension XMLElement { // RefClip
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.RefClip {
+    /// Required.
+    /// Resource ID
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    public var useAudioSubroles: Bool { // only used by `ref-clip`
+        get { element.getBool(forAttribute: Attributes.useAudioSubroles.rawValue) ?? false }
+        set {
+            element._fcpSet(
+                bool: newValue,
+                forAttribute: Attributes.useAudioSubroles.rawValue,
+                defaultValue: false,
+                removeIfDefault: true
+            )
+        }
+    }
+    
+    /// Sources to enable for audio and video. (Default: `.all`)
+    public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
+        get { element.fcpClipSourceEnable }
+        set { element.fcpClipSourceEnable = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementClipAttributes { }
+
+extension FinalCutPro.FCPXML.RefClip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementOptionalModDate { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.RefClip {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetadataChild { }
+
+// MARK: - Resource
+
+extension FinalCutPro.FCPXML.RefClip {
+    /// Returns the `media` resource element for `ref` resource ID.
+    public var mediaResource: FinalCutPro.FCPXML.Media? {
+        element.fcpResource(forID: ref)?.fcpAsMedia
+    }
+    
+    /// Returns the `sequence` contained in the `media` resource.
+    public var mediaSequence: FinalCutPro.FCPXML.Sequence? {
+        mediaResource?.sequence
+    }
+}
+
+// MARK: - Typing
+
+// RefClip
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/RefClip`` model object.
     /// Call this on a `ref-clip` element only.
     public var fcpAsRefClip: FinalCutPro.FCPXML.RefClip? {

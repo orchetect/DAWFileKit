@@ -42,7 +42,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // resources
         
-        let resources = try XCTUnwrap(fcpxml.resourcesElement)
+        let resources = fcpxml.root.resources
         
         XCTAssertEqual(resources.childElements.count, 3)
         
@@ -114,7 +114,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.library)
+        let library = try XCTUnwrap(fcpxml.root.library)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.location, libraryURL)
@@ -124,12 +124,12 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
-        let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
+        let event = try XCTUnwrap(events[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
         
         // projects
         
-        let projects = try XCTUnwrap(events.zeroIndexed[safe: 0]).projects.zeroIndexed
+        let projects = try XCTUnwrap(events[safe: 0]).projects.zeroIndexed
         XCTAssertEqual(projects.count, 1)
 
         let project = try XCTUnwrap(projects[safe: 0])
@@ -165,22 +165,22 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
         #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
-//        // markers
-//        
-//        let element1Markers = element1.contents.annotations().markers()
-//        XCTAssertEqual(element1Markers.count, 1)
-//        
+        // markers
+        
+        let element1Markers = element1.contents.filter(whereFCPElement: .marker)
+        XCTAssertEqual(element1Markers.count, 1)
+        
 //        let expectedE1Marker0 = FinalCutPro.FCPXML.Marker(
 //            start: Self.tc("00:00:27:10", .fps25),
 //            duration: Self.tc("00:00:00:01", .fps25),
 //            name: "marker1",
-//            metaData: .standard,
+//            state: .standard,
 //            note: "m1 notes"
 //        )
 //        XCTAssertEqual(element1Markers[safe: 0], expectedE1Marker0)
-//        
-//        // keywords
-//        
+        
+        // keywords
+        
 //        let element1Keywords = element1.contents.annotations().keywords()
 //        XCTAssertEqual(element1Keywords.count, 2)
 //        

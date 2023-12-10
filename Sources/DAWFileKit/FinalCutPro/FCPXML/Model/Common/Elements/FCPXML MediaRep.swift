@@ -23,73 +23,25 @@ extension FinalCutPro.FCPXML {
     /// > media representation, as a child element of the asset element.
     public struct MediaRep: Equatable, Hashable {
         public let element: XMLElement
-        public let elementName: String = "media-rep"
         
-        /// The kind of media representation.
-        /// Default: `original-media`
-        public var kind: Kind { // only used in `media-rep`
-            get {
-                let defaultValue: Kind = .originalMedia
-                
-                guard let value = element.stringValue(forAttributeNamed: Attributes.kind.rawValue)
-                else { return defaultValue }
-                
-                return Kind(rawValue: value) ?? defaultValue
-            }
-            set {
-                element.addAttribute(withName: Attributes.kind.rawValue, value: newValue.rawValue)
-            }
-        }
+        public let elementType: ElementType = .mediaRep
         
-        /// The unique identifier of a media representation, assigned by Final Cut Pro.
-        public var sig: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.sig.rawValue) }
-            set { element.addAttribute(withName: Attributes.sig.rawValue, value: newValue) }
-        }
-        
-        /// Required.
-        /// May be a full absolute URL to a local `file://` or remote `https://` resource.
-        /// May also be a relative URL based on the location of the FCPXML document itself, for example: `./Media/MyMovie.mov`.
-        public var src: URL? {
-            get { element.getURL(forAttribute: Attributes.src.rawValue) }
-            set { element.set(url: newValue, forAttribute: Attributes.src.rawValue) }
-        }
-        
-        /// The filename string to use when Final Cut Pro manages the media representation file.
-        ///
-        /// Used when the filename should not be derived from the URL. The appropriate extension
-        /// should be included.
-        ///
-        /// See [FCPXML Reference](
-        /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset/media-rep
-        /// ) for details.
-        public var suggestedFilename: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.suggestedFilename.rawValue) }
-            set { element.addAttribute(withName: Attributes.suggestedFilename.rawValue, value: newValue) }
-        }
-        
-        // Children
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.mediaRep]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.MediaRep: FCPXMLElementBookmarkChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.MediaRep {
-    public enum Element: String {
-        case name = "media-rep"
-    }
-    
     public enum Attributes: String {
         /// The kind of media representation.
         /// Default: `original-media`
@@ -111,11 +63,61 @@ extension FinalCutPro.FCPXML.MediaRep {
         case suggestedFilename
     }
     
-    /// Children of ``MediaRep``.
-    public enum Children: String {
-        case bookmark
+    // can contain one bookmark
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.MediaRep {
+    /// The kind of media representation.
+    /// Default: `original-media`
+    public var kind: Kind { // only used in `media-rep`
+        get {
+            let defaultValue: Kind = .originalMedia
+            
+            guard let value = element.stringValue(forAttributeNamed: Attributes.kind.rawValue)
+            else { return defaultValue }
+            
+            return Kind(rawValue: value) ?? defaultValue
+        }
+        set {
+            element.addAttribute(withName: Attributes.kind.rawValue, value: newValue.rawValue)
+        }
+    }
+    
+    /// The unique identifier of a media representation, assigned by Final Cut Pro.
+    public var sig: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.sig.rawValue) }
+        set { element.addAttribute(withName: Attributes.sig.rawValue, value: newValue) }
+    }
+    
+    /// Required.
+    /// May be a full absolute URL to a local `file://` or remote `https://` resource.
+    /// May also be a relative URL based on the location of the FCPXML document itself, for example: `./Media/MyMovie.mov`.
+    public var src: URL? {
+        get { element.getURL(forAttribute: Attributes.src.rawValue) }
+        set { element.set(url: newValue, forAttribute: Attributes.src.rawValue) }
+    }
+    
+    /// The filename string to use when Final Cut Pro manages the media representation file.
+    ///
+    /// Used when the filename should not be derived from the URL. The appropriate extension
+    /// should be included.
+    ///
+    /// See [FCPXML Reference](
+    /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset/media-rep
+    /// ) for details.
+    public var suggestedFilename: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.suggestedFilename.rawValue) }
+        set { element.addAttribute(withName: Attributes.suggestedFilename.rawValue, value: newValue) }
     }
 }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.MediaRep: FCPXMLElementBookmarkChild { }
+
+// MARK: - Properties
 
 extension FinalCutPro.FCPXML.MediaRep {
     /// Convenience to returns the `src` filename.
@@ -124,14 +126,17 @@ extension FinalCutPro.FCPXML.MediaRep {
     }
 }
 
-extension XMLElement { // MediaRep
+// MARK: - Typing
+
+// MediaRep
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/MediaRep`` model object.
     /// Call this on an `media-rep` element only.
     public var fcpAsMediaRep: FinalCutPro.FCPXML.MediaRep? {
         .init(element: self)
     }
 }
-// MARK: - MediaRep Attribute: Kind
+// MARK: - Attribute Types
 
 extension FinalCutPro.FCPXML.MediaRep {
     public enum Kind: String, Equatable, Hashable, CaseIterable, Sendable {

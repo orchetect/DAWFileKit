@@ -12,23 +12,11 @@ import TimecodeKit
 
 public protocol FCPXMLElementAudioRoleSourceChildren: FCPXMLElement {
     /// Child `audio-role-source` elements.
-    var audioRoleSources: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-            FinalCutPro.FCPXML.AudioRoleSource?
-        >>,
-        FinalCutPro.FCPXML.AudioRoleSource
-    > { get }
+    var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> { get }
 }
 
 extension FCPXMLElementAudioRoleSourceChildren {
-    public var audioRoleSources: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-            FinalCutPro.FCPXML.AudioRoleSource?
-        >>,
-        FinalCutPro.FCPXML.AudioRoleSource
-    > {
+    public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
         element.fcpAudioRoleSources()
     }
 }
@@ -36,14 +24,9 @@ extension FCPXMLElementAudioRoleSourceChildren {
 extension XMLElement {
     /// FCPXML: Returns child `audio-role-source` elements.
     /// Use on `ref-clip`, `sync-source`, or `mc-source` elements.
-    public func fcpAudioRoleSources() -> LazyMapSequence<LazyFilterSequence<LazyMapSequence<
-        LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-        FinalCutPro.FCPXML.AudioRoleSource?
-    >>, FinalCutPro.FCPXML.AudioRoleSource
-    > {
-        childElements
-            .filter(whereElementNamed: "audio-role-source")
-            .compactMap(\.fcpAsAudioRoleSource)
+    public func fcpAudioRoleSources() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
+        children(whereFCPElement: .audioRoleSource)
     }
 }
+
 #endif

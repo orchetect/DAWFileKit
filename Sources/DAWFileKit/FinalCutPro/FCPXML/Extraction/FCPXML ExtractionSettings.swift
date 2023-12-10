@@ -110,11 +110,7 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
         filteredExtractionTypes: nil,
         excludedTraversalTypes: [],
         excludedExtractionTypes: [],
-        excludedAncestorTypesOfParentForExtraction: [
-            .story(.clip(.refClip)),
-            .story(.clip(.syncClip)),
-            .story(.clip(.mcClip))
-        ],
+        excludedAncestorTypesOfParentForExtraction: [.refClip, .syncClip, .mcClip],
         traversalPredicate: nil,
         extractionPredicate: nil
     )

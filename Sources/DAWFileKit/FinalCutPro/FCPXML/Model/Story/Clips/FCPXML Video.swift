@@ -18,56 +18,25 @@ extension FinalCutPro.FCPXML {
     /// > References video data from an `asset` or `effect` element.
     public struct Video: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "video"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .video
         
-        /// Resource ID. (Required)
-        public var ref: String {
-            get { element.fcpRef ?? "" }
-            set { element.fcpRef = newValue }
-        }
-        
-        /// Video role. (Default: Video)
-        public var role: VideoRole? {
-            get { element.fcpVideoRole }
-            set { element.fcpVideoRole = newValue }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.video]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Video: FCPXMLElementClipAttributes { }
-
-extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Video {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .video
-    
     public enum Attributes: String {
         /// Required.
         /// Resource ID.
@@ -95,7 +64,44 @@ extension FinalCutPro.FCPXML.Video {
     // con contain one or zero DTD reserved?
 }
 
-extension XMLElement { // Video
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Video {
+    /// Resource ID. (Required)
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    /// Video role. (Default: Video)
+    public var role: FinalCutPro.FCPXML.VideoRole? {
+        get { element.fcpVideoRole }
+        set { element.fcpVideoRole = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Video: FCPXMLElementClipAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Video {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
+
+// MARK: - Typing
+
+// Video
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Video`` model object.
     /// Call this on a `video` element only.
     public var fcpAsVideo: FinalCutPro.FCPXML.Video? {

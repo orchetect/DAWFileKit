@@ -26,8 +26,11 @@ extension FCPXMLElementBookmarkChild {
     
     public var bookmarkData: Data? {
         get {
-            guard let value = element.firstChildElement(named: "bookmark")?.stringValue
+            guard let value = element
+                .firstChildElement(whereFCPElementType: .bookmark)?
+                .stringValue
             else { return nil }
+            
             return Data(base64Encoded: value)
         }
         set {

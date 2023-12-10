@@ -18,61 +18,25 @@ extension FinalCutPro.FCPXML {
     /// Therefore, "tcFormat" (NDF/DF) attribute is not stored in `title` XML itself.
     public struct Title: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "title"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .title
         
-        /// Effect ID (resource ID) for a Motion template. (Required)
-        public var ref: String {
-            get { element.fcpRef ?? "" }
-            set { element.fcpRef = newValue }
-        }
-        
-        public var role: VideoRole? {
-            get { element.fcpVideoRole }
-            set { element.fcpVideoRole = newValue }
-        }
-        
-        // Children
-        
-        // TODO: public var texts
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.title]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Title: FCPXMLElementClipAttributes { }
-
-extension FinalCutPro.FCPXML.Title: FCPXMLElementTextChildren { }
-
-extension FinalCutPro.FCPXML.Title: FCPXMLElementTextStyleDefinitionChildren { }
-
-extension FinalCutPro.FCPXML.Title: FCPXMLElementNoteChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Title {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .title
-    
     public enum Attributes: String {
         case ref // effect ID for a Motion template
         case role
@@ -95,7 +59,49 @@ extension FinalCutPro.FCPXML.Title {
     // can contain DTD %video_filter_item*
 }
 
-extension XMLElement { // Title
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Title {
+    /// Effect ID (resource ID) for a Motion template. (Required)
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    public var role: FinalCutPro.FCPXML.VideoRole? {
+        get { element.fcpVideoRole }
+        set { element.fcpVideoRole = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementClipAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Title {
+    // TODO: public var texts
+    
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementTextChildren { }
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementTextStyleDefinitionChildren { }
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementNoteChild { }
+
+// MARK: - Typing
+
+// Title
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Title`` model object.
     /// Call this on a `title` element only.
     public var fcpAsTitle: FinalCutPro.FCPXML.Title? {

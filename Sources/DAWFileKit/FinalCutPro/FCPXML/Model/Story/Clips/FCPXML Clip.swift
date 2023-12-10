@@ -28,69 +28,25 @@ extension FinalCutPro.FCPXML {
     /// > ) to specify its format, etc.
     public struct Clip: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "clip"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .clip
         
-        public var format: String? { // DTD: default is same as parent
-            get { element.fcpFormat }
-            set { element.fcpFormat = newValue }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.clip]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCStart { }
-
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCFormat { }
-
-extension FinalCutPro.FCPXML.Clip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
-
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalModDate { }
-
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementNoteChild { }
-
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetadataChild { }
-
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementAudioChannelSourceChildren { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Clip {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .clip
-    
     public enum Attributes: String {
         // Element-Specific Attributes
         case format
@@ -119,7 +75,57 @@ extension FinalCutPro.FCPXML.Clip {
     // contains DTD filter-audio*
 }
 
-extension XMLElement { // Clip
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Clip {
+    public var format: String? { // DTD: default is same as parent
+        get { element.fcpFormat }
+        set { element.fcpFormat = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCStart { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCFormat { }
+
+extension FinalCutPro.FCPXML.Clip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalModDate { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Clip {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementAudioChannelSourceChildren { }
+
+// MARK: - Typing
+
+// Clip
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Clip`` model object.
     /// Call this on a `clip` element only.
     public var fcpAsClip: FinalCutPro.FCPXML.Clip? {

@@ -24,17 +24,17 @@ extension FinalCutPro.FCPXML {
             if settings.filteredExtractionTypes == nil {
                 settings.filteredExtractionTypes = []
             }
-            settings.filteredExtractionTypes?.insert(.story(.annotation(.caption)))
+            settings.filteredExtractionTypes?.insert(.caption)
             
             let extracted = extractable.fcpExtractElements(
                 settings: settings
             ) /*{ element in
-                element.element.fcpElementType == .story(.annotation(.caption))
+                element.element.fcpElementType == .caption
             }*/
             
             let captions = extracted
                 // .filter {
-                //     $0.element.fcpElementType == .story(.annotation(.caption))
+                //     $0.element.fcpElementType == .caption
                 // }
             
             return captions

@@ -18,48 +18,25 @@ extension FinalCutPro.FCPXML {
     /// > Defines a placeholder element that has no intrinsic audio or video data.
     public struct Gap: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "gap"
         
-        // Children
+        public let elementType: ElementType = .gap
         
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.gap]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLElementClipAttributes {
-    // A kludge since Gap uses 5 of the 6 clip attributes, except `lane`.
-    public var lane: Int? {
-        get { nil }
-        set { assertionFailure("Can't set lane attribute on gap clip.") }
-    }
-}
-
-extension FinalCutPro.FCPXML.Gap: FCPXMLElementMetadataChild { }
-
-extension FinalCutPro.FCPXML.Gap: FCPXMLElementNoteChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Gap {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .gap
-    
     public enum Attributes: String {
         // Anchorable Attributes
         // (no lane)
@@ -76,7 +53,38 @@ extension FinalCutPro.FCPXML.Gap {
     // can contain markers
 }
 
-extension XMLElement { // Gap
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementClipAttributes {
+    // A kludge since Gap uses 5 of the 6 clip attributes, except `lane`.
+    public var lane: Int? {
+        get { nil }
+        set { assertionFailure("Can't set lane attribute on gap clip.") }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Gap {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementNoteChild { }
+
+// MARK: - Typing
+
+// Gap
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Gap`` model object.
     /// Call this on a `gap` element only.
     public var fcpAsGap: FinalCutPro.FCPXML.Gap? {

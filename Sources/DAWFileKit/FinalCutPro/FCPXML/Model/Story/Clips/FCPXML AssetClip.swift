@@ -36,52 +36,75 @@ extension FinalCutPro.FCPXML {
     /// > > components from a media file as a clip.
     public struct AssetClip: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "asset-clip"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .assetClip
         
-        /// Required.
-        /// Resource ID.
-        public var ref: String {
-            get { element.fcpRef ?? "" }
-            set { element.fcpRef = newValue }
-        }
-        
-        /// Sources to enable for audio and video. (Default: `.all`)
-        public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
-            get { element.fcpClipSourceEnable }
-            set { element.fcpClipSourceEnable = newValue }
-        }
-        
-        public var format: String? { // DTD: default is same as parent
-            get { element.fcpFormat }
-            set { element.fcpFormat = newValue }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.assetClip]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.AssetClip {
+    public enum Attributes: String {
+        // Element-Specific Attributes
+        case ref
+        case format
+        case tcStart
+        case tcFormat
+        case audioStart
+        case audioDuration
+        case audioRole
+        case videoRole
+        case srcEnable
+        case modDate
+        
+        // Anchorable Attributes
+        case lane
+        case offset
+        
+        // Clip Attributes
+        case name
+        case start
+        case duration
+        case enabled
+    }
+    
+    // contains DTD audio-channel-source*
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params
+    // contains DTD %anchor_item* (includes captions)
+    // contains markers
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.AssetClip {
+    /// Required.
+    /// Resource ID.
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    /// Sources to enable for audio and video. (Default: `.all`)
+    public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
+        get { element.fcpClipSourceEnable }
+        set { element.fcpClipSourceEnable = newValue }
+    }
+    
+    public var format: String? { // DTD: default is same as parent
+        get { element.fcpFormat }
+        set { element.fcpFormat = newValue }
     }
 }
 
@@ -119,48 +142,28 @@ extension FinalCutPro.FCPXML.AssetClip /* FCPXMLElementOptionalVideoRole */ {
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementOptionalModDate { }
 
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.AssetClip {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioChannelSourceChildren { }
 
-extension FinalCutPro.FCPXML.AssetClip {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .assetClip
-    
-    public enum Attributes: String {
-        // Element-Specific Attributes
-        case ref
-        case format
-        case tcStart
-        case tcFormat
-        case audioStart
-        case audioDuration
-        case audioRole
-        case videoRole
-        case srcEnable
-        case modDate
-        
-        // Anchorable Attributes
-        case lane
-        case offset
-        
-        // Clip Attributes
-        case name
-        case start
-        case duration
-        case enabled
-    }
-    
-    public enum Children: String {
-        case audioChannelSource = "audio-channel-source"
-    }
-    
-    // contains DTD %timing-params
-    // contains DTD %intrinsic-params
-    // contains DTD %anchor_item* (includes captions)
-    // contains markers
-}
+// MARK: - Typing
 
-extension XMLElement { // AssetClip
+// AssetClip
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AssetClip`` model object.
     /// Call this on a `asset-clip` element only.
     public var fcpAsAssetClip: FinalCutPro.FCPXML.AssetClip? {

@@ -18,11 +18,12 @@ extension FCPXMLElementMetadataChild {
     public var metadata: FinalCutPro.FCPXML.Metadata? {
         get {
             element
-                .firstChildElement(named: "metadata")?
-                .fcpAsMetadata
+                .firstChild(whereFCPElement: .metadata)
         }
         set {
-            if let existingElement = element.firstChildElement(named: "metadata") {
+            if let existingElement = element
+                .firstChildElement(whereFCPElementType: .metadata)
+            {
                 existingElement.detach()
             }
             if let newValue = newValue {

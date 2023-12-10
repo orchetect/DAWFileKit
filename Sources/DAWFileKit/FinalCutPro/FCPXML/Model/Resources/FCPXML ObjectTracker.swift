@@ -24,43 +24,43 @@ extension FinalCutPro.FCPXML {
     /// > See [`object-tracker`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/object-tracker).
     public struct ObjectTracker: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "object-tracker"
         
-        // Children
+        public let elementType: ElementType = .objectTracker
         
-        /// Returns child `tracking-shape` elements.
-        public var trackingShapes: some Swift.Sequence<TrackingShape> {
-            element.childElements
-                .filter(whereElementNamed: Children.trackingShape.rawValue)
-                .compactMap(\.fcpAsTrackingShape)
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.objectTracker]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.ObjectTracker {
-    public static let resourceType: FinalCutPro.FCPXML.ResourceType = .objectTracker
-    
     // no Attributes
-    
-    public enum Children: String {
-        case trackingShape = "tracking-shape"
-    }
     
     // contains 1 or more `tracking-shape`
 }
 
-extension XMLElement { // ObjectTracker
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.ObjectTracker {
+    /// Returns child `tracking-shape` elements.
+    public var trackingShapes: LazyFCPXMLChildrenSequence<TrackingShape> {
+        element.children(whereFCPElement: .trackingShape)
+    }
+}
+
+// MARK: - Typing
+
+// ObjectTracker
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/ObjectTracker`` model object.
     /// Call this on a `object-tracker` element only.
     public var fcpAsObjectTracker: FinalCutPro.FCPXML.ObjectTracker? {

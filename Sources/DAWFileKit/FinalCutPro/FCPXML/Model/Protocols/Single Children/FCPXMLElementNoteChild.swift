@@ -17,10 +17,12 @@ public protocol FCPXMLElementNoteChild: FCPXMLElement {
 extension FCPXMLElementNoteChild {
     public var note: String? {
         get {
-            element.firstChildElement(named: "note")?.stringValue
+            element
+                .firstChildElement(whereFCPElementType: .note)?
+                .stringValue
         }
         set {
-            element._updateChildElement(named: "note", newStringValue: newValue)
+            element._updateFirstChildElement(ofType: .note, newStringValue: newValue)
         }
     }
 }

@@ -27,22 +27,23 @@ extension FinalCutPro.FCPXML.ObjectTracker {
     /// > ).
     public struct TrackingShape: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "tracking-shape"
         
-        // TODO: add property getters/setters
+        public let elementType: FinalCutPro.FCPXML.ElementType = .trackingShape
         
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<FinalCutPro.FCPXML.ElementType> = [.trackingShape]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
+
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.ObjectTracker.TrackingShape {
     public enum Attributes: String {
@@ -52,10 +53,17 @@ extension FinalCutPro.FCPXML.ObjectTracker.TrackingShape {
         case analysisMethod // enum case
         case dataLocator
     }
-    // TODO: Add attributes etc.
+    
 }
 
-extension XMLElement { // ObjectTracker.TrackingShape
+// MARK: - Attributes
+
+// TODO: Add attributes etc.
+
+// MARK: - Typing
+
+// ObjectTracker.TrackingShape
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/ObjectTracker/TrackingShape``
     /// model object.
     /// Call this on a `tracking-shape` element only.

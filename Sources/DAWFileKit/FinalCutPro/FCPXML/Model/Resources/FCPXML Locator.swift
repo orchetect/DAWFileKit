@@ -21,40 +21,25 @@ extension FinalCutPro.FCPXML {
     /// > See [`locator`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/locator).
     public struct Locator: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "locator"
         
-        /// Required.
-        /// Identifier.
-        public var id: String {
-            get { element.fcpID ?? "" }
-            set { element.fcpID = newValue }
-        }
+        public let elementType: ElementType = .locator
         
-        /// Required.
-        /// Absolute URL or relative URL to library path.
-        public var url: URL? {
-            get { element.getURL(forAttribute: Attributes.url.rawValue) }
-            set { element.set(url: newValue, forAttribute: Attributes.url.rawValue) }
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.locator]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Locator: FCPXMLElementBookmarkChild { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Locator {
-    public static let resourceType: FinalCutPro.FCPXML.ResourceType = .locator
-    
     public enum Attributes: String {
         /// Required.
         /// Identifier.
@@ -66,7 +51,32 @@ extension FinalCutPro.FCPXML.Locator {
     }
 }
 
-extension XMLElement { // Locator
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Locator {
+    /// Required.
+    /// Identifier.
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
+    }
+    
+    /// Required.
+    /// Absolute URL or relative URL to library path.
+    public var url: URL? {
+        get { element.getURL(forAttribute: Attributes.url.rawValue) }
+        set { element.set(url: newValue, forAttribute: Attributes.url.rawValue) }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Locator: FCPXMLElementBookmarkChild { }
+
+// MARK: - Typing
+
+// Locator
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Locator`` model object.
     /// Call this on a `locator` element only.
     public var fcpAsLocator: FinalCutPro.FCPXML.Locator? {

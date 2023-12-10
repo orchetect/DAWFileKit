@@ -73,6 +73,7 @@ extension FinalCutPro.FCPXML.AudioRate {
         guard let match = Self.allCases
             .first(where: { $0.rawValueForAsset == rawValue })
         else { return nil }
+        
         self = match
     }
 }

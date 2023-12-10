@@ -36,14 +36,14 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         XCTAssertEqual(fcpxml.version, .ver1_11)
         
         // resources
-        let resources = try XCTUnwrap(fcpxml.resourcesElement)
+        let resources = fcpxml.root.resources
         XCTAssertEqual(resources.childElements.count, 2)
         
         // events
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
-        let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
+        let event = try XCTUnwrap(events[safe: 0])
         
         // project
         let projects = event.projects.zeroIndexed
@@ -86,14 +86,12 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         
         // markers
         
-        // TODO: make this a more convenient global method
-        let audition1Markers = audition1.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }.zeroIndexed
+        let audition1Markers = audition1.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         XCTAssertEqual(audition1Markers.count, 1)
         
-        let a1Marker = try XCTUnwrap(audition1Markers[safe: 0]?.fcpAsMarker)
+        let a1Marker = try XCTUnwrap(audition1Markers[safe: 0])
         XCTAssertEqual(a1Marker.startAsTimecode, Self.tc("01:00:05:00", .fps29_97))
         XCTAssertEqual(a1Marker.durationAsTimecode, Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(a1Marker.name, "Marker 1")
@@ -108,15 +106,13 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         // XCTAssertEqual(a1Marker.context[.ancestorEventName], "Test Event")
         // XCTAssertEqual(a1Marker.context[.ancestorProjectName], "AuditionMarkers")
         
-        // TODO: make this a more convenient global method
-        let audition2Markers = audition2.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }.zeroIndexed
+        let audition2Markers = audition2.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         
         XCTAssertEqual(audition2Markers.count, 1)
         
-        let a2Marker = try XCTUnwrap(audition2Markers[safe: 0]?.fcpAsMarker)
+        let a2Marker = try XCTUnwrap(audition2Markers[safe: 0])
         XCTAssertEqual(a2Marker.startAsTimecode, Self.tc("01:00:02:00", .fps29_97))
         XCTAssertEqual(a2Marker.durationAsTimecode, Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(a2Marker.name, "Marker 2")

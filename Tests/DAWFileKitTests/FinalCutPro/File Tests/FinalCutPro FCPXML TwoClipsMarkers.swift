@@ -39,7 +39,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
-        let event = try XCTUnwrap(events.zeroIndexed[safe: 0])
+        let event = try XCTUnwrap(events[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
         
         // project
@@ -107,13 +107,9 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // markers in title 1
         
-        // TODO: make this a more convenient global method
-        let title1Markers = title1.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }
-        .compactMap(\.fcpAsMarker)
-        .zeroIndexed
+        let title1Markers = title1.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         
         // start is 4 seconds 15 frames elapsed in the title's local timeline.
         // the gap's local timeline starts at 01:00:00:00 so the marker's start is 01:00:04:15.
@@ -127,13 +123,9 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // markers in gap
         
-        // TODO: make this a more convenient global method
-        let gapMarkers = gap.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }
-        .compactMap(\.fcpAsMarker)
-        .zeroIndexed
+        let gapMarkers = gap.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         
         // start is 5 seconds elapsed in the gap's local timeline.
         // the gap's local timeline starts at 00:59:56:12 so the marker's start is 01:00:01:12.
@@ -150,13 +142,9 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // markers in title 2
         
-        // TODO: make this a more convenient global method
-        let title2Markers = title2.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }
-        .compactMap(\.fcpAsMarker)
-        .zeroIndexed
+        let title2Markers = title2.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         
         // start is 7 seconds elapsed in the title's local timeline.
         // the gap's local timeline starts at 01:00:00:00 so the marker's start is 01:00:07:00.
@@ -198,7 +186,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             extractedTitle1Marker.value(forContext: .absoluteStartAsTimecode),
             Self.tc("01:00:04:15", .fps29_97)
         )
-        XCTAssertEqual(extractedTitle1Marker.value(forContext: .parentType), .story(.clip(.title)))
+        XCTAssertEqual(extractedTitle1Marker.value(forContext: .parentType), .title)
         XCTAssertEqual(extractedTitle1Marker.value(forContext: .parentName), "Basic Title 1")
         XCTAssertEqual(
             extractedTitle1Marker.value(forContext: .parentAbsoluteStartAsTimecode),
@@ -217,7 +205,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             extractedGapMarker.value(forContext: .absoluteStartAsTimecode),
             Self.tc("01:00:15:00", .fps29_97)
         )
-        XCTAssertEqual(extractedGapMarker.value(forContext: .parentType), .story(.clip(.gap)))
+        XCTAssertEqual(extractedGapMarker.value(forContext: .parentType), .gap)
         XCTAssertEqual(extractedGapMarker.value(forContext: .parentName), "Gap")
         XCTAssertEqual(
             extractedGapMarker.value(forContext: .parentAbsoluteStartAsTimecode),
@@ -236,7 +224,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             extractedTitle2Marker.value(forContext: .absoluteStartAsTimecode),
             Self.tc("01:00:27:00", .fps29_97)
         )
-        XCTAssertEqual(extractedTitle2Marker.value(forContext: .parentType), .story(.clip(.title)))
+        XCTAssertEqual(extractedTitle2Marker.value(forContext: .parentType), .title)
         XCTAssertEqual(extractedTitle2Marker.value(forContext: .parentName), "Basic Title 2")
         XCTAssertEqual(
             extractedTitle2Marker.value(forContext: .parentAbsoluteStartAsTimecode),
@@ -260,7 +248,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludedTraversalTypes: [.story(.clip(.title))]
+            excludedTraversalTypes: [.title]
         )
         let extractedMarkers = event
             .extractElements(preset: .markers, settings: settings)
@@ -283,7 +271,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludedTraversalTypes: [.story(.clip(.gap))]
+            excludedTraversalTypes: [.gap]
         )
         let extractedMarkers = event
             .extractElements(preset: .markers, settings: settings)
@@ -309,7 +297,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            excludedTraversalTypes: [.story(.clip(.gap)), .story(.clip(.title))]
+            excludedTraversalTypes: [.gap, .title]
         )
         let extractedMarkers = event
             .extractElements(preset: .markers, settings: settings)

@@ -24,52 +24,25 @@ extension FinalCutPro.FCPXML {
     /// > ).
     public struct Effect: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "effect"
         
-        // shared resource attributes
+        public let elementType: ElementType = .effect
         
-        /// Identifier. (Required)
-        public var id: String {
-            get { element.fcpID ?? "" }
-            set { element.fcpID = newValue }
-        }
-        
-        /// Name.
-        public var name: String? {
-            get { element.fcpName }
-            set { element.fcpName = newValue }
-        }
-        
-        // effect attributes
-        
-        /// UID. (Required)
-        public var uid: String {
-            get { element.fcpUID ?? "" }
-            set { element.fcpUID = newValue }
-        }
-        
-        /// Source.
-        public var src: String? {
-            get { element.fcpSRC }
-            set { element.fcpSRC = newValue }
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.effect]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.Effect {
-    public static let resourceType: FinalCutPro.FCPXML.ResourceType = .effect
-    
     public enum Attributes: String {
         // shared resource attributes
         /// Identifier. (Required)
@@ -88,7 +61,42 @@ extension FinalCutPro.FCPXML.Effect {
     }
 }
 
-extension XMLElement { // Effect
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Effect {
+    // shared resource attributes
+    
+    /// Identifier. (Required)
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
+    }
+    
+    /// Name.
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    // effect attributes
+    
+    /// UID. (Required)
+    public var uid: String {
+        get { element.fcpUID ?? "" }
+        set { element.fcpUID = newValue }
+    }
+    
+    /// Source.
+    public var src: String? {
+        get { element.fcpSRC }
+        set { element.fcpSRC = newValue }
+    }
+}
+
+// MARK: - Typing
+
+// Effect
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Effect`` model object.
     /// Call this on an `effect` element only.
     public var fcpAsEffect: FinalCutPro.FCPXML.Effect? {

@@ -14,41 +14,28 @@ extension FinalCutPro.FCPXML {
     /// Represents a closed caption.
     public struct Caption: FCPXMLElement { 
         public let element: XMLElement
-        public let elementName: String = "caption"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .caption
         
-        /// Role.
-        public var role: CaptionRole? {
-            get { element.fcpRole(as: CaptionRole.self) }
-            set { element.fcpSet(role: newValue) }
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.caption]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Caption: FCPXMLElementClipAttributes { }
-
-extension FinalCutPro.FCPXML.Caption: FCPXMLElementNoteChild { }
-
-extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextChildren { }
-
-extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextStyleDefinitionChildren { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Caption {
-    public static let annotationType: FinalCutPro.FCPXML.AnnotationType = .caption
-    
     public enum Attributes: String {
+        /// Role.
+        ///
         /// The format is `role-name?captionFormat=captionFormat.subrole`.
         /// ie: `iTT?captionFormat=ITT.en`.
         case role
@@ -65,16 +52,37 @@ extension FinalCutPro.FCPXML.Caption {
         case enabled // default true
     }
     
-    public enum Children: String {
-        case text
-        case textStyleDef = "text-style-def"
-    }
-    
     // contains `text` elements
     // contains `text-style-def` elements
 }
 
-extension XMLElement { // Caption
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Caption {
+    /// Role.
+    ///
+    /// The format is `role-name?captionFormat=captionFormat.subrole`.
+    /// ie: `iTT?captionFormat=ITT.en`.
+    public var role: FinalCutPro.FCPXML.CaptionRole? {
+        get { element.fcpRole(as: FinalCutPro.FCPXML.CaptionRole.self) }
+        set { element.fcpSet(role: newValue) }
+    }
+}
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementClipAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextChildren { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextStyleDefinitionChildren { }
+
+// MARK: - Typing
+
+// Caption
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Caption`` model object.
     /// Call this on a `caption` element only.
     public var fcpAsCaption: FinalCutPro.FCPXML.Caption? {

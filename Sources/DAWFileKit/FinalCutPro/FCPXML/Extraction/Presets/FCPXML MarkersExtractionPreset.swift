@@ -24,12 +24,12 @@ extension FinalCutPro.FCPXML {
             if settings.filteredExtractionTypes == nil {
                 settings.filteredExtractionTypes = []
             }
-            settings.filteredExtractionTypes?.insert(.story(.annotation(.marker(.marker))))
-            settings.filteredExtractionTypes?.insert(.story(.annotation(.marker(.chapterMarker))))
+            settings.filteredExtractionTypes?.insert(.marker)
+            settings.filteredExtractionTypes?.insert(.chapterMarker)
             
 //            let elementTypes: [ElementType] = [
-//                .story(.annotation(.marker(.marker))),
-//                .story(.annotation(.marker(.chapterMarker)))
+//                .marker,
+//                .chapterMarker
 //            ]
             
             let extracted = extractable.fcpExtractElements(

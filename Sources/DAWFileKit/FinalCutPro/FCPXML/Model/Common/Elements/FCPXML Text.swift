@@ -13,83 +13,25 @@ extension FinalCutPro.FCPXML {
     /// Text element.
     public struct Text: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
-        public let elementName: String = "text"
         
-        // Element-specific Attributes
+        public let elementType: ElementType = .text
         
-        /// For a CEA-608 caption text block.
-        public var displayStyle: DisplayStyle? { // used only with `text`
-            get {
-                guard let value = element.stringValue(forAttributeNamed: Attributes.displayStyle.rawValue)
-                else { return nil }
-                
-                return DisplayStyle(rawValue: value)
-            }
-            set {
-                element.addAttribute(withName: Attributes.displayStyle.rawValue, value: newValue?.rawValue)
-            }
-        }
-        
-        /// For a CEA-608 caption text block with roll-up animation.
-        public var rollUpHeight: String?
-        
-        /// For a CEA-608 caption text block, as "x y".
-        public var position: String? {
-            get { element.fcpPosition }
-            set { element.fcpPosition = newValue }
-        }
-        
-        /// For a ITT caption text block.
-        public var placement: Placement? { // used only with `text`
-            get {
-                guard let value = element.stringValue(forAttributeNamed: Attributes.placement.rawValue)
-                else { return nil }
-                
-                return Placement(rawValue: value)
-            }
-            set {
-                element.addAttribute(withName: Attributes.placement.rawValue, value: newValue?.rawValue)
-            }
-        }
-        
-        /// For a CEA-608 caption text block.
-        public var alignment: Alignment? { // used only with `text`
-            get {
-                guard let value = element.stringValue(forAttributeNamed: Attributes.alignment.rawValue)
-                else { return nil }
-                
-                return Alignment(rawValue: value)
-            }
-            set {
-                element.addAttribute(withName: Attributes.alignment.rawValue, value: newValue?.rawValue)
-            }
-        }
-        
-        // Children
-        
-        /// Returns child `text-style` elements.
-        public var textStrings: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpTextStyles
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.text]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.Text {
-    public enum Element: String {
-        case name = "text"
-    }
-    
     public enum Attributes: String {
         /// For a CEA-608 caption text block.
         case displayStyle = "display-style"
@@ -107,23 +49,102 @@ extension FinalCutPro.FCPXML.Text {
         case alignment
     }
     
-    public enum Children: String {
-        case textStyle = "text-style"
+    // contains DTD text-style*
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Text {
+    /// For a CEA-608 caption text block.
+    public var displayStyle: DisplayStyle? { // used only with `text`
+        get {
+            guard let value = element.stringValue(forAttributeNamed: Attributes.displayStyle.rawValue)
+            else { return nil }
+            
+            return DisplayStyle(rawValue: value)
+        }
+        set {
+            element.addAttribute(withName: Attributes.displayStyle.rawValue, value: newValue?.rawValue)
+        }
+    }
+    
+    /// For a CEA-608 caption text block with roll-up animation.
+    public var rollUpHeight: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.rollUpHeight.rawValue) }
+        set { element.addAttribute(withName: Attributes.rollUpHeight.rawValue, value: newValue) }
+    }
+    
+    /// For a CEA-608 caption text block, as "x y".
+    public var position: String? {
+        get { element.fcpPosition }
+        set { element.fcpPosition = newValue }
+    }
+    
+    /// For a ITT caption text block.
+    public var placement: Placement? { // used only with `text`
+        get {
+            guard let value = element.stringValue(forAttributeNamed: Attributes.placement.rawValue)
+            else { return nil }
+            
+            return Placement(rawValue: value)
+        }
+        set {
+            element.addAttribute(withName: Attributes.placement.rawValue, value: newValue?.rawValue)
+        }
+    }
+    
+    /// For a CEA-608 caption text block.
+    public var alignment: Alignment? { // used only with `text`
+        get {
+            guard let value = element.stringValue(forAttributeNamed: Attributes.alignment.rawValue)
+            else { return nil }
+            
+            return Alignment(rawValue: value)
+        }
+        set {
+            element.addAttribute(withName: Attributes.alignment.rawValue, value: newValue?.rawValue)
+        }
     }
 }
 
-extension XMLElement { // Text
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Text {
+    /// Returns child `text-style` elements.
+    public var textStrings: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpTextStyles
+    }
+}
+
+// MARK: - Properties
+
+// `text` or `adjust-transform`
+extension XMLElement {
+    /// FCPXML: Get or set the value of the `position` attribute.
+    /// Use on `text` element for a CEA-608 caption, or an `adjust-transform` element.
+    public var fcpPosition: String? {
+        get { stringValue(forAttributeNamed: "position") }
+        set { addAttribute(withName: "position", value: newValue) }
+    }
+}
+
+// `text` or `text-style-def`
+extension XMLElement {
+    /// FCPXML: Returns child `text-style` elements.
+    /// Use on `text` or `text-style-def` elements.
+    public var fcpTextStyles: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        childElements.filter(whereFCPElementType: .textStyle)
+    }
+}
+
+// MARK: - Typing
+
+// Text
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Text`` model object.
     /// Call this on a `text` element only.
     public var fcpAsText: FinalCutPro.FCPXML.Text? {
         .init(element: self)
-    }
-    
-    /// FCPXML: Returns child `text-style` elements.
-    /// Use on `text` elements.
-    public var fcpTextStyles: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.Text.Children.textStyle.rawValue)
     }
 }
 
@@ -183,15 +204,6 @@ extension FinalCutPro.FCPXML.Text {
 extension FinalCutPro.FCPXML.Text.TextString {
     public enum Attributes: String {
         case ref // optional
-    }
-}
-
-extension XMLElement {
-    /// FCPXML: Get or set the value of the `position` attribute.
-    /// Use on `text` element for a CEA-608 caption, or an `adjust-transform` element.
-    public var fcpPosition: String? {
-        get { stringValue(forAttributeNamed: "position") }
-        set { addAttribute(withName: "position", value: newValue) }
     }
 }
 

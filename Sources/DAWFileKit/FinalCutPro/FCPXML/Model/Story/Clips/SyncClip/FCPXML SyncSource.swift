@@ -18,53 +18,25 @@ extension FinalCutPro.FCPXML.SyncClip {
     /// > for a source of a synchronized clip.
     public struct SyncSource: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "sync-source"
         
-        // Element-Specific Attributes
+        public let elementType: FinalCutPro.FCPXML.ElementType = .syncSource
         
-        public var sourceID: SourceID? { // only used in `sync-source`
-            get {
-                guard let value = element.stringValue(forAttributeNamed: Attributes.sourceID.rawValue)
-                else { return nil }
-                
-                return SourceID(rawValue: value)
-            }
-            set {
-                element.addAttribute(withName: Attributes.sourceID.rawValue, value: newValue?.rawValue)
-            }
-        }
-        
-        // Children
-        
-        /// Returns child `audio-role-source` elements.
-        public var audioRoleSources: LazyMapSequence<
-            LazyFilterSequence<LazyMapSequence<
-                LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-                FinalCutPro.FCPXML.AudioRoleSource?
-            >>,
-            FinalCutPro.FCPXML.AudioRoleSource
-        > {
-            element.fcpAudioRoleSources()
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<FinalCutPro.FCPXML.ElementType> = [.syncSource]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.SyncClip.SyncSource {
-    public enum Element: String {
-        case name = "sync-source"
-    }
-    
     public enum Attributes: String {
         // Element-Specific Attributes
         
@@ -73,12 +45,38 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
         case sourceID // required
     }
     
-    public enum Children: String {
-        case audioRoleSource = "audio-role-source"
+    // contains DTD audio-role-source*
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.SyncClip.SyncSource {
+    public var sourceID: SourceID? { // only used in `sync-source`
+        get {
+            guard let value = element.stringValue(forAttributeNamed: Attributes.sourceID.rawValue)
+            else { return nil }
+            
+            return SourceID(rawValue: value)
+        }
+        set {
+            element.addAttribute(withName: Attributes.sourceID.rawValue, value: newValue?.rawValue)
+        }
     }
 }
 
-extension XMLElement { // SyncClip.SyncSource
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.SyncClip.SyncSource {
+    /// Returns child `audio-role-source` elements.
+    public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
+        element.fcpAudioRoleSources()
+    }
+}
+
+// MARK: - Typing
+
+// SyncClip.SyncSource
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/SyncClip/SyncSource`` model object.
     /// Call this on a `sync-source` element only.
     public var fcpAsSyncSource: FinalCutPro.FCPXML.SyncClip.SyncSource? {
@@ -86,19 +84,16 @@ extension XMLElement { // SyncClip.SyncSource
     }
 }
 
-extension XMLElement { // SyncClip
+// SyncClip
+extension XMLElement {
     /// FCPXML: Returns child `sync-source` elements.
     /// Use on `sync-clip` elements only.
-    public func fcpSyncSources() -> LazyMapSequence<LazyFilterSequence<LazyMapSequence<
-        LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-        FinalCutPro.FCPXML.SyncClip.SyncSource?
-    >>, FinalCutPro.FCPXML.SyncClip.SyncSource
-    > {
-        childElements
-            .filter(whereElementNamed: FinalCutPro.FCPXML.SyncClip.Children.syncSource.rawValue)
-            .compactMap(\.fcpAsSyncSource)
+    public func fcpSyncSources() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.SyncClip.SyncSource> {
+        children(whereFCPElement: .syncSource)
     }
 }
+
+// MARK: - Attribute Types
 
 extension FinalCutPro.FCPXML.SyncClip.SyncSource {
     public enum SourceID: String, Equatable, Hashable, CaseIterable {

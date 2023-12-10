@@ -16,45 +16,25 @@ extension FinalCutPro.FCPXML {
     /// component in a clip."
     public struct AudioRoleSource: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
-        public let elementName: String = "audio-role-source"
         
-        /// Role the audio component is associated with.
-        public var role: AudioRole? {
-            get { element.fcpAudioRole }
-            set { element.fcpAudioRole = newValue }
-        }
+        public let elementType: ElementType = .audioRoleSource
         
-        /// Active state of the audio role source.
-        public var active: Bool {
-            get { element.fcpGetActive(default: true) }
-            set { element.fcpSet(active: newValue, default: true) }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.audioRoleSource]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.AudioRoleSource {
-    public enum Element: String {
-        case name = "audio-role-source"
-    }
-    
     public enum Attributes: String {
         /// Role the audio component is associated with.
         case role
@@ -66,7 +46,35 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
     // can contain filters
 }
 
-extension XMLElement { // AudioRoleSource
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.AudioRoleSource {
+    /// Role the audio component is associated with.
+    public var role: FinalCutPro.FCPXML.AudioRole? {
+        get { element.fcpAudioRole }
+        set { element.fcpAudioRole = newValue }
+    }
+    
+    /// Active state of the audio role source.
+    public var active: Bool {
+        get { element.fcpGetActive(default: true) }
+        set { element.fcpSet(active: newValue, default: true) }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.AudioRoleSource {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+}
+
+// MARK: - Typing
+
+// AudioRoleSource
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/AudioRoleSource`` model object.
     /// Call this on a `audio-role-source` element only.
     public var fcpAsAudioRoleSource: FinalCutPro.FCPXML.AudioRoleSource? {
@@ -80,7 +88,7 @@ extension Sequence where Element == FinalCutPro.FCPXML.AudioRoleSource {
     /// Convert and wrap the audio role source as ``FinalCutPro/FCPXML/AnyRole``
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         compactMap { $0.role }
-            .compactMap { FinalCutPro.FCPXML.AnyRole.audio($0) }
+            .compactMap { .audio($0) }
     }
 }
 

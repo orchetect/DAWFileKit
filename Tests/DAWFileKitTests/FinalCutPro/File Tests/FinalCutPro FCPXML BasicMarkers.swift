@@ -35,13 +35,13 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         // resources (from XML document)
         
         // make sure these aren't nil and they point to the expected elements
-        let xml_fcpRoot1 = try XCTUnwrap(fcpxml.xml.rootElement()) // `fcpxml` element
-        let xml_fcpRoot2 = try XCTUnwrap(fcpxml.xml.rootElement()?.fcpRoot) // `fcpxml` element
-        XCTAssertEqual(xml_fcpRoot1, xml_fcpRoot2)
+        let root = try XCTUnwrap(fcpxml.xml.rootElement()) // `fcpxml` element
+        XCTAssertEqual(root, try XCTUnwrap(fcpxml.xml.rootElement()?.fcpRoot))
+        XCTAssertEqual(root, try XCTUnwrap(fcpxml.root.element))
         
         // resources (from model)
         
-        let resources = try XCTUnwrap(fcpxml.resourcesElement)
+        let resources = fcpxml.root.resources
         let xml_resources = try XCTUnwrap(fcpxml.xml.rootElement()?.fcpRootResources)
         // make sure these aren't nil and they point to the expected elements
         XCTAssertEqual(resources, xml_resources)
@@ -69,7 +69,7 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // library
         
-        let library = try XCTUnwrap(fcpxml.library)
+        let library = try XCTUnwrap(fcpxml.root.library)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.name, "MyLibrary")
@@ -123,11 +123,9 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         // markers
         
-        // TODO: make this a more convenient global method
-        let markers = element1.contents.filter {
-            $0.fcpElementType == .story(.annotation(.marker(.marker))) ||
-            $0.fcpElementType == .story(.annotation(.marker(.chapterMarker)))
-        }
+        let markers = element1.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         
         XCTAssertEqual(markers.count, 4)
         

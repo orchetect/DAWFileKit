@@ -22,10 +22,12 @@ extension FCPXMLElementTextStyleDefinitionChildren {
 }
 
 extension XMLElement {
+    // TODO: no model objects yet, so just return the bare XML
+    
     /// FCPXML: Returns child `text-style-def` elements.
     public func fcpTextStyleDefinitions() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
-            .filter(whereElementNamed: "text-style-def")
+            .filter(whereFCPElementType: .textStyleDef)
     }
 }
 #endif

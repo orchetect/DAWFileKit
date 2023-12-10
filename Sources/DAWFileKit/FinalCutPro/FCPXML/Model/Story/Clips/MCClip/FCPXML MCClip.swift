@@ -24,82 +24,25 @@ extension FinalCutPro.FCPXML {
     /// > ).
     public struct MCClip: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "mc-clip"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .mcClip
         
-        /// Resource ID. (Required)
-        public var ref: String {
-            get { element.fcpRef ?? "" }
-            set { element.fcpRef = newValue }
-        }
-        
-        /// Sources to enable for audio and video. (Default: `.all`)
-        public var srcEnable: ClipSourceEnable {
-            get { element.fcpClipSourceEnable }
-            set { element.fcpClipSourceEnable = newValue }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.mcClip]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.MCClip: FCPXMLElementClipAttributes { }
-
-extension FinalCutPro.FCPXML.MCClip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
-
-extension FinalCutPro.FCPXML.MCClip: FCPXMLElementOptionalModDate { }
-
-extension FinalCutPro.FCPXML.MCClip: FCPXMLElementNoteChild { }
-
-extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetadataChild { }
-
-extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
-    /// Returns child `mc-source` elements.
-    public var sources: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-            FinalCutPro.FCPXML.MulticamSource?
-        >>, FinalCutPro.FCPXML.MulticamSource
-    > {
-        element.fcpMulticamSources
-    }
-}
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.MCClip {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .mcClip
-    
     public enum Attributes: String {
         // Element-Specific Attributes
         case ref // required
@@ -119,15 +62,72 @@ extension FinalCutPro.FCPXML.MCClip {
         case enabled
     }
     
-    public enum Children: String {
-        case mcSource = "mc-source"
-    }
-    
+    // contains DTD mc-source*
     // contains DTD %timing-params
     // contains DTD %intrinsic-params-audio
     // can contain markers
     // can contain filter-audio
 }
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.MCClip {
+    /// Resource ID. (Required)
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    /// Sources to enable for audio and video. (Default: `.all`)
+    public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
+        get { element.fcpClipSourceEnable }
+        set { element.fcpClipSourceEnable = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementClipAttributes { }
+
+// TODO: protocol-ize this and update other model objects using the same two attributes
+extension FinalCutPro.FCPXML.MCClip /* : FCPXMLElementAudioStartAndDuration */ {
+    public var audioStart: Fraction? {
+        get { element.fcpAudioStart }
+        set { element.fcpAudioStart = newValue }
+    }
+    
+    public var audioDuration: Fraction? {
+        get { element.fcpAudioDuration }
+        set { element.fcpAudioDuration = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementOptionalModDate { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.MCClip {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
+    /// Returns child `mc-source` elements.
+    public var sources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.MulticamSource> {
+        element.fcpMulticamSources
+    }
+}
+
+// MARK: - Properties
 
 extension FinalCutPro.FCPXML.MCClip {
     /// Locates the `media` resource used by the `mc-clip`, and returns the `multicam` element from
@@ -151,7 +151,10 @@ extension FinalCutPro.FCPXML.MCClip {
     }
 }
 
-extension XMLElement { // MCClip
+// MARK: - Typing
+
+// MCClip
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/MCClip`` model object.
     /// Call this on a `mc-clip` element only.
     public var fcpAsMCClip: FinalCutPro.FCPXML.MCClip? {

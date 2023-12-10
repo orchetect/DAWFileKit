@@ -14,45 +14,25 @@ extension FinalCutPro.FCPXML {
     /// Contains elements ordered sequentially in time.
     public struct Spine: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "spine"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .spine
         
-        public var name: String? {
-            get { element.fcpName }
-            set { element.fcpName = newValue }
-        }
-        
-        public var format: String? {
-            get { element.fcpFormat }
-            set { element.fcpFormat = newValue }
-        }
-        
-        // Children
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.spine]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Spine: FCPXMLElementAnchorableAttributes { }
+// MARK: - Structure
 
 extension FinalCutPro.FCPXML.Spine {
-    public static let storyElementType: FinalCutPro.FCPXML.StoryElementType = .spine
-    
     public enum Attributes: String {
         // Element-Specific Attributes
         case name
@@ -67,7 +47,35 @@ extension FinalCutPro.FCPXML.Spine {
     // contains transitions
 }
 
-extension XMLElement { // Spine
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Spine {
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    public var format: String? {
+        get { element.fcpFormat }
+        set { element.fcpFormat = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Spine: FCPXMLElementAnchorableAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Spine {
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+// MARK: - Typing
+
+// Spine
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Spine`` model object.
     /// Call this on a `spine` element only.
     public var fcpAsSpine: FinalCutPro.FCPXML.Spine? {

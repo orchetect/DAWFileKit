@@ -13,73 +13,35 @@ extension FinalCutPro.FCPXML {
     /// Represents a library location on disk.
     public struct Library: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "library"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .library
         
-        /// Specifies the URL of a library on export; Final Cut Pro ignores this option during the
-        /// XML import. To specify the target library for the XML import, see the `library` location
-        /// key listed under the `[import-options`](
-        /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/import-options
-        /// ) attributes.
-        public var location: URL? {
-            get { element.fcpLibraryLocation }
-            set { element.fcpLibraryLocation = newValue }
-        }
-        
-        /// Specifies whether the library supports `standard`, `wide`, or `wide-hdr` color gamut.
-        /// The default is `standard`.
-        public var colorProcessing: String? {
-            get {
-                element.stringValue(forAttributeNamed: Attributes.colorProcessing.rawValue)
-            }
-            set {
-                element.addAttribute(withName: Attributes.colorProcessing.rawValue, value: newValue)
-            }
-        }
-        
-        // Children
-        
-        /// Multiple `event` elements may exist within the `library` element.
-        public var events: LazyMapSequence<
-            LazyFilterSequence<LazyMapSequence<
-                LazyFilterSequence<LazyMapSequence<
-                    LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>,
-                    XMLElement
-                >.Elements>.Elements,
-                FinalCutPro.FCPXML.Event?
-            >>,
-            FinalCutPro.FCPXML.Event
-        > {
-            element.fcpEvents
-        }
-        
-        // TODO: add smart-collection iterator
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.library]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
-        }
-        
-        // Custom inits
-        
-        /// Initialize an empty library with a location URL.
-        public init(location: URL) {
-            self.init()
-            self.location = location
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Custom inits
+
 extension FinalCutPro.FCPXML.Library {
-    public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .library
-    
+    /// Initialize an empty library with a location URL.
+    public init(location: URL) {
+        self.init()
+        self.location = location
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Library {
     public enum Attributes: String {
         /// Specifies the URL of a library on export; Final Cut Pro ignores this option during the
         /// XML import. To specify the target library for the XML import, see the `library` location
@@ -93,14 +55,47 @@ extension FinalCutPro.FCPXML.Library {
         case colorProcessing
     }
     
-    public enum Children: String {
-        case event
-        case smartCollection = "smart-collection"
-    }
-    
     // can contain `event`s
     // can contain `smart-collection`s
 }
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Library {
+    /// Specifies the URL of a library on export; Final Cut Pro ignores this option during the
+    /// XML import. To specify the target library for the XML import, see the `library` location
+    /// key listed under the `[import-options`](
+    /// https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/import-options
+    /// ) attributes.
+    public var location: URL? {
+        get { element.fcpLibraryLocation }
+        set { element.fcpLibraryLocation = newValue }
+    }
+    
+    /// Specifies whether the library supports `standard`, `wide`, or `wide-hdr` color gamut.
+    /// The default is `standard`.
+    public var colorProcessing: String? {
+        get {
+            element.stringValue(forAttributeNamed: Attributes.colorProcessing.rawValue)
+        }
+        set {
+            element.addAttribute(withName: Attributes.colorProcessing.rawValue, value: newValue)
+        }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Library {
+    /// Multiple `event` elements may exist within the `library` element.
+    public var events: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Event> {
+        element.children(whereFCPElement: .event)
+    }
+    
+    // TODO: add smart-collection iterator
+}
+
+// MARK: - Properties
 
 extension FinalCutPro.FCPXML.Library {
     /// Returns the library name, derived from the `location` URL.
@@ -109,15 +104,8 @@ extension FinalCutPro.FCPXML.Library {
     }
 }
 
-extension XMLElement { // Library
-    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Library`` model object.
-    /// Call this on a `library` element only.
-    public var fcpAsLibrary: FinalCutPro.FCPXML.Library? {
-        .init(element: self)
-    }
-}
-
-extension XMLElement { // Library
+// Library
+extension XMLElement {
     /// FCPXML: Returns the library name, derived from the `location` URL.
     /// Call on a `library` element.
     public var fcpLibraryName: String? {
@@ -139,6 +127,17 @@ extension XMLElement { // Library
     public var fcpLibraryLocation: URL? {
         get { getURL(forAttribute: "location") }
         set { set(url: newValue, forAttribute: "location") }
+    }
+}
+
+// MARK: - Typing
+
+// Library
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Library`` model object.
+    /// Call this on a `library` element only.
+    public var fcpAsLibrary: FinalCutPro.FCPXML.Library? {
+        .init(element: self)
     }
 }
 

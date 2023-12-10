@@ -1,5 +1,5 @@
 //
-//  FCPXML Version.swift
+//  FCPXML Root Version.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -24,15 +24,9 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML {
-    /// Returns the FCPXML format version.
-    public var version: Version? {
-        guard let verString = fcpxmlElement?
-            .stringValue(forAttributeNamed: Attributes.version.rawValue)
-        else { return nil }
-        
-        return Version(rawValue: verString)
-    }
+extension FinalCutPro.FCPXML.Version {
+    /// Returns the latest FCPXML format version supported.
+    public static var latest: Self { Self.allCases.last ?? .ver1_11 }
 }
 
 #endif

@@ -14,29 +14,23 @@ extension FinalCutPro.FCPXML {
     /// Metadata container.
     public struct Metadata: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
-        public let elementName: String = "metadata"
         
-        // Children
+        public let elementType: ElementType = .metadata
         
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        // TODO: add strongly-typed enums/structs for metadata types
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.metadata]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
+
+// MARK: Custom inits
 
 extension FinalCutPro.FCPXML.Metadata {
     /// Wraps children in a `metadata` container element.
@@ -51,7 +45,29 @@ extension FinalCutPro.FCPXML.Metadata {
     }
 }
 
-extension XMLElement { // Metadata
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Metadata {
+    // no attributes
+    
+    // contains key/value children
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Metadata {
+    // TODO: add strongly-typed enums/structs for metadata types
+    
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+}
+
+// MARK: - Typing
+
+// Metadata
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Metadata`` model object.
     /// Call this on a `metadata` element only.
     public var fcpAsMetadata: FinalCutPro.FCPXML.Metadata? {

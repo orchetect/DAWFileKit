@@ -8,25 +8,6 @@
 
 import Foundation
 import OTCore
-import TimecodeKit
-
-// MARK: - Resources
-
-extension XMLElement {
-    /// FCPXML: Returns the resource type of the element if it is a resource element.
-    public var fcpResourceType: FinalCutPro.FCPXML.ResourceType? {
-        FinalCutPro.FCPXML.ResourceType(from: self)
-    }
-}
-
-// MARK: - Any Elements
-
-extension XMLElement {
-    /// FCPXML: Returns the element type of the element.
-    public var fcpElementType: FinalCutPro.FCPXML.ElementType? {
-        FinalCutPro.FCPXML.ElementType(from: self)
-    }
-}
 
 // MARK: - Structure Elements
 
@@ -34,47 +15,7 @@ extension XMLElement {
     /// FCPXML: Returns child structure elements.
     public var fcpStructureElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
-            .filter { $0.fcpStructureElementType != nil }
-    }
-    
-    /// FCPXML: Returns the structure element type of the element if the element is a structure
-    /// element.
-    public var fcpStructureElementType: FinalCutPro.FCPXML.StructureElementType? {
-        FinalCutPro.FCPXML.StructureElementType(from: self)
-    }
-}
-
-extension XMLElement {
-    /// FCPXML: Returns child `event` elements.
-    public var fcpEvents: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyMapSequence<
-                LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>,
-                XMLElement
-            >.Elements>.Elements,
-            FinalCutPro.FCPXML.Event?
-        >>,
-        FinalCutPro.FCPXML.Event
-    > {
-        childElements
-            .filter { $0.fcpElementType == .structure(.event) }
-            .compactMap(\.fcpAsEvent)
-    }
-    
-    /// FCPXML: Returns child `project` elements.
-    public var fcpProjects: LazyMapSequence<
-        LazyFilterSequence<LazyMapSequence<
-            LazyFilterSequence<LazyMapSequence<
-                LazyFilterSequence<LazyMapSequence<LazySequence<[XMLNode]>.Elements, XMLElement?>>,
-                XMLElement
-            >.Elements>.Elements,
-            FinalCutPro.FCPXML.Project?
-        >>,
-        FinalCutPro.FCPXML.Project
-    > {
-        childElements
-            .filter { $0.fcpElementType == .structure(.project) }
-            .compactMap(\.fcpAsProject)
+            .filter { $0.fcpElementType?.isStructure == true }
     }
 }
 
@@ -84,19 +25,23 @@ extension XMLElement {
     /// FCPXML: Returns child story elements.
     public var fcpStoryElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
-            .filter { $0.fcpStoryElementType != nil }
-    }
-    
-    /// FCPXML: Returns the story element type of the element if the element is a story element.
-    public var fcpStoryElementType: FinalCutPro.FCPXML.StoryElementType? {
-        FinalCutPro.FCPXML.StoryElementType(from: self)
+            .filter { $0.fcpElementType?.isStoryElement == true }
     }
 }
 
 // MARK: - Child Elements
 
 extension XMLElement {
-    /// Updates the `stringValue` of a child if it exists.
+    /// Updates the `stringValue` of the first matching child if it exists.
+    /// If the new value is `nil`, the child element is removed.
+    func _updateFirstChildElement(
+        ofType childType: FinalCutPro.FCPXML.ElementType,
+        newStringValue: String?
+    ) { 
+        _updateChildElement(named: childType.rawValue, newStringValue: newStringValue)
+    }
+    
+    /// Updates the `stringValue` of the first matching child if it exists.
     /// If the new value is `nil`, the child element is removed.
     func _updateChildElement(named childName: String, newStringValue: String?) {
         if let existingChild = firstChildElement(named: childName) {
@@ -126,9 +71,9 @@ extension XMLElement {
         includeSelf: Bool
     ) -> XMLElement? {
         let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includeSelf)
-        let clipTypeStrings = FinalCutPro.FCPXML.ClipType.allCases.map(\.rawValue)
+        let clipTypes = FinalCutPro.FCPXML.ElementType.allClipCases
         return ancestors
-            .first(whereElementNamed: clipTypeStrings)
+            .first(whereFCPElementTypes: clipTypes)
     }
     
     /// FCPXML: Returns type and lane for each of the element's ancestors.

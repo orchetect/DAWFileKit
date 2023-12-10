@@ -13,6 +13,30 @@ import OTCore
 // MARK: - Main Public Model Getters
 
 extension FinalCutPro.FCPXML {
+    /// Utility:
+    /// Returns the root `fcpxml` element.
+    public var root: Root {
+        get {
+            if let existingElement = xml
+                .childElements
+                .first(whereFCPElement: .fcpxml)
+            {
+                return existingElement
+            }
+            
+            // create new element and attach
+            let newElement = FinalCutPro.FCPXML.Root()
+            xml.addChild(newElement.element)
+            return newElement
+        }
+        set {
+            let current = root
+            guard current.element != newValue.element else { return }
+            current.element.detach()
+            xml.addChild(newValue.element)
+        }
+    }
+    
     /// Convenience:
     /// Returns all events that exist anywhere within the XML hierarchy.
     /// This is computed, so it is best to avoid repeat calls to this method.
@@ -26,16 +50,13 @@ extension FinalCutPro.FCPXML {
         
         var events: [Event] = []
         
-        if let rootEvents = fcpxmlElement?.fcpEvents {
-            events.append(contentsOf: rootEvents)
-        }
-            
+        let rootEvents = root.events
+        events.append(contentsOf: rootEvents)
+        
         // technically there can only be one or zero `library` elements,
         // and FCP will not allow exporting more than one library to FCPXML at a time.
         // but there is nothing stopping us from having more than one.
-        if let libraryEvents = fcpxmlElement?.childElements
-            .filter(whereFCPElementType: .structure(.library))
-            .flatMap(\.fcpEvents) {
+        if let libraryEvents = root.library?.events {
             events.append(contentsOf: libraryEvents)
         }
         
@@ -56,15 +77,19 @@ extension FinalCutPro.FCPXML {
         
         var projects: [Project] = []
         
-        if let rootProjects = fcpxmlElement?.fcpProjects {
-            projects.append(contentsOf: rootProjects)
-        }
+        let rootProjects = root.projects
+        projects.append(contentsOf: rootProjects)
         
         // will get all events and return their projects
         let eventsProjects = allEvents().flatMap(\.projects)
         projects.append(contentsOf: eventsProjects)
         
         return projects
+    }
+    
+    /// Returns the FCPXML format version.
+    public var version: FinalCutPro.FCPXML.Version {
+        root.version
     }
 }
 

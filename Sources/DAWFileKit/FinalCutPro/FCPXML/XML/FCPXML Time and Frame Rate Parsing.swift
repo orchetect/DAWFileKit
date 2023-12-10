@@ -121,10 +121,8 @@ extension XMLElement {
             
             let elementType = ancestor.fcpElementType
             
-            if case let .story(storyElementType) = elementType,
-               case let .annotation(annotationType) = storyElementType
-            {
-                switch annotationType {
+            if let elementType = elementType {
+                switch elementType {
                 case .marker, .keyword:
                     // markers and keywords use `start` attribute as an offset, so handle it specially
                     if let elementStart = ancestor.fcpStart {
@@ -139,6 +137,9 @@ extension XMLElement {
                     }
                 case .caption:
                     // caption behaves like a clip and follows the same rules
+                    break
+                    
+                default:
                     break
                 }
             }

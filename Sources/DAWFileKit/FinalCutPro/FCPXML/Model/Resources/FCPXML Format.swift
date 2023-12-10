@@ -26,85 +26,25 @@ extension FinalCutPro.FCPXML {
     /// > See [`format`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/format).
     public struct Format: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "format"
         
-        // shared resource attributes
+        public let elementType: ElementType = .format
         
-        /// Identifier. (Required)
-        public var id: String {
-            get { element.fcpID ?? "" }
-            set { element.fcpID = newValue }
-        }
-        
-        public var name: String? {
-            get { element.fcpName }
-            set { element.fcpName = newValue }
-        }
-        
-        // format attributes
-        
-        public var frameDuration: Fraction? {
-            get { element.fcpFrameDuration }
-            set { element.fcpFrameDuration = newValue }
-        }
-        
-        /// Field order. Only present if video is interlaced.
-        public var fieldOrder: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.fieldOrder.rawValue) }
-            set { element.addAttribute(withName: Attributes.fieldOrder.rawValue, value: newValue) }
-        }
-        
-        public var width: Int? {
-            get { element.getInt(forAttribute: Attributes.width.rawValue) }
-            set { element.set(int: newValue, forAttribute: Attributes.width.rawValue) }
-        }
-        
-        public var height: Int? {
-            get { element.getInt(forAttribute: Attributes.height.rawValue) }
-            set { element.set(int: newValue, forAttribute: Attributes.height.rawValue) }
-        }
-        
-        public var paspH: Int? {
-            get { element.getInt(forAttribute: Attributes.paspH.rawValue) }
-            set { element.set(int: newValue, forAttribute: Attributes.paspH.rawValue) }
-        }
-        
-        public var paspV: Int? {
-            get { element.getInt(forAttribute: Attributes.paspV.rawValue) }
-            set { element.set(int: newValue, forAttribute: Attributes.paspV.rawValue) }
-        }
-        
-        public var colorSpace: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.colorSpace.rawValue) }
-            set { element.addAttribute(withName: Attributes.colorSpace.rawValue, value: newValue) }
-        }
-        
-        public var projection: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.projection.rawValue) }
-            set { element.addAttribute(withName: Attributes.projection.rawValue, value: newValue) }
-        }
-        
-        public var stereoscopic: String? {
-            get { element.stringValue(forAttributeNamed: Attributes.stereoscopic.rawValue) }
-            set { element.addAttribute(withName: Attributes.stereoscopic.rawValue, value: newValue) }
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.format]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.Format {
-    public static let resourceType: FinalCutPro.FCPXML.ResourceType = .format
-    
     public enum Attributes: String {
         // shared resource attributes
         case id // required
@@ -123,7 +63,75 @@ extension FinalCutPro.FCPXML.Format {
     }
 }
 
-extension XMLElement { // Format
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Format {
+    // shared resource attributes
+    
+    /// Identifier. (Required)
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
+    }
+    
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    // format attributes
+    
+    public var frameDuration: Fraction? {
+        get { element.fcpFrameDuration }
+        set { element.fcpFrameDuration = newValue }
+    }
+    
+    /// Field order. Only present if video is interlaced.
+    public var fieldOrder: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.fieldOrder.rawValue) }
+        set { element.addAttribute(withName: Attributes.fieldOrder.rawValue, value: newValue) }
+    }
+    
+    public var width: Int? {
+        get { element.getInt(forAttribute: Attributes.width.rawValue) }
+        set { element.set(int: newValue, forAttribute: Attributes.width.rawValue) }
+    }
+    
+    public var height: Int? {
+        get { element.getInt(forAttribute: Attributes.height.rawValue) }
+        set { element.set(int: newValue, forAttribute: Attributes.height.rawValue) }
+    }
+    
+    public var paspH: Int? {
+        get { element.getInt(forAttribute: Attributes.paspH.rawValue) }
+        set { element.set(int: newValue, forAttribute: Attributes.paspH.rawValue) }
+    }
+    
+    public var paspV: Int? {
+        get { element.getInt(forAttribute: Attributes.paspV.rawValue) }
+        set { element.set(int: newValue, forAttribute: Attributes.paspV.rawValue) }
+    }
+    
+    public var colorSpace: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.colorSpace.rawValue) }
+        set { element.addAttribute(withName: Attributes.colorSpace.rawValue, value: newValue) }
+    }
+    
+    public var projection: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.projection.rawValue) }
+        set { element.addAttribute(withName: Attributes.projection.rawValue, value: newValue) }
+    }
+    
+    public var stereoscopic: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.stereoscopic.rawValue) }
+        set { element.addAttribute(withName: Attributes.stereoscopic.rawValue, value: newValue) }
+    }
+}
+
+// MARK: - Typing
+
+// Format
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Format`` model object.
     /// Call this on a `format` element only.
     public var fcpAsFormat: FinalCutPro.FCPXML.Format? {

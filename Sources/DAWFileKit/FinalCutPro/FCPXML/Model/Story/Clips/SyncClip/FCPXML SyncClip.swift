@@ -21,39 +21,60 @@ extension FinalCutPro.FCPXML {
     /// > Use the `sync-source` element to describe the audio components of a synchronized clip.
     public struct SyncClip: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "sync-clip"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .syncClip
         
-        public var format: String? { // DTD: default is same as parent
-            get { element.fcpFormat }
-            set { element.fcpFormat = newValue }
-        }
-        
-        // Children
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        // TODO: add missing attributes and protocols
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.syncClip]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.SyncClip {
+    public enum Attributes: String {
+        // Element-Specific Attributes
+        case format
+        case audioStart
+        case audioDuration
+        case tcStart
+        case tcFormat
+        case modDate
+        
+        // Anchorable Attributes
+        case lane
+        case offset
+        
+        // Clip Attributes
+        case name
+        case start
+        case duration
+        case enabled
+    }
+    
+    // contains DTD sync-source*
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params
+    // contains captions
+    // contains markers
+    // contains DTD %video_filter_item*
+    // contains DTD filter-audio*
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.SyncClip {
+    public var format: String? { // DTD: default is same as parent
+        get { element.fcpFormat }
+        set { element.fcpFormat = newValue }
     }
 }
 
@@ -75,6 +96,20 @@ extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementAudioStartAndDuration */
     }
 }
 
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.SyncClip {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetadataChild { }
@@ -83,51 +118,15 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
 
 extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
     /// Returns child `sync-source` elements.
-    public var syncSources: LazyMapSequence<LazyFilterSequence<LazyMapSequence<
-        LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-        FinalCutPro.FCPXML.SyncClip.SyncSource?
-    >>, FinalCutPro.FCPXML.SyncClip.SyncSource
-    > {
+    public var syncSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.SyncClip.SyncSource> {
         element.fcpSyncSources()
     }
 }
 
-extension FinalCutPro.FCPXML.SyncClip {
-    public static let clipType: FinalCutPro.FCPXML.ClipType = .syncClip
-    
-    public enum Attributes: String {
-        // Element-Specific Attributes
-        case format
-        case audioStart
-        case audioDuration
-        case tcStart
-        case tcFormat
-        case modDate
-        
-        // Anchorable Attributes
-        case lane
-        case offset
-        
-        // Clip Attributes
-        case name
-        case start
-        case duration
-        case enabled
-    }
-    
-    public enum Children: String {
-        case syncSource = "sync-source"
-    }
-    
-    // contains DTD %timing-params
-    // contains DTD %intrinsic-params
-    // contains captions
-    // contains markers
-    // contains DTD %video_filter_item*
-    // contains DTD filter-audio*
-}
+// MARK: - Typing
 
-extension XMLElement { // SyncClip
+// SyncClip
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/SyncClip`` model object.
     /// Call this on a `sync-clip` element only.
     public var fcpAsSyncClip: FinalCutPro.FCPXML.SyncClip? {

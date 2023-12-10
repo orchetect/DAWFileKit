@@ -19,64 +19,25 @@ extension FinalCutPro.FCPXML {
     /// > by keywords and other matching criteria listed under the Smart Collection Match Elements.
     public struct Event: FCPXMLElement {
         public let element: XMLElement
-        public let elementName: String = "event"
         
-        // Element-Specific Attributes
+        public let elementType: ElementType = .event
         
-        public var name: String {
-            get { element.fcpName ?? "" }
-            set { element.fcpName = newValue }
-        }
-        
-        public var uid: String? {
-            get { element.fcpUID }
-            set { element.fcpUID = newValue }
-        }
-        
-        // Children
-        
-        /// Returns child `project` elements.
-        public var projects: LazyMapSequence<
-            LazyFilterSequence<
-                LazyMapSequence<
-                    LazyFilterSequence<LazyCompactMapSequence<[XMLNode], XMLElement>>.Elements,
-                    FinalCutPro.FCPXML.Project?
-                >
-            >,
-            FinalCutPro.FCPXML.Project
-        > {
-            element
-                .childElements
-                .filter(whereFCPElementType: .structure(.project))
-                .compactMap(\.fcpAsProject)
-        }
-        
-        /// Returns child story elements.
-        public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-            element.fcpStoryElements
-        }
-        
-        /// Returns all child elements.
-        public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-            element.childElements
-        }
-        
-        // MARK: FCPXMLElement inits
+        public static let supportedElementTypes: Set<ElementType> = [.event]
         
         public init() {
-            element = XMLElement(name: elementName)
+            element = XMLElement(name: elementType.rawValue)
         }
         
         public init?(element: XMLElement) {
             self.element = element
-            guard _isElementValid(element: element) else { return nil }
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
+// MARK: - Structure
+
 extension FinalCutPro.FCPXML.Event {
-    public static let structureElementType: FinalCutPro.FCPXML.StructureElementType = .event
-    
     public enum Attributes: String {
         // Element-Specific Attributes
         case name
@@ -89,7 +50,43 @@ extension FinalCutPro.FCPXML.Event {
     //   collection-folder | keyword-collection | smart-collection
 }
 
-extension XMLElement { // Event
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Event {
+    public var name: String {
+        get { element.fcpName ?? "" }
+        set { element.fcpName = newValue }
+    }
+    
+    public var uid: String? {
+        get { element.fcpUID }
+        set { element.fcpUID = newValue }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Event {
+    /// Returns child `project` elements.
+    public var projects: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Project> {
+        element.children(whereFCPElement: .project)
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+    
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+}
+
+// MARK: - Typing
+
+// Event
+extension XMLElement {
     /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Event`` model object.
     /// Call this on an `event` element only.
     public var fcpAsEvent: FinalCutPro.FCPXML.Event? {

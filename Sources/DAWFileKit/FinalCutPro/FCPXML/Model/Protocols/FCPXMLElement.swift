@@ -11,11 +11,18 @@ import TimecodeKit
 
 /// Protocol which all FCPXML wrapper model objects conform.
 public protocol FCPXMLElement where Self: Equatable, Self: Hashable {
-    /// The wrapped XML element.
+    /// The wrapped XML element object.
     var element: XMLElement { get }
     
-    /// The wrapped XML element name.
-    var elementName: String { get }
+    /// The FCPXML element type of the model instance.
+    var elementType: FinalCutPro.FCPXML.ElementType { get }
+    
+    /// All FCPXML element types the model object is capable of handling.
+    ///
+    /// Most model objects only handle a single type.
+    /// However some model objects are 'meta types' and can handle more than one, such as
+    /// ``FinalCutPro/FCPXML/Marker`` which handles both `marker` and `chapter-marker`.
+    static var supportedElementTypes: Set<FinalCutPro.FCPXML.ElementType> { get }
     
     /// Initialize a new empty element with defaults.
     init()
@@ -45,13 +52,14 @@ extension FCPXMLElement /* : Hashable */ {
     }
 }
 
+// MARK: - Utilities
+
 extension FCPXMLElement {
-    func _isElementValid(element: XMLElement? = nil) -> Bool {
+    func _isElementTypeSupported(element: XMLElement? = nil) -> Bool {
         let e = element ?? self.element
-        guard e.name == elementName else {
-            assertionFailure("Attempted to wrap the wrong FCPXML element type.")
-            return false
-        }
+        guard let et = e.fcpElementType,
+              Self.supportedElementTypes.contains(et)
+        else { return false }
         return true
     }
 }

@@ -35,216 +35,206 @@ extension XMLElement {
         }
         
         switch elementType {
-        case let .story(storyElementType):
-            switch storyElementType {
-            case let .annotation(annotationType):
-                switch annotationType {
-                case .caption:
-                    if let role = fcpRole(as: FinalCutPro.FCPXML.CaptionRole.self) {
-                        add(role: .caption(role), isInherited: false)
-                    }
-                    
-                case .keyword:
-                    // keywords do not contain roles, they inherit them from their parent
-                    break
-                    
-                case .marker:
-                    // markers do not contain roles, they inherit them from their parent
-                    break
-                }
-                
-            case let .clip(clipType):
-                switch clipType {
-                case .assetClip:
-                    // asset clip can have `audioRole` and/or `videoRole` attributes.
-                    
-                    guard let assetClip = fcpAsAssetClip else { break }
-                    
-                    // it can also have roles in `audio-channel-source` children which may or may
-                    // not contain a time range. if there is no time range it applies to the entire
-                    // clip and overrides the asset clip's `audioRole`.
-                    
-                    if let role = assetClip.videoRole {
-                        add(role: .video(role), isInherited: false)
-                    }
-                    
-                    let audioChannelSources = assetClip.audioChannelSources
-                        .filter(\.active)
-                    
-                    if audioChannelSources.isEmpty {
-                        if let role = fcpAudioRole {
-                            add(role: .audio(role), isInherited: false)
-                        }
-                    } else {
-                        // TODO: if audio channel source has a time range and it starts later than the clip's start, then do we assume FCP falls back to using the asset clip's audio role? not sure.
-                        // TODO: also, what happens when there are multiple audio channel sources that overlap? or all lack a time range. does FCP use the topmost?
-                        add(roles: audioChannelSources.asAnyRoles(), isInherited: false)
-                    }
-                    
-                case .audio:
-                    guard let audio = fcpAsAudio else { break }
-                    if let role = audio.role {
-                        add(role: .audio(role), isInherited: false)
-                    }
-                    
-                case .audition:
-                    // contains clip(s) that may have their own roles but they are their own elements
-                    // so we won't parse them here
-                    break
-                    
-                case .clip:
-                    // does not have roles itself.
-                    // instead, it inherits from its contents.
-                    
-                    let childRoles = _fcpRolesForNearestDescendant(
-                        resources: resources,
-                        auditions: auditions,
-                        firstGenerationOnly: true,
-                        firstElementEachGenerationOnly: false
-                    )
-                    add(roles: childRoles, isInherited: true)
-                    
-                case .gap:
-                    break
-                    
-                case .liveDrawing:
-                    // TODO: has role(s)?
-                    break
-                    
-                case .mcClip:
-                    // does not have roles itself.
-                    // instead, it inherits from the selected angles in `mc-source` child element(s).
-                    // - references a `media` resource containing a `multicam` container.
-                    //   - the `multicam` container contains one or more `angle`s.
-                    //   - each `angle` is similar to a `sequence` of story elements.
-                    // - uses either:
-                    //   - a single `mc-source` for video and audio source (srcEnable="all"), or
-                    //   - two `mc-source`: one for video (srcEnable="video"), one for audio (srcEnable="audio")
-                    //   - srcEnable="none" may be present for some sources.
-                    // - the `mc-clip` inherits video role from the video angle's contents
-                    // - the `mc-clip` inherits audio role from the audio angle's contents
-                    
-                    // get multicam sources for `mc-clip`
-                    
-                    guard let mcClip = fcpAsMCClip else { break }
-                    
-                    let sources = mcClip.sources
-                    guard !sources.isEmpty else { break }
-                    
-                    // parse media angles
-                    
-                    let ref = mcClip.ref
-                    
-                    guard let multicam = fcpResource(forID: ref, in: resources)?
-                        .fcpAsMedia?
-                        .multicam
-                    else { break }
-                    
-                    // fetch angles being used
-                    
-                    let (audioAngle, videoAngle) = multicam.audioVideoMCAngles(forMulticamSources: sources)
-                    
-                    // use role from first story element within each angle
-                    
-                    if let angle = audioAngle {
-                        let roles = angle.element._fcpRolesForNearestDescendant(
-                            resources: resources,
-                            auditions: auditions,
-                            firstGenerationOnly: true,
-                            firstElementEachGenerationOnly: false
-                        )
-                        .audioRoles()
-                        .map { $0.asAnyRole() }
-                        
-                        add(roles: roles, isInherited: true)
-                    }
-                    
-                    if let angle = videoAngle {
-                        let roles = angle.element._fcpRolesForNearestDescendant(
-                            resources: resources,
-                            auditions: auditions,
-                            firstGenerationOnly: true,
-                            firstElementEachGenerationOnly: false
-                        )
-                        .videoRoles()
-                        .map { $0.asAnyRole() }
-                        
-                        add(roles: roles, isInherited: true)
-                    }
-                    
-                case .refClip:
-                    // does not have video role itself. it references a sequence that may contain
-                    // clips with their own roles.
-                    // has audio subroles that are enable-able.
-                    
-                    guard let refClip = fcpAsRefClip else { break }
-                    
-                    if refClip.useAudioSubroles {
-                        let audioRoleSources = refClip.audioRoleSources
-                            .filter(\.active)
-                        let audioRoles = audioRoleSources.asAnyRoles()
-                        add(roles: audioRoles, isInherited: false)
-                    }
-                    
-                case .syncClip:
-                    // sync clip does not have video/audio roles itself.
-                    
-                    guard let syncClip = fcpAsSyncClip else { break }
-                    
-                    // instead, we derive the video role from the sync clip's first video media.
-                    // we'll also add any audio roles found in case sync sources are missing and
-                    // audio roles can't be derived from them.
-                    let childRoles = _fcpRolesForNearestDescendant(
-                        resources: resources,
-                        auditions: auditions,
-                        firstGenerationOnly: true,
-                        firstElementEachGenerationOnly: true
-                    )
-                    add(roles: childRoles, isInherited: true)
-                    
-                    // the audio role may be present in a `sync-source` child of the sync clip.
-                    let syncSources = syncClip
-                        .syncSources
-                    
-                    if !syncSources.isEmpty {
-                        let audioRoleSources = syncSources
-                            .flatMap(\.audioRoleSources)
-                            .filter(\.active)
-                        let audioRoles = audioRoleSources
-                            .compactMap(\.role)
-                            .asAnyRoles()
-                        add(roles: audioRoles, isInherited: true)
-                    }
-                case .title:
-                    guard let title = fcpAsTitle else { break }
-                    if let role = title.role {
-                        add(role: .video(role), isInherited: false)
-                    }
-                    
-                case .video:
-                    guard let video = fcpAsVideo else { break }
-                    if let role = video.role {
-                        add(role: .video(role), isInherited: false)
-                    }
-                }
-                
-            case .sequence:
-                break
-                
-            case .spine:
-                break
+        // MARK: annotations
+            
+        case .caption:
+            if let role = fcpRole(as: FinalCutPro.FCPXML.CaptionRole.self) {
+                add(role: .caption(role), isInherited: false)
             }
             
-        case .structure:
-            // structure elements don't have roles
+        case .keyword:
+            // keywords do not contain roles, they inherit them from their parent
             break
             
-        case .resources:
-            // N/A
-            return []
+        case .marker:
+            // markers do not contain roles, they inherit them from their parent
+            break
             
-        case .resource(_):
-            // N/A
+        // MARK: clips
+            
+        case .assetClip:
+            // asset clip can have `audioRole` and/or `videoRole` attributes.
+            
+            guard let assetClip = fcpAsAssetClip else { break }
+            
+            // it can also have roles in `audio-channel-source` children which may or may
+            // not contain a time range. if there is no time range it applies to the entire
+            // clip and overrides the asset clip's `audioRole`.
+            
+            if let role = assetClip.videoRole {
+                add(role: .video(role), isInherited: false)
+            }
+            
+            let audioChannelSources = assetClip.audioChannelSources
+                .filter(\.active)
+            
+            if audioChannelSources.isEmpty {
+                if let role = fcpAudioRole {
+                    add(role: .audio(role), isInherited: false)
+                }
+            } else {
+                // TODO: if audio channel source has a time range and it starts later than the clip's start, then do we assume FCP falls back to using the asset clip's audio role? not sure.
+                // TODO: also, what happens when there are multiple audio channel sources that overlap? or all lack a time range. does FCP use the topmost?
+                add(roles: audioChannelSources.asAnyRoles(), isInherited: false)
+            }
+            
+        case .audio:
+            guard let audio = fcpAsAudio else { break }
+            if let role = audio.role {
+                add(role: .audio(role), isInherited: false)
+            }
+            
+        case .audition:
+            // contains clip(s) that may have their own roles but they are their own elements
+            // so we won't parse them here
+            break
+            
+        case .clip:
+            // does not have roles itself.
+            // instead, it inherits from its contents.
+            
+            let childRoles = _fcpRolesForNearestDescendant(
+                resources: resources,
+                auditions: auditions,
+                firstGenerationOnly: true,
+                firstElementEachGenerationOnly: false
+            )
+            add(roles: childRoles, isInherited: true)
+            
+        case .gap:
+            break
+            
+        case .liveDrawing:
+            // TODO: has role(s)?
+            break
+            
+        case .mcClip:
+            // does not have roles itself.
+            // instead, it inherits from the selected angles in `mc-source` child element(s).
+            // - references a `media` resource containing a `multicam` container.
+            //   - the `multicam` container contains one or more `angle`s.
+            //   - each `angle` is similar to a `sequence` of story elements.
+            // - uses either:
+            //   - a single `mc-source` for video and audio source (srcEnable="all"), or
+            //   - two `mc-source`: one for video (srcEnable="video"), one for audio (srcEnable="audio")
+            //   - srcEnable="none" may be present for some sources.
+            // - the `mc-clip` inherits video role from the video angle's contents
+            // - the `mc-clip` inherits audio role from the audio angle's contents
+            
+            // get multicam sources for `mc-clip`
+            
+            guard let mcClip = fcpAsMCClip else { break }
+            
+            let sources = mcClip.sources
+            guard !sources.isEmpty else { break }
+            
+            // parse media angles
+            
+            let ref = mcClip.ref
+            
+            guard let multicam = fcpResource(forID: ref, in: resources)?
+                .fcpAsMedia?
+                .multicam
+            else { break }
+            
+            // fetch angles being used
+            
+            let (audioAngle, videoAngle) = multicam.audioVideoMCAngles(forMulticamSources: sources)
+            
+            // use role from first story element within each angle
+            
+            if let angle = audioAngle {
+                let roles = angle.element._fcpRolesForNearestDescendant(
+                    resources: resources,
+                    auditions: auditions,
+                    firstGenerationOnly: true,
+                    firstElementEachGenerationOnly: false
+                )
+                    .audioRoles()
+                    .map { $0.asAnyRole() }
+                
+                add(roles: roles, isInherited: true)
+            }
+            
+            if let angle = videoAngle {
+                let roles = angle.element._fcpRolesForNearestDescendant(
+                    resources: resources,
+                    auditions: auditions,
+                    firstGenerationOnly: true,
+                    firstElementEachGenerationOnly: false
+                )
+                    .videoRoles()
+                    .map { $0.asAnyRole() }
+                
+                add(roles: roles, isInherited: true)
+            }
+            
+        case .refClip:
+            // does not have video role itself. it references a sequence that may contain
+            // clips with their own roles.
+            // has audio subroles that are enable-able.
+            
+            guard let refClip = fcpAsRefClip else { break }
+            
+            if refClip.useAudioSubroles {
+                let audioRoleSources = refClip.audioRoleSources
+                    .filter(\.active)
+                let audioRoles = audioRoleSources.asAnyRoles()
+                add(roles: audioRoles, isInherited: false)
+            }
+            
+        case .syncClip:
+            // sync clip does not have video/audio roles itself.
+            
+            guard let syncClip = fcpAsSyncClip else { break }
+            
+            // instead, we derive the video role from the sync clip's first video media.
+            // we'll also add any audio roles found in case sync sources are missing and
+            // audio roles can't be derived from them.
+            let childRoles = _fcpRolesForNearestDescendant(
+                resources: resources,
+                auditions: auditions,
+                firstGenerationOnly: true,
+                firstElementEachGenerationOnly: true
+            )
+            add(roles: childRoles, isInherited: true)
+            
+            // the audio role may be present in a `sync-source` child of the sync clip.
+            let syncSources = syncClip
+                .syncSources
+            
+            if !syncSources.isEmpty {
+                let audioRoleSources = syncSources
+                    .flatMap(\.audioRoleSources)
+                    .filter(\.active)
+                let audioRoles = audioRoleSources
+                    .compactMap(\.role)
+                    .asAnyRoles()
+                add(roles: audioRoles, isInherited: true)
+            }
+            
+        case .title:
+            guard let title = fcpAsTitle else { break }
+            if let role = title.role {
+                add(role: .video(role), isInherited: false)
+            }
+            
+        case .video:
+            guard let video = fcpAsVideo else { break }
+            if let role = video.role {
+                add(role: .video(role), isInherited: false)
+            }
+            
+        // MARK: sequence
+            
+        case .sequence:
+            break
+            
+        case .spine:
+            break
+            
+        default:
+            // N/A or not yet handled
             return []
         }
         
@@ -312,67 +302,57 @@ extension FinalCutPro.FCPXML {
     /// certain defaults that are not written to the FCPXML file so we have to provide them.
     static func _defaultRoles(for elementType: ElementType) -> [AnyRole] {
         switch elementType {
-        case let .story(storyElementType):
-            switch storyElementType {
-            case let .annotation(annotationType):
-                switch annotationType {
-                case .caption:
-                    // captions use their own sets of roles specific for captions/text
-                    // and generally they are auto-assigned so there are no defaults to return
-                    return []
-                case .keyword:
-                    // keywords do not contain roles, they inherit them from their parent
-                    return []
-                case .marker:
-                    // markers do not contain roles, they inherit them from their parent
-                    return []
-                }
-            case let .clip(clipType):
-                switch clipType {
-                case .assetClip:
-                    return [defaultVideoRole]
-                case .audio:
-                    return [defaultAudioRole]
-                case .audition:
-                    // contains clip(s) that may have their own roles but they are their own elements
-                    // so we won't parse them here
-                    return []
-                case .clip:
-                    // not exactly sure if a default is provided for `clip` itself.
-                    return [defaultVideoRole]
-                case .gap:
-                    return []
-                case .liveDrawing:
-                    // TODO: has role(s)?
-                    return []
-                case .mcClip:
-                    // does not have roles itself. references multicam clip(s).
-                    return [defaultVideoRole, defaultAudioRole]
-                case .refClip:
-                    // does not have video role itself. it references a sequence that may contain clips with their own roles.
-                    // has audio subroles that are enable-able.
-                    return []
-                case .syncClip:
-                    // does not have roles itself. contains story elements that may contain their own roles.
-                    return [defaultVideoRole]
-                case .title:
-                    return [titlesRole]
-                case .video:
-                    return [defaultVideoRole]
-                }
-            case .sequence:
-                return []
-            case .spine:
-                return []
-            }
-        case .structure:
+        // MARK: annotations
+            
+        case .caption:
+            // captions use their own sets of roles specific for captions/text
+            // and generally they are auto-assigned so there are no defaults to return
             return []
-            // structure elements don't have roles
-        case .resources:
-            // N/A
+        case .keyword:
+            // keywords do not contain roles, they inherit them from their parent
             return []
-        case .resource(_):
-            // N/A
+        case .marker:
+            // markers do not contain roles, they inherit them from their parent
+            return []
+            
+        // MARK: clips
+            
+        case .assetClip:
+            return [defaultVideoRole]
+        case .audio:
+            return [defaultAudioRole]
+        case .audition:
+            // contains clip(s) that may have their own roles but they are their own elements
+            // so we won't parse them here
+            return []
+        case .clip:
+            // not exactly sure if a default is provided for `clip` itself.
+            return [defaultVideoRole]
+        case .gap:
+            return []
+        case .liveDrawing:
+            // TODO: has role(s)?
+            return []
+        case .mcClip:
+            // does not have roles itself. references multicam clip(s).
+            return [defaultVideoRole, defaultAudioRole]
+        case .refClip:
+            // does not have video role itself. it references a sequence that may contain clips with their own roles.
+            // has audio subroles that are enable-able.
+            return []
+        case .syncClip:
+            // does not have roles itself. contains story elements that may contain their own roles.
+            return [defaultVideoRole]
+        case .title:
+            return [titlesRole]
+        case .video:
+            return [defaultVideoRole]
+        case .sequence:
+            return []
+        case .spine:
+            return []
+            
+        default:
             return []
         }
     }
