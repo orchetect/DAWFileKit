@@ -88,15 +88,15 @@ extension XMLElement {
     ///
     /// - Returns: Elapsed seconds from zero timecode as a floating-point `TimeInterval` (`Double`).
     func _fcpCalculateAbsoluteStart<S: Sequence<XMLElement>>(
-        ancestors: S? = nil as [XMLElement]?,
-        performRounding: Bool = false
+        ancestors: S? = nil as [XMLElement]?
     ) -> TimeInterval? {
         var accum: TimeInterval?
         var lastStart: TimeInterval?
         
         func add(_ other: TimeInterval?) {
             guard let other = other else { return }
-            accum = (accum ?? 0.0) + other
+            let base = accum ?? 0.0
+            accum = base + other/*Rounded*/
         }
         
         // iterate from root to current element

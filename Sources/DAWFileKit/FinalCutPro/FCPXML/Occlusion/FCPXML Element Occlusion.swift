@@ -17,7 +17,7 @@ extension FinalCutPro.FCPXML {
         internalStart: TimeInterval,
         internalEnd: TimeInterval?
     ) -> ElementOcclusion {
-        // perform rounding
+        // perform rounding to prevent floating-point precision from interfering
         let dp = 8
         let cStart = container.lowerBound.rounded(decimalPlaces: dp)
         let cEnd = container.upperBound.rounded(decimalPlaces: dp)

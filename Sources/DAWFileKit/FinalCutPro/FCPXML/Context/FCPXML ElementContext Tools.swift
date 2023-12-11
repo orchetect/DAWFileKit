@@ -46,7 +46,10 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var absoluteStartAsTimecode: Timecode? {
             guard let absoluteStart = absoluteStart else { return nil }
-            return try? element._fcpTimecode(fromRealTime: absoluteStart, resources: resources)
+            return try? element._fcpTimecode(
+                fromRealTime: absoluteStart,
+                resources: resources
+            )
         }
         
         /// The absolute end timecode of the current element in seconds.
@@ -62,7 +65,10 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var absoluteEndAsTimecode: Timecode? {
             guard let absoluteEnd = absoluteEnd else { return nil }
-            return try? element._fcpTimecode(fromRealTime: absoluteEnd, resources: resources)
+            return try? element._fcpTimecode(
+                fromRealTime: absoluteEnd,
+                resources: resources
+            )
         }
         
         /// Returns the effective `format` resource for the current element.
@@ -107,7 +113,10 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteStartAsTimecode: Timecode? {
             guard let parentAbsoluteStart = parentAbsoluteStart else { return nil }
-            return try? element._fcpTimecode(fromRealTime: parentAbsoluteStart, resources: resources)
+            return try? element._fcpTimecode(
+                fromRealTime: parentAbsoluteStart,
+                resources: resources
+            )
         }
         
         /// The parent element's absolute end time in seconds.
@@ -123,7 +132,10 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteEndAsTimecode: Timecode? {
             guard let parentAbsoluteEnd = parentAbsoluteEnd else { return nil }
-            return try? element._fcpTimecode(fromRealTime: parentAbsoluteEnd, resources: resources)
+            return try? element._fcpTimecode(
+                fromRealTime: parentAbsoluteEnd,
+                resources: resources
+            )
         }
         
         /// The parent element's duration in seconds.
@@ -138,7 +150,10 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// The parent element's duration expressed as timecode.
         public var parentDurationAsTimecode: Timecode? {
             guard let parentDuration = parentDuration else { return nil }
-            return try? element._fcpTimecode(fromRealTime: parentDuration, resources: resources)
+            return try? element._fcpTimecode(
+                fromRealTime: parentDuration,
+                resources: resources
+            )
         }
         
         /// The element's local roles, if applicable or present.

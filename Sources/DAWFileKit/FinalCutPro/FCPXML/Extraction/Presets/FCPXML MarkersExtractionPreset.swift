@@ -88,24 +88,12 @@ extension FinalCutPro.FCPXML {
         
         /// Absolute timecode position within the outermost timeline.
         public var timecode: Timecode? {
-            guard let absSeconds = extractedElement.value(forContext: .absoluteStart),
-                  let tc = try? extractedElement.element._fcpTimecode(
-                    fromRealTime: absSeconds,
-                    resources: extractedElement.resources
-                  )
-            else { return nil }
-            return tc
+            extractedElement.value(forContext: .absoluteStartAsTimecode)
         }
         
         /// Duration expressed as a length of timecode.
         public var duration: Timecode? {
-            guard let duration = marker.duration,
-                  let tc = try? extractedElement.element._fcpTimecode(
-                    fromRational: duration,
-                    resources: extractedElement.resources
-                  )
-            else { return nil }
-            return tc
+            marker.durationAsTimecode
         }
         
         /// Inherited roles of the marker from its container(s).

@@ -69,7 +69,21 @@ extension FinalCutPro {
         return TimecodeInterval(tc)
     }
     
-    /// `TimecodeInterval` struct template.
+    /// `TimecodeInterval` template.
+    public static func formTimecodeInterval(
+        realTime: TimeInterval,
+        at rate: TimecodeFrameRate
+    ) throws -> TimecodeInterval {
+        
+        try TimecodeInterval(
+            realTime: realTime,
+            at: rate,
+            base: timecodeSubFramesBase,
+            limit: timecodeUpperLimit
+        )
+    }
+    
+    /// `TimecodeInterval` template.
     public static func formTimecodeInterval(
         rational: Fraction,
         at rate: TimecodeFrameRate
