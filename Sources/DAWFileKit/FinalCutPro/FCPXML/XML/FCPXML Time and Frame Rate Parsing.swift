@@ -125,7 +125,7 @@ extension XMLElement {
             
             if let elementType = elementType {
                 switch elementType {
-                case .marker, .keyword:
+                case .marker, .chapterMarker, .keyword:
                     // markers and keywords use `start` attribute as an offset, so handle it specially
                     if let elementStart = ancestor.fcpStart {
                         if let ancestorParent = ancestor.parentElement,
