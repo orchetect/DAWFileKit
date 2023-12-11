@@ -17,6 +17,7 @@ extension FinalCutPro.FCPXML {
         
         public func perform(
             on extractable: XMLElement,
+            constrainToLocalTimeline: Bool,
             baseSettings settings: FinalCutPro.FCPXML.ExtractionSettings
         ) -> [FinalCutPro.FCPXML.ExtractedElement] {
             var settings = settings
@@ -27,15 +28,11 @@ extension FinalCutPro.FCPXML {
             settings.filteredExtractionTypes?.insert(.caption)
             
             let extracted = extractable.fcpExtractElements(
+                constrainToLocalTimeline: constrainToLocalTimeline,
                 settings: settings
-            ) /*{ element in
-                element.element.fcpElementType == .caption
-            }*/
+            )
             
             let captions = extracted
-                // .filter {
-                //     $0.element.fcpElementType == .caption
-                // }
             
             return captions
         }

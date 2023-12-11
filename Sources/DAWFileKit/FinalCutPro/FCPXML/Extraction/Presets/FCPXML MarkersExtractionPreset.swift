@@ -17,6 +17,7 @@ extension FinalCutPro.FCPXML {
         
         public func perform(
             on extractable: XMLElement,
+            constrainToLocalTimeline: Bool,
             baseSettings settings: FinalCutPro.FCPXML.ExtractionSettings
         ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
             var settings = settings
@@ -27,25 +28,12 @@ extension FinalCutPro.FCPXML {
             settings.filteredExtractionTypes?.insert(.marker)
             settings.filteredExtractionTypes?.insert(.chapterMarker)
             
-//            let elementTypes: [ElementType] = [
-//                .marker,
-//                .chapterMarker
-//            ]
-            
             let extracted = extractable.fcpExtractElements(
+                constrainToLocalTimeline: constrainToLocalTimeline,
                 settings: settings
-            ) /*{ element in
-                guard let elementType = element.element.fcpElementType
-                else { return false }
-                return elementTypes.contains(elementType)
-            }*/
+            )
             
             let markers = extracted
-                // .filter { element in
-                //     guard let elementType = element.element.fcpElementType
-                //     else { return false }
-                //     return elementTypes.contains(elementType)
-                // }
                 .compactMap { ExtractedMarker($0) }
             
             return markers
