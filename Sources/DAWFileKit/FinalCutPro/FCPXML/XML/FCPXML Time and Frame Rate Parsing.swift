@@ -85,16 +85,18 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
+    ///
+    /// - Returns: Elapsed seconds from zero timecode as a floating-point `TimeInterval` (`Double`).
     func _fcpCalculateAbsoluteStart<S: Sequence<XMLElement>>(
-        ancestors: S? = nil as [XMLElement]?
-    ) -> Fraction? {
-        var accum: Fraction?
-        var lastStart: Fraction?
+        ancestors: S? = nil as [XMLElement]?,
+        performRounding: Bool = false
+    ) -> TimeInterval? {
+        var accum: TimeInterval?
+        var lastStart: TimeInterval?
         
-        func add(_ other: Fraction?) {
+        func add(_ other: TimeInterval?) {
             guard let other = other else { return }
-            let newTC = accum ?? .zero
-            accum = newTC + other
+            accum = (accum ?? 0.0) + other
         }
         
         // iterate from root to current element
@@ -104,18 +106,18 @@ extension XMLElement {
         while let ancestor = ancestors.popLast() {
             if let tcStart = ancestor.fcpTCStart {
                 assert(ancestor.fcpStart == nil)
-                add(tcStart)
-                lastStart = tcStart
+                add(tcStart.doubleValue)
+                lastStart = tcStart.doubleValue
                 continue
             }
             
             if let offset = ancestor.fcpOffset {
                 if let _lastStart = lastStart {
-                    let diff = offset - _lastStart
+                    let diff = offset.doubleValue - _lastStart
                     lastStart = nil
                     add(diff)
                 } else {
-                    add(offset)
+                    add(offset.doubleValue)
                 }
             }
             
@@ -129,10 +131,10 @@ extension XMLElement {
                         if let ancestorParent = ancestor.parentElement,
                            let parentStart = ancestorParent.fcpStart
                         {
-                            let diff = elementStart - parentStart
+                            let diff = elementStart.doubleValue - parentStart.doubleValue
                             add(diff)
                         } else {
-                            add(elementStart)
+                            add(elementStart.doubleValue)
                         }
                     }
                 case .caption:
@@ -145,7 +147,7 @@ extension XMLElement {
             }
             
             if let start = ancestor.fcpStart {
-                lastStart = start
+                lastStart = start.doubleValue
             }
         }
         

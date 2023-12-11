@@ -13,28 +13,35 @@ import OTCore
 extension FinalCutPro.FCPXML {
     /// Utility: Returns occlusion information.
     static func _occlusion(
-        containerTimeRange: ClosedRange<Fraction>,
-        internalStartTime: Fraction,
-        internalEndTime: Fraction?
+        container: ClosedRange<TimeInterval>,
+        internalStart: TimeInterval,
+        internalEnd: TimeInterval?
     ) -> ElementOcclusion {
+        // perform rounding
+        let dp = 8
+        let cStart = container.lowerBound.rounded(decimalPlaces: dp)
+        let cEnd = container.upperBound.rounded(decimalPlaces: dp)
+        let cRange = cStart ... cEnd
+        let iStart = internalStart.rounded(decimalPlaces: dp)
+        let iEnd = internalEnd?.rounded(decimalPlaces: dp)
+        
         // don't allow element start exactly on container upper bound
-        let startWithinParent = containerTimeRange.contains(internalStartTime) &&
-            internalStartTime < containerTimeRange.upperBound
+        let isStartWithinParent = cRange.contains(iStart) &&
+        iStart < cEnd
         
-        guard startWithinParent else { return .fullyOccluded }
+        guard isStartWithinParent else { return .fullyOccluded }
         
-        guard let internalEndTime = internalEndTime else {
+        guard let iEnd = iEnd else {
             return .notOccluded
         }
         
-        let internalTimeRange = internalStartTime ..< internalEndTime
+        let isEndWithinParent = iEnd <= cEnd
         
-        if containerTimeRange.contains(internalStartTime),
-           containerTimeRange.contains(internalEndTime) {
+        if isEndWithinParent {
             return .notOccluded
         }
         
-        if internalTimeRange.overlaps(containerTimeRange) {
+        if (iStart ..< iEnd).overlaps(cRange) {
             return .partiallyOccluded
         }
         
@@ -57,9 +64,9 @@ extension XMLElement {
             ancestors: ancestors
         ) else { return .notOccluded }
         
-        var internalAbsEnd: Fraction?
+        var internalAbsEnd: TimeInterval?
         if let elementDuration = fcpDuration {
-            internalAbsEnd = internalAbsStart + elementDuration
+            internalAbsEnd = internalAbsStart + elementDuration.doubleValue
         }
         
         var ancestorWalkedCount = 0
@@ -87,7 +94,7 @@ extension XMLElement {
                 )
             else { continue }
             
-            let ancestorAbsEnd = ancestorAbsStart + ancestorDuration
+            let ancestorAbsEnd = ancestorAbsStart + ancestorDuration.doubleValue
             let ancestorRange = ancestorAbsStart ... ancestorAbsEnd
             
             // if fcpElementType == .story(.sequence) {
@@ -95,9 +102,9 @@ extension XMLElement {
             // }
             
             let o = FinalCutPro.FCPXML._occlusion(
-                containerTimeRange: ancestorRange,
-                internalStartTime: internalAbsStart,
-                internalEndTime: internalAbsEnd
+                container: ancestorRange,
+                internalStart: internalAbsStart,
+                internalEnd: internalAbsEnd
             )
             
             // print(self.name!, stringValue(forAttributeNamed: "value") ?? "",

@@ -12,8 +12,8 @@ import TimecodeKit
 // MARK: - Built-In Context
 
 extension FinalCutPro.FCPXML.ElementContext {
-    /// The absolute start timecode of the element.
-    public static var absoluteStart: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+    /// The absolute start timecode of the element in seconds.
+    public static var absoluteStart: FinalCutPro.FCPXML.ElementContext<TimeInterval?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
             tools.absoluteStart
         }
@@ -26,8 +26,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
     }
     
-    /// The absolute end timecode of the element.
-    public static var absoluteEnd: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+    /// The absolute end timecode of the element in seconds.
+    public static var absoluteEnd: FinalCutPro.FCPXML.ElementContext<TimeInterval?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
             tools.absoluteEnd
         }
@@ -101,8 +101,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
     }
     
-    /// The parent clip's absolute start time.
-    public static var parentAbsoluteStart: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+    /// The parent clip's absolute start time in seconds.
+    public static var parentAbsoluteStart: FinalCutPro.FCPXML.ElementContext<TimeInterval?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
             tools.parentAbsoluteStart
         }
@@ -115,8 +115,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
     }
     
-    /// The parent clip's absolute end time.
-    public static var parentAbsoluteEnd: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+    /// The parent clip's absolute end time in seconds.
+    public static var parentAbsoluteEnd: FinalCutPro.FCPXML.ElementContext<TimeInterval?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
             tools.parentAbsoluteEnd
         }
@@ -129,8 +129,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
     }
     
-    /// The parent clip's duration.
-    public static var parentDuration: FinalCutPro.FCPXML.ElementContext<Fraction?> {
+    /// The parent clip's duration in seconds.
+    public static var parentDuration: FinalCutPro.FCPXML.ElementContext<TimeInterval?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
             tools.parentDuration
         }

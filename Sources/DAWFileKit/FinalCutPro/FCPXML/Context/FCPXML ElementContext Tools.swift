@@ -34,9 +34,9 @@ extension FinalCutPro.FCPXML.ElementContext {
             element.fcpElementType
         }
         
-        /// The absolute start time of the current element.
+        /// The absolute start time of the current element in seconds.
         /// This is calculated based on ancestor elements.
-        public var absoluteStart: Fraction? {
+        public var absoluteStart: TimeInterval? {
             element._fcpCalculateAbsoluteStart(
                 ancestors: breadcrumbs
             )
@@ -46,23 +46,23 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var absoluteStartAsTimecode: Timecode? {
             guard let absoluteStart = absoluteStart else { return nil }
-            return try? element._fcpTimecode(fromRational: absoluteStart, resources: resources)
+            return try? element._fcpTimecode(fromRealTime: absoluteStart, resources: resources)
         }
         
-        /// The absolute end timecode of the current element.
+        /// The absolute end timecode of the current element in seconds.
         /// This is calculated based on ancestor elements.
-        public var absoluteEnd: Fraction? {
+        public var absoluteEnd: TimeInterval? {
             guard let absoluteStart = absoluteStart,
                   let duration = element.fcpDuration
             else { return nil }
-            return absoluteStart + duration
+            return absoluteStart + duration.doubleValue
         }
         
         /// The absolute end time of the current element expressed as timecode.
         /// This is calculated based on ancestor elements.
         public var absoluteEndAsTimecode: Timecode? {
             guard let absoluteEnd = absoluteEnd else { return nil }
-            return try? element._fcpTimecode(fromRational: absoluteEnd, resources: resources)
+            return try? element._fcpTimecode(fromRealTime: absoluteEnd, resources: resources)
         }
         
         /// Returns the effective `format` resource for the current element.
@@ -94,9 +94,9 @@ extension FinalCutPro.FCPXML.ElementContext {
             parent?.fcpName
         }
         
-        /// The parent element's absolute start time.
+        /// The parent element's absolute start time in seconds.
         /// This is calculated based on ancestor elements.
-        public var parentAbsoluteStart: Fraction? {
+        public var parentAbsoluteStart: TimeInterval? {
             guard let parent = parent else { return nil }
             return parent._fcpCalculateAbsoluteStart(
                 ancestors: breadcrumbs.dropFirst()
@@ -107,12 +107,12 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteStartAsTimecode: Timecode? {
             guard let parentAbsoluteStart = parentAbsoluteStart else { return nil }
-            return try? element._fcpTimecode(fromRational: parentAbsoluteStart, resources: resources)
+            return try? element._fcpTimecode(fromRealTime: parentAbsoluteStart, resources: resources)
         }
         
-        /// The parent element's absolute end time.
+        /// The parent element's absolute end time in seconds.
         /// This is calculated based on ancestor elements.
-        public var parentAbsoluteEnd: Fraction? {
+        public var parentAbsoluteEnd: TimeInterval? {
             guard let parentAbsoluteStart = parentAbsoluteStart,
                   let parentDuration = parentDuration
             else { return nil }
@@ -123,22 +123,22 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var parentAbsoluteEndAsTimecode: Timecode? {
             guard let parentAbsoluteEnd = parentAbsoluteEnd else { return nil }
-            return try? element._fcpTimecode(fromRational: parentAbsoluteEnd, resources: resources)
+            return try? element._fcpTimecode(fromRealTime: parentAbsoluteEnd, resources: resources)
         }
         
-        /// The parent element's duration.
-        public var parentDuration: Fraction? {
+        /// The parent element's duration in seconds.
+        public var parentDuration: TimeInterval? {
             guard let parent = parent else { return nil }
             return parent._fcpNearestDuration(
                 ancestors: breadcrumbs.dropFirst(),
                 includingSelf: true
-            )
+            )?.doubleValue
         }
         
         /// The parent element's duration expressed as timecode.
         public var parentDurationAsTimecode: Timecode? {
             guard let parentDuration = parentDuration else { return nil }
-            return try? element._fcpTimecode(fromRational: parentDuration, resources: resources)
+            return try? element._fcpTimecode(fromRealTime: parentDuration, resources: resources)
         }
         
         /// The element's local roles, if applicable or present.
@@ -175,9 +175,9 @@ extension FinalCutPro.FCPXML.ElementContext {
             else { return .notOccluded }
             
             return FinalCutPro.FCPXML._occlusion(
-                containerTimeRange: parentStart ... parentEnd,
-                internalStartTime: elementStart,
-                internalEndTime: absoluteEnd
+                container: parentStart ... parentEnd,
+                internalStart: elementStart,
+                internalEnd: absoluteEnd
             )
         }
         
@@ -200,9 +200,9 @@ extension FinalCutPro.FCPXML.ElementContext {
             element.stringValue(forAttributeNamed: key)
         }
         
-        /// The absolute start timecode of the element.
+        /// The absolute start timecode of the element in seconds.
         /// This is calculated based on ancestor elements.
-        public func absoluteStart(of element: XMLElement) -> Fraction? {
+        public func absoluteStart(of element: XMLElement) -> TimeInterval? {
             element._fcpCalculateAbsoluteStart(
                 ancestors: breadcrumbs
             )

@@ -10,7 +10,7 @@ import Foundation
 import TimecodeKit
 import OTCore
 
-// MARK: - Timecode Utils
+// MARK: - Rational -> Timecode
 
 extension XMLElement {
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
@@ -93,6 +93,31 @@ extension FinalCutPro.FCPXML {
         frameRate: TimecodeFrameRate
     ) throws -> Timecode? {
         try FinalCutPro.formTimecode(rational: fraction, at: frameRate)
+    }
+}
+
+// MARK: - Real Time -> Timecode
+
+extension XMLElement {
+    /// FCPXML: Convert raw time in seconds to `Timecode`.
+    func _fcpTimecode(
+        fromRealTime seconds: TimeInterval,
+        resources: XMLElement? = nil
+    ) throws -> Timecode? {
+        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
+        else { return nil }
+        
+        return try FinalCutPro.FCPXML._timecode(fromRealTime: seconds, frameRate: frameRate)
+    }
+}
+
+extension FinalCutPro.FCPXML {
+    /// FCPXML: Convert raw time in seconds to `Timecode`.
+    static func _timecode(
+        fromRealTime seconds: TimeInterval,
+        frameRate: TimecodeFrameRate
+    ) throws -> Timecode? {
+        try FinalCutPro.formTimecode(realTime: seconds, at: frameRate)
     }
 }
 

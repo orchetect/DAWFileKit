@@ -88,9 +88,9 @@ extension FinalCutPro.FCPXML {
         
         /// Absolute timecode position within the outermost timeline.
         public var timecode: Timecode? {
-            guard let absFraction = extractedElement.value(forContext: .absoluteStart),
+            guard let absSeconds = extractedElement.value(forContext: .absoluteStart),
                   let tc = try? extractedElement.element._fcpTimecode(
-                    fromRational: absFraction,
+                    fromRealTime: absSeconds,
                     resources: extractedElement.resources
                   )
             else { return nil }

@@ -48,6 +48,19 @@ extension FinalCutPro {
         )
     }
     
+    /// `Timecode` template.
+    public static func formTimecode(
+        realTime seconds: TimeInterval,
+        at rate: TimecodeFrameRate
+    ) throws -> Timecode {
+        try Timecode(
+            .realTime(seconds: seconds),
+            at: rate,
+            base: timecodeSubFramesBase,
+            limit: timecodeUpperLimit
+        )
+    }
+    
     /// `TimecodeInterval` template.
     public static func formTimecodeInterval(
         at rate: TimecodeFrameRate
