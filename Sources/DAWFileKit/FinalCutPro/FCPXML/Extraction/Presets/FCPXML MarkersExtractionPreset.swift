@@ -86,6 +86,11 @@ extension FinalCutPro.FCPXML {
             marker.note
         }
         
+        /// Marker state.
+        public var state: FinalCutPro.FCPXML.Marker.MarkerState {
+            marker.state
+        }
+        
         /// Absolute timecode position within the outermost timeline.
         public var timecode: Timecode? {
             extractedElement.value(forContext: .absoluteStartAsTimecode)
