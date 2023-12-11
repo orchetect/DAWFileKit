@@ -10,232 +10,6 @@ import Foundation
 import OTCore
 import TimecodeKit
 
-extension FinalCutPro.FCPXML {
-    struct ExtractionChildren {
-        enum DirectChildren {
-            /// All direct child elements of the element.
-            case all
-            
-            /// Specific direct child elements of the element.
-            case specific(_ specificChildren: any Swift.Sequence<XMLElement>)
-        }
-        
-        var children: DirectChildren?
-        
-        /// Explicit descendants and their children, if any, in special circumstances.
-        ///
-        /// - Note: This is not used for all descendants of any element, but for rare cases where a
-        /// generational jump is required due to how elements are referenced. (`mc-clip` is one such example).
-        ///
-        /// Descendants are ordered nearest to furthest descendant.
-        var descendants: [Descendant]?
-    }
-}
-
-extension FinalCutPro.FCPXML.ExtractionChildren {
-    static let directChildren = Self(children: .all, descendants: nil)
-    
-    static func specificChildren(_ specificChildren: any Swift.Sequence<XMLElement>) -> Self {
-        Self(children: .specific(specificChildren), descendants: nil)
-    }
-}
-
-extension FinalCutPro.FCPXML.ExtractionChildren {
-    struct Descendant {
-        let element: XMLElement
-        let children: FinalCutPro.FCPXML.ExtractionChildren?
-    }
-}
-
-extension XMLElement { // parent/container
-    /// Extractable children contained within the element.
-    func _fcpExtractableChildren(
-        auditions: FinalCutPro.FCPXML.Audition.Mask
-    ) -> FinalCutPro.FCPXML.ExtractionChildren? {
-        guard let fcpElementType = fcpElementType else { return nil }
-        
-        switch fcpElementType {
-        // MARK: annotations
-            
-        case .caption:
-            return .directChildren
-            
-        case .keyword:
-            return nil
-            
-        case .marker:
-            return nil
-                
-        // MARK: clips
-            
-        case .assetClip:
-            return .directChildren
-            
-        case .audio:
-            return .directChildren
-            
-        case .audition:
-            switch auditions {
-            case .active:
-                return .specificChildren([fcpAsAudition?.activeClip].compactMap { $0 })
-            case .activeAndAlternates:
-                return .directChildren
-            }
-            
-        case .clip:
-            return .directChildren
-            
-        case .gap:
-            return .directChildren
-            
-        case .liveDrawing:
-            return .directChildren // TODO: ?
-            
-        case .mcClip: // a.k.a. Multicam Clip
-                      // points to a `media` resource which will contain one `multicam`.
-                      // an `mc-clip` can point to only one `media` resource, but
-                      // the `mc-source` children in the `mc-clip` dictate what parts
-                      // of the `multicam` are used.
-            
-            // we need to know which video angle and audio angle the `mc-clip`
-            // is referencing. they may be different angles or the same angle.
-            // then we extract from those angle's storylines, ignoring the
-            // other angles that may be present in the `multicam`.
-            // so we can't just return the `media` resource and recurse, we need
-            // to actually know which angles are used by the `mc-clip`.
-            
-            if let multicamSources = fcpAsMCClip?.sources,
-               let mediaResource = fcpResource()?.fcpAsMedia,
-               let multicam = mediaResource.multicam
-            {
-                let (audio, video) = multicam
-                    .audioVideoMCAngles(forMulticamSources: multicamSources)
-                
-                // remove nils and reduce any duplicate elements
-                let reducedMCAngles = [video, audio] // video first, audio second
-                    .compactMap(\.?.element)
-                    .removingDuplicates()
-                
-                // provide explicit descendants
-                let descendants: [FinalCutPro.FCPXML.ExtractionChildren.Descendant] = [
-                    // .init(element: mcSource, children: nil), - can omit, not really important
-                    .init(element: mediaResource.element, children: nil),
-                    .init(element: multicam.element, children: .specificChildren(reducedMCAngles))
-                ]
-                
-                let ec = FinalCutPro.FCPXML.ExtractionChildren(
-                    children: .all,
-                    descendants: descendants
-                )
-                return ec
-            }
-            else {
-                return .directChildren
-            }
-            
-        case .refClip:
-            // a.k.a. Compound Clip
-            // points to a `media` resource which will contain one `sequence`
-            
-            if let mediaResource = fcpResource() {
-                let ec = FinalCutPro.FCPXML.ExtractionChildren(
-                    children: .all,
-                    descendants: [.init(element: mediaResource, children: nil)]
-                )
-                return ec
-            } else {
-                return .directChildren
-            }
-            
-        case .syncClip:
-            return .directChildren
-            
-        case .title:
-            return .directChildren
-            
-        case .video:
-            return .directChildren
-            
-        // MARK: sequence
-            
-        case .sequence:
-            // should only be a `spine` element, but return all children anyway
-            return .directChildren
-            
-        case .spine:
-            return .directChildren
-            
-        // MARK: structure
-            
-        case .library:
-            // can contain one or more `event`s and `smart-collection`s
-            return .directChildren
-            
-        case .event:
-            // can contain `project`s and `clips`
-            // as well as collection folders, keyword collections, smart collections
-            return .directChildren
-            
-        case .project:
-            // contains a `sequence` element
-            return .directChildren
-            
-        // MARK: resources
-            
-        case .resources:
-            return nil
-            
-        case .asset:
-            return nil
-            
-        case .effect:
-            return nil
-            
-        case .format:
-            return nil
-            
-        case .locator:
-            return nil
-            
-        case .media:
-            // used by `ref-clip` story element, media will contain a `sequence`
-            // used by `mc-clip` story element, media will contain a `multicam`
-            return .directChildren
-            
-        case .objectTracker:
-            return nil
-            
-        default:
-            return nil
-        }
-    }
-}
-
-// MARK: -
-
-extension FinalCutPro.FCPXML {
-    /// Extracted element and its context.
-    public struct ExtractedElement {
-        public var element: XMLElement
-        public var breadcrumbs: [XMLElement]
-        var resources: XMLElement?
-        
-        init(
-            element: XMLElement,
-            breadcrumbs: [XMLElement],
-            resources: XMLElement?
-        ) {
-            self.element = element
-            self.breadcrumbs = breadcrumbs
-            self.resources = resources
-        }
-        
-        public func value<Value>(forContext contextKey: ElementContext<Value>) -> Value {
-            contextKey.value(from: element, breadcrumbs: breadcrumbs, resources: resources)
-        }
-    }
-}
-
 // MARK: - FCPXMLElement Public Methods
 
 extension FCPXMLElement {
@@ -324,7 +98,7 @@ extension XMLElement {
     }
 }
 
-// MARK: - Recursive Extraction Logic
+// MARK: - Extraction Logic
 
 extension XMLElement {
     /// Internal extraction entry point:
@@ -346,7 +120,7 @@ extension XMLElement {
         settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestors: A,
         resources: XMLElement?,
-        overrideDirectChildren: FinalCutPro.FCPXML.ExtractionChildren? = nil
+        overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
         var ancestors: any Sequence<XMLElement> = ancestors
         
@@ -375,7 +149,7 @@ extension XMLElement {
         settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestors: A,
         resources: XMLElement?,
-        overrideDirectChildren: FinalCutPro.FCPXML.ExtractionChildren? = nil
+        overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
     ) -> [FinalCutPro.FCPXML.ExtractedElement] {
         // self
         
@@ -450,7 +224,7 @@ extension XMLElement {
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
     private func _fcpExtractDirectChildren<A: Sequence<XMLElement>>(
-        childrenRule: FinalCutPro.FCPXML.ExtractionChildren.DirectChildren,
+        childrenRule: FinalCutPro.FCPXML.ExtractableChildren.DirectChildren,
         settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestors: A,
         resources: XMLElement?
@@ -483,7 +257,7 @@ extension XMLElement {
     ///
     /// Descendants are ordered nearest to furthest descendant.
     private func _fcpExtractDescendants<A: Sequence<XMLElement>>(
-        descendants: [FinalCutPro.FCPXML.ExtractionChildren.Descendant],
+        descendants: [FinalCutPro.FCPXML.ExtractableChildren.Descendant],
         settings: FinalCutPro.FCPXML.ExtractionSettings,
         ancestors: A,
         resources: XMLElement?
