@@ -155,6 +155,13 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(title2Marker.name, "Marker 3")
         XCTAssertEqual(title2Marker.state, .standard)
         XCTAssertEqual(title2Marker.note, nil)
+        
+        // test single-element extraction
+        let title2MarkerExtracted = title2Marker.element.fcpExtract()
+        XCTAssertEqual(
+            title2MarkerExtracted.value(forContext: .absoluteStartAsTimecode),
+            Self.tc("01:00:27:00", .fps29_97)
+        )
     }
     
     func testExtractMarkers() throws {
