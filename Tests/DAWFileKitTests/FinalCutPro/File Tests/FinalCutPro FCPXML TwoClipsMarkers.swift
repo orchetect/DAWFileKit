@@ -66,6 +66,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let spine = try XCTUnwrap(sequence.spine)
         
         let storyElements = spine.storyElements.zeroIndexed
+        XCTAssertEqual(storyElements.count, 3)
         
         // clips
         

@@ -107,63 +107,75 @@ extension XMLElement {
 // these methods are conveniences to help in filtering and classifying elements
 
 // swiftformat:options --wrapcollections preserve
+extension Set<FinalCutPro.FCPXML.ElementType> {
+    public static let allStructureCases: Self = [
+        .fcpxml, .resources, .library, .event, .project
+    ]
+    
+    public static let allResourceCases: Self = [
+        .asset, .media, .format, .effect, .locator, .objectTracker
+    ]
+    
+    public static let allClipCases: Self = [
+        .assetClip, .audio, .audition, .clip, .gap, .liveDrawing,
+        .mcClip, .refClip, .syncClip, .title, .video
+    ]
+    
+    public static let allAnnotationCases: Self = [
+        .caption, .keyword, .marker, .chapterMarker
+    ]
+    
+    public static let allStoryElementCases: Self =
+        [.sequence, .spine]
+            + allClipCases
+            + allAnnotationCases
+    
+    public static let allTimelineCases: Self = [
+        .assetClip, .audio, /* not audition */ .clip, .gap, .liveDrawing,
+            .mcClip, .refClip, .syncClip, .title, .video,
+            .mcAngle, .sequence
+    ]
+}
+
 extension FinalCutPro.FCPXML.ElementType {
     
     // structure elements
-    public static let allStructureCases: Set<Self> = [
-        .fcpxml, .resources, .library, .event, .project
-    ]
+    public static let allStructureCases: Set<Self> = .allStructureCases
     public var isStructure: Bool {
         Self.allStructureCases.contains(self)
     }
     
     // resources
-    public static let allResourceCases: Set<Self> = [
-        .asset, .media, .format, .effect, .locator, .objectTracker
-    ]
+    public static let allResourceCases: Set<Self> = .allResourceCases
     public var isResource: Bool {
         Self.allResourceCases.contains(self)
     }
     
     // clips
-    public static let allClipCases: Set<Self> = [
-        .assetClip, .audio, .audition, .clip, .gap, .liveDrawing,
-        .mcClip, .refClip, .syncClip, .title, .video
-    ]
+    public static let allClipCases: Set<Self> = .allClipCases
     public var isClip: Bool {
         Self.allClipCases.contains(self)
     }
     
     // annotations
-    public static let allAnnotationCases: Set<Self> = [
-        .caption, .keyword, .marker, .chapterMarker
-    ]
+    public static let allAnnotationCases: Set<Self> = .allAnnotationCases
     public var isAnnotation: Bool {
         Self.allAnnotationCases.contains(self)
     }
     
     // story elements
-    public static let allStoryElementCases: Set<Self> = 
-        Set([.sequence, .spine])
-        + allClipCases
-        + allAnnotationCases
+    public static let allStoryElementCases: Set<Self> = .allStoryElementCases
     public var isStoryElement: Bool {
         Self.allStoryElementCases.contains(self)
     }
-}
-
-extension FinalCutPro.FCPXML.ElementType {
+    
     // logical containers with a timeline that can contain story elements
     // and/or other nested containers.
     // (not "can it contain child elements?", but is it a container as far
     // as the user is concerned within Final Cut Pro?)
-    public static let allTimelineCases: Set<Self> = [
-        .assetClip, .audio, .audition, .clip, .gap, /*.liveDrawing*/ // TODO: ?
-            .mcClip, .refClip, .syncClip, .title, .video,
-        .mcAngle
-    ]
+    public static let allTimelineCases: Set<Self> = .allTimelineCases
     public var isTimeline: Bool {
-        Self.allAnnotationCases.contains(self)
+        Self.allTimelineCases.contains(self)
     }
 }
 

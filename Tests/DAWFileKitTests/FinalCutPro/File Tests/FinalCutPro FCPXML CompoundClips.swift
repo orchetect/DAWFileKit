@@ -85,7 +85,6 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
                 filteredExtractionTypes: nil,
                 excludedTraversalTypes: [],
                 excludedExtractionTypes: [],
-                excludedAncestorTypesOfParentForExtraction: [],
                 traversalPredicate: nil,
                 extractionPredicate: nil
             )

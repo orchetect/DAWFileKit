@@ -33,7 +33,6 @@ extension XMLElement {
             filteredExtractionTypes: nil,
             excludedTraversalTypes: [],
             excludedExtractionTypes: [],
-            excludedAncestorTypesOfParentForExtraction: [],
             traversalPredicate: { _ in false },
             extractionPredicate: nil
         )

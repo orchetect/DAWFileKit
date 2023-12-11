@@ -44,11 +44,6 @@ extension FinalCutPro.FCPXML {
         /// both.
         public var excludedExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>
         
-        /// Elements will be excluded from extraction if their parent's ancestors have one of these
-        /// element types.
-        /// This rule supersedes ``filteredExtractionTypes`` in the event the same type exists in both.
-        public var excludedAncestorTypesOfParentForExtraction: Set<FinalCutPro.FCPXML.ElementType>
-        
         /// Predicate to apply to element traversal.
         /// This predicate is applied last after all other filters and exclusions.
         public var traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
@@ -64,7 +59,6 @@ extension FinalCutPro.FCPXML {
             filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
             excludedTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedExtractionTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
-            excludedAncestorTypesOfParentForExtraction: Set<FinalCutPro.FCPXML.ElementType> = [],
             traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil,
             extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil
         ) {
@@ -74,7 +68,6 @@ extension FinalCutPro.FCPXML {
             self.filteredExtractionTypes = filteredExtractionTypes
             self.excludedTraversalTypes = excludedTraversalTypes
             self.excludedExtractionTypes = excludedExtractionTypes
-            self.excludedAncestorTypesOfParentForExtraction = excludedAncestorTypesOfParentForExtraction
             self.traversalPredicate = traversalPredicate
             self.extractionPredicate = extractionPredicate
         }
@@ -95,7 +88,6 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
             filteredExtractionTypes: nil,
             excludedTraversalTypes: [],
             excludedExtractionTypes: [],
-            excludedAncestorTypesOfParentForExtraction: [],
             traversalPredicate: nil,
             extractionPredicate: nil
         )
@@ -110,9 +102,22 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
         filteredExtractionTypes: nil,
         excludedTraversalTypes: [],
         excludedExtractionTypes: [],
-        excludedAncestorTypesOfParentForExtraction: [.refClip, .syncClip, .mcClip],
-        traversalPredicate: nil,
-        extractionPredicate: nil
+        traversalPredicate: { element in
+            let timelineCount = element.breadcrumbs
+                .filter { $0.fcpElementType?.isTimeline == true }
+                .filter { ($0.fcpLane ?? 0) == 0 }
+                .count
+            // print(e.element.name!, clipCount, e.breadcrumbs.map(\.name!))
+            return timelineCount <= 2
+        },
+        extractionPredicate: { element in
+            let timelineCount = element.breadcrumbs
+                .filter { $0.fcpElementType?.isTimeline == true }
+                .filter { ($0.fcpLane ?? 0) == 0 }
+                .count
+            // print(e.element.name!, clipCount, e.breadcrumbs.map(\.name!))
+            return timelineCount <= 2
+        }
     )
 }
 
