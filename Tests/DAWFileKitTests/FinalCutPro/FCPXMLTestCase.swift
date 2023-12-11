@@ -34,6 +34,10 @@ extension FCPXMLUtilities {
         }
     }
     
+    static func fraction(frames: Int, _ fr: TimecodeFrameRate) -> Fraction {
+        tcInterval(frames: frames, fr).rationalValue
+    }
+    
     static func debugString(for em: FinalCutPro.FCPXML.ExtractedMarker) -> String {
         let absTC: String
         if let absoluteStart = em.timecode {
