@@ -12,6 +12,7 @@ import OTCore
 extension FinalCutPro.FCPXML {
     /// Describes ancestors of an element and their interpolated roles.
     public struct AncestorRoles: Equatable, Hashable {
+        /// Element roles, ordered from nearest to furthest ancestor.
         public var elements: [ElementRoles]
         
         public init(elements: [ElementRoles] = []) {
@@ -80,7 +81,7 @@ extension FinalCutPro.FCPXML.AncestorRoles {
         // and FCP shows them all in a comma-separated list for Audio Role,
         // ie: "Dialogue.MixL" and "Dialogue.MixR" shown in GUI as "MixL, MixR" for Audio Role
         // but both roles are selected in the drop-down role menu of course.
-        for elementRoles in elementsRoles {
+        for elementRoles in elementsRoles.reversed() {
             if containsAssignedOrInherited(elementRoles) {
                 effectiveRoles.removeAll()
             }
@@ -105,18 +106,22 @@ extension FinalCutPro.FCPXML.AncestorRoles {
 
 extension XMLElement {
     /// FCPXML: Analyzes an element and its ancestors and returns typed information about their roles.
+    ///
+    /// Ancestors are ordered nearest to furthest.
     func _fcpInheritedRoles(
-        breadcrumbs: [XMLElement],
+        ancestors: [XMLElement],
         resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
     ) -> FinalCutPro.FCPXML.AncestorRoles {
         var ancestorRoles = FinalCutPro.FCPXML.AncestorRoles()
         
-        let elements = breadcrumbs + [self]
+        // reversed to get ordering of furthest ancestor to closest
+        let elements = ([self] + ancestors).reversed()
         
+        // iterate from furthest ancestor to closest
         for index in elements.indices {
             let breadcrumb = elements[index]
-            let isLastElement = index == elements.indices.last
+            let isFirstElement = index == elements.indices.first
             var bcRoles = breadcrumb._fcpLocalRoles(
                 resources: resources,
                 auditions: auditions
@@ -127,7 +132,7 @@ extension XMLElement {
             bcRoles = FinalCutPro.FCPXML.addDefaultRoles(for: bcType, to: bcRoles)
             
             // differentiate assigned ancestor roles
-            if !isLastElement {
+            if !isFirstElement {
                 bcRoles = bcRoles._fcpReplacingAssignedRolesWithInherited()
             }
             
@@ -136,7 +141,7 @@ extension XMLElement {
                     elementType: bcType, 
                     roles: bcRoles
                 )
-                ancestorRoles.elements.append(elementRoles)
+                ancestorRoles.elements.insert(elementRoles, at: 0)
             }
         }
         

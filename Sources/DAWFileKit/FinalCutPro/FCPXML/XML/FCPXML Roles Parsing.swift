@@ -69,7 +69,7 @@ extension XMLElement {
                 .filter(\.active)
             
             if audioChannelSources.isEmpty {
-                if let role = fcpAudioRole {
+                if let role = assetClip.audioRole {
                     add(role: .audio(role), isInherited: false)
                 }
             } else {
@@ -194,15 +194,13 @@ extension XMLElement {
             let childRoles = _fcpRolesForNearestDescendant(
                 resources: resources,
                 auditions: auditions,
-                firstGenerationOnly: true,
-                firstElementEachGenerationOnly: true
+                firstGenerationOnly: false,
+                firstElementEachGenerationOnly: false
             )
             add(roles: childRoles, isInherited: true)
             
             // the audio role may be present in a `sync-source` child of the sync clip.
-            let syncSources = syncClip
-                .syncSources
-            
+            let syncSources = syncClip.syncSources
             if !syncSources.isEmpty {
                 let audioRoleSources = syncSources
                     .flatMap(\.audioRoleSources)
@@ -255,20 +253,41 @@ extension XMLElement {
         firstElementEachGenerationOnly: Bool
     ) -> [FinalCutPro.FCPXML.AnyRole] {
         let storyElements = fcpStoryElements
+            .filter { ($0.fcpLane ?? 0) == 0 }
+        
+        var foundRoles: [FinalCutPro.FCPXML.AnyRole] = []
+        
+        func add(roles: [FinalCutPro.FCPXML.AnyRole]) {
+            for role in roles {
+                foundRoles.removeAll { $0.roleType == role.roleType }
+                foundRoles.append(role)
+            }
+        }
         
         let elements: AnySequence = firstElementEachGenerationOnly
             ? storyElements.prefix(1).asAnySequence
             : storyElements.asAnySequence
         
+        // 1st-pass: check first-generation children shallowly
         for storyElement in elements {
             let roles = storyElement._fcpLocalRoles(resources: resources, auditions: auditions)
             // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
-            if !roles.isEmpty { return roles.map(\.wrapped) }
+            add(roles: roles.map(\.wrapped))
             
-            if !firstGenerationOnly {
-                let childElements: AnySequence = firstElementEachGenerationOnly
-                    ? storyElement.childElements.prefix(1).asAnySequence
-                    : storyElement.childElements.asAnySequence
+            let peers = storyElement.childElements
+                .filter { ($0.fcpLane ?? 0) != 0 }
+            
+            for peer in peers {
+                let peerRoles = peer._fcpLocalRoles(resources: resources, auditions: auditions)
+                // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
+                add(roles: peerRoles.map(\.wrapped))
+            }
+        }
+        
+        // 2nd-pass: check second-generation children
+        if !firstGenerationOnly {
+            for storyElement in elements {
+                let childElements = storyElement.childElements
                 
                 for child in childElements {
                     let childRoles = child._fcpRolesForNearestDescendant(
@@ -277,12 +296,12 @@ extension XMLElement {
                         firstGenerationOnly: firstGenerationOnly,
                         firstElementEachGenerationOnly: firstElementEachGenerationOnly
                     )
-                    if !childRoles.isEmpty { return childRoles }
+                    add(roles: childRoles)
                 }
             }
         }
         
-        return []
+        return foundRoles
     }
 }
 

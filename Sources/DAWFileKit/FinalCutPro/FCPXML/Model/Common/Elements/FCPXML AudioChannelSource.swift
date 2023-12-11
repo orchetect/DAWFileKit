@@ -73,8 +73,8 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
     
     /// Output role assignment.
     public var role: FinalCutPro.FCPXML.AudioRole? {
-        get { element.fcpAudioRole }
-        set { element.fcpAudioRole = newValue }
+        get { element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self) }
+        set { element.fcpSet(role: newValue) }
     }
     
     public var start: Fraction? {

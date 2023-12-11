@@ -175,7 +175,7 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// Returns the effective roles of the element inherited from ancestors.
         public var inheritedRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] {
             element._fcpInheritedRoles(
-                breadcrumbs: breadcrumbs,
+                ancestors: breadcrumbs,
                 resources: resources,
                 auditions: .active
             )

@@ -98,7 +98,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(marker.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(marker.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(marker.value(forContext: .inheritedRoles), [
-            .inherited(.audio(raw: "music.music-1")!), // markers can never have 'assigned' roles
+            .inherited(.audio(raw: "effects.effects-1")!), // markers can never have 'assigned' roles
             .inherited(.video(raw: "Sample Role")!) // markers can never have 'assigned' roles
         ])
     }
@@ -155,7 +155,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(marker2.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(marker2.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(marker2.value(forContext: .inheritedRoles), [
-            .inherited(.audio(raw: "music.music-1")!), // markers can never have 'assigned' roles
+            .inherited(.audio(raw: "effects.effects-1")!), // markers can never have 'assigned' roles
             .inherited(.video(raw: "Sample Role")!) // markers can never have 'assigned' roles
         ])
     }
