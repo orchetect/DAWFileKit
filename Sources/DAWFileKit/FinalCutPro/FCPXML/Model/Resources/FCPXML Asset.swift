@@ -40,6 +40,46 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Asset {
+    public init(
+        id: String,
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction? = nil,
+        format: String? = nil,
+        uid: String? = nil,
+        hasAudio: Bool = false,
+        hasVideo: Bool = false,
+        audioSources: Int = 0,
+        audioChannels: Int = 0,
+        audioRate: FinalCutPro.FCPXML.AudioRate? = nil,
+        videoSources: Int = 0,
+        auxVideoFlags: String? = nil,
+        mediaRep: FinalCutPro.FCPXML.MediaRep = .init(),
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.format = format
+        self.uid = uid
+        self.hasAudio = hasAudio
+        self.hasVideo = hasVideo
+        self.audioSources = audioSources
+        self.audioChannels = audioChannels
+        self.audioRate = audioRate
+        self.videoSources = videoSources
+        self.auxVideoFlags = auxVideoFlags
+        self.mediaRep = mediaRep
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Asset {
@@ -47,7 +87,7 @@ extension FinalCutPro.FCPXML.Asset {
         // shared resource attributes
         /// Identifier. (Required)
         case id // required
-                /// Name.
+        /// Name.
         case name
         
         // base attributes
@@ -201,8 +241,23 @@ extension FinalCutPro.FCPXML.Asset: FCPXMLElementOptionalDuration { }
 extension FinalCutPro.FCPXML.Asset {
     // TODO: can contain one or more `media-rep` children. not sure why more than one, but DTD says so.
     // only used by `asset`
-    public var mediaRep: FinalCutPro.FCPXML.MediaRep? {
-        element.firstChild(whereFCPElement: .mediaRep)
+    public var mediaRep: FinalCutPro.FCPXML.MediaRep {
+        get {
+            if let existingElement = element.firstChild(whereFCPElement: .mediaRep) {
+                return existingElement
+            }
+            
+            // create new element and attach
+            let newElement = FinalCutPro.FCPXML.MediaRep()
+            element.addChild(newElement.element)
+            return newElement
+        }
+        set {
+            let current = mediaRep
+            guard current.element != newValue.element else { return }
+            current.element.detach()
+            element.addChild(newValue.element)
+        }
     }
 }
 

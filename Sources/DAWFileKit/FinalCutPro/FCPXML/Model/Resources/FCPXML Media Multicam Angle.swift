@@ -31,6 +31,20 @@ extension FinalCutPro.FCPXML.Media.Multicam {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Media.Multicam.Angle {
+    public init(
+        name: String? = nil,
+        angleID: String
+    ) {
+        self.init()
+        
+        self.name = name
+        self.angleID = angleID
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Media.Multicam.Angle {
@@ -57,9 +71,9 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
         set { element.fcpName = newValue }
     }
     
-    /// Angle ID.
-    public var angleID: String? {
-        get { element.stringValue(forAttributeNamed: Attributes.angleID.rawValue) }
+    /// Angle ID. (Required)
+    public var angleID: String {
+        get { element.stringValue(forAttributeNamed: Attributes.angleID.rawValue) ?? "" }
         set { element.addAttribute(withName: Attributes.angleID.rawValue, value: newValue) }
     }
 }

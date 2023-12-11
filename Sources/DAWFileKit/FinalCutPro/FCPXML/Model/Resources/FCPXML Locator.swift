@@ -37,6 +37,20 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Locator {
+    public init(
+        id: String,
+        url: URL? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.url = url
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Locator {

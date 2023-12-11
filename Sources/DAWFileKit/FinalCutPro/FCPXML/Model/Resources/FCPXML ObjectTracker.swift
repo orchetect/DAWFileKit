@@ -40,6 +40,18 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.ObjectTracker {
+    public init(
+        trackingShapes: [TrackingShape]
+    ) {
+        self.init()
+        
+        trackingShapes.forEach { element.addChild($0.element) }
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.ObjectTracker {

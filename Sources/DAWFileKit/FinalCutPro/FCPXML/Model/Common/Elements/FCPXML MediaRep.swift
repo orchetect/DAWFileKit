@@ -39,6 +39,42 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.MediaRep {
+    public init(
+        kind: Kind = .originalMedia,
+        sig: String? = nil,
+        src: URL? = nil,
+        suggestedFilename: String? = nil,
+        bookmark: Data? = nil
+    ) {
+        self.init()
+        
+        self.kind = kind
+        self.sig = sig
+        self.src = src
+        self.suggestedFilename = suggestedFilename
+        self.bookmarkData = bookmark
+    }
+    
+    public init(
+        kind: Kind = .originalMedia,
+        sig: String? = nil,
+        src: URL? = nil,
+        suggestedFilename: String? = nil,
+        bookmark: String
+    ) {
+        self.init()
+        
+        self.kind = kind
+        self.sig = sig
+        self.src = src
+        self.suggestedFilename = suggestedFilename
+        self.bookmarkData = bookmark.data(using: .utf8)
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.MediaRep {

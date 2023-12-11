@@ -329,7 +329,7 @@ extension XMLElement {
         else { return nil }
         
         switch elementType {
-        case .asset: return resource.fcpAsAsset?.mediaRep?.src
+        case .asset: return resource.fcpAsAsset?.mediaRep.src
         case .effect: return nil
         case .format: return nil
         case .locator: return resource.fcpAsLocator?.url

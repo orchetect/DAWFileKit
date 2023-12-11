@@ -42,6 +42,38 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Format {
+    public init(
+        id: String,
+        name: String? = nil,
+        frameDuration: Fraction? = nil,
+        fieldOrder: String? = nil,
+        width: Int? = nil,
+        height: Int? = nil,
+        paspH: Int? = nil,
+        paspV: Int? = nil,
+        colorSpace: String? = nil,
+        projection: String? = nil,
+        stereoscopic: String? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.name = name
+        self.frameDuration = frameDuration
+        self.fieldOrder = fieldOrder
+        self.width = width
+        self.height = height
+        self.paspH = paspH
+        self.paspV = paspV
+        self.colorSpace = colorSpace
+        self.projection = projection
+        self.stereoscopic = stereoscopic
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Format {

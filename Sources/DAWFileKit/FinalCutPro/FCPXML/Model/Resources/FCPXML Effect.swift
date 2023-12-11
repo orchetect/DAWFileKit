@@ -40,6 +40,24 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Effect {
+    public init(
+        id: String,
+        name: String? = nil,
+        uid: String,
+        src: String? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.name = name
+        self.uid = uid
+        self.src = src
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Effect {

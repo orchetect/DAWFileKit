@@ -43,6 +43,12 @@ extension FinalCutPro.FCPXML.ObjectTracker {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.ObjectTracker.TrackingShape {
+    // TODO: add init after adding attribute properties
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.ObjectTracker.TrackingShape {

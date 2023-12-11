@@ -31,6 +31,34 @@ extension FinalCutPro.FCPXML.Media {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Media.Multicam {
+    public init(
+        // Media Attributes
+        format: String,
+        duration: Fraction? = nil,
+        tcStart: Fraction? = nil,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
+        // Element Attributes
+        renderFormat: String? = nil,
+        angles: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Media.Multicam.Angle>? = nil,
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        // Media Attributes
+        self.format = format
+        self.duration = duration
+        self.tcStart = tcStart
+        self.tcFormat = tcFormat
+        // Element Attributes
+        self.renderFormat = renderFormat
+        angles?.forEach { element.addChild($0.element) }
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Media.Multicam {

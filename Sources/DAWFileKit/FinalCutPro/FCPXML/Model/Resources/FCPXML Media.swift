@@ -40,6 +40,76 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Media {
+    public init(
+        // shared resource attributes
+        id: String,
+        name: String? = nil,
+        // asset attributes
+        uid: String? = nil,
+        projectRef: String? = nil,
+        // FCPXMLElementOptionalModDate
+        modDate: String? = nil
+    ) {
+        self.init()
+        
+        // shared resource attributes
+        self.id = id
+        self.name = name
+        // asset attributes
+        self.uid = uid
+        self.projectRef = projectRef
+        // FCPXMLElementOptionalModDate
+        self.modDate = modDate
+    }
+    
+    public init(
+        // shared resource attributes
+        id: String,
+        name: String? = nil,
+        // asset attributes
+        uid: String? = nil,
+        projectRef: String? = nil,
+        // FCPXMLElementOptionalModDate
+        modDate: String? = nil,
+        // multicam or sequence
+        multicam: Multicam
+    ) {
+        self.init(
+            id: id,
+            name: name,
+            uid: uid,
+            projectRef: projectRef,
+            modDate: modDate
+        )
+        self.element.addChild(multicam.element)
+    }
+    
+    public init(
+        // shared resource attributes
+        id: String,
+        name: String? = nil,
+        // asset attributes
+        uid: String? = nil,
+        projectRef: String? = nil,
+        // FCPXMLElementOptionalModDate
+        modDate: String? = nil,
+        // multicam or sequence
+        sequence: FinalCutPro.FCPXML.Sequence
+    ) {
+        self.init(
+            id: id,
+            name: name,
+            uid: uid,
+            projectRef: projectRef,
+            modDate: modDate
+        )
+        self.element.addChild(sequence.element)
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Media {
