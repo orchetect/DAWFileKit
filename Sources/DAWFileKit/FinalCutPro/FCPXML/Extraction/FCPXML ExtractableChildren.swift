@@ -57,6 +57,7 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
 extension FinalCutPro.FCPXML.ExtractableChildren {
     init?(
         of element: XMLElement,
+        resources: XMLElement?,
         auditions: FinalCutPro.FCPXML.Audition.Mask
     ) {
         guard let fcpElementType = element.fcpElementType else { return nil }
@@ -113,7 +114,7 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
             // to actually know which angles are used by the `mc-clip`.
             
             if let multicamSources = element.fcpAsMCClip?.sources,
-               let mediaResource = element.fcpResource()?.fcpAsMedia,
+               let mediaResource = element.fcpResource(in: resources)?.fcpAsMedia,
                let multicam = mediaResource.multicam
             {
                 let (audio, video) = multicam
@@ -145,7 +146,7 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
             // a.k.a. Compound Clip
             // points to a `media` resource which will contain one `sequence`
             
-            if let mediaResource = element.fcpResource() {
+            if let mediaResource = element.fcpResource(in: resources) {
                 let ec = FinalCutPro.FCPXML.ExtractableChildren(
                     children: .all,
                     descendants: [.init(element: mediaResource, children: nil)]
@@ -223,9 +224,10 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
 extension XMLElement {
     /// Extractable children contained within the element.
     func _fcpExtractableChildren(
+        resources: XMLElement?,
         auditions: FinalCutPro.FCPXML.Audition.Mask
     ) -> FinalCutPro.FCPXML.ExtractableChildren? {
-        FinalCutPro.FCPXML.ExtractableChildren(of: self, auditions: auditions)
+        FinalCutPro.FCPXML.ExtractableChildren(of: self, resources: resources, auditions: auditions)
     }
 }
 

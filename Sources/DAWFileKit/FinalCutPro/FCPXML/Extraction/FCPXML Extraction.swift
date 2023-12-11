@@ -190,7 +190,7 @@ extension XMLElement {
         // get recursing information
         
         guard let recurse = overrideDirectChildren
-              ?? _fcpExtractableChildren(auditions: settings.auditions)
+                ?? _fcpExtractableChildren(resources: resources, auditions: settings.auditions)
         else { return extractedElements }
         
         // direct children, if any
