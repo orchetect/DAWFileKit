@@ -42,13 +42,13 @@ extension FinalCutPro.FCPXML.AncestorRoles {
     public func flattenedInterpolatedRoles() -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
         var outputRoles: [FinalCutPro.FCPXML.AnyInterpolatedRole] = []
         
-        let elementAudioRoles = elements.map { $0.roles.audioRoles() }
-        let audioRoles = _flatten(singleRoleType: elementAudioRoles)
-        outputRoles.append(contentsOf: audioRoles)
-        
         let elementVideoRoles = elements.map { $0.roles.videoRoles() }
         let videoRoles = _flatten(singleRoleType: elementVideoRoles)
         outputRoles.append(contentsOf: videoRoles)
+        
+        let elementAudioRoles = elements.map { $0.roles.audioRoles() }
+        let audioRoles = _flatten(singleRoleType: elementAudioRoles)
+        outputRoles.append(contentsOf: audioRoles)
         
         let elementCaptionRoles = elements.map { $0.roles.captionRoles() }
         let captionRoles = _flatten(singleRoleType: elementCaptionRoles)
@@ -118,10 +118,12 @@ extension XMLElement {
         // reversed to get ordering of furthest ancestor to closest
         let elements = ([self] + ancestors).reversed()
         
+        // print(elements.map(\.name!))
+        
         // iterate from furthest ancestor to closest
         for index in elements.indices {
             let breadcrumb = elements[index]
-            let isFirstElement = index == elements.indices.first
+            let isLastElement = index == elements.indices.last // self
             var bcRoles = breadcrumb._fcpLocalRoles(
                 resources: resources,
                 auditions: auditions
@@ -132,7 +134,7 @@ extension XMLElement {
             bcRoles = FinalCutPro.FCPXML.addDefaultRoles(for: bcType, to: bcRoles)
             
             // differentiate assigned ancestor roles
-            if !isFirstElement {
+            if !isLastElement {
                 bcRoles = bcRoles._fcpReplacingAssignedRolesWithInherited()
             }
             
@@ -144,6 +146,10 @@ extension XMLElement {
                 ancestorRoles.elements.insert(elementRoles, at: 0)
             }
         }
+        
+        // print(ancestorRoles.elements.map {
+        //     $0.elementType.rawValue + ": " + $0.roles.map(\.wrapped).map(\.rawValue).joined(separator: " - ")
+        // })
         
         return ancestorRoles
     }

@@ -78,8 +78,8 @@ extension FinalCutPro.FCPXML.Audio {
     }
     
     public var role: FinalCutPro.FCPXML.AudioRole? {
-        get { element.fcpAudioRole }
-        set { element.fcpAudioRole = newValue }
+        get { element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self) }
+        set { element.fcpSet(role: newValue) }
     }
     
     /// Source/track identifier in asset (if not '1').

@@ -78,6 +78,9 @@ extension XMLElement {
                 add(roles: audioChannelSources.asAnyRoles(), isInherited: false)
             }
             
+            // print(localRoles.map(\.role).map(\.rawValue),
+            //       Array(ancestorElements(includingSelf: false)).count)
+            
         case .audio:
             guard let audio = fcpAsAudio else { break }
             if let role = audio.role {
@@ -97,7 +100,8 @@ extension XMLElement {
                 resources: resources,
                 auditions: auditions,
                 firstGenerationOnly: true,
-                firstElementEachGenerationOnly: false
+                firstElementEachGenerationOnly: false, 
+                ignoring: []
             )
             add(roles: childRoles, isInherited: true)
             
@@ -148,7 +152,8 @@ extension XMLElement {
                     resources: resources,
                     auditions: auditions,
                     firstGenerationOnly: true,
-                    firstElementEachGenerationOnly: false
+                    firstElementEachGenerationOnly: false, 
+                    ignoring: []
                 )
                     .audioRoles()
                     .map { $0.asAnyRole() }
@@ -161,7 +166,8 @@ extension XMLElement {
                     resources: resources,
                     auditions: auditions,
                     firstGenerationOnly: true,
-                    firstElementEachGenerationOnly: false
+                    firstElementEachGenerationOnly: false,
+                    ignoring: []
                 )
                     .videoRoles()
                     .map { $0.asAnyRole() }
@@ -188,28 +194,42 @@ extension XMLElement {
             
             guard let syncClip = fcpAsSyncClip else { break }
             
-            // instead, we derive the video role from the sync clip's first video media.
-            // we'll also add any audio roles found in case sync sources are missing and
-            // audio roles can't be derived from them.
-            let childRoles = _fcpRolesForNearestDescendant(
-                resources: resources,
-                auditions: auditions,
-                firstGenerationOnly: false,
-                firstElementEachGenerationOnly: false
-            )
-            add(roles: childRoles, isInherited: true)
-            
             // the audio role may be present in a `sync-source` child of the sync clip.
             let syncSources = syncClip.syncSources
-            if !syncSources.isEmpty {
-                let audioRoleSources = syncSources
-                    .flatMap(\.audioRoleSources)
-                    .filter(\.active)
-                let audioRoles = audioRoleSources
-                    .compactMap(\.role)
-                    .asAnyRoles()
-                add(roles: audioRoles, isInherited: true)
+            let audioRoleSources = syncSources
+                .flatMap(\.audioRoleSources)
+            let activeAudioRoleSources = audioRoleSources.filter { $0.active }
+            let inactiveAudioRoleSources = audioRoleSources.filter { !$0.active }
+            
+            // we derive the video role from the sync clip's first video media.
+            // we'll also add any audio roles found in case sync sources are missing and
+            // audio roles can't be derived from them.
+            let childVideoRoles = _fcpRolesForNearestDescendant(
+                resources: resources,
+                auditions: auditions,
+                firstGenerationOnly: true,
+                firstElementEachGenerationOnly: false,
+                types: [.video],
+                ignoring: inactiveAudioRoleSources.asAnyRoles()
+            )
+            add(roles: childVideoRoles, isInherited: true)
+            
+            if activeAudioRoleSources.isEmpty {
+                let childAudioRoles = _fcpRolesForNearestDescendant(
+                    resources: resources,
+                    auditions: auditions,
+                    firstGenerationOnly: false,
+                    firstElementEachGenerationOnly: false,
+                    types: [.audio],
+                    ignoring: inactiveAudioRoleSources.asAnyRoles()
+                )
+                add(roles: childAudioRoles, isInherited: true)
+            } else {
+                add(roles: activeAudioRoleSources.asAnyRoles(), isInherited: true)
             }
+            
+            // print(localRoles.map(\.role).map(\.rawValue), 
+            //       Array(ancestorElements(includingSelf: false)).count)
             
         case .title:
             guard let title = fcpAsTitle else { break }
@@ -246,75 +266,68 @@ extension XMLElement {
     }
     
     /// FCPXML: Attempts to extract assigned roles for the first child clip found.
-    func _fcpRolesForNearestDescendant(
+    func _fcpRolesForNearestDescendant<I: Sequence<FinalCutPro.FCPXML.AnyRole>>(
         resources: XMLElement? = nil,
         auditions: FinalCutPro.FCPXML.Audition.Mask, // = .activeAudition
         firstGenerationOnly: Bool,
-        firstElementEachGenerationOnly: Bool
+        firstElementEachGenerationOnly: Bool,
+        types: Set<FinalCutPro.FCPXML.RoleType> = .allCases,
+        ignoring ignoreRoles: I
     ) -> [FinalCutPro.FCPXML.AnyRole] {
-        let storyElements = fcpStoryElements
-            .filter { ($0.fcpLane ?? 0) == 0 }
-        
-        var foundRoles: [FinalCutPro.FCPXML.AnyRole] = []
-        
-        func add(roles: [FinalCutPro.FCPXML.AnyRole]) {
-            for role in roles {
-                foundRoles.removeAll { $0.roleType == role.roleType }
-                foundRoles.append(role)
-            }
-        }
-        
         let elements: AnySequence = firstElementEachGenerationOnly
-            ? storyElements.prefix(1).asAnySequence
-            : storyElements.asAnySequence
+            ? childElements.prefix(1).asAnySequence
+            : childElements.asAnySequence
         
-        // 1st-pass: check first-generation children shallowly
-        for storyElement in elements {
-            let roles = storyElement._fcpLocalRoles(resources: resources, auditions: auditions)
+        for element in elements {
+            let roles = element
+                ._fcpLocalRoles(resources: resources, auditions: auditions)
+                .filter { types.contains($0.wrapped.roleType) }
+                .filter { !ignoreRoles.contains($0.wrapped) }
             // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
-            add(roles: roles.map(\.wrapped))
+            // print("-", roles.map(\.wrapped).map(\.rawValue))
+            if !roles.isEmpty { return roles.map(\.wrapped) }
             
-            let peers = storyElement.childElements
-                .filter { ($0.fcpLane ?? 0) != 0 }
-            
-            for peer in peers {
-                let peerRoles = peer._fcpLocalRoles(resources: resources, auditions: auditions)
-                // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
-                add(roles: peerRoles.map(\.wrapped))
-            }
-        }
-        
-        // 2nd-pass: check second-generation children
-        if !firstGenerationOnly {
-            for storyElement in elements {
-                let childElements = storyElement.childElements
+            if !firstGenerationOnly {
+                let childElements = firstElementEachGenerationOnly
+                    ? element.childElements.prefix(1).asAnySequence
+                    : element.childElements.asAnySequence
                 
                 for child in childElements {
-                    let childRoles = child._fcpRolesForNearestDescendant(
-                        resources: resources,
-                        auditions: auditions,
-                        firstGenerationOnly: firstGenerationOnly,
-                        firstElementEachGenerationOnly: firstElementEachGenerationOnly
-                    )
-                    add(roles: childRoles)
+                    let childRoles = child
+                        ._fcpLocalRoles(resources: resources, auditions: auditions)
+                        .filter { types.contains($0.wrapped.roleType) }
+                        .filter { !ignoreRoles.contains($0.wrapped) }
+                    // print("--", childRoles.map(\.rawValue))
+                    if !childRoles.isEmpty { return childRoles.map(\.wrapped) }
                 }
             }
         }
         
-        return foundRoles
+        return []
     }
 }
 
 // MARK: - Default Roles
 
+// Known default roles Final Cut Pro uses.
+// If an element does not have a user-assigned role, Final Cut Pro uses
+// certain defaults.
+// TODO: These are English-only defaults, would be nice to localize them
+
+extension FinalCutPro.FCPXML.AudioRole {
+    static let defaultAudioRole: Self = Self(rawValue: "Dialogue")!
+}
+
+extension FinalCutPro.FCPXML.VideoRole {
+    static let defaultVideoRole: Self = Self(rawValue: "Video")!
+    static let titlesRole: Self = Self(rawValue: "Titles")!
+}
+
 extension FinalCutPro.FCPXML {
-    // Known default roles Final Cut Pro uses.
-    // If an element does not have a user-assigned role, Final Cut Pro uses
-    // certain defaults.
-    // TODO: These are English-only defaults, would be nice to localize them
-    static let defaultAudioRole: AnyRole = .audio(raw: "Dialogue")!
-    static let defaultVideoRole: AnyRole = .video(raw: "Video")!
-    static let titlesRole: AnyRole = .video(raw: "Titles")!
+    
+    static let defaultAudioRole: AnyRole = .audio(.defaultAudioRole)
+    static let defaultVideoRole: AnyRole = .video(.defaultVideoRole)
+    static let titlesRole: AnyRole = .video(.titlesRole)
     
     /// Returns known default role(s) that Final Cut Pro uses for a given element type.
     /// If an element does not have a user-assigned role, Final Cut Pro uses
@@ -392,11 +405,11 @@ extension FinalCutPro.FCPXML {
         
         // add default roles if needed
         let defaultRoles = _defaultRoles(for: elementType)
-        if !localRoles.containsAudioRoles {
-            localRoles.append(contentsOf: defaultRoles.audioRoles().map { .defaulted($0) })
-        }
         if !localRoles.containsVideoRoles {
             localRoles.append(contentsOf: defaultRoles.videoRoles().map { .defaulted($0) })
+        }
+        if !localRoles.containsAudioRoles {
+            localRoles.append(contentsOf: defaultRoles.audioRoles().map { .defaulted($0) })
         }
         if !localRoles.containsCaptionRoles {
             localRoles.append(contentsOf: defaultRoles.captionRoles().map { .defaulted($0) })

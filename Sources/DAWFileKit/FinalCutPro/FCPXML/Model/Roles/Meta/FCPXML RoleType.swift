@@ -23,4 +23,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension Set<FinalCutPro.FCPXML.RoleType> {
+    public static let allCases: Self = Set(Element.allCases)
+}
+
 #endif

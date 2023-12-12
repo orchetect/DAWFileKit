@@ -50,9 +50,12 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
 
 extension FinalCutPro.FCPXML.AudioRoleSource {
     /// Role the audio component is associated with.
-    public var role: FinalCutPro.FCPXML.AudioRole? {
-        get { element.fcpAudioRole }
-        set { element.fcpAudioRole = newValue }
+    public var role: FinalCutPro.FCPXML.AudioRole {
+        get { 
+            element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self)
+                ?? .defaultAudioRole
+        }
+        set { element.fcpSet(role: newValue) }
     }
     
     /// Active state of the audio role source.
