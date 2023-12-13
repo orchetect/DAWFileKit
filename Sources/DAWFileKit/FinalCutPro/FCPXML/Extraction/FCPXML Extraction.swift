@@ -204,7 +204,6 @@ extension XMLElement {
         else { return extractedElements }
         
         // direct children, if any
-        
         if let childrenRule = recurse.children {
             let extractedChildren = _fcpExtractDirectChildren(
                 childrenRule: childrenRule,
@@ -303,12 +302,14 @@ extension XMLElement {
         var descendantAccum: [XMLElement] = []
         var extracted: [FinalCutPro.FCPXML.ExtractedElement] = []
         
+        // parse from nearest descendent to furthest, which is the same as
+        // parsing ancestors from furthest to nearest
         for descendant in descendants {
             defer { descendantAccum.insert(descendant.element, at: 0) }
             
             let extractedDescendants = descendant.element._fcpExtractElements(
                 settings: settings,
-                ancestors: [self] + descendantAccum + ancestors,
+                ancestors: descendantAccum + [self] + ancestors,
                 resources: resources,
                 overrideDirectChildren: descendant.children
             )
@@ -346,17 +347,6 @@ extension XMLElement {
                 return false
             }
         }
-        
-        // if !settings.excludedAncestorTypesOfParentForExtraction.isEmpty {
-        //     let lane = extractedElement.element._fcpEffectiveLane(ancestors: ancestors)
-        //     if extractedElement.element._fcpHasAncestorExcludingParent(
-        //         elementLane: lane,
-        //         ofTypes: settings.excludedAncestorTypesOfParentForExtraction,
-        //         ancestors: ancestors
-        //     ) {
-        //         return false
-        //     }
-        // }
         
         if let predicate = settings.extractionPredicate,
            !predicate(extractedElement)
@@ -416,31 +406,6 @@ extension XMLElement {
             .first(where: { $0.lane != nil })?
             .lane
     }
-    
-    // /// Returns `true` if element has an ancestor, excluding its immediate parent, with the any of
-    // /// specified element type(s).
-    // ///
-    // /// Ancestors are ordered nearest to furthest ancestor.
-    // func _fcpHasAncestorExcludingParent<S: Sequence<XMLElement>>(
-    //     elementLane: Int?,
-    //     ofTypes elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
-    //     ancestors: S
-    // ) -> Bool {
-    //     let ancestorTypesOfClip = _fcpAncestorElementTypesAndLanes(
-    //         ancestors: ancestors,
-    //         includeSelf: false
-    //     )
-    //     .dropFirst() // remove ancestor the element is directly attached to
-    //
-    //     // print(ancestorTypesOfClip.map(\.type).map(\.rawValue).joined(separator: " - "))
-    //
-    //     for ancestor in ancestorTypesOfClip {
-    //         // guard ancestor.lane == elementLane else { return false }
-    //         if elementTypes.contains(ancestor.type) { return true }
-    //     }
-    //
-    //     return false
-    // }
 }
 
 #endif

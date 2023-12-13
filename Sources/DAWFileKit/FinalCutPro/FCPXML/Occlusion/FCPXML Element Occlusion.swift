@@ -56,7 +56,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
     func _fcpEffectiveOcclusion<S: Sequence<XMLElement>>(
-        ancestors: S? = nil
+        ancestors: S? = nil as [XMLElement]?
     ) -> FinalCutPro.FCPXML.ElementOcclusion {
         let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: false)
         

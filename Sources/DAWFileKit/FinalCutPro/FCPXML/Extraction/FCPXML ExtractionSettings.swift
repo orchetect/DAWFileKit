@@ -79,7 +79,7 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     /// producing results that include elements visible from the main timeline and elements not
     /// visible from the main timeline.
     public static func deep(
-        auditions: FinalCutPro.FCPXML.Audition.Mask = .active
+        auditions: FinalCutPro.FCPXML.Audition.Mask = .activeAndAlternates
     ) -> FinalCutPro.FCPXML.ExtractionSettings {
         FinalCutPro.FCPXML.ExtractionSettings(
             auditions: .active,

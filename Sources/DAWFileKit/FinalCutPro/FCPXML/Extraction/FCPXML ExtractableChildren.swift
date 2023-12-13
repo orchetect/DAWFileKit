@@ -122,7 +122,7 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
                 
                 // remove nils and reduce any duplicate elements
                 let reducedMCAngles = [video, audio] // video first, audio second
-                    .compactMap(\.?.element)
+                    .compactMap { $0?.element }
                     .removingDuplicates()
                 
                 // provide explicit descendants
@@ -209,10 +209,20 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
         case .media:
             // used by `ref-clip` story element, media will contain a `sequence`
             // used by `mc-clip` story element, media will contain a `multicam`
-            self = .directChildren
+            // self = .directChildren
+            
+            // don't return children here. elements that use a media resource
+            // will point to specific children/descendants instead.
+            return nil
             
         case .objectTracker:
             return nil
+            
+        // MARK: resource sub-elements
+            
+        case .mcAngle:
+            // `mc-angle` is similar to a `sequence`
+            self = .directChildren
             
         default:
             return nil
