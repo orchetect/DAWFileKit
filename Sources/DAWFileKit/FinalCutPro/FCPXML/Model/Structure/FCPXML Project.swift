@@ -94,8 +94,10 @@ extension FinalCutPro.FCPXML.Project {
 extension FinalCutPro.FCPXML.Project {
     /// Convenience:
     /// Returns the start timecode of the `sequence` contained within the project.
-    public var startTimecode: Timecode? {
-        sequence.tcStartAsTimecode
+    public func startTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> Timecode? {
+        sequence.tcStartAsTimecode(frameRateSource: frameRateSource)
     }
 }
 

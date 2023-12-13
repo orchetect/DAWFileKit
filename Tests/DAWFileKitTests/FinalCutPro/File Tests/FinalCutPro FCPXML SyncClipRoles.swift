@@ -57,12 +57,12 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
         // story elements
         let clip1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsSyncClip)
         XCTAssertEqual(clip1.format, nil)
-        XCTAssertEqual(clip1.offsetAsTimecode, Self.tc("01:01:04:23", .fps25))
-        XCTAssertEqual(clip1.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(clip1.offsetAsTimecode(), Self.tc("01:01:04:23", .fps25))
+        XCTAssertEqual(clip1.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(clip1.name, "Sync Clip 1")
-        XCTAssertEqual(clip1.startAsTimecode, Self.tc("10:43:05:16", .fps25))
-        XCTAssertEqual(clip1.durationAsTimecode, Self.tc("00:00:01:24", .fps25))
-        XCTAssertEqual(clip1.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(clip1.startAsTimecode(), Self.tc("10:43:05:16", .fps25))
+        XCTAssertEqual(clip1.durationAsTimecode(), Self.tc("00:00:01:24", .fps25))
+        XCTAssertEqual(clip1.durationAsTimecode()?.frameRate, .fps25)
         
         // `sync-clip` `sync-source`s
         
@@ -98,10 +98,10 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
         // FCP shows audio roles: "MixL, MixR" of Dialogue
         let marker = try XCTUnwrap(markers.first)
         XCTAssertEqual(marker.name, "Marker 1")
-        XCTAssertEqual(marker.startAsTimecode, Self.tc("10:43:05:16", .fps25))
+        XCTAssertEqual(marker.startAsTimecode(), Self.tc("10:43:05:16", .fps25))
         let extractedMarker = marker.element.fcpExtract()
         XCTAssertEqual(
-            extractedMarker.value(forContext: .absoluteStartAsTimecode),
+            extractedMarker.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:01:04:23", .fps25)
         )
         XCTAssertEqual(extractedMarker.value(forContext: .inheritedRoles), [

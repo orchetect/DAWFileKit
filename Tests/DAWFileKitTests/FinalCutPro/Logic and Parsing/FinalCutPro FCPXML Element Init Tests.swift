@@ -95,7 +95,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         let format = FinalCutPro.FCPXML.Format(
             id: "r1",
             name: "FFVideoFormat1080p25",
-            frameDuration: Fraction(100, 2500),
+            frameDuration: Fraction(200, 5000),
             fieldOrder: nil,
             width: 1920,
             height: 1080,
@@ -108,7 +108,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         
         XCTAssertEqual(format.id, "r1")
         XCTAssertEqual(format.name, "FFVideoFormat1080p25")
-        XCTAssertEqual(format.frameDuration, Fraction(100, 2500))
+        XCTAssertEqual(format.frameDuration, Fraction(200, 5000))
         XCTAssertEqual(format.fieldOrder, nil)
         XCTAssertEqual(format.width, 1920)
         XCTAssertEqual(format.height, 1080)

@@ -10,7 +10,7 @@ import Foundation
 import OTCore
 import TimecodeKit
 
-// MARK: - Time -> Timecode
+// MARK: - Time -> Timecode, from resource
 
 extension XMLElement {
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
@@ -52,11 +52,17 @@ extension XMLElement {
             frameRate: frameRate
         )
     }
-    
-    /// FCPXML: Convert raw time attribute value string to `Timecode`.
+}
+
+// MARK: - Time -> Timecode, with timeline source
+
+extension XMLElement {
+    /// FCPXML: Convert time value to `Timecode`.
     /// Traverses the parents of the given XML leaf to determine frame rate.
     func _fcpTimecode(
         fromRational rawString: String,
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
         guard let fraction = Fraction(fcpxmlString: rawString)
@@ -64,6 +70,8 @@ extension XMLElement {
         
         return try _fcpTimecode(
             fromRational: fraction,
+            frameRateSource: frameRateSource,
+            breadcrumbs: breadcrumbs,
             resources: resources
         )
     }
@@ -72,29 +80,32 @@ extension XMLElement {
     /// Traverses the parents of the given XML leaf to determine frame rate.
     func _fcpTimecode(
         fromRational fraction: Fraction,
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
-        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
-        else { return nil }
-        
-        return try FinalCutPro.FCPXML._timecode(
-            fromRational: fraction,
-            frameRate: frameRate
+        try _fcpTimecode(
+            fromRealTime: fraction.doubleValue,
+            frameRateSource: frameRateSource,
+            breadcrumbs: breadcrumbs,
+            resources: resources
         )
     }
     
     /// FCPXML: Convert raw time in seconds to `Timecode`.
     func _fcpTimecode(
         fromRealTime seconds: TimeInterval,
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
-        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
-        else { return nil }
+        guard let frameRate = _fcpTimecodeFrameRate(
+            source: frameRateSource,
+            breadcrumbs: breadcrumbs,
+            resources: resources
+        ) else { return nil }
         
-        return try FinalCutPro.FCPXML._timecode(
-            fromRealTime: seconds,
-            frameRate: frameRate
-        )
+        return try FinalCutPro.formTimecode(realTime: seconds, at: frameRate)
     }
 }
 
@@ -137,6 +148,8 @@ extension XMLElement {
     /// Traverses the parents of the given XML leaf to determine frame rate.
     func _fcpTimecodeInterval(
         fromRational rawString: String,
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
         guard let fraction = Fraction(fcpxmlString: rawString)
@@ -144,6 +157,8 @@ extension XMLElement {
         
         return try _fcpTimecodeInterval(
             fromRational: fraction,
+            frameRateSource: frameRateSource,
+            breadcrumbs: breadcrumbs,
             resources: resources
         )
     }
@@ -152,14 +167,15 @@ extension XMLElement {
     /// Traverses the parents of the given XML leaf to determine frame rate.
     func _fcpTimecodeInterval(
         fromRational fraction: Fraction,
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
-        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
-        else { return nil }
-        
-        return try FinalCutPro.FCPXML._timecodeInterval(
-            fromRational: fraction,
-            frameRate: frameRate
+        try _fcpTimecodeInterval(
+            fromRealTime: fraction.doubleValue,
+            frameRateSource: frameRateSource,
+            breadcrumbs: breadcrumbs,
+            resources: resources
         )
     }
     
@@ -167,10 +183,15 @@ extension XMLElement {
     /// Traverses the parents of the given XML leaf to determine frame rate.
     func _fcpTimecodeInterval(
         fromRealTime seconds: TimeInterval,
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
-        guard let frameRate = _fcpTimecodeFrameRate(in: resources)
-        else { return nil }
+        guard let frameRate = _fcpTimecodeFrameRate(
+            source: frameRateSource,
+            breadcrumbs: breadcrumbs,
+            resources: resources
+        ) else { return nil }
         
         return try FinalCutPro.FCPXML._timecodeInterval(
             fromRealTime: seconds,

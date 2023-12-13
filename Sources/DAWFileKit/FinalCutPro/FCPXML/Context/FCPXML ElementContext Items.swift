@@ -20,9 +20,11 @@ extension FinalCutPro.FCPXML.ElementContext {
     }
     
     /// The absolute start timecode of the element expressed as timecode.
-    public static var absoluteStartAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+    public static func absoluteStartAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> FinalCutPro.FCPXML.ElementContext<Timecode?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
-            tools.absoluteStartAsTimecode
+            tools.absoluteStartAsTimecode(frameRateSource: frameRateSource)
         }
     }
     
@@ -34,9 +36,11 @@ extension FinalCutPro.FCPXML.ElementContext {
     }
     
     /// The absolute end timecode of the element expressed as timecode.
-    public static var absoluteEndAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+    public static func absoluteEndAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> FinalCutPro.FCPXML.ElementContext<Timecode?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
-            tools.absoluteEndAsTimecode
+            tools.absoluteEndAsTimecode(frameRateSource: frameRateSource)
         }
     }
     
@@ -109,9 +113,11 @@ extension FinalCutPro.FCPXML.ElementContext {
     }
     
     /// The parent element's absolute start time expressed as timecode.
-    public static var parentAbsoluteStartAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+    public static func parentAbsoluteStartAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> FinalCutPro.FCPXML.ElementContext<Timecode?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
-            tools.parentAbsoluteStartAsTimecode
+            tools.parentAbsoluteStartAsTimecode(frameRateSource: frameRateSource)
         }
     }
     
@@ -123,9 +129,11 @@ extension FinalCutPro.FCPXML.ElementContext {
     }
     
     /// The parent element's absolute end time expressed as timecode.
-    public static var parentAbsoluteEndAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+    public static func parentAbsoluteEndAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> FinalCutPro.FCPXML.ElementContext<Timecode?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
-            tools.parentAbsoluteEndAsTimecode
+            tools.parentAbsoluteEndAsTimecode(frameRateSource: frameRateSource)
         }
     }
     
@@ -137,9 +145,11 @@ extension FinalCutPro.FCPXML.ElementContext {
     }
     
     /// The parent element's duration expressed as timecode.
-    public static var parentDurationAsTimecode: FinalCutPro.FCPXML.ElementContext<Timecode?> {
+    public static func parentDurationAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> FinalCutPro.FCPXML.ElementContext<Timecode?> {
         FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
-            tools.parentDurationAsTimecode
+            tools.parentDurationAsTimecode(frameRateSource: frameRateSource)
         }
     }
 }

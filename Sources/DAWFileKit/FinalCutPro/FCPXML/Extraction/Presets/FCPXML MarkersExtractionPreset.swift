@@ -70,6 +70,7 @@ extension FinalCutPro.FCPXML {
             return markerModel
         }
         
+        /// Return the a context value for the element.
         public func value<Value>(forContext: ElementContext<Value>) -> Value {
             extractedElement.value(forContext: forContext)
         }
@@ -92,13 +93,17 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Absolute timecode position within the outermost timeline.
-        public var timecode: Timecode? {
-            extractedElement.value(forContext: .absoluteStartAsTimecode)
+        public func timecode(
+            frameRateSource: FrameRateSource = .mainTimeline
+        ) -> Timecode? {
+            extractedElement.timecode(frameRateSource: frameRateSource)
         }
         
         /// Duration expressed as a length of timecode.
-        public var duration: Timecode? {
-            marker.durationAsTimecode
+        public func duration(
+            frameRateSource: FrameRateSource = .mainTimeline
+        ) -> Timecode? {
+            extractedElement.duration(frameRateSource: frameRateSource)
         }
         
         /// Inherited roles of the marker from its container(s).
@@ -112,8 +117,8 @@ extension Sequence<FinalCutPro.FCPXML.ExtractedMarker> {
     /// Sort collection by marker timecode.
     public func sorted() -> [FinalCutPro.FCPXML.ExtractedMarker] {
         sorted { lhs, rhs in
-            guard let lhsTimecode = lhs.timecode,
-                  let rhsTimecode = rhs.timecode
+            guard let lhsTimecode = lhs.timecode(frameRateSource: .mainTimeline),
+                  let rhsTimecode = rhs.timecode(frameRateSource: .mainTimeline)
             else {
                 // sort by `start` attribute as fallback
                 return lhs.marker.start < rhs.marker.start

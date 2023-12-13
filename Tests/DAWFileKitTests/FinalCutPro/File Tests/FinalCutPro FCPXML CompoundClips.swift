@@ -46,7 +46,10 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         // just test basic marker info to identify the marker
         let marker = try XCTUnwrap(extractedMarkers[safe: 0])
         XCTAssertEqual(marker.name, "Marker On Compound Clip in Main Timeline")
-        XCTAssertEqual(marker.value(forContext: .absoluteStartAsTimecode), Self.tc("01:00:04:00", .fps25))
+        XCTAssertEqual(
+            marker.value(forContext: .absoluteStartAsTimecode()),
+            Self.tc("01:00:04:00", .fps25)
+        )
     }
     
     func testExtractElements_DeepSettings() throws {

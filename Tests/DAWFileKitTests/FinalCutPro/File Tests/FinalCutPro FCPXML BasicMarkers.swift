@@ -91,16 +91,16 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         
         let project = try XCTUnwrap(projects[safe: 0])
         XCTAssertEqual(project.name, "Test Project")
-        XCTAssertEqual(project.startTimecode, Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(project.startTimecode(), Self.tc("00:00:00:00", .fps29_97))
         
         // sequence
         
         let sequence = try XCTUnwrap(project.sequence)
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("00:00:00:00", .fps29_97))
-        XCTAssertEqual(sequence.tcStartAsTimecode?.frameRate, .fps29_97)
-        XCTAssertEqual(sequence.tcStartAsTimecode?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode, Self.tc("00:01:03:29", .fps29_97))
+        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps29_97)
+        XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
+        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:01:03:29", .fps29_97))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -114,12 +114,12 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
         let element1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsTitle)
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.name, "Basic Title")
-        XCTAssertEqual(element1.offsetAsTimecode, Self.tc("00:00:00:00", .fps29_97))
-        XCTAssertEqual(element1.offsetAsTimecode?.frameRate, .fps29_97)
-        XCTAssertEqual(element1.startAsTimecode, Self.tc("00:10:00:00", .fps29_97))
-        XCTAssertEqual(element1.startAsTimecode?.frameRate, .fps29_97)
-        XCTAssertEqual(element1.durationAsTimecode, Self.tc("00:01:03:29", .fps29_97))
-        XCTAssertEqual(element1.durationAsTimecode?.frameRate, .fps29_97)
+        XCTAssertEqual(element1.offsetAsTimecode(), Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(element1.offsetAsTimecode()?.frameRate, .fps29_97)
+        XCTAssertEqual(element1.startAsTimecode(), Self.tc("00:10:00:00", .fps29_97))
+        XCTAssertEqual(element1.startAsTimecode()?.frameRate, .fps29_97)
+        XCTAssertEqual(element1.durationAsTimecode(), Self.tc("00:01:03:29", .fps29_97))
+        XCTAssertEqual(element1.durationAsTimecode()?.frameRate, .fps29_97)
         
         // markers
         

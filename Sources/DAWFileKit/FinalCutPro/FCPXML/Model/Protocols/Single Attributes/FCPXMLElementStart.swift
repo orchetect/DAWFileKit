@@ -20,10 +20,14 @@ extension FCPXMLElementRequiredStart {
         set { element.fcpStart = newValue }
     }
     
-    /// Convenience:
     /// Returns the start time of the element as timecode.
-    public var startAsTimecode: Timecode? {
-        try? element._fcpTimecode(fromRational: start)
+    public func startAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
+    ) -> Timecode? {
+        try? element._fcpTimecode(
+            fromRational: start,
+            frameRateSource: frameRateSource
+        )
     }
 }
 
@@ -38,11 +42,15 @@ extension FCPXMLElementOptionalStart {
         set { element.fcpStart = newValue }
     }
     
-    /// Convenience:
     /// Returns the start time of the element as timecode.
-    public var startAsTimecode: Timecode? {
+    public func startAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
+    ) -> Timecode? {
         guard let start = start else { return nil }
-        return try? element._fcpTimecode(fromRational: start)
+        return try? element._fcpTimecode(
+            fromRational: start,
+            frameRateSource: frameRateSource
+        )
     }
 }
 

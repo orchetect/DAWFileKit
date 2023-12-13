@@ -69,7 +69,7 @@ final class FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLTestCase {
         XCTAssertEqual(marker.name, "Marker 1")
         let extractedMarker = marker.element.fcpExtract()
         XCTAssertEqual(
-            extractedMarker.value(forContext: .absoluteStartAsTimecode),
+            extractedMarker.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:01:18:03", .fps25)
         )
         XCTAssertEqual(extractedMarker.value(forContext: .inheritedRoles), [

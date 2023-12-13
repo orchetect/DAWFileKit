@@ -86,6 +86,37 @@ extension XMLElement {
 // MARK: - Timecode Frame Rate
 
 extension XMLElement {
+    /// FCPXML: Returns the timecode frame rate for the given timeline.
+    func _fcpTimecodeFrameRate(
+        source frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        breadcrumbs: [XMLElement]? = nil,
+        resources: XMLElement?
+    ) -> TimecodeFrameRate? {
+        switch frameRateSource {
+        case .localToElement:
+            if let rate = _fcpTimecodeFrameRate(in: resources) {
+                return rate
+            }
+            
+        case .mainTimeline:
+            // find outermost timeline - the first storyline in breadcrumbs.
+            // traverse starting from furthest ancestor.
+            
+            let breadcrumbTrail = ancestorElements(overrideWith: breadcrumbs, includingSelf: true)
+            
+            for breadcrumb in breadcrumbTrail.reversed() {
+                if let rate = breadcrumb._fcpTimecodeFrameRate(in: resources) {
+                    return rate
+                }
+            }
+            
+        case let .rate(rate):
+            return rate
+        }
+        
+        return nil
+    }
+    
     /// FCPXML: Returns the timecode frame rate for the given resource ID.
     /// Traverses parents to determine `tcFormat`.
     func _fcpTimecodeFrameRate(

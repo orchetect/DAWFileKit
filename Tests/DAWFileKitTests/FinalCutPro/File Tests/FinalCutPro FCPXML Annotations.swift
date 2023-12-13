@@ -134,16 +134,16 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
 
         let project = try XCTUnwrap(projects[safe: 0])
         XCTAssertEqual(project.name, "Annotations")
-        XCTAssertEqual(project.startTimecode, Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(project.startTimecode(), Self.tc("01:00:00:00", .fps25))
         
         // sequence
         
         let sequence = try XCTUnwrap(projects[safe: 0]?.sequence)
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode, Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(sequence.tcStartAsTimecode?.frameRate, .fps25)
-        XCTAssertEqual(sequence.tcStartAsTimecode?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode, Self.tc("00:00:29:13", .fps25))
+        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps25)
+        XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
+        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -156,12 +156,12 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         let element1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsAssetClip)
         XCTAssertEqual(element1.ref, "r2")
-        XCTAssertEqual(element1.offsetAsTimecode, Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(element1.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(element1.offsetAsTimecode(), Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(element1.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(element1.name, "TestVideo Clip")
         XCTAssertEqual(element1.start, nil)
-        XCTAssertEqual(element1.durationAsTimecode, Self.tc("00:00:29:13", .fps25))
-        XCTAssertEqual(element1.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(element1.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
+        XCTAssertEqual(element1.durationAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
         #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")

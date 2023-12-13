@@ -62,27 +62,27 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let storyElements = spine.storyElements.zeroIndexed
         
         let audition = try XCTUnwrap(storyElements[safe: 0]?.fcpAsAudition)
-        XCTAssertEqual(audition.offsetAsTimecode, Self.tc("01:00:00:00", .fps29_97))
-        XCTAssertEqual(audition.offsetAsTimecode?.frameRate, .fps29_97)
+        XCTAssertEqual(audition.offsetAsTimecode(), Self.tc("01:00:00:00", .fps29_97))
+        XCTAssertEqual(audition.offsetAsTimecode()?.frameRate, .fps29_97)
         XCTAssertEqual(audition.clips.count, 2)
         
         // "active" audition
         let audition1 = try XCTUnwrap(audition.clips[safe: 0]?.fcpAsTitle)
         XCTAssertEqual(audition1.ref, "r2")
         XCTAssertEqual(audition1.name, "Basic Title 1")
-        XCTAssertEqual(audition1.startAsTimecode, Self.tc("01:00:00:00", .fps29_97))
-        XCTAssertEqual(audition1.startAsTimecode?.frameRate, .fps29_97)
-        XCTAssertEqual(audition1.durationAsTimecode, Self.tc("00:00:10:00", .fps29_97))
-        XCTAssertEqual(audition1.durationAsTimecode?.frameRate, .fps29_97)
+        XCTAssertEqual(audition1.startAsTimecode(), Self.tc("01:00:00:00", .fps29_97))
+        XCTAssertEqual(audition1.startAsTimecode()?.frameRate, .fps29_97)
+        XCTAssertEqual(audition1.durationAsTimecode(), Self.tc("00:00:10:00", .fps29_97))
+        XCTAssertEqual(audition1.durationAsTimecode()?.frameRate, .fps29_97)
         
         // first "inactive" audition
         let audition2 = try XCTUnwrap(audition.clips[safe: 1]?.fcpAsTitle)
         XCTAssertEqual(audition2.ref, "r2")
         XCTAssertEqual(audition2.name, "Basic Title 2")
-        XCTAssertEqual(audition2.startAsTimecode, Self.tc("01:00:00:00", .fps29_97))
-        XCTAssertEqual(audition2.startAsTimecode?.frameRate, .fps29_97)
-        XCTAssertEqual(audition2.durationAsTimecode, Self.tc("00:00:10:00", .fps29_97))
-        XCTAssertEqual(audition2.durationAsTimecode?.frameRate, .fps29_97)
+        XCTAssertEqual(audition2.startAsTimecode(), Self.tc("01:00:00:00", .fps29_97))
+        XCTAssertEqual(audition2.startAsTimecode()?.frameRate, .fps29_97)
+        XCTAssertEqual(audition2.durationAsTimecode(), Self.tc("00:00:10:00", .fps29_97))
+        XCTAssertEqual(audition2.durationAsTimecode()?.frameRate, .fps29_97)
         
         // markers
         
@@ -92,8 +92,8 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         XCTAssertEqual(audition1Markers.count, 1)
         
         let a1Marker = try XCTUnwrap(audition1Markers[safe: 0])
-        XCTAssertEqual(a1Marker.startAsTimecode, Self.tc("01:00:05:00", .fps29_97))
-        XCTAssertEqual(a1Marker.durationAsTimecode, Self.tc("00:00:00:01", .fps29_97))
+        XCTAssertEqual(a1Marker.startAsTimecode(), Self.tc("01:00:05:00", .fps29_97))
+        XCTAssertEqual(a1Marker.durationAsTimecode(), Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(a1Marker.name, "Marker 1")
         XCTAssertEqual(a1Marker.state, .standard)
         XCTAssertEqual(a1Marker.note, nil)
@@ -113,8 +113,8 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         XCTAssertEqual(audition2Markers.count, 1)
         
         let a2Marker = try XCTUnwrap(audition2Markers[safe: 0])
-        XCTAssertEqual(a2Marker.startAsTimecode, Self.tc("01:00:02:00", .fps29_97))
-        XCTAssertEqual(a2Marker.durationAsTimecode, Self.tc("00:00:00:01", .fps29_97))
+        XCTAssertEqual(a2Marker.startAsTimecode(), Self.tc("01:00:02:00", .fps29_97))
+        XCTAssertEqual(a2Marker.durationAsTimecode(), Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(a2Marker.name, "Marker 2")
         XCTAssertEqual(a2Marker.state, .standard)
         XCTAssertEqual(a2Marker.note, nil)

@@ -20,10 +20,14 @@ extension FCPXMLElementRequiredDuration {
         set { element.fcpDuration = newValue }
     }
     
-    /// Convenience:
     /// Returns the local timeline duration of the element as timecode.
-    public var durationAsTimecode: Timecode? {
-        try? element._fcpTimecode(fromRational: duration)
+    public func durationAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
+    ) -> Timecode? {
+        try? element._fcpTimecode(
+            fromRational: duration,
+            frameRateSource: frameRateSource
+        )
     }
 }
 
@@ -38,11 +42,15 @@ extension FCPXMLElementOptionalDuration {
         set { element.fcpDuration = newValue }
     }
     
-    /// Convenience:
     /// Returns the start time of the element as timecode.
-    public var durationAsTimecode: Timecode? {
+    public func durationAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
+    ) -> Timecode? {
         guard let duration = duration else { return nil }
-        return try? element._fcpTimecode(fromRational: duration)
+        return try? element._fcpTimecode(
+            fromRational: duration,
+            frameRateSource: frameRateSource
+        )
     }
 }
 

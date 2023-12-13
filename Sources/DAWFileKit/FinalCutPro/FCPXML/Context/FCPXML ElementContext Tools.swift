@@ -44,10 +44,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// The absolute start time of the current element expressed as timecode.
         /// This is calculated based on ancestor elements.
-        public var absoluteStartAsTimecode: Timecode? {
+        public func absoluteStartAsTimecode(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> Timecode? {
             guard let absoluteStart = absoluteStart else { return nil }
             return try? element._fcpTimecode(
                 fromRealTime: absoluteStart,
+                frameRateSource: frameRateSource,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }
@@ -63,10 +67,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// The absolute end time of the current element expressed as timecode.
         /// This is calculated based on ancestor elements.
-        public var absoluteEndAsTimecode: Timecode? {
+        public func absoluteEndAsTimecode(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> Timecode? {
             guard let absoluteEnd = absoluteEnd else { return nil }
             return try? element._fcpTimecode(
                 fromRealTime: absoluteEnd,
+                frameRateSource: frameRateSource,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }
@@ -111,10 +119,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// The parent element's absolute start time expressed as timecode.
         /// This is calculated based on ancestor elements.
-        public var parentAbsoluteStartAsTimecode: Timecode? {
+        public func parentAbsoluteStartAsTimecode(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> Timecode? {
             guard let parentAbsoluteStart = parentAbsoluteStart else { return nil }
             return try? element._fcpTimecode(
                 fromRealTime: parentAbsoluteStart,
+                frameRateSource: frameRateSource,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }
@@ -130,10 +142,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         
         /// The parent element's absolute end time expressed as timecode.
         /// This is calculated based on ancestor elements.
-        public var parentAbsoluteEndAsTimecode: Timecode? {
+        public func parentAbsoluteEndAsTimecode(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> Timecode? {
             guard let parentAbsoluteEnd = parentAbsoluteEnd else { return nil }
             return try? element._fcpTimecode(
                 fromRealTime: parentAbsoluteEnd,
+                frameRateSource: frameRateSource,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }
@@ -148,10 +164,14 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
         
         /// The parent element's duration expressed as timecode.
-        public var parentDurationAsTimecode: Timecode? {
+        public func parentDurationAsTimecode(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> Timecode? {
             guard let parentDuration = parentDuration else { return nil }
             return try? element._fcpTimecode(
                 fromRealTime: parentDuration,
+                frameRateSource: frameRateSource,
+                breadcrumbs: breadcrumbs,
                 resources: resources
             )
         }

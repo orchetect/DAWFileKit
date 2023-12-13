@@ -72,16 +72,16 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         let title1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsTitle)
         XCTAssertEqual(title1.ref, "r2")
         XCTAssertEqual(title1.lane, nil)
-        XCTAssertEqual(title1.offsetAsTimecode, Self.tc("00:59:50:00", .fps25))
-        XCTAssertEqual(title1.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(title1.offsetAsTimecode(), Self.tc("00:59:50:00", .fps25))
+        XCTAssertEqual(title1.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(title1.name, "Basic Title 1")
-        XCTAssertEqual(title1.startAsTimecode, Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(title1.durationAsTimecode, Self.tc("00:00:05:01", .fps25))
-        XCTAssertEqual(title1.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(title1.startAsTimecode(), Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(title1.durationAsTimecode(), Self.tc("00:00:05:01", .fps25))
+        XCTAssertEqual(title1.durationAsTimecode()?.frameRate, .fps25)
         
         let extractedTitle1 = title1.element.fcpExtract()
         XCTAssertEqual(
-            extractedTitle1.value(forContext: .absoluteStartAsTimecode),
+            extractedTitle1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:50:00", .fps25)
         )
         XCTAssertEqual(extractedTitle1.value(forContext: .occlusion), .notOccluded)
@@ -97,16 +97,16 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         let title2 = try XCTUnwrap(title1.storyElements.zeroIndexed[safe: 0]?.fcpAsTitle)
         XCTAssertEqual(title2.ref, "r2")
         XCTAssertEqual(title2.lane, 1)
-        XCTAssertEqual(title2.offsetAsTimecode, Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(title2.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(title2.offsetAsTimecode(), Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(title2.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(title2.name, "Basic Title 2")
-        XCTAssertEqual(title2.startAsTimecode, Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(title2.durationAsTimecode, Self.tc("00:05:37:11", .fps25))
-        XCTAssertEqual(title2.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(title2.startAsTimecode(), Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(title2.durationAsTimecode(), Self.tc("00:05:37:11", .fps25))
+        XCTAssertEqual(title2.durationAsTimecode()?.frameRate, .fps25)
         
         let extractedTitle2 = title2.element.fcpExtract()
         XCTAssertEqual(
-            extractedTitle2.value(forContext: .absoluteStartAsTimecode),
+            extractedTitle2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:50:00", .fps25)
         )
         XCTAssertEqual(extractedTitle2.value(forContext: .occlusion), .partiallyOccluded)
@@ -123,7 +123,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         
         let extractedTitle2M1 = title2M1.element.fcpExtract()
         XCTAssertEqual(
-            extractedTitle2M1.value(forContext: .absoluteStartAsTimecode),
+            extractedTitle2M1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:00:01:00", .fps25)
         )
         XCTAssertEqual(extractedTitle2M1.value(forContext: .occlusion), .notOccluded) // within title2
@@ -137,7 +137,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         
         let extractedTitle2M2 = title2M2.element.fcpExtract()
         XCTAssertEqual(
-            extractedTitle2M2.value(forContext: .absoluteStartAsTimecode),
+            extractedTitle2M2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:01:30:00", .fps25)
         )
         XCTAssertEqual(extractedTitle2M2.value(forContext: .occlusion), .notOccluded) // within title2

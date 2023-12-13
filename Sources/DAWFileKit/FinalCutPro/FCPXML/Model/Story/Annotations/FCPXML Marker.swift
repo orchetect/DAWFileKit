@@ -50,6 +50,8 @@ extension FinalCutPro.FCPXML.Marker {
     public init(
         name: String,
         _ state: FinalCutPro.FCPXML.Marker.MarkerState,
+        start: Fraction,
+        duration: Fraction? = nil,
         note: String? = nil
     ) {
         switch state.markerElementType {
@@ -60,6 +62,8 @@ extension FinalCutPro.FCPXML.Marker {
         }
         
         self.state = state
+        self.start = start
+        self.duration = duration
         self.note = note
     }
     

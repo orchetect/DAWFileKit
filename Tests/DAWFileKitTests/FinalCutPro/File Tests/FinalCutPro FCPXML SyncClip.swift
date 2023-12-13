@@ -29,12 +29,9 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
     func testParse() throws {
         // load file
         let rawData = try fileContents
-        
-        // parse file
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // event
-        
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
@@ -42,33 +39,29 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         XCTAssertEqual(event.name, "TestEvent")
         
         // project
-        
         let projects = event.projects.zeroIndexed
         XCTAssertEqual(projects.count, 1)
         
         let project = try XCTUnwrap(projects[safe: 0])
         
         // sequence
-        
         let sequence = try XCTUnwrap(project.sequence)
         
         // spine
-        
         let spine = try XCTUnwrap(sequence.spine)
         
         let storyElements = spine.storyElements.zeroIndexed
-        
         XCTAssertEqual(storyElements.count, 1)
         
         // story elements
         let syncClip = try XCTUnwrap(storyElements[safe: 0]?.fcpAsSyncClip)
         XCTAssertEqual(syncClip.format, "r2")
-        XCTAssertEqual(syncClip.offsetAsTimecode, Self.tc("01:00:00:00", .fps25))
-        XCTAssertEqual(syncClip.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(syncClip.offsetAsTimecode(), Self.tc("01:00:00:00", .fps25))
+        XCTAssertEqual(syncClip.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(syncClip.name, "TestVideo - Synchronized Clip")
-        XCTAssertEqual(syncClip.startAsTimecode, nil)
-        XCTAssertEqual(syncClip.durationAsTimecode, Self.tc("00:00:29:13", .fps25))
-        XCTAssertEqual(syncClip.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(syncClip.startAsTimecode(), nil)
+        XCTAssertEqual(syncClip.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
+        XCTAssertEqual(syncClip.durationAsTimecode()?.frameRate, .fps25)
         
         // let syncClipStoryElements = syncClip.storyElements.zeroIndexed
         //
@@ -94,7 +87,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         
         let marker = try XCTUnwrap(extractedMarkers[safe: 0])
         XCTAssertEqual(marker.name, "Marker on Sync Clip")
-        XCTAssertEqual(marker.timecode, Self.tc("01:00:10:00", .fps25))
+        XCTAssertEqual(marker.timecode(), Self.tc("01:00:10:00", .fps25))
         XCTAssertEqual(marker.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(marker.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(marker.value(forContext: .inheritedRoles), [
@@ -125,8 +118,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         
         let marker0 = try XCTUnwrap(extractedMarkers[safe: 0])
         XCTAssertEqual(marker0.name, "Marker on Audio")
-        XCTAssertEqual(marker0.marker.startAsTimecode, Self.tc("00:00:03:00", .fps25))
-        XCTAssertEqual(marker0.timecode, Self.tc("01:00:03:00", .fps25))
+        XCTAssertEqual(marker0.marker.startAsTimecode(), Self.tc("00:00:03:00", .fps25))
+        XCTAssertEqual(marker0.timecode(), Self.tc("01:00:03:00", .fps25))
         XCTAssertEqual(marker0.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(marker0.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(marker0.value(forContext: .inheritedRoles), [
@@ -136,8 +129,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         
         let marker1 = try XCTUnwrap(extractedMarkers[safe: 1])
         XCTAssertEqual(marker1.name, "Marker on TestVideo")
-        XCTAssertEqual(marker1.marker.startAsTimecode, Self.tc("00:00:27:10", .fps25))
-        XCTAssertEqual(marker1.timecode, Self.tc("01:00:27:10", .fps25))
+        XCTAssertEqual(marker1.marker.startAsTimecode(), Self.tc("00:00:27:10", .fps25))
+        XCTAssertEqual(marker1.timecode(), Self.tc("01:00:27:10", .fps25))
         XCTAssertEqual(marker1.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(marker1.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(marker1.value(forContext: .inheritedRoles), [
@@ -150,8 +143,8 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         // the audio role may be present in a `sync-source` child of the sync clip.
         let marker2 = try XCTUnwrap(extractedMarkers[safe: 2])
         XCTAssertEqual(marker2.name, "Marker on Sync Clip")
-        XCTAssertEqual(marker2.marker.startAsTimecode, Self.tc("00:00:10:00", .fps25))
-        XCTAssertEqual(marker2.timecode, Self.tc("01:00:10:00", .fps25))
+        XCTAssertEqual(marker2.marker.startAsTimecode(), Self.tc("00:00:10:00", .fps25))
+        XCTAssertEqual(marker2.timecode(), Self.tc("01:00:10:00", .fps25))
         XCTAssertEqual(marker2.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(marker2.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(marker2.value(forContext: .inheritedRoles), [

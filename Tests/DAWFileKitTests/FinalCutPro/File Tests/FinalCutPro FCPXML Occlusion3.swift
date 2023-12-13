@@ -70,17 +70,17 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         let syncClip1 = try XCTUnwrap(storyElements[safe: 2]?.fcpAsSyncClip)
         XCTAssertEqual(syncClip1.name, "1-X-1")
         XCTAssertEqual(syncClip1.lane, nil)
-        XCTAssertEqual(syncClip1.offsetAsTimecode, Self.tc("00:59:58:09", .fps25))
-        XCTAssertEqual(syncClip1.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(syncClip1.offsetAsTimecode(), Self.tc("00:59:58:09", .fps25))
+        XCTAssertEqual(syncClip1.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(
-            syncClip1.startAsTimecode,
+            syncClip1.startAsTimecode(),
             Self.tc("19:54:56:13", .fps25)
         )
-        XCTAssertEqual(syncClip1.durationAsTimecode, Self.tc("00:00:02:07", .fps25))
-        XCTAssertEqual(syncClip1.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(syncClip1.durationAsTimecode(), Self.tc("00:00:02:07", .fps25))
+        XCTAssertEqual(syncClip1.durationAsTimecode()?.frameRate, .fps25)
         let extractedSyncClip1 = syncClip1.element.fcpExtract()
         XCTAssertEqual(
-            extractedSyncClip1.value(forContext: .absoluteStartAsTimecode),
+            extractedSyncClip1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:58:09", .fps25)
         )
         XCTAssertEqual(extractedSyncClip1.value(forContext: .occlusion), .notOccluded)
@@ -93,7 +93,7 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         XCTAssertEqual(sc1Marker.name, "Marker 2")
         let extractedSC1Marker = sc1Marker.element.fcpExtract()
         XCTAssertEqual(
-            extractedSC1Marker.value(forContext: .absoluteStartAsTimecode),
+            extractedSC1Marker.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:58:10", .fps25)
         )
         XCTAssertEqual(extractedSC1Marker.value(forContext: .occlusion), .notOccluded) // within syncclip1
@@ -107,19 +107,19 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         XCTAssertEqual(syncClip2.name, "1-2-2 MOS")
         XCTAssertEqual(syncClip2.lane, 1)
         XCTAssertEqual(
-            syncClip2.offsetAsTimecode,
+            syncClip2.offsetAsTimecode(),
             Self.tc("19:54:56:13", .fps25)
         )
-        XCTAssertEqual(syncClip2.offsetAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(syncClip2.offsetAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(
-            syncClip2.startAsTimecode,
+            syncClip2.startAsTimecode(),
             Self.tc("19:19:01:08", .fps25)
         )
-        XCTAssertEqual(syncClip2.durationAsTimecode, Self.tc("00:00:02:07", .fps25))
-        XCTAssertEqual(syncClip2.durationAsTimecode?.frameRate, .fps25)
+        XCTAssertEqual(syncClip2.durationAsTimecode(), Self.tc("00:00:02:07", .fps25))
+        XCTAssertEqual(syncClip2.durationAsTimecode()?.frameRate, .fps25)
         let extractedSyncClip2 = syncClip2.element.fcpExtract()
         XCTAssertEqual(
-            extractedSyncClip2.value(forContext: .absoluteStartAsTimecode),
+            extractedSyncClip2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:58:09", .fps25)
         )
         XCTAssertEqual(extractedSyncClip2.value(forContext: .occlusion), .notOccluded)
@@ -132,7 +132,7 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         XCTAssertEqual(sc2Marker.name, "Marker 1")
         let extractedSC2Marker = sc2Marker.element.fcpExtract()
         XCTAssertEqual(
-            extractedSC2Marker.value(forContext: .absoluteStartAsTimecode),
+            extractedSC2Marker.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:58:09", .fps25)
         )
         XCTAssertEqual(extractedSC2Marker.value(forContext: .occlusion), .notOccluded) // within syncclip2

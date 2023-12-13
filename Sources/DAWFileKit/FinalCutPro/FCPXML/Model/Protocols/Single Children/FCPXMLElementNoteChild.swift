@@ -22,7 +22,8 @@ extension FCPXMLElementNoteChild {
                 .stringValue
         }
         set {
-            element._updateFirstChildElement(ofType: .note, newStringValue: newValue)
+            element
+                ._updateFirstChildElement(ofType: .note, newStringValue: newValue)
         }
     }
 }

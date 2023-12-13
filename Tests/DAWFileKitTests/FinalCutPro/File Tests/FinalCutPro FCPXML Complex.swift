@@ -495,13 +495,13 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
             XCTAssertEqual(em.name, md.name, md.name)
             XCTAssertEqual(em.state, md.state, md.name)
             XCTAssertEqual(em.note, md.note, md.name)
-            XCTAssertEqual(em.duration, md.clip.markerDuration.duration, md.name)
+            XCTAssertEqual(em.duration(), md.clip.markerDuration.duration, md.name)
             
-            XCTAssertEqual(em.value(forContext: .absoluteStartAsTimecode), md.timecode, md.name)
+            XCTAssertEqual(em.value(forContext: .absoluteStartAsTimecode()), md.timecode, md.name)
             XCTAssertEqual(em.value(forContext: .parentType), md.clip.elementType, md.name)
             XCTAssertEqual(em.value(forContext: .parentName), md.clip.name, md.name)
-            XCTAssertEqual(em.value(forContext: .parentAbsoluteStartAsTimecode), md.clip.absoluteStart, md.name)
-            XCTAssertEqual(em.value(forContext: .parentDurationAsTimecode), md.clip.duration, md.name)
+            XCTAssertEqual(em.value(forContext: .parentAbsoluteStartAsTimecode()), md.clip.absoluteStart, md.name)
+            XCTAssertEqual(em.value(forContext: .parentDurationAsTimecode()), md.clip.duration, md.name)
             
             XCTAssertEqual(em.value(forContext: .ancestorEventName), "Example A")
             XCTAssertEqual(em.value(forContext: .ancestorProjectName), "Marker Data Demo_V2")

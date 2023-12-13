@@ -49,11 +49,15 @@ extension FCPXMLElementAnchorableAttributes {
 }
 
 extension FCPXMLElementAnchorableAttributes {
-    /// Convenience:
     /// Returns the offset of the element as timecode.
-    public var offsetAsTimecode: Timecode? {
+    public func offsetAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
+    ) -> Timecode? {
         guard let offset = offset else { return nil }
-        return try? element._fcpTimecode(fromRational: offset)
+        return try? element._fcpTimecode(
+            fromRational: offset,
+            frameRateSource: frameRateSource
+        )
     }
 }
 

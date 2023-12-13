@@ -89,6 +89,29 @@ extension FinalCutPro.FCPXML.Root {
         }
     }
     
+    /// Access the contents of the `resources` XML element as a dictionary of elements
+    /// keyed by resource ID.
+    public var resourcesDict: [String: XMLElement] {
+        get {
+            resources
+                .childElements
+                .mapDictionary {
+                    (key: $0.fcpID ?? "", value: $0)
+                }
+        }
+        set {
+            let sortedElements = newValue.values.sorted(by: {
+                ($0.fcpID ?? "")
+                    .caseInsensitiveCompare(($1.fcpID ?? ""))
+                    == .orderedAscending
+            })
+            
+            let resourcesContainer = XMLElement(name: FinalCutPro.FCPXML.ElementType.resources.rawValue)
+            sortedElements.forEach { resourcesContainer.addChild($0) }
+            resources = resourcesContainer
+        }
+    }
+    
     /// Utility:
     /// Returns the `fcpxml/library` element if it exists.
     /// One or zero of these elements may be present within the `fcpxml` element.

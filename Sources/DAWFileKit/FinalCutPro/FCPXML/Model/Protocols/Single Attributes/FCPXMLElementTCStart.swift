@@ -20,11 +20,15 @@ extension FCPXMLElementOptionalTCStart {
         set { element.fcpTCStart = newValue }
     }
     
-    /// Convenience:
     /// Returns the start time of the element as timecode.
-    public var tcStartAsTimecode: Timecode? {
+    public func tcStartAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
+    ) -> Timecode? {
         guard let tcStart = tcStart else { return nil }
-        return try? element._fcpTimecode(fromRational: tcStart)
+        return try? element._fcpTimecode(
+            fromRational: tcStart,
+            frameRateSource: frameRateSource
+        )
     }
 }
 
