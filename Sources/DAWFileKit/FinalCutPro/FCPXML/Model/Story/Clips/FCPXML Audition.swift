@@ -121,9 +121,9 @@ extension XMLElement {
 // MARK: - Supporting Types
 
 extension FinalCutPro.FCPXML.Audition {
-    public enum Mask: Equatable, Hashable, CaseIterable, Sendable {
+    public enum AuditionMask: Equatable, Hashable, CaseIterable, Sendable {
         case active
-        case activeAndAlternates
+        case all
     }
 }
 

@@ -217,8 +217,8 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         )
     }
     
-    /// Test main timeline markers extraction with all occlusion conditions.
-    func testExtractMarkers_MainTimeline_AllOcclusions() throws {
+    /// Test main timeline markers extraction with all occlusion conditions and active MC angles.
+    func testExtractMarkers_MainTimeline_AllOcclusions_ActiveAngles() throws {
         // load file
         let rawData = try fileContents
         
@@ -230,6 +230,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         
         // extract markers
         var settings = FinalCutPro.FCPXML.ExtractionSettings.mainTimeline
+        settings.mcClipAngles = .active
         settings.occlusions = .allCases
         let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 2)
@@ -240,8 +241,12 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         )
     }
     
-    /// Test deep markers extraction with all occlusion conditions.
-    func testExtractMarkers_Deep_AllOcclusions() throws {
+    /// Test main timeline markers extraction with all occlusion conditions and all MC angles.
+    /// NOTE: The auditions rule and the mcClipAngles rule have slightly different effects
+    /// since audition clips are peer elements, but mc-clip angles are nested elements.
+    /// This means that applying the `mainTimeline` extraction settings prevents any angles
+    /// from being extracted.
+    func testExtractMarkers_MainTimeline_AllOcclusions_AllAngles() throws {
         // load file
         let rawData = try fileContents
         
@@ -252,7 +257,34 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractElements(preset: .markers, settings: .deep())
+        var settings = FinalCutPro.FCPXML.ExtractionSettings.mainTimeline
+        settings.mcClipAngles = .all
+        settings.occlusions = .allCases
+        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
+        XCTAssertEqual(extractedMarkers.count, 2)
+        
+        XCTAssertEqual(
+            extractedMarkers.map(\.name),
+            ["Marker on Multicam Clip 1", "Marker on Multicam Clip 2"]
+        )
+    }
+    
+    /// Test deep markers extraction with all occlusion conditions with active MC angles.
+    func testExtractMarkers_Deep_AllOcclusions_ActiveAngles() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // parse file
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        
+        // extract markers
+        let extractedMarkers = event.extractElements(
+            preset: .markers,
+            settings: .deep(mcClipAngles: .active)
+        )
         // 1 on each mc-clip, and 5 within each mc-clip
         XCTAssertEqual(extractedMarkers.count, 4)
         
@@ -263,6 +295,43 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
             "Marker on Multicam Clip 2", // on mc-clip 2
             "Marker in Multicam Clip on Angle B", // within mc-clip 2
         ])
+    }
+    
+    /// Test deep markers extraction with all occlusion conditions and all MC angles.
+    func testExtractMarkers_Deep_AllOcclusions_AllAngles() throws {
+        // load file
+        let rawData = try fileContents
+        
+        // parse file
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // event
+        let event = try XCTUnwrap(fcpxml.allEvents().first)
+        
+        // extract markers
+        let extractedMarkers = event.extractElements(
+            preset: .markers,
+            settings: .deep(mcClipAngles: .all)
+        )
+        XCTAssertEqual(extractedMarkers.count, 2 + (2 * 5))
+        
+        XCTAssertEqual(
+            extractedMarkers.map(\.name),
+            [
+                "Marker on Multicam Clip 1", // on mc-clip 1
+                "Marker in Multicam Clip on Angle A", // within mc-clip 1
+                "Marker in Multicam Clip on Angle B", // within mc-clip 1
+                "Marker in Multicam Clip on Angle C", // within mc-clip 1
+                "Marker in Multicam Clip on Angle D", // within mc-clip 1
+                "Marker in Multicam Clip on Music Angle", // within mc-clip 1
+                "Marker on Multicam Clip 2", // on mc-clip 2
+                "Marker in Multicam Clip on Angle A", // within mc-clip 2
+                "Marker in Multicam Clip on Angle B", // within mc-clip 2
+                "Marker in Multicam Clip on Angle C", // within mc-clip 2
+                "Marker in Multicam Clip on Angle D", // within mc-clip 2
+                "Marker in Multicam Clip on Music Angle" // within mc-clip 2
+            ]
+        )
     }
 }
 

@@ -18,7 +18,8 @@ extension XMLElement {
     /// ancestors. No default roles are added and no interpolation is performed.
     func _fcpLocalRoles(
         resources: XMLElement? = nil,
-        auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
+        auditions: FinalCutPro.FCPXML.Audition.AuditionMask, // = .active
+        mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask // = .active
     ) -> [FinalCutPro.FCPXML.AnyInterpolatedRole] {
         guard let elementType = fcpElementType else { return [] }
         
@@ -99,6 +100,7 @@ extension XMLElement {
             let childRoles = _fcpRolesForNearestDescendant(
                 resources: resources,
                 auditions: auditions,
+                mcClipAngles: mcClipAngles,
                 firstGenerationOnly: true,
                 firstElementEachGenerationOnly: false, 
                 ignoring: []
@@ -142,17 +144,16 @@ extension XMLElement {
             else { break }
             
             // fetch angles being used
-            
             let (audioAngle, videoAngle) = multicam.audioVideoMCAngles(forMulticamSources: sources)
             
             // use role from first story element within each angle
-            
             if let angle = audioAngle {
                 let roles = angle.element._fcpRolesForNearestDescendant(
                     resources: resources,
                     auditions: auditions,
+                    mcClipAngles: mcClipAngles,
                     firstGenerationOnly: true,
-                    firstElementEachGenerationOnly: false, 
+                    firstElementEachGenerationOnly: false,
                     ignoring: []
                 )
                     .audioRoles()
@@ -165,6 +166,7 @@ extension XMLElement {
                 let roles = angle.element._fcpRolesForNearestDescendant(
                     resources: resources,
                     auditions: auditions,
+                    mcClipAngles: mcClipAngles,
                     firstGenerationOnly: false,
                     firstElementEachGenerationOnly: true,
                     ignoring: []
@@ -179,7 +181,6 @@ extension XMLElement {
             // does not have video role itself. it references a sequence that may contain
             // clips with their own roles.
             // has audio subroles that are enable-able.
-            
             guard let refClip = fcpAsRefClip else { break }
             
             if refClip.useAudioSubroles {
@@ -191,7 +192,6 @@ extension XMLElement {
             
         case .syncClip:
             // sync clip does not have video/audio roles itself.
-            
             guard let syncClip = fcpAsSyncClip else { break }
             
             // the audio role may be present in a `sync-source` child of the sync clip.
@@ -207,6 +207,7 @@ extension XMLElement {
             let childVideoRoles = _fcpRolesForNearestDescendant(
                 resources: resources,
                 auditions: auditions,
+                mcClipAngles: mcClipAngles,
                 firstGenerationOnly: false,
                 firstElementEachGenerationOnly: true,
                 types: [.video],
@@ -218,6 +219,7 @@ extension XMLElement {
                 let childAudioRoles = _fcpRolesForNearestDescendant(
                     resources: resources,
                     auditions: auditions,
+                    mcClipAngles: mcClipAngles,
                     firstGenerationOnly: false,
                     firstElementEachGenerationOnly: true,
                     types: [.audio],
@@ -268,7 +270,8 @@ extension XMLElement {
     /// FCPXML: Attempts to extract assigned roles for the first child clip found.
     func _fcpRolesForNearestDescendant<I: Sequence<FinalCutPro.FCPXML.AnyRole>>(
         resources: XMLElement? = nil,
-        auditions: FinalCutPro.FCPXML.Audition.Mask, // = .activeAudition
+        auditions: FinalCutPro.FCPXML.Audition.AuditionMask, // = .active
+        mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask, // = .active
         firstGenerationOnly: Bool,
         firstElementEachGenerationOnly: Bool,
         types: Set<FinalCutPro.FCPXML.RoleType> = .allCases,
@@ -286,7 +289,7 @@ extension XMLElement {
         
         for element in elements {
             let roles = element
-                ._fcpLocalRoles(resources: resources, auditions: auditions)
+                ._fcpLocalRoles(resources: resources, auditions: auditions, mcClipAngles: mcClipAngles)
                 .filter { types.contains($0.wrapped.roleType) }
                 .filter { !ignoreRoles.contains($0.wrapped) }
             // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
@@ -300,7 +303,7 @@ extension XMLElement {
                 
                 for child in childElements {
                     let childRoles = child
-                        ._fcpLocalRoles(resources: resources, auditions: auditions)
+                        ._fcpLocalRoles(resources: resources, auditions: auditions, mcClipAngles: mcClipAngles)
                         .filter { types.contains($0.wrapped.roleType) }
                         .filter { !ignoreRoles.contains($0.wrapped) }
                     // print("--", childRoles.map(\.rawValue))

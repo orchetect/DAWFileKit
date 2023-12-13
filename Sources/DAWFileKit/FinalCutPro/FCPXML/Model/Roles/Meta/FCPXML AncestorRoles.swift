@@ -111,7 +111,8 @@ extension XMLElement {
     func _fcpInheritedRoles(
         ancestors: [XMLElement],
         resources: XMLElement? = nil,
-        auditions: FinalCutPro.FCPXML.Audition.Mask // = .activeAudition
+        auditions: FinalCutPro.FCPXML.Audition.AuditionMask, // = .activeAudition
+        mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask // = .active
     ) -> FinalCutPro.FCPXML.AncestorRoles {
         var ancestorRoles = FinalCutPro.FCPXML.AncestorRoles()
         
@@ -126,7 +127,8 @@ extension XMLElement {
             let isLastElement = index == elements.indices.last // self
             var bcRoles = breadcrumb._fcpLocalRoles(
                 resources: resources,
-                auditions: auditions
+                auditions: auditions,
+                mcClipAngles: mcClipAngles
             )
             
             guard let bcType = breadcrumb.fcpElementType else { continue }

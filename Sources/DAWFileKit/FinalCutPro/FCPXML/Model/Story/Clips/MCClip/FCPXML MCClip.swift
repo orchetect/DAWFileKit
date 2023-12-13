@@ -162,4 +162,13 @@ extension XMLElement {
     }
 }
 
+// MARK: - Supporting Types
+
+extension FinalCutPro.FCPXML.MCClip {
+    public enum AngleMask: Equatable, Hashable, CaseIterable, Sendable {
+        case active
+        case all
+    }
+}
+
 #endif

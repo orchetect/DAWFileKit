@@ -82,7 +82,8 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         // extract markers
         let extractedMarkers = event.extractElements(
             settings: FinalCutPro.FCPXML.ExtractionSettings(
-                auditions: .activeAndAlternates,
+                auditions: .all,
+                mcClipAngles: .all,
                 occlusions: .allCases,
                 filteredTraversalTypes: nil,
                 filteredExtractionTypes: nil,

@@ -151,7 +151,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         XCTAssertEqual(marker.name, "Marker 1")
     }
     
-    func testExtractMarkers_allAudition() throws {
+    func testExtractMarkers_allAuditions() throws {
         // load file
         let rawData = try fileContents
         
@@ -163,7 +163,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         
         // extract markers
         let settings = FinalCutPro.FCPXML.ExtractionSettings(
-            auditions: .activeAndAlternates
+            auditions: .all
         )
         let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
         XCTAssertEqual(extractedMarkers.count, 2)

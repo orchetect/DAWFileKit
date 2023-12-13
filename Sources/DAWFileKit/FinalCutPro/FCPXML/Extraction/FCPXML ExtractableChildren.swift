@@ -58,7 +58,8 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
     init?(
         of element: XMLElement,
         resources: XMLElement?,
-        auditions: FinalCutPro.FCPXML.Audition.Mask
+        auditions: FinalCutPro.FCPXML.Audition.AuditionMask, // = .active
+        mcClipAngleMask: FinalCutPro.FCPXML.MCClip.AngleMask // = .active
     ) {
         guard let fcpElementType = element.fcpElementType else { return nil }
         
@@ -85,8 +86,11 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
         case .audition:
             switch auditions {
             case .active:
-                self = .specificChildren([element.fcpAsAudition?.activeClip].compactMap { $0 })
-            case .activeAndAlternates:
+                self = .specificChildren(
+                    [element.fcpAsAudition?.activeClip]
+                        .compactMap { $0 }
+                )
+            case .all:
                 self = .directChildren
             }
             
@@ -113,10 +117,23 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
             // so we can't just return the `media` resource and recurse, we need
             // to actually know which angles are used by the `mc-clip`.
             
-            if let multicamSources = element.fcpAsMCClip?.sources,
+            guard let multicamSources = element.fcpAsMCClip?.sources,
                let mediaResource = element.fcpResource(in: resources)?.fcpAsMedia,
                let multicam = mediaResource.multicam
-            {
+            else {
+                self = .directChildren
+                return
+            }
+            
+            var descendants: [FinalCutPro.FCPXML.ExtractableChildren.Descendant] = []
+            
+            // can omit, not really important
+            // descendants.append(.init(element: mcSource, children: nil))
+            
+            descendants.append(.init(element: mediaResource.element, children: nil))
+            
+            switch mcClipAngleMask {
+            case .active:
                 let (audio, video) = multicam
                     .audioVideoMCAngles(forMulticamSources: multicamSources)
                 
@@ -126,21 +143,22 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
                     .removingDuplicates()
                 
                 // provide explicit descendants
-                let descendants: [FinalCutPro.FCPXML.ExtractableChildren.Descendant] = [
-                    // .init(element: mcSource, children: nil), - can omit, not really important
-                    .init(element: mediaResource.element, children: nil),
+                descendants.append(
                     .init(element: multicam.element, children: .specificChildren(reducedMCAngles))
-                ]
-                
-                let ec = FinalCutPro.FCPXML.ExtractableChildren(
-                    children: .all,
-                    descendants: descendants
                 )
-                self = ec
+                
+            case .all:
+                // provide explicit descendants
+                descendants.append(
+                    .init(element: multicam.element, children: .directChildren)
+                )
             }
-            else {
-                self = .directChildren
-            }
+            
+            let ec = FinalCutPro.FCPXML.ExtractableChildren(
+                children: .all,
+                descendants: descendants
+            )
+            self = ec
             
         case .refClip:
             // a.k.a. Compound Clip
@@ -149,7 +167,7 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
             if let mediaResource = element.fcpResource(in: resources) {
                 let ec = FinalCutPro.FCPXML.ExtractableChildren(
                     children: .all,
-                    descendants: [.init(element: mediaResource, children: nil)]
+                    descendants: [.init(element: mediaResource, children: .directChildren)]
                 )
                 self = ec
             } else {
@@ -235,9 +253,15 @@ extension XMLElement {
     /// Extractable children contained within the element.
     func _fcpExtractableChildren(
         resources: XMLElement?,
-        auditions: FinalCutPro.FCPXML.Audition.Mask
+        auditions: FinalCutPro.FCPXML.Audition.AuditionMask, // = .active
+        mcClipAngleMask: FinalCutPro.FCPXML.MCClip.AngleMask // = .active
     ) -> FinalCutPro.FCPXML.ExtractableChildren? {
-        FinalCutPro.FCPXML.ExtractableChildren(of: self, resources: resources, auditions: auditions)
+        FinalCutPro.FCPXML.ExtractableChildren(
+            of: self,
+            resources: resources,
+            auditions: auditions,
+            mcClipAngleMask: mcClipAngleMask
+        )
     }
 }
 

@@ -182,9 +182,8 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(auditions: .active)
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: settings)
+            .extractElements(preset: .markers, settings: .init())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 3)
         

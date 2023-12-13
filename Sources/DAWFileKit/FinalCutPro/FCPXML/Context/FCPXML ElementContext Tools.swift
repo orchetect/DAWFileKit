@@ -182,7 +182,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         public func localRoles(includeDefaultRoles: Bool) -> [FinalCutPro.FCPXML.AnyRole] {
             var elementRoles = element._fcpLocalRoles(
                 resources: resources,
-                auditions: .active
+                auditions: .active, 
+                mcClipAngles: .active
             )
             
             if includeDefaultRoles, let elementType = elementType {
@@ -197,7 +198,8 @@ extension FinalCutPro.FCPXML.ElementContext {
             element._fcpInheritedRoles(
                 ancestors: breadcrumbs,
                 resources: resources,
-                auditions: .active
+                auditions: .active,
+                mcClipAngles: .active
             )
             .flattenedInterpolatedRoles()
         }

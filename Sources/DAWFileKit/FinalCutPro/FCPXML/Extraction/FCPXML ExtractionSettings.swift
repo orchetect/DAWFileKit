@@ -13,7 +13,10 @@ extension FinalCutPro.FCPXML {
     /// Settings applied when extracting FCPXML elements.
     public struct ExtractionSettings {
         /// Filter to apply to Audition clip contents.
-        public var auditions: FinalCutPro.FCPXML.Audition.Mask
+        public var auditions: FinalCutPro.FCPXML.Audition.AuditionMask
+        
+        /// Filter to apply to Multicam clip contents.
+        public var mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask
         
         /// Occlusion conditions of elements to include.
         /// By default, all are included.
@@ -53,7 +56,8 @@ extension FinalCutPro.FCPXML {
         public var extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
         
         public init(
-            auditions: FinalCutPro.FCPXML.Audition.Mask = .active,
+            auditions: FinalCutPro.FCPXML.Audition.AuditionMask = .active,
+            mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask = .active,
             occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion> = .allCases,
             filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
             filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
@@ -63,6 +67,7 @@ extension FinalCutPro.FCPXML {
             extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil
         ) {
             self.auditions = auditions
+            self.mcClipAngles = mcClipAngles
             self.occlusions = occlusions
             self.filteredTraversalTypes = filteredTraversalTypes
             self.filteredExtractionTypes = filteredExtractionTypes
@@ -79,10 +84,12 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     /// producing results that include elements visible from the main timeline and elements not
     /// visible from the main timeline.
     public static func deep(
-        auditions: FinalCutPro.FCPXML.Audition.Mask = .activeAndAlternates
+        auditions: FinalCutPro.FCPXML.Audition.AuditionMask = .all,
+        mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask = .all
     ) -> FinalCutPro.FCPXML.ExtractionSettings {
         FinalCutPro.FCPXML.ExtractionSettings(
-            auditions: .active,
+            auditions: auditions,
+            mcClipAngles: mcClipAngles,
             occlusions: .allCases,
             filteredTraversalTypes: nil,
             filteredExtractionTypes: nil,
@@ -97,6 +104,7 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     /// timeline.
     public static let mainTimeline = FinalCutPro.FCPXML.ExtractionSettings(
         auditions: .active,
+        mcClipAngles: .active,
         occlusions: [.notOccluded, .partiallyOccluded],
         filteredTraversalTypes: nil,
         filteredExtractionTypes: nil,
