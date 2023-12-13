@@ -165,8 +165,8 @@ extension XMLElement {
                 let roles = angle.element._fcpRolesForNearestDescendant(
                     resources: resources,
                     auditions: auditions,
-                    firstGenerationOnly: true,
-                    firstElementEachGenerationOnly: false,
+                    firstGenerationOnly: false,
+                    firstElementEachGenerationOnly: true,
                     ignoring: []
                 )
                     .videoRoles()
@@ -207,8 +207,8 @@ extension XMLElement {
             let childVideoRoles = _fcpRolesForNearestDescendant(
                 resources: resources,
                 auditions: auditions,
-                firstGenerationOnly: true,
-                firstElementEachGenerationOnly: false,
+                firstGenerationOnly: false,
+                firstElementEachGenerationOnly: true,
                 types: [.video],
                 ignoring: inactiveAudioRoleSources.asAnyRoles()
             )
@@ -219,7 +219,7 @@ extension XMLElement {
                     resources: resources,
                     auditions: auditions,
                     firstGenerationOnly: false,
-                    firstElementEachGenerationOnly: false,
+                    firstElementEachGenerationOnly: true,
                     types: [.audio],
                     ignoring: inactiveAudioRoleSources.asAnyRoles()
                 )
@@ -274,9 +274,15 @@ extension XMLElement {
         types: Set<FinalCutPro.FCPXML.RoleType> = .allCases,
         ignoring ignoreRoles: I
     ) -> [FinalCutPro.FCPXML.AnyRole] {
+        var collectedRoles: [FinalCutPro.FCPXML.AnyRole] = []
+        
+        func add(_ newRoles: [FinalCutPro.FCPXML.AnyRole]) {
+            newRoles.forEach { collectedRoles.insert($0) }
+        }
+        
         let elements: AnySequence = firstElementEachGenerationOnly
-            ? childElements.prefix(1).asAnySequence
-            : childElements.asAnySequence
+            ? fcpTimelineElements.prefix(1).asAnySequence
+            : fcpTimelineElements.asAnySequence
         
         for element in elements {
             let roles = element
@@ -285,12 +291,12 @@ extension XMLElement {
                 .filter { !ignoreRoles.contains($0.wrapped) }
             // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
             // print("-", roles.map(\.wrapped).map(\.rawValue))
-            if !roles.isEmpty { return roles.map(\.wrapped) }
+            if !roles.isEmpty { add(roles.map(\.wrapped)) }
             
             if !firstGenerationOnly {
                 let childElements = firstElementEachGenerationOnly
-                    ? element.childElements.prefix(1).asAnySequence
-                    : element.childElements.asAnySequence
+                    ? element.fcpTimelineElements.prefix(1).asAnySequence
+                    : element.fcpTimelineElements.asAnySequence
                 
                 for child in childElements {
                     let childRoles = child
@@ -298,12 +304,12 @@ extension XMLElement {
                         .filter { types.contains($0.wrapped.roleType) }
                         .filter { !ignoreRoles.contains($0.wrapped) }
                     // print("--", childRoles.map(\.rawValue))
-                    if !childRoles.isEmpty { return childRoles.map(\.wrapped) }
+                    if !childRoles.isEmpty { add(childRoles.map(\.wrapped)) }
                 }
             }
         }
         
-        return []
+        return collectedRoles
     }
 }
 

@@ -29,6 +29,14 @@ extension XMLElement {
     }
 }
 
+extension XMLElement {
+    /// FCPXML: Returns child timeline elements.
+    public var fcpTimelineElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        childElements
+            .filter { $0.fcpElementType?.isTimeline == true }
+    }
+}
+
 // MARK: - Child Elements
 
 extension XMLElement {
