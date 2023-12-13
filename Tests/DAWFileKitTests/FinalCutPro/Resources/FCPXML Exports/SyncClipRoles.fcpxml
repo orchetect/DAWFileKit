@@ -41,7 +41,7 @@
     </resources>
     <library location="file:///Users/user/Movies/MyLibrary.fcpbundle/">
         <event name="TestEvent" uid="AE0E3222-9235-45E2-BBB2-D902AE1B04A6">
-            <project name="TestProject" uid="0D598DDA-ACB1-4DB2-9A6C-32F057004917" modDate="2023-11-22 14:47:17 -0800">
+            <project name="SyncClipRoles" uid="0D598DDA-ACB1-4DB2-9A6C-32F057004917" modDate="2023-11-22 14:47:17 -0800">
                 <sequence format="r1" duration="10123200/30000s" tcStart="3590s" tcFormat="NDF" renderFormat="FFRenderFormatProRes422LT" audioLayout="stereo" audioRate="48k">
                     <spine>
                         <sync-clip offset="109947600/30000s" name="Sync Clip 1" start="96464100/2500s" duration="4900/2500s" audioStart="27781660800/720000s" audioDuration="403200/720000s" tcFormat="NDF">

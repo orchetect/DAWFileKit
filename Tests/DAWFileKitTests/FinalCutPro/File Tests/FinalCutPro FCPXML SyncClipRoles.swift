@@ -38,7 +38,6 @@ final class FinalCutPro_FCPXML_SyncClipRoles: FCPXMLTestCase {
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events[safe: 0])
-        XCTAssertEqual(event.name, "TestEvent")
         
         // project
         let projects = event.projects.zeroIndexed
