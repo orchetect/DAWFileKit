@@ -80,8 +80,8 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         XCTAssertEqual(extractedMCClip1.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedMCClip1.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(extractedMCClip1.value(forContext: .localRoles), [
-            FinalCutPro.FCPXML.defaultAudioRole.lowercased(derivedOnly: true),
-            FinalCutPro.FCPXML.defaultVideoRole
+            FinalCutPro.FCPXML.defaultVideoRole,
+            FinalCutPro.FCPXML.defaultAudioRole.lowercased(derivedOnly: true)
         ])
         XCTAssertEqual(extractedMCClip1.value(forContext: .inheritedRoles), [
             .defaulted(FinalCutPro.FCPXML.defaultVideoRole),
@@ -165,8 +165,8 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         XCTAssertEqual(extractedMCClip2.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedMCClip2.value(forContext: .effectiveOcclusion), .notOccluded)
         XCTAssertEqual(extractedMCClip2.value(forContext: .localRoles), [
-            FinalCutPro.FCPXML.defaultAudioRole.lowercased(derivedOnly: true),
-            FinalCutPro.FCPXML.defaultVideoRole
+            FinalCutPro.FCPXML.defaultVideoRole,
+            FinalCutPro.FCPXML.defaultAudioRole.lowercased(derivedOnly: true)
         ])
         XCTAssertEqual(extractedMCClip2.value(forContext: .inheritedRoles), [
             .defaulted(FinalCutPro.FCPXML.defaultVideoRole),

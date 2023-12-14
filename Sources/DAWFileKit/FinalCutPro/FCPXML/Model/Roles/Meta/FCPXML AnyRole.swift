@@ -176,6 +176,16 @@ extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     }
 }
 
+extension Sequence<FinalCutPro.FCPXML.AnyRole> {
+    /// Returns the sequence sorted by role type: video, then audio, then caption.
+    /// Role order is otherwise maintained and roles are not sorted alphabetically.
+    public func sortedByType() -> [Element] {
+        filter(\.isVideo)
+            + filter(\.isAudio)
+            + filter(\.isCaption)
+    }
+}
+
 // MARK: - Filtering
 
 extension Sequence<FinalCutPro.FCPXML.AnyRole> {

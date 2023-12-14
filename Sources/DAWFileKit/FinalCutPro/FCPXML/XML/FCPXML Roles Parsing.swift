@@ -146,35 +146,35 @@ extension XMLElement {
             // fetch angles being used
             let (audioAngle, videoAngle) = multicam.audioVideoMCAngles(forMulticamSources: sources)
             
-            // use role from first story element within each angle
-            if let angle = audioAngle {
-                let roles = angle.element._fcpRolesForNearestDescendant(
-                    resources: resources,
-                    auditions: auditions,
-                    mcClipAngles: mcClipAngles,
-                    firstGenerationOnly: true,
-                    firstElementEachGenerationOnly: false,
-                    ignoring: []
-                )
-                    .audioRoles()
-                    .map { $0.asAnyRole() }
-                
-                add(roles: roles, isInherited: true)
-            }
-            
-            if let angle = videoAngle {
-                let roles = angle.element._fcpRolesForNearestDescendant(
+            if let videoAngle = videoAngle {
+                let videoRoles = videoAngle.element._fcpRolesForNearestDescendant(
                     resources: resources,
                     auditions: auditions,
                     mcClipAngles: mcClipAngles,
                     firstGenerationOnly: false,
-                    firstElementEachGenerationOnly: true,
+                    firstElementEachGenerationOnly: false,
+                    types: [.video],
                     ignoring: []
                 )
-                    .videoRoles()
-                    .map { $0.asAnyRole() }
+                .map { $0.asAnyRole() }
                 
-                add(roles: roles, isInherited: true)
+                add(roles: videoRoles, isInherited: true)
+            }
+            
+            // use role from first story element within each angle
+            if let audioAngle = audioAngle {
+                let audioRoles = audioAngle.element._fcpRolesForNearestDescendant(
+                    resources: resources,
+                    auditions: auditions,
+                    mcClipAngles: mcClipAngles,
+                    firstGenerationOnly: false,
+                    firstElementEachGenerationOnly: false,
+                    types: [.audio],
+                    ignoring: []
+                )
+                .map { $0.asAnyRole() }
+                
+                add(roles: audioRoles, isInherited: true)
             }
             
         case .refClip:
@@ -279,35 +279,47 @@ extension XMLElement {
     ) -> [FinalCutPro.FCPXML.AnyRole] {
         var collectedRoles: [FinalCutPro.FCPXML.AnyRole] = []
         
-        func add(_ newRoles: [FinalCutPro.FCPXML.AnyRole]) {
+        func add(_ newRoles: some Sequence<FinalCutPro.FCPXML.AnyRole>) {
             newRoles.forEach { collectedRoles.insert($0) }
         }
         
-        let elements: AnySequence = firstElementEachGenerationOnly
-            ? fcpTimelineElements.prefix(1).asAnySequence
-            : fcpTimelineElements.asAnySequence
+        func elements(for element: XMLElement) -> some Sequence<XMLElement> {
+            var elements: AnySequence = firstElementEachGenerationOnly
+                ? element.fcpTimelineElements.prefix(1).asAnySequence
+                : element.fcpTimelineElements.asAnySequence
+            
+            // gaps may appear before an actual clip in a multicam angle.
+            // FCP skips them and looks to the first clip in the angle.
+            // (gaps are timelines but also cannot have roles)
+            elements = elements
+                .filter { $0.fcpElementType != .gap }
+                .asAnySequence
+            
+            return elements
+        }
         
-        for element in elements {
-            let roles = element
+        func localRoles(for element: XMLElement) -> some Sequence<FinalCutPro.FCPXML.AnyRole> {
+            // all roles returned are considered inherited,
+            // so we'll strip its `AnyInterpolatedRole` case to return `[AnyRole]`
+            element
                 ._fcpLocalRoles(resources: resources, auditions: auditions, mcClipAngles: mcClipAngles)
                 .filter { types.contains($0.wrapped.roleType) }
                 .filter { !ignoreRoles.contains($0.wrapped) }
-            // all roles returned are considered 'inherited', so strip interpolated role case to return [AnyRole]
-            // print("-", roles.map(\.wrapped).map(\.rawValue))
-            if !roles.isEmpty { add(roles.map(\.wrapped)) }
+                .map(\.wrapped)
+        }
+        
+        let localElements = elements(for: self)
+        
+        for localElement in localElements {
+            let roles = localRoles(for: localElement)
+            add(roles)
             
             if !firstGenerationOnly {
-                let childElements = firstElementEachGenerationOnly
-                    ? element.fcpTimelineElements.prefix(1).asAnySequence
-                    : element.fcpTimelineElements.asAnySequence
+                let childElements = elements(for: localElement)
                 
-                for child in childElements {
-                    let childRoles = child
-                        ._fcpLocalRoles(resources: resources, auditions: auditions, mcClipAngles: mcClipAngles)
-                        .filter { types.contains($0.wrapped.roleType) }
-                        .filter { !ignoreRoles.contains($0.wrapped) }
-                    // print("--", childRoles.map(\.rawValue))
-                    if !childRoles.isEmpty { add(childRoles.map(\.wrapped)) }
+                for childElement in childElements {
+                    let childRoles = localRoles(for: childElement)
+                    add(childRoles)
                 }
             }
         }
@@ -424,7 +436,7 @@ extension FinalCutPro.FCPXML {
             localRoles.append(contentsOf: defaultRoles.captionRoles().map { .defaulted($0) })
         }
         
-        return localRoles
+        return localRoles.sortedByType()
     }
 }
 
