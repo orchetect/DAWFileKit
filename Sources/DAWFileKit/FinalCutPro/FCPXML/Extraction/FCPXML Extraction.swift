@@ -21,8 +21,8 @@ extension FCPXMLElement {
     public func extractElements(
         types elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
         scope: FinalCutPro.FCPXML.ExtractionScope
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
-        element.fcpExtractElements(
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
+        await element.fcpExtractElements(
             types: elementTypes,
             scope: scope
         )
@@ -36,8 +36,8 @@ extension FCPXMLElement {
     public func extractElements<Result>(
         preset: some FCPXMLExtractionPreset<Result>,
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
-    ) -> Result {
-        element.fcpExtractElements(
+    ) async -> Result {
+        await element.fcpExtractElements(
             preset: preset,
             scope: scope
         )
@@ -55,8 +55,8 @@ extension XMLElement {
     public func fcpExtractElements(
         types elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
         scope: FinalCutPro.FCPXML.ExtractionScope
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
-        _fcpExtractElements(
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
+        await _fcpExtractElements(
             types: elementTypes,
             scope: scope,
             ancestors: ancestorElements(includingSelf: false),
@@ -72,8 +72,8 @@ extension XMLElement {
     public func fcpExtractElements<Result>(
         preset: some FCPXMLExtractionPreset<Result>,
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
-    ) -> Result {
-        preset.perform(
+    ) async -> Result {
+        await preset.perform(
             on: self,
             scope: scope
         )
@@ -100,7 +100,7 @@ extension XMLElement {
         ancestors: A,
         resources: XMLElement?,
         overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
         var ancestors: any Sequence<XMLElement> = ancestors
         if scope.constrainToLocalTimeline {
             ancestors = []
@@ -109,7 +109,7 @@ extension XMLElement {
         var scope = scope
         scope.filteredExtractionTypes = elementTypes
         
-        return _fcpExtractElements(
+        return await _fcpExtractElements(
             scope: scope,
             ancestors: ancestors,
             resources: resources
@@ -131,7 +131,7 @@ extension XMLElement {
         ancestors: A,
         resources: XMLElement?,
         overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
         // self
         
         let selfExtractedElement = FinalCutPro.FCPXML.ExtractedElement(
@@ -167,7 +167,7 @@ extension XMLElement {
         // gather immediate children with `lane != 0` which should be considered peers
         // with the current element
         
-        let extractedPeers = _fcpExtractPeers(
+        let extractedPeers = await _fcpExtractPeers(
             scope: scope,
             ancestors: ancestors,
             resources: resources
@@ -190,7 +190,7 @@ extension XMLElement {
         
         // direct children, if any
         if let childrenRule = recurse.children {
-            let extractedChildren = _fcpExtractDirectChildren(
+            let extractedChildren = await _fcpExtractDirectChildren(
                 childrenRule: childrenRule,
                 scope: scope,
                 ancestors: ancestors,
@@ -202,7 +202,7 @@ extension XMLElement {
         // explicit descendants that are not automatically recursive, if any
         
         if let descendants = recurse.descendants, !descendants.isEmpty {
-            let extractedDescendants = _fcpExtractDescendants(
+            let extractedDescendants = await _fcpExtractDescendants(
                 descendants: descendants,
                 scope: scope,
                 ancestors: ancestors,
@@ -218,25 +218,27 @@ extension XMLElement {
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: A,
         resources: XMLElement?
-    ) -> some Sequence<FinalCutPro.FCPXML.ExtractedElement> {
+    ) async -> some Sequence<FinalCutPro.FCPXML.ExtractedElement> {
         // gather immediate children with `lane != 0` which should be considered peers
         // with the current element
         
-        let peers = childElements
+        let elements = childElements
+        // filter out peers of parent, which we already handled in main extraction method
             .filter { ($0.fcpLane ?? 0) != 0 }
         
-        let extractedPeers = peers
-            .flatMap {
-                $0._fcpExtractElements(
-                    scope: scope,
-                    ancestors: [self] + ancestors,
-                    resources: resources
-                )
-            }
+        let extracted = await withOrderedTaskGroup(sequence: elements) { element in
+            await element._fcpExtractElements(
+                scope: scope,
+                ancestors: [self] + ancestors,
+                resources: resources
+            )
+        }
         
-        return extractedPeers
+        let output = extracted.flatMap { $0 }
+        
+        return output
     }
-    
+        
     /// Helper to extract direct children of the element.
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
@@ -245,7 +247,7 @@ extension XMLElement {
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: A,
         resources: XMLElement?
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
         let childrenSource: any Sequence<XMLElement>
         
         switch childrenRule {
@@ -255,17 +257,21 @@ extension XMLElement {
             childrenSource = childrenSequence
         }
         
-        let extractedChildren = childrenSource
-        // filter out peers of parent, which we already handled in main extraction method
+        let elements = childrenSource
+            // filter out peers of parent, which we already handled in main extraction method
             .filter { ($0.fcpLane ?? 0) == 0 }
-            .flatMap {
-                $0._fcpExtractElements(
-                    scope: scope,
-                    ancestors: [self] + ancestors,
-                    resources: resources
-                )
-            }
-        return extractedChildren
+        
+        let extracted = await withOrderedTaskGroup(sequence: elements) { element in
+            await element._fcpExtractElements(
+                scope: scope,
+                ancestors: [self] + ancestors,
+                resources: resources
+            )
+        }
+        
+        let output = extracted.flatMap { $0 }
+        
+        return output
     }
     
     /// Helper to extract further descendants of the element in special circumstances.
@@ -281,27 +287,36 @@ extension XMLElement {
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: A,
         resources: XMLElement?
-    ) -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
         // each descendant record has an element, as well as an optional sequence of children
         
         var descendantAccum: [XMLElement] = []
-        var extracted: [FinalCutPro.FCPXML.ExtractedElement] = []
+        
+        var descendantsIterator = descendants.makeIterator()
+        typealias IteratorResult = (
+            descendant: FinalCutPro.FCPXML.ExtractableChildren.Descendant,
+            accum: [XMLElement]
+        )
+        let iterator = AnyIterator { () -> IteratorResult? in
+            guard let next = descendantsIterator.next() else { return nil }
+            defer { descendantAccum.insert(next.element, at: 0) }
+            return (descendant: next, accum: descendantAccum)
+        }
         
         // parse from nearest descendent to furthest, which is the same as
         // parsing ancestors from furthest to nearest
-        for descendant in descendants {
-            defer { descendantAccum.insert(descendant.element, at: 0) }
-            
-            let extractedDescendants = descendant.element._fcpExtractElements(
+        let extracted = await withOrderedTaskGroup(sequence: iterator) { (descendant, accum) in
+            await descendant.element._fcpExtractElements(
                 scope: scope,
-                ancestors: descendantAccum + [self] + ancestors,
+                ancestors: accum + [self] + ancestors,
                 resources: resources,
                 overrideDirectChildren: descendant.children
             )
-            extracted.append(contentsOf: extractedDescendants)
         }
         
-        return extracted
+        let output = extracted.flatMap { $0 }
+        
+        return output
     }
     
     /// Returns `true` if the element should be filtered (kept) in returned elements.

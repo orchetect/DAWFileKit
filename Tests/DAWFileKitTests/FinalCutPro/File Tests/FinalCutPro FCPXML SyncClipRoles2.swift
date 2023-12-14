@@ -26,7 +26,7 @@ final class FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLTestCase {
     } }
     
     /// Ensure that elements that can appear in various locations in the XML hierarchy are all found.
-    func testParse() throws {
+    func testParse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -67,7 +67,7 @@ final class FinalCutPro_FCPXML_SyncClipRoles2: FCPXMLTestCase {
         let marker = try XCTUnwrap(markers.first)
         // confirm we have the right marker
         XCTAssertEqual(marker.name, "Marker 1")
-        let extractedMarker = marker.element.fcpExtract()
+        let extractedMarker = await marker.element.fcpExtract()
         XCTAssertEqual(
             extractedMarker.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:01:18:03", .fps25)

@@ -25,7 +25,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         ))
     } }
     
-    func testParse() throws {
+    func testParse() async throws {
         // load file
         let rawData = try fileContents
         
@@ -72,7 +72,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         XCTAssertEqual(mcClip.durationAsTimecode(), Self.tc("00:00:10:00", .fps23_976))
         XCTAssertEqual(mcClip.durationAsTimecode()?.frameRate, .fps23_976)
         XCTAssertEqual(mcClip.enabled, true)
-        let extractedMCClip = mcClip.element.fcpExtract()
+        let extractedMCClip = await mcClip.element.fcpExtract()
         XCTAssertEqual(
             extractedMCClip.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:00:00:00", .fps23_976)
@@ -137,7 +137,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         
         let mcMarker = try XCTUnwrap(mcMarkers[safe: 0])
         XCTAssertEqual(mcMarker.name, "Marker on Multicam Clip")
-        let extractedMCMarker = mcMarker.element.fcpExtract()
+        let extractedMCMarker = await mcMarker.element.fcpExtract()
         XCTAssertEqual(
             extractedMCMarker.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:00:04:08", .fps23_976)
@@ -152,7 +152,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
     }
     
     /// Test main timeline markers extraction with limited occlusion conditions.
-    func testExtractMarkers_MainTimeline_LimitedOcclusions() throws {
+    func testExtractMarkers_MainTimeline_LimitedOcclusions() async throws {
         // load file
         let rawData = try fileContents
         
@@ -163,7 +163,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractElements(preset: .markers, scope: .mainTimeline)
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: .mainTimeline)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         XCTAssertEqual(
@@ -173,7 +173,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
     }
     
     /// Test main timeline markers extraction with all occlusion conditions.
-    func testExtractMarkers_MainTimeline_AllOcclusions_ActiveAngles() throws {
+    func testExtractMarkers_MainTimeline_AllOcclusions_ActiveAngles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -186,7 +186,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         // extract markers
         var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
         scope.occlusions = .allCases
-        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         XCTAssertEqual(
@@ -196,7 +196,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
     }
     
     /// Test deep markers extraction with all occlusion conditions and active angles.
-    func testExtractMarkers_Deep_AllOcclusions_ActiveAngles() throws {
+    func testExtractMarkers_Deep_AllOcclusions_ActiveAngles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -210,7 +210,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         var scope = FinalCutPro.FCPXML.ExtractionScope.deep()
         scope.mcClipAngles = .active
         scope.occlusions = .allCases
-        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
         // 1 on mc-clip, and 5 with the mc-clip
         XCTAssertEqual(extractedMarkers.count, 1 + 2)
         
@@ -223,7 +223,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
     }
     
     /// Test deep markers extraction with all occlusion conditions and all angles.
-    func testExtractMarkers_Deep_AllOcclusions_AllAngles() throws {
+    func testExtractMarkers_Deep_AllOcclusions_AllAngles() async throws {
         // load file
         let rawData = try fileContents
         
@@ -237,7 +237,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         var scope = FinalCutPro.FCPXML.ExtractionScope.deep()
         scope.mcClipAngles = .all
         scope.occlusions = .allCases
-        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
         // 1 on mc-clip, and 5 with the mc-clip
         XCTAssertEqual(extractedMarkers.count, 1 + 5)
         

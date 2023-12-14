@@ -15,7 +15,7 @@ public protocol FCPXMLExtractionPreset<Result> {
     func perform(
         on extractable: XMLElement,
         scope: FinalCutPro.FCPXML.ExtractionScope
-    ) -> Result
+    ) async -> Result
 }
 
 #endif

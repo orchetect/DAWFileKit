@@ -130,7 +130,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
     
     #warning("> TODO: uncomment and fix unit tests")
     
-    func testExtractMarkers_activeAudition() throws {
+    func testExtractMarkers_activeAudition() async throws {
         // load file
         let rawData = try fileContents
         
@@ -144,14 +144,14 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             auditions: .active
         )
-        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         let marker = try XCTUnwrap(extractedMarkers.zeroIndexed[safe: 0])
         XCTAssertEqual(marker.name, "Marker 1")
     }
     
-    func testExtractMarkers_allAuditions() throws {
+    func testExtractMarkers_allAuditions() async throws {
         // load file
         let rawData = try fileContents
         
@@ -165,7 +165,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             auditions: .all
         )
-        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         let marker1 = try XCTUnwrap(extractedMarkers.zeroIndexed[safe: 0])

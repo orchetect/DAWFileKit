@@ -25,7 +25,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
     
     /// Test markers contained on two clips in the same sequence, as well as a marker in a gap
     /// between the clips.
-    func testParse() throws {
+    func testParse() async throws {
         // load file
         
         let rawData = try fileContents
@@ -160,14 +160,14 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(title2Marker.note, nil)
         
         // test single-element extraction
-        let title2MarkerExtracted = title2Marker.element.fcpExtract()
+        let title2MarkerExtracted = await title2Marker.element.fcpExtract()
         XCTAssertEqual(
             title2MarkerExtracted.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:00:27:00", .fps29_97)
         )
     }
     
-    func testExtractMarkers() throws {
+    func testExtractMarkers() async throws {
         // load file
         
         let rawData = try fileContents
@@ -182,7 +182,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         
         // extract markers
         
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: .init())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 3)
@@ -245,7 +245,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         )
     }
     
-    func testExtractMarkers_ExcludeTitle() throws {
+    func testExtractMarkers_ExcludeTitle() async throws {
         // load file
         let rawData = try fileContents
         
@@ -259,7 +259,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.title]
         )
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
@@ -268,7 +268,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(extractedGapMarker.name, "Marker 2")
     }
     
-    func testExtractMarkers_ExcludeGap() throws {
+    func testExtractMarkers_ExcludeGap() async throws {
         // load file
         let rawData = try fileContents
         
@@ -282,7 +282,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.gap]
         )
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 2)
@@ -294,7 +294,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(extractedTitle2Marker.name, "Marker 3")
     }
     
-    func testExtractMarkers_ExcludeGapAndTitle() throws {
+    func testExtractMarkers_ExcludeGapAndTitle() async throws {
         // load file
         let rawData = try fileContents
         
@@ -308,7 +308,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.gap, .title]
         )
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 0)

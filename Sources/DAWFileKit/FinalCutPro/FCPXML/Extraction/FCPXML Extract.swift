@@ -31,7 +31,7 @@ extension XMLElement {
     ///   the local timeline of the first nested container will be used.
     public func fcpExtract(
         constrainToLocalTimeline: Bool = false
-    ) -> FinalCutPro.FCPXML.ExtractedElement {
+    ) async -> FinalCutPro.FCPXML.ExtractedElement {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             constrainToLocalTimeline: constrainToLocalTimeline,
             maxContainerDepth: nil,
@@ -46,7 +46,7 @@ extension XMLElement {
         )
         
         guard let elementType = fcpElementType,
-              let extractedElement = fcpExtractElements(
+              let extractedElement = await fcpExtractElements(
                   types: [elementType],
                   scope: scope
               )

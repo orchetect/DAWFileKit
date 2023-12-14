@@ -25,7 +25,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         ))
     } }
     
-    func testParseAndOcclusion() throws {
+    func testParseAndOcclusion() async throws {
         // load file
         let rawData = try fileContents
         
@@ -41,7 +41,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         
         let event = try XCTUnwrap(events[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
-        let extractedEvent = event.element.fcpExtract()
+        let extractedEvent = await event.element.fcpExtract()
         XCTAssertEqual(extractedEvent.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedEvent.value(forContext: .effectiveOcclusion), .notOccluded)
         
@@ -50,12 +50,12 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         XCTAssertEqual(projects.count, 1)
         
         let project = try XCTUnwrap(projects[safe: 0])
-        let extractedProject = event.element.fcpExtract()
+        let extractedProject = await event.element.fcpExtract()
         XCTAssertEqual(extractedProject.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedProject.value(forContext: .effectiveOcclusion), .notOccluded)
         
         let sequence = project.sequence
-        let extractedSequence = sequence.element.fcpExtract()
+        let extractedSequence = await sequence.element.fcpExtract()
         XCTAssertEqual(extractedSequence.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedSequence.value(forContext: .effectiveOcclusion), .notOccluded)
         
@@ -76,7 +76,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         XCTAssertEqual(title1.startAsTimecode(), Self.tc("01:00:00:00", .fps24))
         XCTAssertEqual(title1.durationAsTimecode(), Self.tc("00:00:30:00", .fps24))
         XCTAssertEqual(title1.durationAsTimecode()?.frameRate, .fps24)
-        let extractedTitle1 = title1.element.fcpExtract()
+        let extractedTitle1 = await title1.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:00:00", .fps24)
@@ -89,7 +89,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         
         let title1M1 = try XCTUnwrap(title1Markers[safe: 0])
         XCTAssertEqual(title1M1.name, "Marker on Start")
-        let extractedTitle1M1 = title1M1.element.fcpExtract()
+        let extractedTitle1M1 = await title1M1.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle1M1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:00:00", .fps24)
@@ -99,7 +99,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
 
         let title1M2 = try XCTUnwrap(title1Markers[safe: 1])
         XCTAssertEqual(title1M2.name, "Marker in Middle")
-        let extractedTitle1M2 = title1M2.element.fcpExtract()
+        let extractedTitle1M2 = await title1M2.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle1M2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:15:00", .fps24)
@@ -109,7 +109,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         
         let title1M3 = try XCTUnwrap(title1Markers[safe: 2])
         XCTAssertEqual(title1M3.name, "Marker 1 Frame Before End")
-        let extractedTitle1M3 = title1M3.element.fcpExtract()
+        let extractedTitle1M3 = await title1M3.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle1M3.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:29:23", .fps24)
@@ -120,7 +120,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         // this marker is not visible from the main timeline, FCP hides it
         let title1M4 = try XCTUnwrap(title1Markers[safe: 3])
         XCTAssertEqual(title1M4.name, "Marker on End")
-        let extractedTitle1M4 = title1M4.element.fcpExtract()
+        let extractedTitle1M4 = await title1M4.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle1M4.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:30:00", .fps24)
@@ -138,7 +138,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         XCTAssertEqual(title2.startAsTimecode(), Self.tc("01:00:10:00", .fps24))
         XCTAssertEqual(title2.durationAsTimecode(), Self.tc("00:00:10:00", .fps24))
         XCTAssertEqual(title2.durationAsTimecode()?.frameRate, .fps24)
-        let extractedTitle2 = title2.element.fcpExtract()
+        let extractedTitle2 = await title2.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:40:00", .fps24))
@@ -151,7 +151,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         // this marker is not visible from the main timeline, FCP hides it
         let title2M1 = try XCTUnwrap(title2Markers[safe: 0])
         XCTAssertEqual(title2M1.name, "Marker Before Start")
-        let extractedTitle2M1 = title2M1.element.fcpExtract()
+        let extractedTitle2M1 = await title2M1.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2M1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:30:00", .fps24)
@@ -161,7 +161,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         
         let title2M2 = try XCTUnwrap(title2Markers[safe: 1])
         XCTAssertEqual(title2M2.name, "Marker in Middle")
-        let extractedTitle2M2 = title2M2.element.fcpExtract()
+        let extractedTitle2M2 = await title2M2.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2M2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:00:45:00", .fps24)
@@ -172,7 +172,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         // this marker is not visible from the main timeline, FCP hides it
         let title2M3 = try XCTUnwrap(title2Markers[safe: 2])
         XCTAssertEqual(title2M3.name, "Marker Past End")
-        let extractedTitle2M3 = title2M3.element.fcpExtract()
+        let extractedTitle2M3 = await title2M3.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2M3.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:01:00:00", .fps24)
@@ -227,7 +227,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
     }
     
     /// Test main timeline markers extraction with limited occlusion conditions.
-    func testExtractMarkers_MainTimeline_LimitedOcclusions() throws {
+    func testExtractMarkers_MainTimeline_LimitedOcclusions() async throws {
         // load file
         let rawData = try fileContents
         
@@ -242,7 +242,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
             FinalCutPro.FCPXML.ExtractionScope.mainTimeline.occlusions
             == [.notOccluded, .partiallyOccluded]
         )
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 4)
@@ -254,7 +254,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
     }
     
     /// Test main timeline markers extraction with all occlusion conditions.
-    func testExtractMarkers_MainTimeline_AllOcclusions() throws {
+    func testExtractMarkers_MainTimeline_AllOcclusions() async throws {
         // load file
         let rawData = try fileContents
         
@@ -267,7 +267,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         // extract markers
         var scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
         scope.occlusions = .allCases
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 7)

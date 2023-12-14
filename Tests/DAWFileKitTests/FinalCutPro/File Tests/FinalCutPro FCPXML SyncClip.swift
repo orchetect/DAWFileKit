@@ -69,7 +69,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
     }
     
     /// Test main timeline markers extraction.
-    func testExtractMarkers_MainTimeline() throws {
+    func testExtractMarkers_MainTimeline() async throws {
         // load file
         let rawData = try fileContents
         
@@ -80,7 +80,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
@@ -97,7 +97,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
     }
     
     /// Test deep markers extraction.
-    func testExtractMarkers_Deep() throws {
+    func testExtractMarkers_Deep() async throws {
         // load file
         let rawData = try fileContents
         
@@ -108,7 +108,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event
+        let extractedMarkers = await event
             .extractElements(preset: .markers, scope: .deep())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 3)

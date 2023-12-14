@@ -25,7 +25,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         ))
     } }
     
-    func testParseAndOcclusion() throws {
+    func testParseAndOcclusion() async throws {
         // load file
         let rawData = try fileContents
         
@@ -41,7 +41,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         
         let event = try XCTUnwrap(events[safe: 0])
         XCTAssertEqual(event.name, "Test Event")
-        let extractedEvent = event.element.fcpExtract()
+        let extractedEvent = await event.element.fcpExtract()
         XCTAssertEqual(extractedEvent.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedEvent.value(forContext: .effectiveOcclusion), .notOccluded)
         
@@ -50,13 +50,13 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         XCTAssertEqual(projects.count, 1)
         
         let project = try XCTUnwrap(projects[safe: 0])
-        let extractedProject = event.element.fcpExtract()
+        let extractedProject = await event.element.fcpExtract()
         XCTAssertEqual(extractedProject.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedProject.value(forContext: .effectiveOcclusion), .notOccluded)
         
         // sequence
         let sequence = project.sequence
-        let extractedSequence = sequence.element.fcpExtract()
+        let extractedSequence = await sequence.element.fcpExtract()
         XCTAssertEqual(extractedSequence.value(forContext: .occlusion), .notOccluded)
         XCTAssertEqual(extractedSequence.value(forContext: .effectiveOcclusion), .notOccluded)
         
@@ -79,7 +79,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         XCTAssertEqual(title1.durationAsTimecode(), Self.tc("00:00:05:01", .fps25))
         XCTAssertEqual(title1.durationAsTimecode()?.frameRate, .fps25)
         
-        let extractedTitle1 = title1.element.fcpExtract()
+        let extractedTitle1 = await title1.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:50:00", .fps25)
@@ -104,7 +104,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         XCTAssertEqual(title2.durationAsTimecode(), Self.tc("00:05:37:11", .fps25))
         XCTAssertEqual(title2.durationAsTimecode()?.frameRate, .fps25)
         
-        let extractedTitle2 = title2.element.fcpExtract()
+        let extractedTitle2 = await title2.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("00:59:50:00", .fps25)
@@ -121,7 +121,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         let title2M1 = try XCTUnwrap(title2Markers[safe: 0])
         XCTAssertEqual(title2M1.name, "Visible on Main Timeline")
         
-        let extractedTitle2M1 = title2M1.element.fcpExtract()
+        let extractedTitle2M1 = await title2M1.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2M1.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:00:01:00", .fps25)
@@ -135,7 +135,7 @@ final class FinalCutPro_FCPXML_Occlusion2: FCPXMLTestCase {
         
         XCTAssertEqual(title2M2.name, "Not Visible on Main Timeline")
         
-        let extractedTitle2M2 = title2M2.element.fcpExtract()
+        let extractedTitle2M2 = await title2M2.element.fcpExtract()
         XCTAssertEqual(
             extractedTitle2M2.value(forContext: .absoluteStartAsTimecode()),
             Self.tc("01:01:30:00", .fps25)

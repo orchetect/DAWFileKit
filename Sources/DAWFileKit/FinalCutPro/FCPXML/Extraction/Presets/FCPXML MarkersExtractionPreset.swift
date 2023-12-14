@@ -16,8 +16,8 @@ extension FinalCutPro.FCPXML {
         public func perform(
             on extractable: XMLElement,
             scope: FinalCutPro.FCPXML.ExtractionScope
-        ) -> [FinalCutPro.FCPXML.ExtractedMarker] {
-            let extracted = extractable.fcpExtractElements(
+        ) async -> [FinalCutPro.FCPXML.ExtractedMarker] {
+            let extracted = await extractable.fcpExtractElements(
                 types: [.marker, .chapterMarker],
                 scope: scope
             )

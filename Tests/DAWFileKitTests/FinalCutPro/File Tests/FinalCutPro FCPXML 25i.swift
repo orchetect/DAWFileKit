@@ -232,7 +232,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
     
     /// Check markers within `ref-clip`s.
     /// The clips within the `ref-clip` can contain markers but they don't show on the FCP timeline.
-    func testExtractMarkers_IncludeMarkersWithinRefClips() throws {
+    func testExtractMarkers_IncludeMarkersWithinRefClips() async throws {
         // load file
         let rawData = try fileContents
         
@@ -242,7 +242,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         // project
         let project = try XCTUnwrap(fcpxml.allProjects().first)
         
-        let extractedMarkers = project
+        let extractedMarkers = await project
             .extractElements(preset: .markers, scope: .deep())
             .zeroIndexed
         
@@ -428,7 +428,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
     
     /// Check markers within `ref-clip`s.
     /// The clips within the `ref-clip` can contain markers but they don't show on the FCP timeline.
-    func testExtractMarkers_ExcludeMarkersWithinRefClips() throws {
+    func testExtractMarkers_ExcludeMarkersWithinRefClips() async throws {
         // load file
         let rawData = try fileContents
         
@@ -441,7 +441,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.refClip]
         )
-        let markers = project
+        let markers = await project
             .extractElements(preset: .markers, scope: scope)
             .sortedByAbsoluteStartTimecode()
         

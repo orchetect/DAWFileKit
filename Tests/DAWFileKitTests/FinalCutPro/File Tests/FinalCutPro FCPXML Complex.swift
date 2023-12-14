@@ -467,7 +467,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
 //        #warning("> TODO: finish writing unit test")
 //    }
     
-    func testExtractMarkers() throws {
+    func testExtractMarkers() async throws {
         // load file
         let rawData = try fileContents
         
@@ -478,7 +478,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractElements(preset: .markers, scope: .deep())
+        let extractedMarkers = await event.extractElements(preset: .markers, scope: .deep())
         XCTAssertEqual(extractedMarkers.count, Self.markerData.count)
         
         // print(debugString(for: extractedMarkers))
