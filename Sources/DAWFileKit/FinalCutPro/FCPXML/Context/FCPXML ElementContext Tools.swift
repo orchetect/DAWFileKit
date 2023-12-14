@@ -341,6 +341,11 @@ extension FinalCutPro.FCPXML.ElementContext {
             element.fcpAncestorClip(ancestors: breadcrumbs, includeSelf: includeSelf)
         }
         
+        /// Returns the timecode frame rate for the local timeline.
+        public func localTimecodeFrameRate() -> TimecodeFrameRate? {
+            element._fcpTimecodeFrameRate(in: resources)
+        }
+        
         /// Looks up the resource for the element and returns its `media-rep` instance, if any.
         public var mediaRep: FinalCutPro.FCPXML.MediaRep? {
             element._fcpMediaRep(in: resources)
