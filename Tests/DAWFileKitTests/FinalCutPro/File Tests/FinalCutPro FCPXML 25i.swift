@@ -243,10 +243,10 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         let project = try XCTUnwrap(fcpxml.allProjects().first)
         
         let extractedMarkers = project
-            .extractElements(preset: .markers, settings: .deep())
+            .extractElements(preset: .markers, scope: .deep())
             .zeroIndexed
         
-        let markers = extractedMarkers.sorted()
+        let markers = extractedMarkers.sortedByAbsoluteStartTimecode()
         
         XCTAssertEqual(markers.count, 18 + (2 * 3))
         
@@ -259,6 +259,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         })
         
         // Clip 1
+        
         XCTAssertEqual(markers[safe: 0]?.name, "Marker 2")
         let marker2Timecode = try XCTUnwrap(markers[safe: 0]?.timecode())
         XCTAssertEqual(marker2Timecode, Self.tc("00:00:01:11.56", .fps25))
@@ -437,12 +438,12 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         // project
         let project = try XCTUnwrap(fcpxml.allProjects().first)
         
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.refClip]
         )
         let markers = project
-            .extractElements(preset: .markers, settings: settings)
-            .sorted()
+            .extractElements(preset: .markers, scope: scope)
+            .sortedByAbsoluteStartTimecode()
         
         XCTAssertEqual(markers.count, 18)
         

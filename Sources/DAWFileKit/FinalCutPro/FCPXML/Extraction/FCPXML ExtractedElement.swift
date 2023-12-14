@@ -13,16 +13,9 @@ import OTCore
 extension FinalCutPro.FCPXML {
     /// Extracted element and its context.
     public struct ExtractedElement {
-        /// The extracted XML element.
-        public var element: XMLElement
-        
-        /// XML breadcrumbs that were followed during the extraction process.
-        ///
-        /// This provides necessary element traversal history needed to infer context values
-        /// that cannot be provided from the XML document layout.
-        public var breadcrumbs: [XMLElement]
-        
-        var resources: XMLElement?
+        public let element: XMLElement
+        public let breadcrumbs: [XMLElement]
+        public let resources: XMLElement?
         
         init(
             element: XMLElement,
@@ -35,31 +28,11 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Return the a context value for the element.
-        public func value<Value>(forContext contextKey: ElementContext<Value>) -> Value {
+        public func value<Value>(
+            forContext contextKey: FinalCutPro.FCPXML.ElementContext<Value>
+        ) -> Value {
             contextKey.value(from: element, breadcrumbs: breadcrumbs, resources: resources)
         }
-    }
-}
-
-extension FinalCutPro.FCPXML.ExtractedElement {
-    /// Absolute timecode position within the outermost timeline.
-    public func timecode(
-        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
-    ) -> Timecode? {
-        value(forContext: .absoluteStartAsTimecode(frameRateSource: frameRateSource))
-    }
-    
-    /// Duration expressed as a length of timecode.
-    public func duration(
-        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
-    ) -> Timecode? {
-        guard let duration = element.fcpDuration else { return nil }
-        return try? element._fcpTimecode(
-            fromRational: duration,
-            frameRateSource: frameRateSource,
-            breadcrumbs: breadcrumbs,
-            resources: resources
-        )
     }
 }
 

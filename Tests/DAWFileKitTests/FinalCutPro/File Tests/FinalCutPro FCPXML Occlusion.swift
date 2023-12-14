@@ -239,11 +239,11 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         
         // extract markers
         assert(
-            FinalCutPro.FCPXML.ExtractionSettings.mainTimeline.occlusions
+            FinalCutPro.FCPXML.ExtractionScope.mainTimeline.occlusions
             == [.notOccluded, .partiallyOccluded]
         )
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: .mainTimeline)
+            .extractElements(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 4)
         
@@ -265,10 +265,10 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        var settings = FinalCutPro.FCPXML.ExtractionSettings.mainTimeline
-        settings.occlusions = .allCases
+        var scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
+        scope.occlusions = .allCases
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: settings)
+            .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 7)
         

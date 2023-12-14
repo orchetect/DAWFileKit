@@ -39,7 +39,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: .mainTimeline)
+            .extractElements(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
         
@@ -52,7 +52,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         )
     }
     
-    func testExtractElements_DeepSettings() throws {
+    func testExtractElements_Deep() throws {
         // load file
         let rawData = try fileContents
         
@@ -64,7 +64,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: .deep())
+            .extractElements(preset: .markers, scope: .deep())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 5)
     }
@@ -81,22 +81,18 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = event.extractElements(
-            settings: FinalCutPro.FCPXML.ExtractionSettings(
+            types: [.marker, .chapterMarker],
+            scope: FinalCutPro.FCPXML.ExtractionScope(
                 auditions: .all,
                 mcClipAngles: .all,
                 occlusions: .allCases,
-                filteredTraversalTypes: nil,
-                filteredExtractionTypes: nil,
+                filteredTraversalTypes: [],
                 excludedTraversalTypes: [],
                 excludedExtractionTypes: [],
                 traversalPredicate: nil,
                 extractionPredicate: nil
             )
         )
-        .filter {
-            $0.element.fcpElementType == .marker ||
-            $0.element.fcpElementType == .chapterMarker
-        }
         .zeroIndexed
         
         XCTAssertEqual(extractedMarkers.count, 5)

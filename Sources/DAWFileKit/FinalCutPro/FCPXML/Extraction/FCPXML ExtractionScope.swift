@@ -1,5 +1,5 @@
 //
-//  FCPXML ExtractionSettings.swift
+//  FCPXML ExtractionScope.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -10,8 +10,22 @@ import Foundation
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// Settings applied when extracting FCPXML elements.
-    public struct ExtractionSettings {
+    /// Scope applied when extracting FCPXML elements.
+    public struct ExtractionScope {
+        // MARK: - Public Properties
+        
+        /// Limit the top-level (main) timeline to the element that extraction is initiated upon.
+        ///
+        /// If `true`, calculations for interior elements that involve the outermost timeline (such
+        /// as absolute start timecode and occlusion) will be constrained to the initiating
+        /// element's local timeline. If the element has no implicit local timeline, the local
+        /// timeline of the first nested container will be used.
+        public var constrainToLocalTimeline: Bool
+        
+        /// The maximum number of internal containers to traverse.
+        /// `nil` bypasses this rule.
+        public var maxContainerDepth: Int?
+        
         /// Filter to apply to Audition clip contents.
         public var auditions: FinalCutPro.FCPXML.Audition.AuditionMask
         
@@ -25,16 +39,7 @@ extension FinalCutPro.FCPXML {
         /// Element types to filter during traversal.
         /// This applies to elements that are walked and does not apply to elements that are
         /// extracted.
-        ///
-        /// - Note: If this set is non-nil and empty, no elements will be extracted.
-        public var filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>?
-        
-        /// Extracted element types to filter during extraction.
-        /// This applies to extracted (returned result) types and does not affect
-        /// element traversal.
-        ///
-        /// - Note: If this set is non-nil and empty, no elements will be extracted.
-        public var filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>?
+        public var filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>
         
         /// Element types to exclude during traversal.
         /// These types will be excluded from XML traversal and does not apply to elements that are
@@ -55,22 +60,33 @@ extension FinalCutPro.FCPXML {
         /// This predicate is applied last after all other filters and exclusions.
         public var extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
         
+        // MARK: - Internal Properties
+        
+        /// Extracted element types to filter during extraction.
+        /// This applies to extracted (returned result) types and does not affect
+        /// element traversal.
+        var filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType> = []
+        
+        // MARK: - Init
+        
         public init(
+            constrainToLocalTimeline: Bool = false,
+            maxContainerDepth: Int? = nil,
             auditions: FinalCutPro.FCPXML.Audition.AuditionMask = .active,
             mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask = .active,
             occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion> = .allCases,
-            filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
-            filteredExtractionTypes: Set<FinalCutPro.FCPXML.ElementType>? = nil,
+            filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedExtractionTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil,
             extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil
         ) {
+            self.constrainToLocalTimeline = constrainToLocalTimeline
+            self.maxContainerDepth = maxContainerDepth
             self.auditions = auditions
             self.mcClipAngles = mcClipAngles
             self.occlusions = occlusions
             self.filteredTraversalTypes = filteredTraversalTypes
-            self.filteredExtractionTypes = filteredExtractionTypes
             self.excludedTraversalTypes = excludedTraversalTypes
             self.excludedExtractionTypes = excludedExtractionTypes
             self.traversalPredicate = traversalPredicate
@@ -79,20 +95,21 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-extension FinalCutPro.FCPXML.ExtractionSettings {
+extension FinalCutPro.FCPXML.ExtractionScope {
     /// Extraction settings that return deep results including internal timelines within clips,
     /// producing results that include elements visible from the main timeline and elements not
     /// visible from the main timeline.
     public static func deep(
         auditions: FinalCutPro.FCPXML.Audition.AuditionMask = .all,
         mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask = .all
-    ) -> FinalCutPro.FCPXML.ExtractionSettings {
-        FinalCutPro.FCPXML.ExtractionSettings(
+    ) -> FinalCutPro.FCPXML.ExtractionScope {
+        FinalCutPro.FCPXML.ExtractionScope(
+            constrainToLocalTimeline: false,
+            maxContainerDepth: nil,
             auditions: auditions,
             mcClipAngles: mcClipAngles,
             occlusions: .allCases,
-            filteredTraversalTypes: nil,
-            filteredExtractionTypes: nil,
+            filteredTraversalTypes: [],
             excludedTraversalTypes: [],
             excludedExtractionTypes: [],
             traversalPredicate: nil,
@@ -102,30 +119,17 @@ extension FinalCutPro.FCPXML.ExtractionSettings {
     
     /// Extraction settings that constrain results to elements that are visible from the main
     /// timeline.
-    public static let mainTimeline = FinalCutPro.FCPXML.ExtractionSettings(
+    public static let mainTimeline = FinalCutPro.FCPXML.ExtractionScope(
+        constrainToLocalTimeline: false,
+        maxContainerDepth: 2,
         auditions: .active,
         mcClipAngles: .active,
         occlusions: [.notOccluded, .partiallyOccluded],
-        filteredTraversalTypes: nil,
-        filteredExtractionTypes: nil,
+        filteredTraversalTypes: [],
         excludedTraversalTypes: [],
         excludedExtractionTypes: [],
-        traversalPredicate: { element in
-            let timelineCount = element.breadcrumbs
-                .filter { $0.fcpElementType?.isTimeline == true }
-                .filter { ($0.fcpLane ?? 0) == 0 }
-                .count
-            // print(e.element.name!, clipCount, e.breadcrumbs.map(\.name!))
-            return timelineCount <= 2
-        },
-        extractionPredicate: { element in
-            let timelineCount = element.breadcrumbs
-                .filter { $0.fcpElementType?.isTimeline == true }
-                .filter { ($0.fcpLane ?? 0) == 0 }
-                .count
-            // print(e.element.name!, clipCount, e.breadcrumbs.map(\.name!))
-            return timelineCount <= 2
-        }
+        traversalPredicate: nil,
+        extractionPredicate: nil
     )
 }
 

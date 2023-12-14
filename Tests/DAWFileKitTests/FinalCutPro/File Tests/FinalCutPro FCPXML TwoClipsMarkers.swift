@@ -183,7 +183,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         // extract markers
         
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: .init())
+            .extractElements(preset: .markers, scope: .init())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 3)
         
@@ -256,11 +256,11 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.title]
         )
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: settings)
+            .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
         
@@ -279,11 +279,11 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.gap]
         )
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: settings)
+            .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 2)
         
@@ -305,11 +305,11 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
             excludedTraversalTypes: [.gap, .title]
         )
         let extractedMarkers = event
-            .extractElements(preset: .markers, settings: settings)
+            .extractElements(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 0)
     }

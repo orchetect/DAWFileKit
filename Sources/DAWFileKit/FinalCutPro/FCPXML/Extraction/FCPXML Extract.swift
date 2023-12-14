@@ -22,26 +22,35 @@ extension XMLElement {
     /// > to any parent timelines above it.
     /// >
     /// > If full context is required, do not use this method, but use
-    /// > ``fcpExtractElements(constrainToLocalTimeline:settings:)`` instead.
+    /// > ``fcpExtractElements(scope:)`` instead.
+    ///
+    /// - Parameters:
+    ///   - constrainToLocalTimeline: If `true`, calculations for interior elements that involve the
+    ///   outermost timeline (such as absolute start timecode and occlusion) will be constrained to
+    ///   the initiating element's local timeline. If the element has no implicit local timeline,
+    ///   the local timeline of the first nested container will be used.
     public func fcpExtract(
         constrainToLocalTimeline: Bool = false
     ) -> FinalCutPro.FCPXML.ExtractedElement {
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
+            constrainToLocalTimeline: constrainToLocalTimeline,
+            maxContainerDepth: nil,
             auditions: .active,
+            mcClipAngles: .active,
             occlusions: .allCases,
-            filteredTraversalTypes: nil,
-            filteredExtractionTypes: nil,
+            filteredTraversalTypes: [],
             excludedTraversalTypes: [],
             excludedExtractionTypes: [],
             traversalPredicate: { _ in false },
             extractionPredicate: nil
         )
         
-        guard let extractedElement = fcpExtractElements(
-            constrainToLocalTimeline: constrainToLocalTimeline,
-            settings: settings
-        )
-        .first
+        guard let elementType = fcpElementType,
+              let extractedElement = fcpExtractElements(
+                  types: [elementType],
+                  scope: scope
+              )
+              .first
         else {
             assertionFailure("Element extraction did not return self.")
             return FinalCutPro.FCPXML.ExtractedElement(

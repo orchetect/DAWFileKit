@@ -208,7 +208,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractElements(preset: .markers, settings: .mainTimeline)
+        let extractedMarkers = event.extractElements(preset: .markers, scope: .mainTimeline)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(
@@ -229,10 +229,10 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        var settings = FinalCutPro.FCPXML.ExtractionSettings.mainTimeline
-        settings.mcClipAngles = .active
-        settings.occlusions = .allCases
-        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
+        var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
+        scope.mcClipAngles = .active
+        scope.occlusions = .allCases
+        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(
@@ -244,7 +244,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
     /// Test main timeline markers extraction with all occlusion conditions and all MC angles.
     /// NOTE: The auditions rule and the mcClipAngles rule have slightly different effects
     /// since audition clips are peer elements, but mc-clip angles are nested elements.
-    /// This means that applying the `mainTimeline` extraction settings prevents any angles
+    /// This means that applying the `mainTimeline` extraction scope prevents any angles
     /// from being extracted.
     func testExtractMarkers_MainTimeline_AllOcclusions_AllAngles() throws {
         // load file
@@ -257,10 +257,10 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        var settings = FinalCutPro.FCPXML.ExtractionSettings.mainTimeline
-        settings.mcClipAngles = .all
-        settings.occlusions = .allCases
-        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
+        var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
+        scope.mcClipAngles = .all
+        scope.occlusions = .allCases
+        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(
@@ -283,7 +283,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         // extract markers
         let extractedMarkers = event.extractElements(
             preset: .markers,
-            settings: .deep(mcClipAngles: .active)
+            scope: .deep(mcClipAngles: .active)
         )
         // 1 on each mc-clip, and 5 within each mc-clip
         XCTAssertEqual(extractedMarkers.count, 4)
@@ -311,7 +311,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         // extract markers
         let extractedMarkers = event.extractElements(
             preset: .markers,
-            settings: .deep(mcClipAngles: .all)
+            scope: .deep(mcClipAngles: .all)
         )
         XCTAssertEqual(extractedMarkers.count, 2 + (2 * 5))
         

@@ -141,10 +141,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
             auditions: .active
         )
-        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
+        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         let marker = try XCTUnwrap(extractedMarkers.zeroIndexed[safe: 0])
@@ -162,10 +162,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let settings = FinalCutPro.FCPXML.ExtractionSettings(
+        let scope = FinalCutPro.FCPXML.ExtractionScope(
             auditions: .all
         )
-        let extractedMarkers = event.extractElements(preset: .markers, settings: settings)
+        let extractedMarkers = event.extractElements(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         let marker1 = try XCTUnwrap(extractedMarkers.zeroIndexed[safe: 0])

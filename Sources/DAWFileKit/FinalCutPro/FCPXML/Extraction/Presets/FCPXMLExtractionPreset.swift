@@ -14,8 +14,7 @@ public protocol FCPXMLExtractionPreset<Result> {
     
     func perform(
         on extractable: XMLElement,
-        constrainToLocalTimeline: Bool,
-        baseSettings settings: FinalCutPro.FCPXML.ExtractionSettings
+        scope: FinalCutPro.FCPXML.ExtractionScope
     ) -> Result
 }
 

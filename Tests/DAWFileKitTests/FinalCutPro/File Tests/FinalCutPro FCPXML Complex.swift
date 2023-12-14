@@ -478,14 +478,14 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = event.extractElements(preset: .markers, settings: .deep())
+        let extractedMarkers = event.extractElements(preset: .markers, scope: .deep())
         XCTAssertEqual(extractedMarkers.count, Self.markerData.count)
         
         // print(debugString(for: extractedMarkers))
         
         // compare markers
         for md in Self.markerData {
-            guard let em = extractedMarkers.first(where: { $0.name == md.name })
+            guard let em = extractedMarkers.first(where: { $0.element.fcpAsMarker?.name == md.name })
             else {
                 let tcString = md.timecode.stringValue(format: [.showSubFrames])
                 let nameString = md.name.quoted
