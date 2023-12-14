@@ -221,7 +221,7 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         
         let marker = try XCTUnwrap(extractedMarkers[safe: 0])
         XCTAssertEqual(marker.name, "Marker 2")
-        XCTAssertEqual(marker.state, .standard)
+        XCTAssertEqual(marker.configuration, .standard)
         XCTAssertEqual(
             marker.startAsTimecode(frameRateSource: .rate(.fps25)), // (local timeline is 29.97)
             Self.tc("00:00:01:11.56", .fps25) // confirmed in FCP

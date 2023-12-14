@@ -174,7 +174,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
 //            start: Self.tc("00:00:27:10", .fps25),
 //            duration: Self.tc("00:00:00:01", .fps25),
 //            name: "marker1",
-//            state: .standard,
+//            configuration: .standard,
 //            note: "m1 notes"
 //        )
 //        XCTAssertEqual(element1Markers[safe: 0], expectedE1Marker0)

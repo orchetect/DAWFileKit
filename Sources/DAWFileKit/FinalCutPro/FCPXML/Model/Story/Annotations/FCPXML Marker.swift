@@ -46,22 +46,22 @@ extension FinalCutPro.FCPXML {
 // MARK: - Additional inits
 
 extension FinalCutPro.FCPXML.Marker {
-    /// Initialize a new marker by providing its name and state.
+    /// Initialize a new marker by providing its name and configuration.
     public init(
         name: String,
-        _ state: FinalCutPro.FCPXML.Marker.MarkerState,
+        _ configuration: FinalCutPro.FCPXML.Marker.MarkerConfiguration,
         start: Fraction,
         duration: Fraction? = nil,
         note: String? = nil
     ) {
-        switch state.markerElementType {
+        switch configuration.markerElementType {
         case .marker:
             self.init(markerElementNamed: name)
         case .chapterMarker:
             self.init(chapterMarkerElementNamed: name)
         }
         
-        self.state = state
+        self.configuration = configuration
         self.start = start
         self.duration = duration
         self.note = note
@@ -129,9 +129,9 @@ extension FinalCutPro.FCPXML.Marker {
         set { element.fcpNote = newValue }
     }
     
-    public var state: MarkerState {
-        get { element.fcpMarkerState ?? .standard }
-        set { element.fcpMarkerState = newValue }
+    public var configuration: MarkerConfiguration {
+        get { element.fcpMarkerConfiguration ?? .standard }
+        set { element.fcpMarkerConfiguration = newValue }
     }
 }
 
@@ -179,9 +179,9 @@ extension XMLElement {
 // Marker or Chapter Marker
 extension XMLElement {
     // TODO: needs unit testing :)
-    /// FCPXML: Get or set the marker type and state. Setting `nil` has no effect.
+    /// FCPXML: Get or set the marker type and configuration. Setting `nil` has no effect.
     /// Call on a `marker` or `chapter-marker` element.
-    public var fcpMarkerState: FinalCutPro.FCPXML.Marker.MarkerState? {
+    public var fcpMarkerConfiguration: FinalCutPro.FCPXML.Marker.MarkerConfiguration? {
         get {
             guard let markerElementType = fcpMarkerElementType
             else { return nil }
@@ -316,10 +316,10 @@ extension XMLElement {
     }
 }
 
-// MARK: - MarkerState
+// MARK: - MarkerConfiguration
 
 extension FinalCutPro.FCPXML.Marker {
-    public enum MarkerState: Equatable, Hashable {
+    public enum MarkerConfiguration: Equatable, Hashable {
         /// Standard Marker.
         /// Contains no additional metadata.
         case standard
@@ -336,7 +336,7 @@ extension FinalCutPro.FCPXML.Marker {
     }
 }
 
-extension FinalCutPro.FCPXML.Marker.MarkerState {
+extension FinalCutPro.FCPXML.Marker.MarkerConfiguration {
     /// Returns the associated element type.
     internal var markerElementType: FinalCutPro.FCPXML.Marker.MarkerElementType {
         switch self {
@@ -369,9 +369,9 @@ extension XMLElement { // Any Marker
     /// FCPXML: Returns the marker kind.
     /// Call on `marker` or `chapter-marker` elements.
     public var fcpMarkerKind: FinalCutPro.FCPXML.Marker.MarkerKind? {
-        guard let fcpMarkerState = fcpMarkerState else { return nil }
+        guard let fcpMarkerConfiguration = fcpMarkerConfiguration else { return nil }
         
-        switch fcpMarkerState {
+        switch fcpMarkerConfiguration {
         case .standard: return .standard
         case .chapter: return .chapter
         case .toDo: return .toDo

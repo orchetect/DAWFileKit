@@ -284,7 +284,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         timecode: Timecode,
         name: String,
         note: String?,
-        state: FinalCutPro.FCPXML.Marker.MarkerState,
+        config: FinalCutPro.FCPXML.Marker.MarkerConfiguration,
         clip: ClipInfo
         // inheritedRoles: [FinalCutPro.FCPXML.Role]
     )
@@ -493,7 +493,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
                 continue
             }
             XCTAssertEqual(em.name, md.name, md.name)
-            XCTAssertEqual(em.state, md.state, md.name)
+            XCTAssertEqual(em.configuration, md.config, md.name)
             XCTAssertEqual(em.note, md.note, md.name)
             XCTAssertEqual(em.duration(), md.clip.markerDuration.duration, md.name)
             

@@ -87,9 +87,9 @@ extension FinalCutPro.FCPXML {
             marker.note
         }
         
-        /// Marker state.
-        public var state: FinalCutPro.FCPXML.Marker.MarkerState {
-            marker.state
+        /// Marker configuration.
+        public var configuration: FinalCutPro.FCPXML.Marker.MarkerConfiguration {
+            marker.configuration
         }
         
         /// Absolute timecode position within the outermost timeline.

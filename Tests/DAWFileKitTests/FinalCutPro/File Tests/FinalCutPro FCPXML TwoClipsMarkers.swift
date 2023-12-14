@@ -119,7 +119,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(title1Marker.startAsTimecode(), Self.tc("01:00:04:15", .fps29_97))
         XCTAssertEqual(title1Marker.durationAsTimecode(), Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(title1Marker.name, "Marker 1")
-        XCTAssertEqual(title1Marker.state, .standard)
+        XCTAssertEqual(title1Marker.configuration, .standard)
         XCTAssertEqual(title1Marker.note, nil)
         
         // markers in gap
@@ -140,7 +140,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             try Timecode(.rational(1, 48000), at: .fps29_97, base: .max80SubFrames)
         )
         XCTAssertEqual(gapMarker.name, "Marker 2")
-        XCTAssertEqual(gapMarker.state, .standard)
+        XCTAssertEqual(gapMarker.configuration, .standard)
         XCTAssertEqual(gapMarker.note, nil)
         
         // markers in title 2
@@ -156,7 +156,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         XCTAssertEqual(title2Marker.startAsTimecode(), Self.tc("01:00:07:00", .fps29_97))
         XCTAssertEqual(title2Marker.durationAsTimecode(), Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(title2Marker.name, "Marker 3")
-        XCTAssertEqual(title2Marker.state, .standard)
+        XCTAssertEqual(title2Marker.configuration, .standard)
         XCTAssertEqual(title2Marker.note, nil)
         
         // test single-element extraction
