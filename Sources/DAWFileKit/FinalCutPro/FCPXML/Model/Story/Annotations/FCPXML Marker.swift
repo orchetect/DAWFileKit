@@ -49,7 +49,7 @@ extension FinalCutPro.FCPXML.Marker {
     /// Initialize a new marker by providing its name and configuration.
     public init(
         name: String,
-        _ configuration: FinalCutPro.FCPXML.Marker.MarkerConfiguration,
+        configuration: FinalCutPro.FCPXML.Marker.MarkerConfiguration,
         start: Fraction,
         duration: Fraction? = nil,
         note: String? = nil

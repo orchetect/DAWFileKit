@@ -89,7 +89,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
     func testMarker() {
         let keyword = FinalCutPro.FCPXML.Marker(
             name: "Marker name",
-            .chapter(posterOffset: Fraction(2,1)),
+            configuration: .chapter(posterOffset: Fraction(2,1)),
             start: Fraction(10, 1),
             duration: Fraction(25, 1),
             note: "Some notes"
