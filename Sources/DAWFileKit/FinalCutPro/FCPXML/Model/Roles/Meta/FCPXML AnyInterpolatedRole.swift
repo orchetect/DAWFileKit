@@ -24,6 +24,52 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.AnyInterpolatedRole: FCPXMLRole {
+    public var roleType: FinalCutPro.FCPXML.RoleType {
+        wrapped.roleType
+    }
+    
+    public func asAnyRole() -> FinalCutPro.FCPXML.AnyRole {
+        wrapped.asAnyRole()
+    }
+    
+    public func lowercased(derivedOnly: Bool) -> FinalCutPro.FCPXML.AnyInterpolatedRole {
+        let anyRole = wrapped.lowercased(derivedOnly: derivedOnly)
+        
+        switch self {
+        case .assigned: return .assigned(anyRole)
+        case .defaulted: return .defaulted(anyRole)
+        case .inherited: return .inherited(anyRole)
+        }
+    }
+    
+    public func titleCased(derivedOnly: Bool) -> FinalCutPro.FCPXML.AnyInterpolatedRole {
+        let anyRole = wrapped.titleCased(derivedOnly: derivedOnly)
+        
+        switch self {
+        case .assigned: return .assigned(anyRole)
+        case .defaulted: return .defaulted(anyRole)
+        case .inherited: return .inherited(anyRole)
+        }
+    }
+    
+    public var isMainRoleBuiltIn: Bool {
+        wrapped.isMainRoleBuiltIn
+    }
+    
+    public init?(rawValue: String) {
+        guard let anyRole = FinalCutPro.FCPXML.AnyRole(rawValue: rawValue)
+        else { return nil }
+        
+        // TODO: assigned case is best default case, but not ideal
+        self = .assigned(anyRole)
+    }
+    
+    public var rawValue: String {
+        wrapped.rawValue
+    }
+}
+
 extension FinalCutPro.FCPXML.AnyInterpolatedRole {
     public var wrapped: FinalCutPro.FCPXML.AnyRole {
         switch self {
@@ -61,48 +107,6 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: CustomDebugStringConvertible {
         case let .defaulted(role): return "defaulted(\(role.debugDescription))"
         case let .inherited(role): return "inherited(\(role.debugDescription))"
         }
-    }
-}
-
-// MARK: - Sequence Methods
-
-extension Sequence<FinalCutPro.FCPXML.AnyInterpolatedRole> {
-    public var containsAudioRoles: Bool {
-        contains(where: { $0.wrapped.isAudio })
-    }
-    
-    public var containsVideoRoles: Bool {
-        contains(where: { $0.wrapped.isVideo })
-    }
-    
-    public var containsCaptionRoles: Bool {
-        contains(where: { $0.wrapped.isCaption })
-    }
-}
-
-extension Sequence<FinalCutPro.FCPXML.AnyInterpolatedRole> {
-    /// Returns the sequence sorted by role type: video, then audio, then caption.
-    /// Role order is otherwise maintained and roles are not sorted alphabetically.
-    public func sortedByType() -> [Element] {
-        filter(\.wrapped.isVideo)
-            + filter(\.wrapped.isAudio)
-            + filter(\.wrapped.isCaption)
-    }
-}
-
-// MARK: - Filtering
-
-extension Sequence<FinalCutPro.FCPXML.AnyInterpolatedRole> {
-    public func audioRoles() -> [Element] {
-        filter { $0.wrapped.isAudio }
-    }
-    
-    public func videoRoles() -> [Element] {
-        filter { $0.wrapped.isVideo }
-    }
-    
-    public func captionRoles() -> [Element] {
-        filter { $0.wrapped.isCaption }
     }
 }
 

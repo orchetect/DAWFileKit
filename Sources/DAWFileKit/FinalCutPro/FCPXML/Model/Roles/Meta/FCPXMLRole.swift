@@ -61,6 +61,56 @@ extension Dictionary where Value: FCPXMLRole {
     }
 }
 
+// MARK: - Collection Contains
+
+extension Sequence where Element: FCPXMLRole {
+    public var containsAudioRoles: Bool {
+        contains(where: { $0.isAudio })
+    }
+    
+    public var containsVideoRoles: Bool {
+        contains(where: { $0.isVideo })
+    }
+    
+    public var containsCaptionRoles: Bool {
+        contains(where: { $0.isCaption })
+    }
+}
+
+// MARK: - Collection Filtering
+
+extension Sequence where Element: FCPXMLRole {
+    public func filter(roleTypes: Set<FinalCutPro.FCPXML.RoleType>) -> [Element] {
+        filter { roleTypes.contains($0.roleType) }
+    }
+}
+
+extension Sequence where Element: FCPXMLRole {
+    public func audioRoles() -> [Element] {
+        filter(\.isAudio)
+    }
+    
+    public func videoRoles() -> [Element] {
+        filter(\.isVideo)
+    }
+    
+    public func captionRoles() -> [Element] {
+        filter(\.isCaption)
+    }
+}
+
+// MARK: - Collection Sorting
+
+extension Sequence where Element: FCPXMLRole {
+    /// Returns the sequence sorted by role type: video, then audio, then caption.
+    /// Role order is otherwise maintained and roles are not sorted alphabetically.
+    public func sortedByRoleType() -> [Element] {
+        filter(\.isVideo)
+        + filter(\.isAudio)
+        + filter(\.isCaption)
+    }
+}
+
 // MARK: - Nested Type Erasure
 
 extension Sequence where Element: FCPXMLRole {
@@ -72,6 +122,25 @@ extension Sequence where Element: FCPXMLRole {
 extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         map { $0.asAnyRole() }
+    }
+}
+
+// MARK: - Properties
+
+extension FCPXMLRole {
+    /// Returns `true` if the role is an audio role.
+    public var isAudio: Bool {
+        roleType == .audio
+    }
+    
+    /// Returns `true` if the role is a video role.
+    public var isVideo: Bool {
+        roleType == .video
+    }
+    
+    /// Returns `true` if the role is a caption role.
+    public var isCaption: Bool {
+        roleType == .caption
     }
 }
 

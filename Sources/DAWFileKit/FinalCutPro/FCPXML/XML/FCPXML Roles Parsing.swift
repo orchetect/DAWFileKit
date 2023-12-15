@@ -436,7 +436,7 @@ extension FinalCutPro.FCPXML {
             localRoles.append(contentsOf: defaultRoles.captionRoles().map { .defaulted($0) })
         }
         
-        return localRoles.sortedByType()
+        return localRoles.sortedByRoleType()
     }
 }
 
