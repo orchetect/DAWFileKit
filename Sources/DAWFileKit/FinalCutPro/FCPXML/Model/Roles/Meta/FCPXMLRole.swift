@@ -102,12 +102,27 @@ extension Sequence where Element: FCPXMLRole {
 // MARK: - Collection Sorting
 
 extension Sequence where Element: FCPXMLRole {
+    /// Returns the sequence sorted by role name.
+    public func sortedByName() -> [Element] {
+        sorted { lhs, rhs in
+            lhs.rawValue.localizedStandardCompare(rhs.rawValue) == .orderedAscending
+        }
+    }
+    
     /// Returns the sequence sorted by role type: video, then audio, then caption.
     /// Role order is otherwise maintained and roles are not sorted alphabetically.
     public func sortedByRoleType() -> [Element] {
-        filter(\.isVideo)
-        + filter(\.isAudio)
-        + filter(\.isCaption)
+        videoRoles()
+            + audioRoles()
+            + captionRoles()
+    }
+    
+    /// Returns the sequence first sorted by role type (video, then audio, then caption)
+    /// then sorted alphabetically within each type.
+    public func sortedByRoleTypeThenByName() -> [Element] {
+        videoRoles().sortedByName()
+            + audioRoles().sortedByName()
+            + captionRoles().sortedByName()
     }
 }
 
