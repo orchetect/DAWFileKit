@@ -33,7 +33,7 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: FCPXMLRole {
         wrapped.asAnyRole()
     }
     
-    public func lowercased(derivedOnly: Bool) -> FinalCutPro.FCPXML.AnyInterpolatedRole {
+    public func lowercased(derivedOnly: Bool) -> Self {
         let anyRole = wrapped.lowercased(derivedOnly: derivedOnly)
         
         switch self {
@@ -43,8 +43,18 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: FCPXMLRole {
         }
     }
     
-    public func titleCased(derivedOnly: Bool) -> FinalCutPro.FCPXML.AnyInterpolatedRole {
+    public func titleCased(derivedOnly: Bool) -> Self {
         let anyRole = wrapped.titleCased(derivedOnly: derivedOnly)
+        
+        switch self {
+        case .assigned: return .assigned(anyRole)
+        case .defaulted: return .defaulted(anyRole)
+        case .inherited: return .inherited(anyRole)
+        }
+    }
+    
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        let anyRole = wrapped.titleCasedDefaultRole(derivedOnly: derivedOnly)
         
         switch self {
         case .assigned: return .assigned(anyRole)

@@ -62,6 +62,12 @@ extension FinalCutPro.FCPXML.AnyRole: FCPXMLRole {
             .asAnyRole()
     }
     
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        wrapped
+            .titleCasedDefaultRole(derivedOnly: derivedOnly)
+            .asAnyRole()
+    }
+    
     public var isMainRoleBuiltIn: Bool { wrapped.isMainRoleBuiltIn }
 }
 

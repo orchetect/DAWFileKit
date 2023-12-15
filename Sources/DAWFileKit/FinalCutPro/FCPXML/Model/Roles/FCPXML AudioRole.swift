@@ -61,6 +61,12 @@ extension FinalCutPro.FCPXML.AudioRole: FCPXMLRole {
         return Self(role: newRole, subRole: newSubRole)
     }
     
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        isMainRoleBuiltIn
+            ? titleCased(derivedOnly: derivedOnly)
+            : self
+    }
+    
     public var isMainRoleBuiltIn: Bool {
         let builtInMainRoles = [
             "dialogue", "Dialogue",

@@ -60,6 +60,12 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
         return Self(role: newRole, subRole: newSubRole)
     }
     
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        isMainRoleBuiltIn
+            ? titleCased(derivedOnly: derivedOnly)
+            : self
+    }
+    
     public var isMainRoleBuiltIn: Bool {
         let builtInMainRoles = [
             "video", "Video",

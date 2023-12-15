@@ -17,10 +17,30 @@ public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String, Sel
     func asAnyRole() -> FinalCutPro.FCPXML.AnyRole
     
     /// Returns the role with its string lowercased.
+    ///
+    /// - Parameters:
+    ///   - derivedOnly: Determines if the operation should only affect roles which have a sub-role
+    ///     that is derived from its main role.
     func lowercased(derivedOnly: Bool) -> Self
     
     /// Returns the role with its string title-cased.
+    /// 
+    /// - Parameters:
+    ///   - derivedOnly: Determines if the operation should only affect roles which have a sub-role
+    ///     that is derived from its main role.
     func titleCased(derivedOnly: Bool) -> Self
+    
+    /// Returns the role with its string title-cased if it is a default role.
+    ///
+    /// Final Cut Pro typically writes default role names as lowercase in FCPXML.
+    /// ie: `music.music-1` or `dialogue.dialogue-1`.
+    ///
+    /// User-defined roles are always written verbatim to the FCPXML.
+    ///
+    /// - Parameters:
+    ///   - derivedOnly: Determines if the operation should only affect roles which have a sub-role
+    ///     that is derived from its main role.
+    func titleCasedDefaultRole(derivedOnly: Bool) -> Self
     
     /// Returns `true` if the role is a built-in role in Final Cut Pro (and not a user-defined
     /// role).

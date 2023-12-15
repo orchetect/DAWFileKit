@@ -62,6 +62,12 @@ extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
         return Self(role: role, captionFormat: captionFormat)
     }
     
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        // this has no effect on caption role, as FCP does not lowercase default caption roles,
+        // only default audio and video roles
+        self
+    }
+    
     public var isMainRoleBuiltIn: Bool {
         let builtInRoles = [
             "iTT", "SRT", "CEA-608"
