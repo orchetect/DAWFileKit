@@ -35,32 +35,17 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: FCPXMLRole {
     
     public func lowercased(derivedOnly: Bool) -> Self {
         let anyRole = wrapped.lowercased(derivedOnly: derivedOnly)
-        
-        switch self {
-        case .assigned: return .assigned(anyRole)
-        case .defaulted: return .defaulted(anyRole)
-        case .inherited: return .inherited(anyRole)
-        }
+        return rewrap(newRole: anyRole)
     }
     
     public func titleCased(derivedOnly: Bool) -> Self {
         let anyRole = wrapped.titleCased(derivedOnly: derivedOnly)
-        
-        switch self {
-        case .assigned: return .assigned(anyRole)
-        case .defaulted: return .defaulted(anyRole)
-        case .inherited: return .inherited(anyRole)
-        }
+        return rewrap(newRole: anyRole)
     }
     
     public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
         let anyRole = wrapped.titleCasedDefaultRole(derivedOnly: derivedOnly)
-        
-        switch self {
-        case .assigned: return .assigned(anyRole)
-        case .defaulted: return .defaulted(anyRole)
-        case .inherited: return .inherited(anyRole)
-        }
+        return rewrap(newRole: anyRole)
     }
     
     public var isMainRoleBuiltIn: Bool {
@@ -77,6 +62,13 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: FCPXMLRole {
     
     public var rawValue: String {
         wrapped.rawValue
+    }
+}
+
+extension FinalCutPro.FCPXML.AnyInterpolatedRole {
+    public func collapsingSubRole() -> Self {
+        let anyRole = wrapped.collapsingSubRole()
+        return rewrap(newRole: anyRole)
     }
 }
 
@@ -116,6 +108,18 @@ extension FinalCutPro.FCPXML.AnyInterpolatedRole: CustomDebugStringConvertible {
         case let .assigned(role): return "assigned(\(role.debugDescription))"
         case let .defaulted(role): return "defaulted(\(role.debugDescription))"
         case let .inherited(role): return "inherited(\(role.debugDescription))"
+        }
+    }
+}
+
+// MARK: - Helpers
+
+extension FinalCutPro.FCPXML.AnyInterpolatedRole {
+    fileprivate func rewrap(newRole: FinalCutPro.FCPXML.AnyRole) -> Self {
+        switch self {
+        case .assigned: return .assigned(newRole)
+        case .defaulted: return .defaulted(newRole)
+        case .inherited: return .inherited(newRole)
         }
     }
 }

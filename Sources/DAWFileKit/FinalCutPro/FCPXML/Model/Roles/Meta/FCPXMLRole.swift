@@ -119,6 +119,14 @@ extension Sequence where Element: FCPXMLRole {
     }
 }
 
+// MARK: - Collection Transforms
+
+extension Sequence where Element: FCPXMLRole {
+    public func collapsingSubRoles() -> [Element] {
+        map { $0.collapsingSubRole() }
+    }
+}
+
 // MARK: - Collection Sorting
 
 extension Sequence where Element: FCPXMLRole {
@@ -157,6 +165,21 @@ extension Sequence where Element: FCPXMLRole {
 extension Sequence<FinalCutPro.FCPXML.AnyRole> {
     public func asAnyRoles() -> [FinalCutPro.FCPXML.AnyRole] {
         map { $0.asAnyRole() }
+    }
+}
+
+// MARK: - Methods
+
+extension FCPXMLRole where Self: FCPXMLCollapsibleRole {
+    public func collapsingSubRole() -> Self {
+        collapsingSubRole()
+    }
+}
+
+extension FCPXMLRole {
+    @_disfavoredOverload
+    public func collapsingSubRole() -> Self {
+        self
     }
 }
 

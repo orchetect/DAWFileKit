@@ -71,6 +71,16 @@ extension FinalCutPro.FCPXML.AnyRole: FCPXMLRole {
     public var isMainRoleBuiltIn: Bool { wrapped.isMainRoleBuiltIn }
 }
 
+extension FinalCutPro.FCPXML.AnyRole {
+    public func collapsingSubRole() -> Self {
+        switch self {
+        case let .audio(role): return role.collapsingSubRole().asAnyRole()
+        case let .video(role): return role.collapsingSubRole().asAnyRole()
+        case let .caption(role): return role.collapsingSubRole().asAnyRole()
+        }
+    }
+}
+
 extension FinalCutPro.FCPXML.AnyRole: RawRepresentable {
     public var rawValue: String {
         switch self {
