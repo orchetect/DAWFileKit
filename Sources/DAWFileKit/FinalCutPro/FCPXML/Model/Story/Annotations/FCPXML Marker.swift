@@ -283,7 +283,7 @@ extension Sequence<FinalCutPro.FCPXML.Marker> {
 // MARK: - MarkerElementType
 
 extension FinalCutPro.FCPXML.Marker {
-    internal enum MarkerElementType: CaseIterable {
+    internal enum MarkerElementType: Equatable, Hashable, CaseIterable, Sendable {
         case marker
         case chapterMarker
         
@@ -319,7 +319,7 @@ extension XMLElement {
 // MARK: - MarkerConfiguration
 
 extension FinalCutPro.FCPXML.Marker {
-    public enum MarkerConfiguration: Equatable, Hashable {
+    public enum MarkerConfiguration: Equatable, Hashable, Sendable {
         /// Standard Marker.
         /// Contains no additional metadata.
         case standard
@@ -350,7 +350,7 @@ extension FinalCutPro.FCPXML.Marker.MarkerConfiguration {
 
 extension FinalCutPro.FCPXML.Marker {
     // TODO: add `analysisMarker`?
-    public enum MarkerKind: CaseIterable {
+    public enum MarkerKind: Equatable, Hashable, CaseIterable, Sendable {
         case standard
         case chapter
         case toDo
