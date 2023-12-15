@@ -35,6 +35,20 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Event {
+    public init(
+        name: String,
+        uid: String? = nil
+    ) {
+        self.init()
+        
+        self.name = name
+        self.uid = uid
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Event {

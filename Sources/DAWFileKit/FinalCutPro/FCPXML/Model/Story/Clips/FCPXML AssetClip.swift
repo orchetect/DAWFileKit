@@ -52,6 +52,70 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.AssetClip {
+    public init(
+        ref: String,
+        srcEnable: FinalCutPro.FCPXML.ClipSourceEnable = .all,
+        format: String? = nil,
+        tcStart: Fraction? = nil,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
+        audioRole: FinalCutPro.FCPXML.AudioRole? = nil,
+        videoRole: FinalCutPro.FCPXML.VideoRole? = nil,
+        // Audio Start/Duration
+        audioStart: Fraction? = nil,
+        audioDuration: Fraction? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Mod Date
+        modDate: String? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.ref = ref
+        self.srcEnable = srcEnable
+        self.format = format
+        self.tcStart = tcStart
+        self.tcFormat = tcFormat
+        self.audioRole = audioRole
+        self.videoRole = videoRole
+        
+        // Audio Start/Duration
+        self.audioStart = audioStart
+        self.audioDuration = audioDuration
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Mod Date
+        self.modDate = modDate
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.AssetClip {
@@ -66,7 +130,6 @@ extension FinalCutPro.FCPXML.AssetClip {
         case audioRole
         case videoRole
         case srcEnable
-        case modDate
         
         // Anchorable Attributes
         case lane
@@ -77,6 +140,9 @@ extension FinalCutPro.FCPXML.AssetClip {
         case start
         case duration
         case enabled
+        
+        // Mod Date
+        case modDate
     }
     
     // contains DTD audio-channel-source*
@@ -157,6 +223,8 @@ extension FinalCutPro.FCPXML.AssetClip {
 }
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementMetadataChild { }
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioChannelSourceChildren { }
 

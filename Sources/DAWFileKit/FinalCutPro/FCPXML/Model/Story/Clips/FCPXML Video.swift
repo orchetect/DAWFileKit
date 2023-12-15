@@ -34,6 +34,45 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Video {
+    public init(
+        ref: String,
+        role: FinalCutPro.FCPXML.VideoRole? = nil,
+        srcID: String? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Note child
+        note: String? = nil
+    ) {
+        self.init()
+        
+        self.ref = ref
+        self.role = role
+        self.srcID = srcID
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Note child
+        self.note = note
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Video {
@@ -42,6 +81,7 @@ extension FinalCutPro.FCPXML.Video {
         /// Resource ID.
         case ref
         case role
+        /// Source/track identifier in asset (if not '1').
         case srcID
         
         // Anchorable Attributes
@@ -77,6 +117,12 @@ extension FinalCutPro.FCPXML.Video {
     public var role: FinalCutPro.FCPXML.VideoRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.VideoRole.self) }
         set { element.fcpSet(role: newValue) }
+    }
+    
+    /// Source/track identifier in asset (if not '1').
+    public var srcID: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
+        set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
     }
 }
 

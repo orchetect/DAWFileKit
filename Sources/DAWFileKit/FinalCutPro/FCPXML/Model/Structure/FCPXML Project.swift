@@ -30,6 +30,27 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Project {
+    public init(
+        name: String? = nil,
+        id: String? = nil,
+        uid: String? = nil,
+        // Mod Date
+        modDate: String? = nil
+    ) {
+        self.init()
+        
+        self.name = name
+        self.id = id
+        self.uid = uid
+        
+        // Mod Date
+        self.modDate = modDate
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Project {

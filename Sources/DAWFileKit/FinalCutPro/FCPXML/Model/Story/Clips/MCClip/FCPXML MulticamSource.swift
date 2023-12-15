@@ -30,6 +30,20 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.MulticamSource {
+    public init(
+        angleID: String? = nil,
+        sourceEnable: SourceEnable = .all
+    ) {
+        self.init()
+        
+        self.angleID = angleID
+        self.sourceEnable = sourceEnable
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.MulticamSource {

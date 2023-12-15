@@ -36,6 +36,27 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Audition {
+    public init(
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Mod Date
+        modDate: String? = nil
+    ) {
+        self.init()
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Mod Date
+        self.modDate = modDate
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Audition {

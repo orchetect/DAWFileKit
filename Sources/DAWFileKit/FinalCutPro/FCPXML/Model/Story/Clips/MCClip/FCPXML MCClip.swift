@@ -40,6 +40,60 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.MCClip {
+    public init(
+        ref: String,
+        srcEnable: FinalCutPro.FCPXML.ClipSourceEnable = .all,
+        // Audio Start/Duration
+        audioStart: Fraction? = nil,
+        audioDuration: Fraction? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Mod Date
+        modDate: String? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.ref = ref
+        self.srcEnable = srcEnable
+        
+        // Audio Start/Duration
+        self.audioStart = audioStart
+        self.audioDuration = audioDuration
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Mod Date
+        self.modDate = modDate
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.MCClip {
@@ -49,7 +103,6 @@ extension FinalCutPro.FCPXML.MCClip {
         case audioStart
         case audioDuration
         case srcEnable // (all, audio, video) default: all
-        case modDate
         
         // Anchorable Attributes
         case lane
@@ -60,6 +113,9 @@ extension FinalCutPro.FCPXML.MCClip {
         case start
         case duration
         case enabled
+        
+        // Mod Date
+        case modDate
     }
     
     // contains DTD mc-source*

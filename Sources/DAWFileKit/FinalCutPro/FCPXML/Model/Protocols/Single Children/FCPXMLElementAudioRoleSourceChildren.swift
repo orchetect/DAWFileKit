@@ -16,6 +16,7 @@ public protocol FCPXMLElementAudioRoleSourceChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementAudioRoleSourceChildren {
+    // TODO: add set support, not just read-only
     public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
         element.fcpAudioRoleSources()
     }

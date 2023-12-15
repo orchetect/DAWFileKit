@@ -16,6 +16,7 @@ public protocol FCPXMLElementTextChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementTextChildren {
+    // TODO: add set support, not just read-only
     public var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
         element.fcpTexts()
     }

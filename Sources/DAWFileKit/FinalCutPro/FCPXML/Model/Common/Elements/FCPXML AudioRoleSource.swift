@@ -32,6 +32,20 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.AudioRoleSource {
+    public init(
+        role: FinalCutPro.FCPXML.AudioRole,
+        active: Bool = true
+    ) {
+        self.init()
+        
+        self.role = role
+        self.active = active
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.AudioRoleSource {

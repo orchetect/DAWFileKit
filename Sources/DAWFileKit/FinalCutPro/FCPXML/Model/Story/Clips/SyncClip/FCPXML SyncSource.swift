@@ -34,6 +34,18 @@ extension FinalCutPro.FCPXML.SyncClip {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.SyncClip.SyncSource {
+    public init(
+        sourceID: SourceID
+    ) {
+        self.init()
+        
+        self.sourceID = sourceID
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.SyncClip.SyncSource {
@@ -59,7 +71,10 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
             return SourceID(rawValue: value)
         }
         set {
-            element.addAttribute(withName: Attributes.sourceID.rawValue, value: newValue?.rawValue)
+            // required attribute, don't allow setting nil
+            guard let newValue = newValue else { return }
+            
+            element.addAttribute(withName: Attributes.sourceID.rawValue, value: newValue.rawValue)
         }
     }
 }

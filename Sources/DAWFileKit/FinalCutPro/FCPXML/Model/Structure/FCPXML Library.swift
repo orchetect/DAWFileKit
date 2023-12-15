@@ -29,12 +29,15 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-// MARK: - Custom inits
+// MARK: - Parameterized init
 
 extension FinalCutPro.FCPXML.Library {
     /// Initialize an empty library with a location URL.
-    public init(location: URL) {
+    public init(
+        location: URL
+    ) {
         self.init()
+        
         self.location = location
     }
 }

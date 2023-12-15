@@ -29,6 +29,24 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Keyword {
+    public init(
+        keywords: String,
+        start: Fraction,
+        duration: Fraction? = nil,
+        note: String? = nil
+    ) {
+        self.init()
+        
+        self.keywords = keywords
+        self.start = start
+        self.duration = duration
+        self.note = note
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Keyword {

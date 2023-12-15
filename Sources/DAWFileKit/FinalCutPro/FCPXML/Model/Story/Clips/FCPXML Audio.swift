@@ -34,6 +34,49 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Audio {
+    public init(
+        ref: String,
+        role: FinalCutPro.FCPXML.AudioRole? = nil,
+        srcID: String? = nil,
+        sourceChannels: String? = nil,
+        outputChannels: String? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Note child
+        note: String? = nil
+    ) {
+        self.init()
+        
+        self.ref = ref
+        self.role = role
+        self.srcID = srcID
+        self.sourceChannels = sourceChannels
+        self.outputChannels = outputChannels
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Note child
+        self.note = note
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Audio {
@@ -94,7 +137,7 @@ extension FinalCutPro.FCPXML.Audio {
         set { element.fcpSourceChannels = newValue }
     }
     
-    /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
+    /// Output audio channels (comma separated, from: `L, R, C, LFE, Ls, Rs, X`)
     public var outputChannels: String? {
         get { element.fcpOutputChannels }
         set { element.fcpOutputChannels = newValue }

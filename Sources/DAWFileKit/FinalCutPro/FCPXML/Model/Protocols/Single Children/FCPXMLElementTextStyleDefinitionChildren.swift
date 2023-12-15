@@ -16,6 +16,7 @@ public protocol FCPXMLElementTextStyleDefinitionChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementTextStyleDefinitionChildren {
+    // TODO: add set support, not just read-only
     public var fcpTextStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         element.fcpTextStyleDefinitions()
     }

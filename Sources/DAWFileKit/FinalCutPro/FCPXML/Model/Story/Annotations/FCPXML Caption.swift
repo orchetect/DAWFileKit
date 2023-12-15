@@ -30,6 +30,38 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Caption {
+    public init(
+        role: FinalCutPro.FCPXML.CaptionRole? = nil,
+        note: String? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true
+    ) {
+        self.init()
+        
+        self.role = role
+        self.note = note
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Caption {

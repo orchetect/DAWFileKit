@@ -34,6 +34,43 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Gap {
+    public init(
+        // Anchorable Attributes
+        // (no lane)
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        // Anchorable Attributes
+        // (no lane)
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Gap {

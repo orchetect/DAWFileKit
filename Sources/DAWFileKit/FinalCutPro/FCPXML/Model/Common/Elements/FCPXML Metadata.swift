@@ -30,6 +30,12 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Metadata {
+    // TODO: add init after adding properties
+}
+
 // MARK: Custom inits
 
 extension FinalCutPro.FCPXML.Metadata {

@@ -20,6 +20,7 @@ public protocol FCPXMLElementBookmarkChild: FCPXMLElement {
 }
 
 extension FCPXMLElementBookmarkChild {
+    // TODO: add set support, not just read-only
     public var bookmark: XMLElement? {
         element.firstChildElement(named: "bookmark")
     }

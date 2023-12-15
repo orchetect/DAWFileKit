@@ -29,6 +29,26 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Text {
+    public init(
+        displayStyle: DisplayStyle? = nil,
+        rollUpHeight: String? = nil,
+        position: String? = nil,
+        placement: Placement? = nil,
+        alignment: Alignment? = nil
+    ) {
+        self.init()
+        
+        self.displayStyle = displayStyle
+        self.rollUpHeight = rollUpHeight
+        self.position = position
+        self.placement = placement
+        self.alignment = alignment
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Text {
@@ -111,7 +131,7 @@ extension FinalCutPro.FCPXML.Text {
 
 extension FinalCutPro.FCPXML.Text {
     /// Returns child `text-style` elements.
-    public var textStrings: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+    public var textStyles: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         element.fcpTextStyles
     }
 }

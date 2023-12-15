@@ -37,6 +37,62 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.SyncClip {
+    public init(
+        format: String? = nil,
+        tcStart: Fraction? = nil,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
+        // Audio Start/Duration
+        audioStart: Fraction? = nil,
+        audioDuration: Fraction? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Mod Date
+        modDate: String? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.format = format
+        self.tcStart = tcStart
+        self.tcFormat = tcFormat
+        
+        // Audio Start/Duration
+        self.audioStart = audioStart
+        self.audioDuration = audioDuration
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Mod Date
+        self.modDate = modDate
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.SyncClip {
@@ -47,7 +103,6 @@ extension FinalCutPro.FCPXML.SyncClip {
         case audioDuration
         case tcStart
         case tcFormat
-        case modDate
         
         // Anchorable Attributes
         case lane
@@ -58,6 +113,9 @@ extension FinalCutPro.FCPXML.SyncClip {
         case start
         case duration
         case enabled
+        
+        // Mod Date
+        case modDate
     }
     
     // contains DTD sync-source*
@@ -96,6 +154,8 @@ extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementAudioStartAndDuration */
     }
 }
 
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
+
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.SyncClip {
@@ -113,8 +173,6 @@ extension FinalCutPro.FCPXML.SyncClip {
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetadataChild { }
-
-extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
 
 extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
     /// Returns child `sync-source` elements.

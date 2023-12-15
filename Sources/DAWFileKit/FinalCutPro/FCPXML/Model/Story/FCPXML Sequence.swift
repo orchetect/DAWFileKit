@@ -32,6 +32,48 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Sequence {
+    public init(
+        spine: FinalCutPro.FCPXML.Spine = .init(),
+        audioLayout: FinalCutPro.FCPXML.AudioLayout? = nil,
+        audioRate: FinalCutPro.FCPXML.AudioRate? = nil,
+        renderFormat: String? = nil,
+        keywords: String? = nil,
+        // Media Attributes
+        format: String,
+        duration: Fraction? = nil,
+        tcStart: Fraction? = nil,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.spine = spine
+        
+        self.audioLayout = audioLayout
+        self.audioRate = audioRate
+        self.renderFormat = renderFormat
+        self.keywords = keywords
+        
+        // Media Attributes
+        self.format = format
+        self.duration = duration
+        self.tcStart = tcStart
+        self.tcFormat = tcFormat
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Sequence {
@@ -55,6 +97,8 @@ extension FinalCutPro.FCPXML.Sequence {
 }
 
 // MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMediaAttributes { }
 
 extension FinalCutPro.FCPXML.Sequence {
     // only exists on sequence
@@ -90,8 +134,6 @@ extension FinalCutPro.FCPXML.Sequence {
         }
     }
 }
-
-extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMediaAttributes { }
 
 // MARK: - Children
 

@@ -34,6 +34,30 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.AudioChannelSource {
+    public init(
+        sourceChannels: String,
+        outputChannels: String? = nil,
+        role: FinalCutPro.FCPXML.AudioRole? = nil,
+        start: Fraction? = nil,
+        duration: Fraction? = nil,
+        enabled: Bool = true,
+        active: Bool = true
+    ) {
+        self.init()
+        
+        self.sourceChannels = sourceChannels
+        self.outputChannels = outputChannels
+        self.role = role
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        self.active = active
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.AudioChannelSource {
@@ -59,13 +83,13 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
 // MARK: - Attributes
 
 extension FinalCutPro.FCPXML.AudioChannelSource {
-    /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
-    public var sourceChannels: String? {
-        get { element.fcpSourceChannels }
+    /// Source audio channels (comma separated, 1-based index, ie: "1, 2") (Required)
+    public var sourceChannels: String {
+        get { element.fcpSourceChannels ?? "" }
         set { element.fcpSourceChannels = newValue }
     }
     
-    /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
+    /// Output audio channels (comma separated, from: `L, R, C, LFE, Ls, Rs, X`)
     public var outputChannels: String? {
         get { element.fcpOutputChannels }
         set { element.fcpOutputChannels = newValue }
@@ -75,16 +99,6 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
     public var role: FinalCutPro.FCPXML.AudioRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self) }
         set { element.fcpSet(role: newValue) }
-    }
-    
-    public var start: Fraction? {
-        get { element.fcpStart }
-        set { element.fcpStart = newValue }
-    }
-    
-    public var duration: Fraction? {
-        get { element.fcpDuration }
-        set { element.fcpDuration = newValue }
     }
     
     public var enabled: Bool {
@@ -97,6 +111,10 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
         set { element.fcpSet(active: newValue, default: true) }
     }
 }
+
+extension FinalCutPro.FCPXML.AudioChannelSource: FCPXMLElementOptionalStart { }
+
+extension FinalCutPro.FCPXML.AudioChannelSource: FCPXMLElementOptionalDuration { }
 
 // MARK: - Children
 

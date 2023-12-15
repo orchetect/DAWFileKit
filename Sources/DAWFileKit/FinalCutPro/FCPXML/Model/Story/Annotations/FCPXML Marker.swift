@@ -43,7 +43,7 @@ extension FinalCutPro.FCPXML {
     }
 }
 
-// MARK: - Additional inits
+// MARK: - Parameterized init
 
 extension FinalCutPro.FCPXML.Marker {
     /// Initialize a new marker by providing its name and configuration.

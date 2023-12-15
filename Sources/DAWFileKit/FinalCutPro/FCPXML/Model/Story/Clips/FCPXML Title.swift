@@ -34,6 +34,48 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Title {
+    public init(
+        ref: String,
+        role: FinalCutPro.FCPXML.VideoRole? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.ref = ref
+        self.role = role
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Title {
@@ -92,11 +134,13 @@ extension FinalCutPro.FCPXML.Title {
     }
 }
 
+extension FinalCutPro.FCPXML.Title: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementMetadataChild { }
+
 extension FinalCutPro.FCPXML.Title: FCPXMLElementTextChildren { }
 
 extension FinalCutPro.FCPXML.Title: FCPXMLElementTextStyleDefinitionChildren { }
-
-extension FinalCutPro.FCPXML.Title: FCPXMLElementNoteChild { }
 
 // MARK: - Typing
 

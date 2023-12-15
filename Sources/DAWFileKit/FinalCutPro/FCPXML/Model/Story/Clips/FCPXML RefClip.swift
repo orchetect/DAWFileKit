@@ -46,6 +46,62 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.RefClip {
+    public init(
+        ref: String,
+        srcEnable: FinalCutPro.FCPXML.ClipSourceEnable = .all,
+        useAudioSubroles: Bool = false,
+        // Audio Start/Duration
+        audioStart: Fraction? = nil,
+        audioDuration: Fraction? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Mod Date
+        modDate: String? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.ref = ref
+        self.srcEnable = srcEnable
+        self.useAudioSubroles = useAudioSubroles
+        
+        // Audio Start/Duration
+        self.audioStart = audioStart
+        self.audioDuration = audioDuration
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Mod Date
+        self.modDate = modDate
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.RefClip {
@@ -53,12 +109,10 @@ extension FinalCutPro.FCPXML.RefClip {
         /// Required.
         /// Resource ID
         case ref
-        case role
         case srcEnable
         case audioStart
         case audioDuration
         case useAudioSubroles // default `0` (false)
-        case modDate
         
         // Anchorable Attributes
         case lane
@@ -69,6 +123,9 @@ extension FinalCutPro.FCPXML.RefClip {
         case start
         case duration
         case enabled
+        
+        // Mod Date
+        case modDate
     }
     
     // contains audio-role-source*
@@ -80,6 +137,8 @@ extension FinalCutPro.FCPXML.RefClip {
 }
 
 // MARK: - Attributes
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementClipAttributes { }
 
 extension FinalCutPro.FCPXML.RefClip {
     /// Required.
@@ -107,8 +166,6 @@ extension FinalCutPro.FCPXML.RefClip {
         set { element.fcpClipSourceEnable = newValue }
     }
 }
-
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementClipAttributes { }
 
 extension FinalCutPro.FCPXML.RefClip /* : FCPXMLElementAudioStartAndDuration */ {
     public var audioStart: Fraction? {
@@ -138,11 +195,11 @@ extension FinalCutPro.FCPXML.RefClip {
     }
 }
 
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
-
 extension FinalCutPro.FCPXML.RefClip: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
 
 // MARK: - Resource
 

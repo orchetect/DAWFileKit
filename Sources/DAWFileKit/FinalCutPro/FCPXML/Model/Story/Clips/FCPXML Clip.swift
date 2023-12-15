@@ -44,6 +44,62 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Clip {
+    public init(
+        format: String? = nil,
+        tcStart: Fraction? = nil,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
+        // Audio Start/Duration
+        audioStart: Fraction? = nil,
+        audioDuration: Fraction? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Mod Date
+        modDate: String? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.format = format
+        self.tcStart = tcStart
+        self.tcFormat = tcFormat
+        
+        // Audio Start/Duration
+        self.audioStart = audioStart
+        self.audioDuration = audioDuration
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+        
+        // Mod Date
+        self.modDate = modDate
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
 // MARK: - Structure
 
 extension FinalCutPro.FCPXML.Clip {
@@ -54,7 +110,6 @@ extension FinalCutPro.FCPXML.Clip {
         case tcFormat
         case audioStart
         case audioDuration
-        case modDate
         
         // Anchorable Attributes
         case lane
@@ -65,6 +120,9 @@ extension FinalCutPro.FCPXML.Clip {
         case start
         case duration
         case enabled
+        
+        // Mod Date
+        case modDate
     }
     
     // contains DTD %timing-params
@@ -76,6 +134,8 @@ extension FinalCutPro.FCPXML.Clip {
 }
 
 // MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementClipAttributes { }
 
 extension FinalCutPro.FCPXML.Clip {
     public var format: String? { // DTD: default is same as parent
