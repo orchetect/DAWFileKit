@@ -46,6 +46,54 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Project>
 
 // MARK: - Resources
 
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Asset>
+{
+    public static var asset: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Asset> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Media>
+{
+    public static var media: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Media> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Format>
+{
+    public static var format: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Format> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Effect>
+{
+    public static var effect: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Effect> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Locator>
+{
+    public static var locator: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Locator> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ObjectTracker>
+{
+    public static var objectTracker: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ObjectTracker> {
+        .init()
+    }
+}
+
 // asset sub-elements
 
 extension FCPXMLElementModelTypeProtocol
@@ -106,6 +154,95 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Spine>
 
 // MARK: - Clips
 
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.AssetClip>
+{
+    public static var assetClip: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.AssetClip> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Audio>
+{
+    public static var audio: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Audio> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Audition>
+{
+    public static var audition: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Audition> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Clip>
+{
+    public static var clip: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Clip> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Gap>
+{
+    public static var gap: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Gap> {
+        .init()
+    }
+}
+
+// TODO: uncomment once `live-drawing` element model is implemented
+// extension FCPXMLElementModelTypeProtocol
+// where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.LiveDrawing>
+// {
+//     public static var liveDrawing: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.LiveDrawing> {
+//         .init()
+//     }
+// }
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.MCClip>
+{
+    public static var mcClip: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.MCClip> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.RefClip>
+{
+    public static var refClip: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.RefClip> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.SyncClip>
+{
+    public static var syncClip: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.SyncClip> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Title>
+{
+    public static var title: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Title> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Video>
+{
+    public static var video: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Video> {
+        .init()
+    }
+}
+
 // asset-clip sub-elements
 
 extension FCPXMLElementModelTypeProtocol
@@ -162,6 +299,7 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Keyword>
     }
 }
 
+// Marker model includes `marker` and `chapter-marker` element types
 extension FCPXMLElementModelTypeProtocol
 where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Marker>
 {

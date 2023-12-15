@@ -83,6 +83,7 @@ extension FinalCutPro.FCPXML {
         case keywordCollection = "keyword-collection"
         case smartCollection = "smart-collection"
         
+        // misc.
         case bookmark
     }
 }
