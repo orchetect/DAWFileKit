@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Video element.
@@ -15,130 +16,142 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > References video data from an `asset` or `effect` element.
-    public struct Video: FCPXMLClipAttributes {
-        public let ref: String // resource ID, required
-        public let role: VideoRole?
+    public struct Video: FCPXMLElement {
+        public let element: XMLElement
         
-        public var contents: [AnyStoryElement]
+        public let elementType: ElementType = .video
         
-        // FCPXMLAnchorableAttributes
-        public let lane: Int?
-        public let offset: Timecode?
+        public static let supportedElementTypes: Set<ElementType> = [.video]
         
-        // FCPXMLClipAttributes
-        public let name: String?
-        public let start: Timecode?
-        public let duration: Timecode?
-        public let enabled: Bool
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
         
-        // TODO: add missing attributes and protocols
-        
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
-        
-        public init(
-            ref: String,
-            role: VideoRole?,
-            contents: [AnyStoryElement],
-            // FCPXMLAnchorableAttributes
-            lane: Int?,
-            offset: Timecode?,
-            // FCPXMLClipAttributes
-            name: String?,
-            start: Timecode?,
-            duration: Timecode?,
-            enabled: Bool,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            self.ref = ref
-            self.role = role
-            self.contents = contents
-            
-            // FCPXMLAnchorableAttributes
-            self.lane = lane
-            self.offset = offset
-            
-            // FCPXMLClipAttributes
-            self.name = name
-            self.start = start
-            self.duration = duration
-            self.enabled = enabled
-            
-            // FCPXMLElementContext
-            self.context = context
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Video: FCPXMLClip {
-    /// Attributes unique to ``Video`` clip.
-    public enum Attributes: String, XMLParsableAttributesKey {
-        case ref // resource ID
-        case role
-    }
-    
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Video {
+    public init(
+        ref: String,
+        role: FinalCutPro.FCPXML.VideoRole? = nil,
+        srcID: String? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Note child
+        note: String? = nil
     ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        self.init()
         
-        guard let ref = rawValues[.ref] else { return nil }
         self.ref = ref
+        self.role = role
+        self.srcID = srcID
         
-        if let videoRoleString = rawValues[.role],
-           let videoRole = FinalCutPro.FCPXML.VideoRole(rawValue: videoRoleString)
-        {
-            role = videoRole
-        } else {
-            role = nil
-        }
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
         
-        contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
-            in: xmlLeaf,
-            breadcrumbs: breadcrumbs,
-            resources: resources,
-            contextBuilder: contextBuilder
-        )
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
         
-        let clipAttributes = Self.parseClipAttributes(
-            from: xmlLeaf,
-            resources: resources
-        )
-        
-        // FCPXMLAnchorableAttributes
-        lane = clipAttributes.lane
-        offset = clipAttributes.offset
-        
-        // FCPXMLClipAttributes
-        name = clipAttributes.name
-        start = clipAttributes.start
-        duration = clipAttributes.duration
-        enabled = clipAttributes.enabled
-        
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == clipType.rawValue else { return nil }
+        // Note child
+        self.note = note
     }
-    
-    public var clipType: FinalCutPro.FCPXML.ClipType { .video }
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .video(self) }
 }
 
-extension FinalCutPro.FCPXML.Video: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Video {
+    public enum Attributes: String {
+        /// Required.
+        /// Resource ID.
+        case ref
+        case role
+        /// Source/track identifier in asset (if not '1').
+        case srcID
+        
+        // Anchorable Attributes
+        case lane
+        case offset
+        
+        // Clip Attributes
+        case name
+        case start
+        case duration
+        case enabled
     }
     
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        contents.asAnyElements()
+    // can contain DTD param*
+    // contains DTD %timing-params
+    // contains DTD %intrinsic-params-video
+    // can contain DTD %anchor_item*
+    // can contain markers
+    // can contain DTD %video_filter_item*
+    // con contain one or zero DTD reserved?
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Video {
+    /// Resource ID. (Required)
+    public var ref: String {
+        get { element.fcpRef ?? "" }
+        set { element.fcpRef = newValue }
+    }
+    
+    /// Video role. (Default: Video)
+    public var role: FinalCutPro.FCPXML.VideoRole? {
+        get { element.fcpRole(as: FinalCutPro.FCPXML.VideoRole.self) }
+        set { element.fcpSet(role: newValue) }
+    }
+    
+    /// Source/track identifier in asset (if not '1').
+    public var srcID: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
+        set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
+    }
+}
+
+extension FinalCutPro.FCPXML.Video: FCPXMLElementClipAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Video {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
+
+// MARK: - Typing
+
+// Video
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Video`` model object.
+    /// Call this on a `video` element only.
+    public var fcpAsVideo: FinalCutPro.FCPXML.Video? {
+        .init(element: self)
     }
 }
 

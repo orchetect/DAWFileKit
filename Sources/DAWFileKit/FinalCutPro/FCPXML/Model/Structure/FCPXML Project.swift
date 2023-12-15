@@ -12,129 +12,124 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Project element.
-    public struct Project {
-        public var name: String?
-        public var id: String?
-        public var uid: String?
-        public var modDate: String?
-        public var sequence: Sequence
+    public struct Project: FCPXMLElement {
+        public let element: XMLElement
         
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
+        public let elementType: ElementType = .project
         
-        public init(
-            name: String? = nil,
-            id: String? = nil,
-            uid: String? = nil,
-            modDate: String? = nil,
-            sequence: Sequence,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            self.name = name
-            self.id = id
-            self.uid = uid
-            self.modDate = modDate
-            self.sequence = sequence
-            
-            // FCPXMLElementContext
-            self.context = context
+        public static let supportedElementTypes: Set<ElementType> = [.project]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Project: FCPXMLStructureElement {
-    /// Attributes unique to ``Project``.
-    public enum Attributes: String, XMLParsableAttributesKey {
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Project {
+    public init(
+        name: String? = nil,
+        id: String? = nil,
+        uid: String? = nil,
+        // Mod Date
+        modDate: String? = nil
+    ) {
+        self.init()
+        
+        self.name = name
+        self.id = id
+        self.uid = uid
+        
+        // Mod Date
+        self.modDate = modDate
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Project {
+    public enum Attributes: String {
+        // Element-Specific Attributes
         case name
         case id
         case uid
         case modDate
-        case sequence
     }
     
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
-    ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        name = rawValues[.name]
-        id = rawValues[.id]
-        uid = rawValues[.uid]
-        modDate = rawValues[.modDate]
-        
-        guard let seq = Self.parseSequence( // adds xmlLeaf as breadcrumb
-            from: xmlLeaf,
-            breadcrumbs: breadcrumbs,
-            resources: resources,
-            contextBuilder: contextBuilder
-        )
-        else { return nil }
-        sequence = seq
-        
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == structureElementType.rawValue else { return nil }
-    }
-    
-    internal static func parseSequence(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
-    ) -> FinalCutPro.FCPXML.Sequence? {
-        let storyElements = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
-            in: xmlLeaf,
-            breadcrumbs: breadcrumbs,
-            resources: resources,
-            contextBuilder: contextBuilder
-        )
-        let sequences = storyElements.sequences()
-        guard let sequence = sequences.first else {
-            print("Expected one sequence within project but found none.")
-            return nil
-        }
-        if sequences.count != 1 {
-            print("Expected one sequence within project but found \(sequences.count)")
-        }
-        return sequence
-    }
-    
-    public var structureElementType: FinalCutPro.FCPXML.StructureElementType {
-        .project
-    }
-    
-    public func asAnyStructureElement() -> FinalCutPro.FCPXML.AnyStructureElement {
-        .project(self)
-    }
+    // must contain one sequence
 }
+
+// MARK: - Attributes
 
 extension FinalCutPro.FCPXML.Project {
-    /// Convenience to return the start timecode of the earliest sequence in the project.
-    public var startTimecode: Timecode? {
-        sequence.startTimecode
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
     }
     
-    /// Convenience to return the frame rate of the project.
-    public var frameRate: TimecodeFrameRate? {
-        sequence.startTimecode?.frameRate
+    public var id: String? {
+        get { element.fcpID }
+        set { element.fcpID = newValue }
+    }
+    
+    public var uid: String? {
+        get { element.fcpUID }
+        set { element.fcpUID = newValue }
     }
 }
 
-extension FinalCutPro.FCPXML.Project: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+extension FinalCutPro.FCPXML.Project: FCPXMLElementOptionalModDate { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Project {
+    /// Get or set the child `sequence` element. (Required)
+    public var sequence: FinalCutPro.FCPXML.Sequence {
+        get {
+            if let seq = element.firstChild(whereFCPElement: .sequence) {
+                return seq
+            }
+            
+            // create new element and attach
+            let newSequence = FinalCutPro.FCPXML.Sequence()
+            element.addChild(newSequence.element)
+            return newSequence
+        }
+        set {
+            let current = sequence
+            guard current.element != newValue.element else { return }
+            current.element.detach()
+            element.addChild(newValue.element)
+        }
     }
-    
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        [sequence.asAnyElement()]
+}
+
+// MARK: - Properties
+
+extension FinalCutPro.FCPXML.Project {
+    /// Convenience:
+    /// Returns the start timecode of the `sequence` contained within the project.
+    public func startTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+    ) -> Timecode? {
+        sequence.tcStartAsTimecode(frameRateSource: frameRateSource)
+    }
+}
+
+// MARK: - Typing
+
+// Project
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Project`` model object.
+    /// Call this on a `project` element only.
+    public var fcpAsProject: FinalCutPro.FCPXML.Project? {
+        .init(element: self)
     }
 }
 

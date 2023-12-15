@@ -6,7 +6,7 @@ let package = Package(
     name: "DAWFileKit",
     
     platforms: [
-        .macOS(.v10_12), .iOS(.v10), .tvOS(.v10), .watchOS(.v6)
+        .macOS(.v10_15), .iOS(.v10), .tvOS(.v10), .watchOS(.v6)
     ],
     
     products: [
@@ -17,9 +17,9 @@ let package = Package(
     ],
     
     dependencies: [
-        .package(url: "https://github.com/orchetect/OTCore", from: "1.4.16"),
-        .package(url: "https://github.com/orchetect/TimecodeKit", from: "2.0.6"),
-        .package(url: "https://github.com/orchetect/MIDIKit.git", from: "0.9.2")
+        .package(url: "https://github.com/orchetect/OTCore", from: "1.5.0"),
+        .package(url: "https://github.com/orchetect/TimecodeKit", from: "2.0.8"),
+        .package(url: "https://github.com/orchetect/MIDIKit.git", from: "0.9.4")
     ],
     
     targets: [

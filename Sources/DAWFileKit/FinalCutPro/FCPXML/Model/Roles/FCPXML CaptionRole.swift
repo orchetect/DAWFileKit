@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-@_implementationOnly import OTCore
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Caption role.
@@ -29,7 +29,7 @@ extension FinalCutPro.FCPXML {
     /// > string in FCPXML.
     /// > This is how Final Cut Pro separates role and sub-role.
     /// > Otherwise, any other Unicode character is valid, including accented characters and emojis.
-    public struct CaptionRole: Equatable, Hashable {
+    public struct CaptionRole: Equatable, Hashable, Sendable {
         public let role: String
         public let captionFormat: String
         
@@ -62,6 +62,12 @@ extension FinalCutPro.FCPXML.CaptionRole: FCPXMLRole {
         return Self(role: role, captionFormat: captionFormat)
     }
     
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        // this has no effect on caption role, as FCP does not lowercase default caption roles,
+        // only default audio and video roles
+        self
+    }
+    
     public var isMainRoleBuiltIn: Bool {
         let builtInRoles = [
             "iTT", "SRT", "CEA-608"
@@ -77,7 +83,7 @@ extension FinalCutPro.FCPXML.CaptionRole: RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let parsed = try? parseRawCaptionRole(rawValue: rawValue)
+        guard let parsed = try? FinalCutPro.FCPXML._parseRawCaptionRole(rawValue: rawValue)
         else { return nil }
         
         role = parsed.role

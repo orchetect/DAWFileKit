@@ -7,7 +7,6 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Effect shared resource.
@@ -23,63 +22,104 @@ extension FinalCutPro.FCPXML {
     /// > See [`effect`](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/effect
     /// > ).
-    public struct Effect: Equatable, Hashable {
-        // shared resource attributes
-        public var id: String // required
-        public var name: String?
+    public struct Effect: FCPXMLElement {
+        public let element: XMLElement
         
-        // effect attributes
-        public var uid: String // required
-        public var src: String?
+        public let elementType: ElementType = .effect
         
-        public init(
-            id: String,
-            name: String?,
-            uid: String,
-            src: String?
-        ) {
-            // shared resource attributes
-            self.id = id
-            self.name = name
-            
-            // effect attributes
-            self.uid = uid
-            self.src = src
+        public static let supportedElementTypes: Set<ElementType> = [.effect]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Effect: FCPXMLResource {
-    /// Attributes unique to ``Effect``.
-    public enum Attributes: String, XMLParsableAttributesKey {
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Effect {
+    public init(
+        id: String,
+        name: String? = nil,
+        uid: String,
+        src: String? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.name = name
+        self.uid = uid
+        self.src = src
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Effect {
+    public enum Attributes: String {
         // shared resource attributes
+        /// Identifier. (Required)
         case id
+        
+        /// Name.
         case name
         
         // effect attributes
-        case uid
+        
+        /// UID. (Required)
+        case uid // required
+        
+        /// Source.
         case src
     }
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Effect {
+    // shared resource attributes
     
-    public init?(from xmlLeaf: XMLElement) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        guard let id = rawValues[.id] else { return nil }
-        self.id = id
-        name = rawValues[.name]
-        
-        // effect attributes
-        guard let uid = rawValues[.uid] else { return nil }
-        self.uid = uid
-        src = rawValues[.src]
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == resourceType.rawValue else { return nil }
+    /// Identifier. (Required)
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
     }
     
-    public var resourceType: FinalCutPro.FCPXML.ResourceType { .effect }
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .effect(self) }
+    /// Name.
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    // effect attributes
+    
+    /// UID. (Required)
+    public var uid: String {
+        get { element.fcpUID ?? "" }
+        set { element.fcpUID = newValue }
+    }
+    
+    /// Source.
+    public var src: String? {
+        get { element.fcpSRC }
+        set { element.fcpSRC = newValue }
+    }
+}
+
+// MARK: - Typing
+
+// Effect
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Effect`` model object.
+    /// Call this on an `effect` element only.
+    public var fcpAsEffect: FinalCutPro.FCPXML.Effect? {
+        .init(element: self)
+    }
 }
 
 #endif

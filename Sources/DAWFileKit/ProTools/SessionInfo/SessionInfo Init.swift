@@ -5,7 +5,7 @@
 //
 
 import Foundation
-@_implementationOnly import OTCore
+import OTCore
 import TimecodeKit
 
 // MARK: - Parse methods

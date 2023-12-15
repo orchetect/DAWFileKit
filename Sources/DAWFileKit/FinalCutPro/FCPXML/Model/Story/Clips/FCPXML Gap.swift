@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Gap element.
@@ -15,106 +16,116 @@ extension FinalCutPro.FCPXML {
     /// > Final Cut Pro FCPXML 1.11 Reference:
     /// >
     /// > Defines a placeholder element that has no intrinsic audio or video data.
-    public struct Gap: FCPXMLClipAttributes {
-        public var contents: [AnyStoryElement]
+    public struct Gap: FCPXMLElement {
+        public let element: XMLElement
         
-        // FCPXMLAnchorableAttributes
-        public var lane: Int? // TODO: Gap doesn't have lane attribute?
-        public var offset: Timecode?
+        public let elementType: ElementType = .gap
         
-        // FCPXMLClipAttributes
-        public var name: String?
-        public var start: Timecode?
-        public var duration: Timecode?
-        public var enabled: Bool
+        public static let supportedElementTypes: Set<ElementType> = [.gap]
         
-        // TODO: add missing attributes and protocols
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
         
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
-        
-        public init(
-            contents: [AnyStoryElement],
-            // FCPXMLAnchorableAttributes
-            lane: Int?,
-            offset: Timecode,
-            // FCPXMLClipAttributes
-            name: String,
-            start: Timecode,
-            duration: Timecode,
-            enabled: Bool,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            self.contents = contents
-            
-            // FCPXMLAnchorableAttributes
-            self.lane = lane
-            self.offset = offset
-            
-            // FCPXMLClipAttributes
-            self.name = name
-            self.start = start
-            self.duration = duration
-            self.enabled = enabled
-            
-            // FCPXMLElementContext
-            self.context = context
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLClip {
-    // no ref, no role
-    // no lane
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Gap {
+    public init(
+        // Anchorable Attributes
+        // (no lane)
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
     ) {
-        contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
-            in: xmlLeaf,
-            breadcrumbs: breadcrumbs,
-            resources: resources,
-            contextBuilder: contextBuilder
-        )
+        self.init()
         
-        let clipAttributes = Self.parseClipAttributes(
-            from: xmlLeaf,
-            resources: resources
-        )
+        // Anchorable Attributes
+        // (no lane)
+        self.offset = offset
         
-        // FCPXMLAnchorableAttributes
-        lane = clipAttributes.lane
-        offset = clipAttributes.offset
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
         
-        // FCPXMLClipAttributes
-        name = clipAttributes.name
-        start = clipAttributes.start
-        duration = clipAttributes.duration
-        enabled = clipAttributes.enabled
+        // Note child
+        self.note = note
         
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == clipType.rawValue else { return nil }
+        // Metadata
+        self.metadata = metadata
     }
-    
-    public var clipType: FinalCutPro.FCPXML.ClipType { .gap }
-    public func asAnyClip() -> FinalCutPro.FCPXML.AnyClip { .gap(self) }
 }
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Gap {
+    public enum Attributes: String {
+        // Anchorable Attributes
+        // (no lane)
+        case offset
+        
+        // Clip Attributes
+        case name
+        case start
+        case duration
+        case enabled
     }
     
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        contents.asAnyElements()
+    // can contain DTD anchor_item*
+    // can contain markers
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementClipAttributes {
+    // A kludge since Gap uses 5 of the 6 clip attributes, except `lane`.
+    public var lane: Int? {
+        get { nil }
+        set { assertionFailure("Can't set lane attribute on gap clip.") }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Gap {
+    /// Returns all child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        element.childElements
+    }
+    
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementMetadataChild { }
+
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementNoteChild { }
+
+// MARK: - Typing
+
+// Gap
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Gap`` model object.
+    /// Call this on a `gap` element only.
+    public var fcpAsGap: FinalCutPro.FCPXML.Gap? {
+        .init(element: self)
     }
 }
 

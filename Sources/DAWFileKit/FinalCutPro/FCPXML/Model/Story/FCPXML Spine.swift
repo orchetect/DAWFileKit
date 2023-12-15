@@ -8,95 +8,99 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Contains elements ordered sequentially in time.
-    public struct Spine: FCPXMLAnchorableAttributes {
-        public var name: String?
-        public var contents: [FinalCutPro.FCPXML.AnyStoryElement]
+    public struct Spine: FCPXMLElement {
+        public let element: XMLElement
         
-        // FCPXMLAnchorableAttributes
-        public var lane: Int?
-        public var offset: Timecode?
+        public let elementType: ElementType = .spine
         
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
+        public static let supportedElementTypes: Set<ElementType> = [.spine]
         
-        public init(
-            name: String?,
-            contents: [FinalCutPro.FCPXML.AnyStoryElement],
-            // FCPXMLAnchorableAttributes
-            lane: Int?,
-            offset: Timecode?,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            self.name = name
-            self.contents = contents
-            
-            // FCPXMLAnchorableAttributes
-            self.lane = lane
-            self.offset = offset
-            
-            // FCPXMLElementContext
-            self.context = context
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Spine: FCPXMLStoryElement {
-    /// Attributes unique to ``Spine``.
-    public enum Attributes: String, XMLParsableAttributesKey {
-        case name
-    }
-    
-    // no start, no role
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Spine {
+    public init(
+        name: String? = nil,
+        format: String? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil
     ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        self.init()
         
-        name = rawValues[.name]
+        self.name = name
+        self.format = format
         
-        contents = FinalCutPro.FCPXML.storyElements( // adds xmlLeaf as breadcrumb
-            in: xmlLeaf,
-            breadcrumbs: breadcrumbs,
-            resources: resources,
-            contextBuilder: contextBuilder
-        )
-        
-        let anchorableAttributes = Self.parseAnchorableAttributes(
-            from: xmlLeaf,
-            resources: resources
-        )
-        
-        // FCPXMLAnchorableAttributes
-        lane = anchorableAttributes.lane
-        offset = anchorableAttributes.offset
-        
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == storyElementType.rawValue else { return nil }
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
     }
-    
-    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .spine }
-    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement { .spine(self) }
 }
 
-extension FinalCutPro.FCPXML.Spine: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Spine {
+    public enum Attributes: String {
+        // Element-Specific Attributes
+        case name
+        case format
+        
+        // Anchorable Attributes
+        case lane
+        case offset
     }
     
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        contents.asAnyElements()
+    // contains clips
+    // contains transitions
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Spine {
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    public var format: String? {
+        get { element.fcpFormat }
+        set { element.fcpFormat = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Spine: FCPXMLElementAnchorableAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Spine {
+    /// Returns child story elements.
+    public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        element.fcpStoryElements
+    }
+}
+
+// MARK: - Typing
+
+// Spine
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Spine`` model object.
+    /// Call this on a `spine` element only.
+    public var fcpAsSpine: FinalCutPro.FCPXML.Spine? {
+        .init(element: self)
     }
 }
 

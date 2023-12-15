@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-@_implementationOnly import OTCore
+import OTCore
 import TimecodeKit
 
 // MARK: - Helper methods
@@ -178,23 +178,25 @@ extension Cubase.TrackArchive {
 
 // MARK: - .filter
 
-extension Collection where Element: XMLNode {
-    /// DAWFileKit: Filters by the given "name" attribute.
-    internal func filter(nameAttribute: String) -> [XMLNode] {
-        filter {
-            $0.asElement?
-                .attribute(forName: "name")?
-                .stringValue == nameAttribute
-        }
+extension Collection where Element: XMLElement {
+    /// DAWFileKit: Filters by the given "name" attribute value.
+    internal func filter(whereNameAttributeValue attributeValue: String) -> LazyFilterSequence<Self> {
+        filter(whereAttribute: "name") { $0 == attributeValue }
     }
     
-    /// DAWFileKit: Filters by the given "class" attribute.
-    internal func filter(classAttribute: String) -> [XMLNode] {
-        filter {
-            $0.asElement?
-                .attribute(forName: "class")?
-                .stringValue == classAttribute
-        }
+    /// DAWFileKit: Filters by the given "class" attribute value.
+    internal func filter(whereClassAttributeValue attributeValue: String) -> LazyFilterSequence<Self> {
+        filter(whereAttribute: "class") { $0 == attributeValue }
+    }
+    
+    /// DAWFileKit: Returns first having the given "name" attribute value.
+    internal func first(whereNameAttributeValue attributeValue: String) -> Element? {
+        first(whereAttribute: "name", hasValue: attributeValue)
+    }
+    
+    /// DAWFileKit: Returns first having the given "class" attribute value.
+    internal func first(whereClassAttributeValue attributeValue: String) -> Element? {
+        first(whereAttribute: "class", hasValue: attributeValue)
     }
 }
 

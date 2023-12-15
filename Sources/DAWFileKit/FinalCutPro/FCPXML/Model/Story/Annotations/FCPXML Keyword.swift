@@ -11,92 +11,84 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Represents a keyword.
-    public struct Keyword: Equatable, Hashable {
-        public var name: String // a.k.a. `value`, required
-        public var start: Timecode? // required
-        public var duration: Timecode?
-        public var note: String?
+    public struct Keyword: FCPXMLElement {
+        public let element: XMLElement
         
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
+        public let elementType: ElementType = .keyword
         
-        public init(
-            name: String,
-            start: Timecode?,
-            duration: Timecode?,
-            note: String?,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            self.start = start
-            self.duration = duration
-            self.name = name
-            self.note = note
-            
-            // FCPXMLElementContext
-            self.context = context
+        public static let supportedElementTypes: Set<ElementType> = [.keyword]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Keyword: FCPXMLAnnotationElement {
-    public enum Attributes: String, XMLParsableAttributesKey {
-        case value // a.k.a name
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Keyword {
+    public init(
+        keywords: String,
+        start: Fraction,
+        duration: Fraction? = nil,
+        note: String? = nil
+    ) {
+        self.init()
+        
+        self.keywords = keywords
+        self.start = start
+        self.duration = duration
+        self.note = note
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Keyword {
+    public enum Attributes: String {
+        // Element-Specific Attributes
         case start
         case duration
+        case value // comma-separated list of keywords, required
         case note
     }
     
-    // no role
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
-    ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        // `name`
-        guard let nameValue = rawValues[.value] else { return nil }
-        name = nameValue
-        
-        // `start`
-        start = try? FinalCutPro.FCPXML.timecode(
-            fromRational: rawValues[.start] ?? "",
-            xmlLeaf: xmlLeaf,
-            resources: resources
-        )
-        
-        // `duration`
-        duration = try? FinalCutPro.FCPXML.timecode(
-            fromRational: rawValues[.duration] ?? "",
-            xmlLeaf: xmlLeaf,
-            resources: resources
-        )
-        
-        // `note`
-        note = rawValues[.note]
-        
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == annotationType.rawValue else { return nil }
-    }
-    
-    public var annotationType: FinalCutPro.FCPXML.AnnotationType { .keyword }
-    public func asAnyAnnotation() -> FinalCutPro.FCPXML.AnyAnnotation { .keyword(self) }
+    // no children
 }
 
-extension FinalCutPro.FCPXML.Keyword: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Keyword {
+    /// Comma-separated list of keywords.
+    public var keywords: String {
+        get { element.fcpValue ?? "" }
+        set { element.fcpValue = newValue }
     }
     
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+    /// Optional note.
+    public var note: String? {
+        get { element.fcpNote }
+        set { element.fcpNote = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Keyword: FCPXMLElementRequiredStart { }
+
+extension FinalCutPro.FCPXML.Keyword: FCPXMLElementOptionalDuration { }
+
+// MARK: - Typing
+
+// Keyword
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Keyword`` model object.
+    /// Call this on a `keyword` element only.
+    public var fcpAsKeyword: FinalCutPro.FCPXML.Keyword? {
+        .init(element: self)
     }
 }
 

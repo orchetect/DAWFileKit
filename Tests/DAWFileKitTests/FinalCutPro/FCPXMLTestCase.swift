@@ -34,9 +34,13 @@ extension FCPXMLUtilities {
         }
     }
     
-    static func debugString(for em: FinalCutPro.FCPXML.Marker) -> String {
+    static func fraction(frames: Int, _ fr: TimecodeFrameRate) -> Fraction {
+        tcInterval(frames: frames, fr).rationalValue
+    }
+    
+    static func debugString(for em: FinalCutPro.FCPXML.ExtractedMarker) -> String {
         let absTC: String
-        if let absoluteStart = em.context[.absoluteStart] {
+        if let absoluteStart = em.timecode() {
             absTC = absoluteStart.stringValue(format: [.showSubFrames]) + " @ " + absoluteStart.frameRate.stringValue
         } else {
             absTC = "??:??:??:??.?? @ ??"
@@ -44,25 +48,14 @@ extension FCPXMLUtilities {
         
         let name = em.name.quoted
         let note = em.note != nil ? " note:\(em.note!.quoted)" : ""
-        let durTC = em.duration?.stringValue(format: [.showSubFrames]) ?? "?"
+        let durTC = em.duration()?.stringValue(format: [.showSubFrames]) ?? "?"
         
-        let parentName = em.context[.parentName]?.quoted ?? "<<missing>>"
+        let parentName = em.value(forContext: .parentName)?.quoted ?? "<<missing>>"
         return "\(absTC): \(name)\(note) dur:\(durTC) parent:\(parentName)"
     }
     
-    static func debugString(for extractedMarkers: some Collection<FinalCutPro.FCPXML.Marker>) -> String {
+    static func debugString(for extractedMarkers: some Collection<FinalCutPro.FCPXML.ExtractedMarker>) -> String {
         extractedMarkers.map { debugString(for: $0) }.joined(separator: "\n")
-    }
-    
-    static func convert(
-        absoluteStartOf marker: FinalCutPro.FCPXML.Marker,
-        to newFR: TimecodeFrameRate
-    ) throws -> FinalCutPro.FCPXML.Marker {
-        guard let absoluteStart = marker.context[.absoluteStart] else { return marker }
-        guard absoluteStart.frameRate != newFR else { return marker }
-        var copy = marker
-        copy.context[.absoluteStart] = try copy.context[.absoluteStart]?.converted(to: newFR)
-        return copy
     }
 }
 

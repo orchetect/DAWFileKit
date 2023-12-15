@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Object tracker shared resource.
@@ -22,23 +22,62 @@ extension FinalCutPro.FCPXML {
     /// > color effect, to a moving object in a video clip.
     /// >
     /// > See [`object-tracker`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/object-tracker).
-    public struct ObjectTracker: Equatable, Hashable {
-        // TODO: xml variable is temporary; finish parsing the xml
-        public var xml: XMLElement
+    public struct ObjectTracker: FCPXMLElement {
+        public let element: XMLElement
+        
+        public let elementType: ElementType = .objectTracker
+        
+        public static let supportedElementTypes: Set<ElementType> = [.objectTracker]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
+        }
     }
 }
 
-extension FinalCutPro.FCPXML.ObjectTracker: FCPXMLResource {
-    public init?(from xmlLeaf: XMLElement) {
-        xml = xmlLeaf
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.ObjectTracker {
+    public init(
+        trackingShapes: [TrackingShape]
+    ) {
+        self.init()
         
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == resourceType.rawValue else { return nil }
+        trackingShapes.forEach { element.addChild($0.element) }
     }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.ObjectTracker {
+    // no Attributes
     
-    public var resourceType: FinalCutPro.FCPXML.ResourceType { .objectTracker }
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .objectTracker(self) }
+    // contains 1 or more `tracking-shape`
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.ObjectTracker {
+    /// Returns child `tracking-shape` elements.
+    public var trackingShapes: LazyFCPXMLChildrenSequence<TrackingShape> {
+        element.children(whereFCPElement: .trackingShape)
+    }
+}
+
+// MARK: - Typing
+
+// ObjectTracker
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/ObjectTracker`` model object.
+    /// Call this on a `object-tracker` element only.
+    public var fcpAsObjectTracker: FinalCutPro.FCPXML.ObjectTracker? {
+        .init(element: self)
+    }
 }
 
 #endif

@@ -7,11 +7,8 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    // TODO: xml variable is temporary; finish parsing the xml
-    
     /// Locator shared resource.
     ///
     /// > Final Cut Pro FCPXML 1.11 Reference:
@@ -22,47 +19,83 @@ extension FinalCutPro.FCPXML {
     /// > FCPXML element.
     /// >
     /// > See [`locator`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/locator).
-    public struct Locator: Equatable, Hashable {
-        public var id: String
+    public struct Locator: FCPXMLElement {
+        public let element: XMLElement
         
-        /// A string that specifies the location of the resource as an absolute or relative URL. For
-        /// details about the URL, see the Location of Media Files section of `media-rep`.
-        public var url: URL
+        public let elementType: ElementType = .locator
         
-        public init(id: String, url: URL) {
-            self.id = id
-            self.url = url
+        public static let supportedElementTypes: Set<ElementType> = [.locator]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Locator: FCPXMLResource {
-    /// Attributes unique to ``Locator``.
-    public enum Attributes: String, XMLParsableAttributesKey {
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Locator {
+    public init(
+        id: String,
+        url: URL? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.url = url
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Locator {
+    public enum Attributes: String {
+        /// Required.
+        /// Identifier.
         case id
+        
+        /// Required.
+        /// Absolute URL or relative URL to library path.
         case url
     }
-    
-    public init?(from xmlLeaf: XMLElement) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        guard let id = rawValues[.id]
-        else { return nil }
-        self.id = id
-        
-        // TODO: handle relative file URLs - probably needs library path passed into this init.
-        guard let urlString = rawValues[.url],
-              let url = URL(string: urlString)
-        else { return nil }
-        self.url = url
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == resourceType.rawValue else { return nil }
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Locator {
+    /// Required.
+    /// Identifier.
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
     }
     
-    public var resourceType: FinalCutPro.FCPXML.ResourceType { .locator }
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .locator(self) }
+    /// Required.
+    /// Absolute URL or relative URL to library path.
+    public var url: URL? {
+        get { element.getURL(forAttribute: Attributes.url.rawValue) }
+        set { element.set(url: newValue, forAttribute: Attributes.url.rawValue) }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Locator: FCPXMLElementBookmarkChild { }
+
+// MARK: - Typing
+
+// Locator
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Locator`` model object.
+    /// Call this on a `locator` element only.
+    public var fcpAsLocator: FinalCutPro.FCPXML.Locator? {
+        .init(element: self)
+    }
 }
 
 #endif

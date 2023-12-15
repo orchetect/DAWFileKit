@@ -19,7 +19,7 @@ extension FinalCutPro.FCPXML {
     /// > string in FCPXML.
     /// > This is how Final Cut Pro separates role and sub-role.
     /// > Otherwise, any other Unicode character is valid, including accented characters and emojis.
-    public struct VideoRole: Equatable, Hashable {
+    public struct VideoRole: Equatable, Hashable, Sendable {
         public let role: String
         public let subRole: String?
         
@@ -60,6 +60,12 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
         return Self(role: newRole, subRole: newSubRole)
     }
     
+    public func titleCasedDefaultRole(derivedOnly: Bool) -> Self {
+        isMainRoleBuiltIn
+            ? titleCased(derivedOnly: derivedOnly)
+            : self
+    }
+    
     public var isMainRoleBuiltIn: Bool {
         let builtInMainRoles = [
             "video", "Video",
@@ -70,7 +76,7 @@ extension FinalCutPro.FCPXML.VideoRole: FCPXMLRole {
     }
     
     public var isSubRoleDerivedFromMainRole: Bool {
-        isSubRole(subRole, derivedFromMainRole: role)
+        FinalCutPro.FCPXML._isSubRole(subRole, derivedFromMainRole: role)
     }
 }
 
@@ -84,7 +90,7 @@ extension FinalCutPro.FCPXML.VideoRole: RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let parsed = try? parseRawStandardRole(rawValue: rawValue)
+        guard let parsed = try? FinalCutPro.FCPXML._parseRawStandardRole(rawValue: rawValue)
         else { return nil }
         
         role = parsed.role
@@ -100,7 +106,10 @@ extension FinalCutPro.FCPXML.VideoRole: CustomDebugStringConvertible {
 
 extension FinalCutPro.FCPXML.VideoRole: FCPXMLCollapsibleRole {
     public func collapsingSubRole() -> Self {
-        let collapsedValues = collapseStandardSubRole(role: role, subRole: subRole)
+        let collapsedValues = FinalCutPro.FCPXML._collapseStandardSubRole(
+            role: role,
+            subRole: subRole
+        )
         return Self(role: collapsedValues.role, subRole: collapsedValues.subRole)
     }
 }

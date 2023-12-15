@@ -20,8 +20,10 @@ public enum FinalCutPro {
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
-    
-    /// `Timecode` struct template.
+}
+
+extension FinalCutPro {
+    /// `Timecode` template.
     public static func formTimecode(
         at rate: TimecodeFrameRate
     ) -> Timecode {
@@ -33,7 +35,7 @@ public enum FinalCutPro {
         )
     }
     
-    /// `Timecode` struct template.
+    /// `Timecode` template.
     public static func formTimecode(
         rational: Fraction,
         at rate: TimecodeFrameRate
@@ -46,8 +48,20 @@ public enum FinalCutPro {
         )
     }
     
+    /// `Timecode` template.
+    public static func formTimecode(
+        realTime seconds: TimeInterval,
+        at rate: TimecodeFrameRate
+    ) throws -> Timecode {
+        try Timecode(
+            .realTime(seconds: seconds),
+            at: rate,
+            base: timecodeSubFramesBase,
+            limit: timecodeUpperLimit
+        )
+    }
     
-    /// `Timecode` struct template.
+    /// `TimecodeInterval` template.
     public static func formTimecodeInterval(
         at rate: TimecodeFrameRate
     ) -> TimecodeInterval {
@@ -55,7 +69,21 @@ public enum FinalCutPro {
         return TimecodeInterval(tc)
     }
     
-    /// `Timecode` struct template.
+    /// `TimecodeInterval` template.
+    public static func formTimecodeInterval(
+        realTime: TimeInterval,
+        at rate: TimecodeFrameRate
+    ) throws -> TimecodeInterval {
+        
+        try TimecodeInterval(
+            realTime: realTime,
+            at: rate,
+            base: timecodeSubFramesBase,
+            limit: timecodeUpperLimit
+        )
+    }
+    
+    /// `TimecodeInterval` template.
     public static func formTimecodeInterval(
         rational: Fraction,
         at rate: TimecodeFrameRate

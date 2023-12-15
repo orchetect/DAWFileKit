@@ -7,7 +7,6 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Media shared resource.
@@ -23,130 +22,171 @@ extension FinalCutPro.FCPXML {
     /// > See [`media`](
     /// > https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/media
     /// > ).
-    public struct Media: Equatable, Hashable {
-        public var id: String?
-        public var name: String?
+    public struct Media: FCPXMLElement {
+        public let element: XMLElement
         
-        public var contents: IntermediateMediaType?
+        public let elementType: ElementType = .media
         
-        public init(
-            id: String,
-            name: String?,
-            contents: IntermediateMediaType? = nil
-        ) {
-            self.id = id
-            self.name = name
-            self.contents = contents
+        public static let supportedElementTypes: Set<ElementType> = [.media]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Media: FCPXMLResource {
-    public enum Element: String {
-        case name = "media"
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Media {
+    public init(
+        // shared resource attributes
+        id: String,
+        name: String? = nil,
+        // asset attributes
+        uid: String? = nil,
+        projectRef: String? = nil,
+        // FCPXMLElementOptionalModDate
+        modDate: String? = nil
+    ) {
+        self.init()
+        
+        // shared resource attributes
+        self.id = id
+        self.name = name
+        // asset attributes
+        self.uid = uid
+        self.projectRef = projectRef
+        // FCPXMLElementOptionalModDate
+        self.modDate = modDate
     }
     
-    /// Attributes unique to ``Media``.
-    public enum Attributes: String, XMLParsableAttributesKey {
+    public init(
+        // shared resource attributes
+        id: String,
+        name: String? = nil,
+        // asset attributes
+        uid: String? = nil,
+        projectRef: String? = nil,
+        // FCPXMLElementOptionalModDate
+        modDate: String? = nil,
+        // multicam or sequence
+        multicam: Multicam
+    ) {
+        self.init(
+            id: id,
+            name: name,
+            uid: uid,
+            projectRef: projectRef,
+            modDate: modDate
+        )
+        self.element.addChild(multicam.element)
+    }
+    
+    public init(
+        // shared resource attributes
+        id: String,
+        name: String? = nil,
+        // asset attributes
+        uid: String? = nil,
+        projectRef: String? = nil,
+        // FCPXMLElementOptionalModDate
+        modDate: String? = nil,
+        // multicam or sequence
+        sequence: FinalCutPro.FCPXML.Sequence
+    ) {
+        self.init(
+            id: id,
+            name: name,
+            uid: uid,
+            projectRef: projectRef,
+            modDate: modDate
+        )
+        self.element.addChild(sequence.element)
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Media {
+    public enum Attributes: String {
+        // shared resource attributes
         case id
         case name
+        
+        // asset attributes
+        case uid
+        case projectRef
     }
     
-    /// Children of ``Media``.
-    public enum Children: String {
+    // can contain either one `multicam` or one `sequence`
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Media {
+    // shared resource attributes
+    
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
+    }
+    
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
+    }
+    
+    public var projectRef: String? {
+        get { element.stringValue(forAttributeNamed: Attributes.projectRef.rawValue) }
+        set { element.addAttribute(withName: Attributes.projectRef.rawValue, value: newValue) }
+    }
+    
+    // asset attributes
+    
+    public var uid: String? {
+        get { element.fcpUID }
+        set { element.fcpUID = newValue }
+    }
+}
+
+extension FinalCutPro.FCPXML.Media: FCPXMLElementOptionalModDate { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Media {
+    /// Returns the `multicam` child element if one exists.
+    public var multicam: Multicam? {
+        element.firstChild(whereFCPElement: .multicam)
+    }
+    
+    /// Returns the `sequence` child element if one exists.
+    public var sequence: FinalCutPro.FCPXML.Sequence? {
+        element.firstChild(whereFCPElement: .sequence)
+    }
+}
+
+// MARK: - Typing
+
+// Media
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Media`` model object.
+    /// Call this on a `media` element only.
+    public var fcpAsMedia: FinalCutPro.FCPXML.Media? {
+        .init(element: self)
+    }
+}
+
+// MARK: - Supporting Types
+
+extension FinalCutPro.FCPXML.Media {
+    public enum MediaType: Equatable, Hashable {
         case multicam
         case sequence
-    }
-    
-    public init?(from xmlLeaf: XMLElement) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        id = rawValues[.id]
-        name = rawValues[.name]
-        
-        // contents
-        if let multicamXML = xmlLeaf.first(childNamed: Children.multicam.rawValue)
-        {
-            contents = .multicam(fromXML: multicamXML, parentMediaXML: xmlLeaf)
-        }
-        else if let sequenceXML = xmlLeaf.first(childNamed: Children.sequence.rawValue)
-        {
-            contents = .sequence(fromXML: sequenceXML, parentMediaXML: xmlLeaf)
-        }
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == resourceType.rawValue else { return nil }
-    }
-    
-    public var resourceType: FinalCutPro.FCPXML.ResourceType { .media }
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .media(self) }
-}
-
-extension FinalCutPro.FCPXML.Media {
-    public enum IntermediateMediaType: Equatable, Hashable {
-        // can't store `FinalCutPro.FCPXML.Multicam` because it requires resources to already have
-        // been parsed to construct. so as a workaround we'll store raw XML here so we can
-        // parse it later after the complete collection of resources have been parsed.
-        case multicam(fromXML: XMLElement, parentMediaXML: XMLElement)
-        
-        // can't store `FinalCutPro.FCPXML.Sequence` because it requires resources to already have
-        // been parsed to construct. so as a workaround we'll store raw XML here so we can
-        // parse it later after the complete collection of resources have been parsed.
-        case sequence(fromXML: XMLElement, parentMediaXML: XMLElement)
-    }
-}
-
-extension FinalCutPro.FCPXML.Media {
-    // TODO: factor out? RefClip AFAIK can only reference a Media resource containing a Sequence, and MCClip can only reference a Media resource containing a Multicam container.
-    public enum MediaType: Equatable, Hashable {
-        case multicam(_ multicam: FinalCutPro.FCPXML.Media.Multicam)
-        case sequence(_ sequence: FinalCutPro.FCPXML.Sequence)
-    }
-    
-    public func generateMediaType(
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
-    ) -> MediaType? {
-        guard let mediaContents = contents else { return nil }
-        
-        switch mediaContents {
-        case let .multicam(sequenceXML, parentMediaXML):
-            guard let multicam = FinalCutPro.FCPXML.Media.Multicam(
-                from: sequenceXML,
-                breadcrumbs: breadcrumbs + [parentMediaXML],
-                resources: resources,
-                contextBuilder: contextBuilder
-            ) else { return nil }
-            return .multicam(multicam)
-            
-        case let .sequence(sequenceXML, parentMediaXML):
-            guard let sequence = FinalCutPro.FCPXML.Sequence(
-                from: sequenceXML,
-                breadcrumbs: breadcrumbs + [parentMediaXML],
-                resources: resources,
-                contextBuilder: contextBuilder
-            ) else { return nil }
-            return .sequence(sequence)
-        }
-    }
-}
-
-extension FinalCutPro.FCPXML.Media.MediaType: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
-    }
-    
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        switch self {
-        case let .multicam(multicam):
-            // `Multicam` doesn't conform to FCPXMLElement and can't be wrapped with AnyElement
-            return multicam.extractableChildren()
-            
-        case let .sequence(sequence):
-            return [sequence.asAnyElement()]
-        }
     }
 }
 

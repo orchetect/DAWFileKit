@@ -19,7 +19,9 @@ public enum ProTools {
     
     /// `Timecode` setting for `.stringFormat`.
     public static let timecodeStringFormat: Timecode.StringFormat = []
-    
+}
+
+extension ProTools {
     /// `Timecode` struct template.
     public static func formTimecode(
         _ exactly: Timecode.Components,

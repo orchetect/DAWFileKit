@@ -35,3 +35,10 @@ public struct EquatableAndHashableExempt<Value>: Equatable, Hashable {
         self.wrappedValue = wrappedValue
     }
 }
+
+extension Sequence {
+    /// Wraps the sequence in a `AnySequence` instance.
+    var asAnySequence: AnySequence<Element> {
+        AnySequence(self)
+    }
+}

@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Asset shared resource.
@@ -21,150 +22,275 @@ extension FinalCutPro.FCPXML {
     /// > `media-rep` element along with file URLs for the media files.
     /// >
     /// > See [`asset`](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/asset).
-    public struct Asset: Equatable, Hashable {
-        // shared resource attributes
-        public var id: String // required
-        public var name: String?
+    public struct Asset: FCPXMLElement {
+        public let element: XMLElement
         
-        // base attributes
-        public var start: String?
-        public var duration: String?
-        public var format: String?
+        public let elementType: ElementType = .asset
         
-        // asset attributes
-        public var uid: String?
+        public static let supportedElementTypes: Set<ElementType> = [.asset]
         
-        // implied asset attributes
-        public var hasVideo: Bool
-        public var hasAudio: Bool
-        public var audioSources: Int
-        public var audioChannels: Int
-        public var audioRate: Int?
-        public var videoSources: Int
-        public var auxVideoFlags: String?
-        public var mediaRep: MediaRep?
-        public var metadata: Metadata
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
         
-        public init(
-            // shared resource attributes
-            id: String,
-            name: String?,
-            // base attributes
-            start: String?,
-            duration: String?,
-            format: String?,
-            // asset attributes
-            uid: String?,
-            // implied asset attributes
-            hasVideo: Bool,
-            hasAudio: Bool,
-            audioSources: Int,
-            audioChannels: Int,
-            audioRate: Int?,
-            videoSources: Int,
-            auxVideoFlags: String?,
-            mediaRep: MediaRep?,
-            metadata: Metadata
-        ) {
-            // shared resource attributes
-            self.id = id
-            self.name = name
-            
-            // base attributes
-            self.start = start
-            self.duration = duration
-            self.format = format
-            
-            // asset attributes
-            self.uid = uid
-            
-            // implied asset attributes
-            self.hasVideo = hasVideo
-            self.hasAudio = hasAudio
-            self.audioSources = audioSources
-            self.audioChannels = audioChannels
-            self.audioRate = audioRate
-            self.videoSources = videoSources
-            self.auxVideoFlags = auxVideoFlags
-            self.mediaRep = mediaRep
-            self.metadata = metadata
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Asset: FCPXMLResource {
-    /// Attributes unique to ``Asset``.
-    public enum Attributes: String, XMLParsableAttributesKey {
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Asset {
+    public init(
+        id: String,
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction? = nil,
+        format: String? = nil,
+        uid: String? = nil,
+        hasAudio: Bool = false,
+        hasVideo: Bool = false,
+        audioSources: Int = 0,
+        audioChannels: Int = 0,
+        audioRate: FinalCutPro.FCPXML.AudioRate? = nil,
+        videoSources: Int = 0,
+        auxVideoFlags: String? = nil,
+        mediaRep: FinalCutPro.FCPXML.MediaRep = .init(),
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
+    ) {
+        self.init()
+        
+        self.id = id
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.format = format
+        self.uid = uid
+        self.hasAudio = hasAudio
+        self.hasVideo = hasVideo
+        self.audioSources = audioSources
+        self.audioChannels = audioChannels
+        self.audioRate = audioRate
+        self.videoSources = videoSources
+        self.auxVideoFlags = auxVideoFlags
+        self.mediaRep = mediaRep
+        self.metadata = metadata
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Asset {
+    public enum Attributes: String {
         // shared resource attributes
-        case id
+        /// Identifier. (Required)
+        case id // required
+        /// Name.
         case name
         
         // base attributes
+        /// Local timeline start.
         case start
+        /// Asset duration.
         case duration
+        /// Asset format ID.
         case format
         
         // asset attributes
         case uid
         
         // implied asset attributes
+        /// True if asset contains audio. Default is `0` (false).
         case hasAudio
+        /// True if asset contains video. Default is `0` (false).
         case hasVideo
+        /// Number of audio sources. Default is `0`.
         case audioSources
+        /// Number of audio channels. Default is `0`.
         case audioChannels
+        /// Audio sample rate in Hz.
         case audioRate
+        /// Number of video sources. Default is `0`.
         case videoSources
+        
+        case customLUTOverride
+        case colorSpaceOverride
+        case projectionOverride
+        case stereoscopicOverride
         case auxVideoFlags
     }
     
-    /// Children unique to ``Asset``.
-    public enum Children: String {
-        case mediaRep = "media-rep"
-        case metadata
+    // contains one or more media-rep
+    // can contain metadata
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Asset {
+    // shared resource attributes
+    
+    /// Identifier. (Required)
+    public var id: String {
+        get { element.fcpID ?? "" }
+        set { element.fcpID = newValue }
     }
     
-    public init?(from xmlLeaf: XMLElement) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        // shared resource attributes
-        guard let id = rawValues[.id] else { return nil }
-        self.id = id
-        name = rawValues[.name]
-        
-        // base attributes
-        start = rawValues[.start]
-        duration = rawValues[.duration]
-        format = rawValues[.format]
-        
-        // asset attributes
-        uid = rawValues[.uid]
-        
-        // implied asset attributes
-        hasVideo = rawValues[.hasVideo] ?? "0" == "1"
-        hasAudio = rawValues[.hasAudio] ?? "0" == "1"
-        audioSources = Int(rawValues[.audioSources] ?? "0") ?? 0
-        audioChannels = Int(rawValues[.audioChannels] ?? "0") ?? 0
-        audioRate = rawValues[.audioRate]?.int
-        videoSources = Int(rawValues[.videoSources] ?? "0") ?? 0
-        auxVideoFlags = rawValues[.auxVideoFlags]
-        
-        if let mediaRepXML = xmlLeaf.first(childNamed: Children.mediaRep.rawValue) {
-            mediaRep = FinalCutPro.FCPXML.MediaRep(from: mediaRepXML)
-        }
-        
-        if let metadataXML = xmlLeaf.first(childNamed: Children.metadata.rawValue) {
-            metadata = FinalCutPro.FCPXML.Metadata(fromMetadataElement: metadataXML)
-        } else {
-            metadata = FinalCutPro.FCPXML.Metadata(xml: [])
-        }
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == resourceType.rawValue else { return nil }
+    /// Name.
+    public var name: String? {
+        get { element.fcpName }
+        set { element.fcpName = newValue }
     }
     
-    public var resourceType: FinalCutPro.FCPXML.ResourceType { .asset }
-    public func asAnyResource() -> FinalCutPro.FCPXML.AnyResource { .asset(self) }
+    // base attributes
+    
+    /// Asset format ID.
+    public var format: String? {
+        get { element.fcpFormat }
+        set { element.fcpFormat = newValue }
+    }
+    
+    // asset attributes
+    
+    public var uid: String? {
+        get { element.fcpUID }
+        set { element.fcpUID = newValue }
+    }
+    
+    // implied asset attributes
+    
+    /// True if asset contains audio. Default is `0` (false).
+    public var hasAudio: Bool {
+        get {
+            element.getBool(forAttribute: Attributes.hasAudio.rawValue) ?? false
+        }
+        set {
+            element._fcpSet(
+                bool: newValue,
+                forAttribute: Attributes.hasAudio.rawValue,
+                defaultValue: false,
+                removeIfDefault: true
+            )
+        }
+    }
+    
+    /// True if asset contains video. Default is `0` (false).
+    public var hasVideo: Bool {
+        get {
+            element.getBool(forAttribute: Attributes.hasVideo.rawValue) ?? false
+        }
+        set {
+            element._fcpSet(
+                bool: newValue,
+                forAttribute: Attributes.hasVideo.rawValue,
+                defaultValue: false,
+                removeIfDefault: true
+            )
+        }
+    }
+    
+    /// Number of audio sources. Default is `0`.
+    public var audioSources: Int {
+        get {
+            element.getInt(forAttribute: Attributes.audioSources.rawValue) ?? 0
+        }
+        set {
+            element.set(int: newValue, forAttribute: Attributes.audioSources.rawValue)
+        }
+    }
+    
+    /// Number of audio channels. Default is `0`.
+    public var audioChannels: Int {
+        get {
+            element.getInt(forAttribute: Attributes.audioChannels.rawValue) ?? 0
+        }
+        set {
+            element.set(int: newValue, forAttribute: Attributes.audioChannels.rawValue)
+        }
+    }
+    
+    /// Audio sample rate in Hz.
+    public var audioRate: FinalCutPro.FCPXML.AudioRate? {
+        get { element.fcpAssetAudioRate }
+        set { element.fcpAssetAudioRate = newValue }
+    }
+    
+    /// Number of video sources. Default is `0`.
+    public var videoSources: Int {
+        get {
+            element.getInt(forAttribute: Attributes.videoSources.rawValue) ?? 0
+        }
+        set {
+            element.set(int: newValue, forAttribute: Attributes.videoSources.rawValue)
+        }
+    }
+    
+    public var auxVideoFlags: String? { // only used by `asset`
+        get { element.stringValue(forAttributeNamed: Attributes.auxVideoFlags.rawValue) }
+        set { element.addAttribute(withName: Attributes.auxVideoFlags.rawValue, value: newValue) }
+    }
+}
+
+extension FinalCutPro.FCPXML.Asset: FCPXMLElementOptionalStart { }
+
+extension FinalCutPro.FCPXML.Asset: FCPXMLElementOptionalDuration { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Asset {
+    // TODO: can contain one or more `media-rep` children. not sure why more than one, but DTD says so.
+    // only used by `asset`
+    public var mediaRep: FinalCutPro.FCPXML.MediaRep {
+        get {
+            if let existingElement = element.firstChild(whereFCPElement: .mediaRep) {
+                return existingElement
+            }
+            
+            // create new element and attach
+            let newElement = FinalCutPro.FCPXML.MediaRep()
+            element.addChild(newElement.element)
+            return newElement
+        }
+        set {
+            let current = mediaRep
+            guard current.element != newValue.element else { return }
+            current.element.detach()
+            element.addChild(newValue.element)
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Asset: FCPXMLElementMetadataChild { }
+
+// MARK: - Properties
+
+// Asset
+extension XMLElement {
+    /// FCPXML: Returns the `audioRate` attribute value (audio sample rate in Hz).
+    /// Call this on a `asset` element only.
+    public var fcpAssetAudioRate: FinalCutPro.FCPXML.AudioRate? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "audioRate")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.AudioRate(rawValueForAsset: value)
+        }
+        set {
+            addAttribute(withName: "audioRate", value: newValue?.rawValueForAsset)
+        }
+    }
+}
+
+// MARK: - Typing
+
+// Asset
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in an ``FinalCutPro/FCPXML/Asset`` model object.
+    /// Call this on an `asset` element only.
+    public var fcpAsAsset: FinalCutPro.FCPXML.Asset? {
+        .init(element: self)
+    }
 }
 
 #endif

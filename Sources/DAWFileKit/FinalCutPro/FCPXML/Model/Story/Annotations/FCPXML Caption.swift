@@ -8,150 +8,117 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Represents a closed caption.
-    public struct Caption: Equatable, Hashable, FCPXMLClipAttributes {
-        public var note: String?
+    public struct Caption: FCPXMLElement { 
+        public let element: XMLElement
+        
+        public let elementType: ElementType = .caption
+        
+        public static let supportedElementTypes: Set<ElementType> = [.caption]
+        
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
+        
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
+        }
+    }
+}
+
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Caption {
+    public init(
+        role: FinalCutPro.FCPXML.CaptionRole? = nil,
+        note: String? = nil,
+        // Anchorable Attributes
+        lane: Int? = nil,
+        offset: Fraction? = nil,
+        // Clip Attributes
+        name: String? = nil,
+        start: Fraction? = nil,
+        duration: Fraction,
+        enabled: Bool = true
+    ) {
+        self.init()
+        
+        self.role = role
+        self.note = note
+        
+        // Anchorable Attributes
+        self.lane = lane
+        self.offset = offset
+        
+        // Clip Attributes
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.enabled = enabled
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Caption {
+    public enum Attributes: String {
+        /// Role.
+        ///
         /// The format is `role-name?captionFormat=captionFormat.subrole`.
         /// ie: `iTT?captionFormat=ITT.en`.
-        public var role: CaptionRole?
-        public var texts: [Text]
-        public var textStyleDefinitions: [XMLElement]
-        
-        // FCPXMLAnchorableAttributes
-        public var lane: Int?
-        public var offset: Timecode?
-        
-        // FCPXMLClipAttributes
-        public var name: String?
-        public var start: Timecode?
-        public var duration: Timecode?
-        public var enabled: Bool
-        
-        // TODO: parse children (`text` and `text-style-def` elements)
-        
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
-        
-        public init(
-            note: String?,
-            role: CaptionRole?,
-            texts: [Text],
-            textStyleDefinitions: [XMLElement],
-            // FCPXMLAnchorableAttributes
-            lane: Int?,
-            offset: Timecode,
-            // FCPXMLClipAttributes
-            name: String,
-            start: Timecode,
-            duration: Timecode,
-            enabled: Bool,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            self.note = note
-            self.role = role
-            self.texts = texts
-            self.textStyleDefinitions = textStyleDefinitions
-            
-            // FCPXMLAnchorableAttributes
-            self.lane = lane
-            self.offset = offset
-            
-            // FCPXMLClipAttributes
-            self.name = name
-            self.start = start
-            self.duration = duration
-            self.enabled = enabled
-            
-            // FCPXMLElementContext
-            self.context = context
-        }
-    }
-}
-
-extension FinalCutPro.FCPXML.Caption: FCPXMLAnnotationElement {
-    /// Attributes unique to ``Caption``.
-    public enum Attributes: String, XMLParsableAttributesKey {
-        case note
         case role
+        case note
+        
+        // Anchorable Attributes
+        case lane
+        case offset
+        
+        // Clip Attributes
+        case name
+        case start
+        case duration
+        case enabled // default true
     }
     
-    /// Children of ``Caption``.
-    public enum Children: String {
-        case text
-        case textStyleDef = "text-style-def"
-    }
-    
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
-    ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
-        
-        note = rawValues[.note]
-        
-        if let roleString = rawValues[.role],
-           let role = FinalCutPro.FCPXML.CaptionRole(rawValue: roleString)
-        {
-            self.role = role
-        }
-        
-        texts = Self.parseTexts(from: xmlLeaf)
-        textStyleDefinitions = Self.parseTextStyleDefinitions(from: xmlLeaf)
-        
-        let clipAttributes = Self.parseClipAttributes(
-            from: xmlLeaf,
-            resources: resources
-        )
-        
-        // FCPXMLAnchorableAttributes
-        lane = clipAttributes.lane
-        offset = clipAttributes.offset
-        
-        // FCPXMLClipAttributes
-        name = clipAttributes.name
-        start = clipAttributes.start
-        duration = clipAttributes.duration
-        enabled = clipAttributes.enabled
-        
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == annotationType.rawValue else { return nil }
-    }
-    
-    static func parseTexts(from xmlLeaf: XMLElement) -> [FinalCutPro.FCPXML.Text] {
-        let elements = (xmlLeaf.children ?? [])
-            .filter { $0.name == Children.text.rawValue }
-            .compactMap { $0 as? XMLElement }
-        return elements.compactMap { FinalCutPro.FCPXML.Text(from: $0) }
-    }
-    
-    // TODO: parse XML into strongly typed structs
-    static func parseTextStyleDefinitions(from xmlLeaf: XMLElement) -> [XMLElement] {
-        (xmlLeaf.children ?? [])
-            .filter { $0.name == Children.textStyleDef.rawValue }
-            .compactMap { $0 as? XMLElement }
-    }
-    
-    public var annotationType: FinalCutPro.FCPXML.AnnotationType { .caption }
-    public func asAnyAnnotation() -> FinalCutPro.FCPXML.AnyAnnotation { .caption(self) }
+    // contains `text` elements
+    // contains `text-style-def` elements
 }
 
-extension FinalCutPro.FCPXML.Caption: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Caption {
+    /// Role.
+    ///
+    /// The format is `role-name?captionFormat=captionFormat.subrole`.
+    /// ie: `iTT?captionFormat=ITT.en`.
+    public var role: FinalCutPro.FCPXML.CaptionRole? {
+        get { element.fcpRole(as: FinalCutPro.FCPXML.CaptionRole.self) }
+        set { element.fcpSet(role: newValue) }
     }
-    
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        []
+}
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementClipAttributes { }
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextChildren { }
+
+extension FinalCutPro.FCPXML.Caption: FCPXMLElementTextStyleDefinitionChildren { }
+
+// MARK: - Typing
+
+// Caption
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Caption`` model object.
+    /// Call this on a `caption` element only.
+    public var fcpAsCaption: FinalCutPro.FCPXML.Caption? {
+        .init(element: self)
     }
 }
 

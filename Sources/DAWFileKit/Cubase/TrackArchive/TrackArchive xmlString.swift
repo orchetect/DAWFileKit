@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-@_implementationOnly import OTCore
+import OTCore
 import TimecodeKit
 
 extension Cubase.TrackArchive {
@@ -368,11 +368,10 @@ extension Cubase.TrackArchive {
         ])
         
         // MListNode
-        let mlistNode = newTrack.children?
-            .filter(elementName: "obj")
-            .filter(attribute: "class", value: "MListNode")
-            .filter(attribute: "name", value: "Node")
-            .first as? XMLElement
+        let mlistNode = newTrack.childElements
+            .filter(whereNodeNamed: "obj")
+            .filter(whereAttribute: "class", hasValue: "MListNode")
+            .first(whereAttribute: "name", hasValue: "Node")
         
         // MListNode.Events
         let eventsNode = XMLElement(

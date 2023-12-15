@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 extension FinalCutPro.FCPXML {
-    /// Pro Tools session info text file parsing error.
+    /// Final Cut Pro FCPXML file parsing error.
     public enum ParseError: Error {
         case general(String)
     }

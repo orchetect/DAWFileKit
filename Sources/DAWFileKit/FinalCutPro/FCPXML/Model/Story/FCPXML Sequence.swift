@@ -9,149 +9,210 @@
 import Foundation
 import TimecodeKit
 import CoreMedia
-@_implementationOnly import OTCore
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// A container that represents the top-level sequence for a Final Cut Pro project or compound
     /// clip.
-    public struct Sequence: FCPXMLTimelineAttributes {
-        // FCPXMLTimelineAttributes
-        public var formatID: String
-        public var startTimecode: Timecode? // (absolute `tcStart` timecode, not relative `start`)
-        public var duration: Timecode?
+    public struct Sequence: FCPXMLElement {
+        public let element: XMLElement
         
-        // FCPXMLElementContext
-        @EquatableAndHashableExempt
-        public var context: FinalCutPro.FCPXML.ElementContext
+        public let elementType: ElementType = .sequence
         
-        public var audioLayout: AudioLayout?
-        public var audioRate: AudioRate?
-        public var renderFormat: String?
-        public var note: String?
-        public var keywords: String?
-        public var spine: Spine
+        public static let supportedElementTypes: Set<ElementType> = [.sequence]
         
-        // TODO: add metadata
+        public init() {
+            element = XMLElement(name: elementType.rawValue)
+        }
         
-        public init?(
-            // FCPXMLTimelineAttributes
-            formatID: String,
-            startTimecode: Timecode?,
-            duration: Timecode?,
-            // sequence attributes
-            audioLayout: AudioLayout?,
-            audioRate: AudioRate?,
-            renderFormat: String?,
-            note: String?,
-            keywords: String?,
-            spine: Spine,
-            // FCPXMLElementContext
-            context: FinalCutPro.FCPXML.ElementContext = .init()
-        ) {
-            // FCPXMLTimelineAttributes
-            self.formatID = formatID
-            self.startTimecode = startTimecode
-            self.duration = duration
-            
-            // sequence attributes
-            self.audioLayout = audioLayout
-            self.audioRate = audioRate
-            self.renderFormat = renderFormat
-            self.note = note
-            self.keywords = keywords
-            self.spine = spine
-            
-            // FCPXMLElementContext
-            self.context = context
+        public init?(element: XMLElement) {
+            self.element = element
+            guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
 }
 
-extension FinalCutPro.FCPXML.Sequence: FCPXMLStoryElement {
-    /// Attributes unique to ``Sequence``.
-    public enum Attributes: String, XMLParsableAttributesKey {
-        case audioLayout
-        case audioRate
-        case note
-        case renderFormat
-        case keywords
-        case spine
-        
-        case metadata
-    }
-    
-    // no role
-    public init?(
-        from xmlLeaf: XMLElement,
-        breadcrumbs: [XMLElement],
-        resources: [String: FinalCutPro.FCPXML.AnyResource],
-        contextBuilder: FCPXMLElementContextBuilder
+// MARK: - Parameterized init
+
+extension FinalCutPro.FCPXML.Sequence {
+    public init(
+        spine: FinalCutPro.FCPXML.Spine = .init(),
+        audioLayout: FinalCutPro.FCPXML.AudioLayout? = nil,
+        audioRate: FinalCutPro.FCPXML.AudioRate? = nil,
+        renderFormat: String? = nil,
+        keywords: String? = nil,
+        // Media Attributes
+        format: String,
+        duration: Fraction? = nil,
+        tcStart: Fraction? = nil,
+        tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
+        // Note child
+        note: String? = nil,
+        // Metadata
+        metadata: FinalCutPro.FCPXML.Metadata? = nil
     ) {
-        let rawValues = xmlLeaf.parseRawAttributeValues(key: Attributes.self)
+        self.init()
         
-        // parses `format`, `tcStart`, `tcFormat`, `duration`
-        guard let timelineAttributes = Self.parseTimelineAttributes(
-            from: xmlLeaf,
-            resources: resources
-        ) else { return nil }
-        
-        formatID = timelineAttributes.format
-        startTimecode = timelineAttributes.startTimecode
-        duration = timelineAttributes.duration
-        
-        audioLayout = FinalCutPro.FCPXML.AudioLayout(rawValue: rawValues[.audioLayout] ?? "")
-        audioRate = FinalCutPro.FCPXML.AudioRate(rawValue: rawValues[.audioRate] ?? "")
-        
-        renderFormat = rawValues[.renderFormat]
-        note = rawValues[.note]
-        keywords = rawValues[.keywords]
-        
-        // FCPXMLElementContext
-        context = contextBuilder.buildContext(from: xmlLeaf, breadcrumbs: breadcrumbs, resources: resources)
-        
-        // spine
-        guard let spineLeaf = Self.parseSpine(from: xmlLeaf),
-              let spine = FinalCutPro.FCPXML.Spine(
-                  from: spineLeaf,
-                  breadcrumbs: breadcrumbs + [xmlLeaf],
-                  resources: resources,
-                  contextBuilder: contextBuilder
-              )
-        else { return nil }
         self.spine = spine
         
-        // validate element name
-        // (we have to do this last, after all properties are initialized in order to access self)
-        guard xmlLeaf.name == storyElementType.rawValue else { return nil }
+        self.audioLayout = audioLayout
+        self.audioRate = audioRate
+        self.renderFormat = renderFormat
+        self.keywords = keywords
+        
+        // Media Attributes
+        self.format = format
+        self.duration = duration
+        self.tcStart = tcStart
+        self.tcFormat = tcFormat
+        
+        // Note child
+        self.note = note
+        
+        // Metadata
+        self.metadata = metadata
+    }
+}
+
+// MARK: - Structure
+
+extension FinalCutPro.FCPXML.Sequence {
+    public enum Attributes: String {
+        // Element-Specific Attributes
+        case audioLayout
+        case audioRate
+        case renderFormat
+        case keywords
+        
+        // Media Attributes
+        case format
+        case duration
+        case tcStart
+        case tcFormat
     }
     
-    static func parseSpine(
-        from xmlLeaf: XMLElement
-    ) -> XMLElement? {
-        let spines = xmlLeaf.children?.lazy
-            .filter { $0.name == FinalCutPro.FCPXML.StoryElementType.spine.rawValue }
-            .compactMap { $0 as? XMLElement } ?? []
-        guard let spine = spines.first else {
-            print("Expected one spine within sequence but found none.")
-            return nil
+    // must contain one `spine`
+    // can contain one `note`
+    // can contain one `metadata`
+}
+
+// MARK: - Attributes
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMediaAttributes { }
+
+extension FinalCutPro.FCPXML.Sequence {
+    // only exists on sequence
+    public var audioLayout: FinalCutPro.FCPXML.AudioLayout? {
+        get {
+            guard let value = element.stringValue(forAttributeNamed: Attributes.audioLayout.rawValue)
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.AudioLayout(rawValue: value)
         }
-        if spines.count != 1 {
-            print("Expected one spine within sequence but found \(spines.count)")
+        set {
+            element.addAttribute(withName: Attributes.audioLayout.rawValue, value: newValue?.rawValue)
+        }
+    }
+    
+    /// Audio sample rate in Hz.
+    public var audioRate: FinalCutPro.FCPXML.AudioRate? {
+        get { element.fcpSequenceAudioRate }
+        set { element.fcpSequenceAudioRate = newValue }
+    }
+    
+    public var renderFormat: String? {
+        get { element.fcpRenderFormat }
+        set { element.fcpRenderFormat = newValue }
+    }
+    
+    public var keywords: String? { // only exists on sequence
+        get {
+            element.stringValue(forAttributeNamed: Attributes.keywords.rawValue)
+        }
+        set {
+            element.addAttribute(withName: Attributes.keywords.rawValue, value: newValue)
+        }
+    }
+}
+
+// MARK: - Children
+
+extension FinalCutPro.FCPXML.Sequence {
+    /// Get or set the child `spine` element. (Required)
+    public var spine: FinalCutPro.FCPXML.Spine {
+        get {
+            if let existingElement = element.fcpSpine() {
+                return existingElement
+            }
+            
+            // create new element and attach
+            let newElement = FinalCutPro.FCPXML.Spine()
+            element.addChild(newElement.element)
+            return newElement
+        }
+        set {
+            let current = spine
+            guard current.element != newValue.element else { return }
+            current.element.detach()
+            element.addChild(newValue.element)
+        }
+    }
+}
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementNoteChild { }
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetadataChild { }
+
+// MARK: - Properties
+
+// Sequence
+extension XMLElement {
+    /// FCPXML: Returns `renderFormat` attribute value.
+    /// Call this on a `sequence` or `multicam` element only.
+    public var fcpRenderFormat: String? {
+        get { stringValue(forAttributeNamed: "renderFormat") }
+        set { addAttribute(withName: "renderFormat", value: newValue) }
+    }
+    
+    /// FCPXML: Returns child `spine` elements.
+    /// Typically called on a `sequence` element.
+    public var fcpSpines: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Spine> {
+        children(whereFCPElement: .spine)
+    }
+    
+    /// FCPXML: Returns a child `spine` element if it exists.
+    /// Typically called on a `sequence` element.
+    public func fcpSpine() -> FinalCutPro.FCPXML.Spine? {
+        guard let spine = fcpSpines.first else {
+            // print("Expected one spine within sequence but found none.")
+            return nil
         }
         return spine
     }
     
-    public var storyElementType: FinalCutPro.FCPXML.StoryElementType { .sequence }
-    public func asAnyStoryElement() -> FinalCutPro.FCPXML.AnyStoryElement { .sequence(self) }
+    /// FCPXML: Returns the `audioRate` attribute value (audio sample rate in Hz).
+    /// Call this on a `sequence` element only.
+    public var fcpSequenceAudioRate: FinalCutPro.FCPXML.AudioRate? {
+        get {
+            guard let value = stringValue(forAttributeNamed: "audioRate")
+            else { return nil }
+            
+            return FinalCutPro.FCPXML.AudioRate(rawValueForSequence: value)
+        }
+        set {
+            addAttribute(withName: "audioRate", value: newValue?.rawValueForSequence)
+        }
+    }
 }
 
-extension FinalCutPro.FCPXML.Sequence: FCPXMLExtractable {
-    public func extractableElements() -> [FinalCutPro.FCPXML.AnyElement] {
-        [] // not found in sequence, they're in the inner spine instead
-    }
-    
-    public func extractableChildren() -> [FinalCutPro.FCPXML.AnyElement] {
-        [spine.asAnyElement()]
+// MARK: - Typing
+
+// Sequence
+extension XMLElement {
+    /// FCPXML: Returns the element wrapped in a ``FinalCutPro/FCPXML/Sequence`` model object.
+    /// Call this on a `sequence` element only.
+    public var fcpAsSequence: FinalCutPro.FCPXML.Sequence? {
+        .init(element: self)
     }
 }
 
