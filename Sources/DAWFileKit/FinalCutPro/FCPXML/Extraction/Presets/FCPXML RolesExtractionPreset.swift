@@ -11,8 +11,9 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// FCPXML extraction preset that extracts roles within a specified scope.
+    /// Results are sorted by type, then by name.
     public struct RolesExtractionPreset: FCPXMLExtractionPreset {
-        var roleTypes: Set<RoleType>
+        public var roleTypes: Set<RoleType>
         
         public init(
             roleTypes: Set<RoleType>
@@ -24,6 +25,9 @@ extension FinalCutPro.FCPXML {
             on extractable: XMLElement,
             scope: FinalCutPro.FCPXML.ExtractionScope
         ) async -> [FinalCutPro.FCPXML.AnyRole] {
+            // early return in case no types are specified
+            guard !roleTypes.isEmpty else { return [] }
+            
             let extracted = await extractable.fcpExtract(scope: scope) { element in
                 element
                     .value(forContext: .inheritedRoles)
@@ -43,6 +47,7 @@ extension FinalCutPro.FCPXML {
 
 extension FCPXMLExtractionPreset where Self == FinalCutPro.FCPXML.RolesExtractionPreset {
     /// FCPXML extraction preset that extracts roles within a specified scope.
+    /// Results are sorted by type, then by name.
     public static func roles(
         roleTypes: Set<FinalCutPro.FCPXML.RoleType> = .allCases
     ) -> FinalCutPro.FCPXML.RolesExtractionPreset {
