@@ -108,6 +108,8 @@ extension FinalCutPro.FCPXML.Clip {
         case format
         case tcStart
         case tcFormat
+        
+        // Audio Start/Duration
         case audioStart
         case audioDuration
         
@@ -148,17 +150,7 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCStart { }
 
 extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalTCFormat { }
 
-extension FinalCutPro.FCPXML.Clip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementAudioStartAndDuration { }
 
 extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalModDate { }
 

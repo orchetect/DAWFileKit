@@ -125,11 +125,13 @@ extension FinalCutPro.FCPXML.AssetClip {
         case format
         case tcStart
         case tcFormat
-        case audioStart
-        case audioDuration
         case audioRole
         case videoRole
         case srcEnable
+        
+        // Audio Start/Duration
+        case audioStart
+        case audioDuration
         
         // Anchorable Attributes
         case lane
@@ -180,17 +182,7 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementOptionalTCStart { }
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementOptionalTCFormat { }
 
-extension FinalCutPro.FCPXML.AssetClip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioStartAndDuration { }
 
 extension FinalCutPro.FCPXML.AssetClip /* FCPXMLElementOptionalAudioRole */ {
     public var audioRole: FinalCutPro.FCPXML.AudioRole? {

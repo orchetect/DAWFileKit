@@ -167,17 +167,7 @@ extension FinalCutPro.FCPXML.RefClip {
     }
 }
 
-extension FinalCutPro.FCPXML.RefClip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioStartAndDuration { }
 
 extension FinalCutPro.FCPXML.RefClip: FCPXMLElementOptionalModDate { }
 

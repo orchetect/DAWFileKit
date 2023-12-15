@@ -142,17 +142,7 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalTCStart { }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalTCFormat { }
 
-extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementAudioStartAndDuration { }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
 

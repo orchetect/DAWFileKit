@@ -100,9 +100,11 @@ extension FinalCutPro.FCPXML.MCClip {
     public enum Attributes: String {
         // Element-Specific Attributes
         case ref // required
+        case srcEnable // (all, audio, video) default: all
+        
+        // Audio Start/Duration
         case audioStart
         case audioDuration
-        case srcEnable // (all, audio, video) default: all
         
         // Anchorable Attributes
         case lane
@@ -143,18 +145,7 @@ extension FinalCutPro.FCPXML.MCClip {
 
 extension FinalCutPro.FCPXML.MCClip: FCPXMLElementClipAttributes { }
 
-// TODO: protocol-ize this and update other model objects using the same two attributes
-extension FinalCutPro.FCPXML.MCClip /* : FCPXMLElementAudioStartAndDuration */ {
-    public var audioStart: Fraction? {
-        get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
-    }
-    
-    public var audioDuration: Fraction? {
-        get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
-    }
-}
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementAudioStartAndDuration { }
 
 extension FinalCutPro.FCPXML.MCClip: FCPXMLElementOptionalModDate { }
 
