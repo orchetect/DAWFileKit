@@ -409,10 +409,25 @@ extension XMLElement {
     ///
     /// Ancestors are ordered nearest to furthest ancestor.
     static func _fcpContainerDepth<S: Sequence<XMLElement>>(in ancestors: S) -> Int {
-        ancestors
-            .filter { $0.fcpElementType?.isTimeline == true }
-            .filter { ($0.fcpLane ?? 0) == 0 }
-            .count
+        var count = 0
+        var isTraversingAssetClip = false
+        for ancestor in ancestors {
+            let elementType = ancestor.fcpElementType
+            let isTimeline = elementType?.isTimeline == true
+            let hasNoLane = (ancestor.fcpLane ?? 0) == 0
+            
+            if elementType == .assetClip {
+                if isTraversingAssetClip {
+                    // don't count asset clips within an asset clip
+                    // TODO: should this also apply to other clip types?
+                    continue
+                }
+                isTraversingAssetClip = true
+            }
+            
+            if isTimeline, hasNoLane { count += 1 }
+        }
+        return count
     }
 }
 

@@ -426,6 +426,29 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual(marker22Timecode.frameRate, .fps25)
     }
     
+    func testExtractMarkers() async throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let markers = await project
+            .extractElements(preset: .markers, scope: .mainTimeline)
+            .sortedByAbsoluteStartTimecode()
+        
+        XCTAssertEqual(markers.count, 18)
+        
+        print("Markers sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
+        
+        // print("Sorted by name:")
+        // print(Self.debugString(for: markers.sortedByName()))
+    }
+    
     /// Check markers within `ref-clip`s.
     /// The clips within the `ref-clip` can contain markers but they don't show on the FCP timeline.
     func testExtractMarkers_ExcludeMarkersWithinRefClips() async throws {
