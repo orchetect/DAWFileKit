@@ -33,6 +33,7 @@ extension FinalCutPro.FCPXML {
             
             let output = extracted
                 .flatMap { $0 }
+                .removingDuplicates()
                 .sortedByRoleType()
             
             return output
