@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// `tcFormat` attribute value.
-    public enum TimecodeFormat: String, Equatable, Hashable, CaseIterable {
+    public enum TimecodeFormat: String, Equatable, Hashable, CaseIterable, Sendable {
         case dropFrame = "DF"
         case nonDropFrame = "NDF"
     }

@@ -11,7 +11,7 @@ import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Describes ancestors of an element and their interpolated roles.
-    public struct AncestorRoles: Equatable, Hashable {
+    public struct AncestorRoles: Equatable, Hashable, Sendable {
         /// Element roles, ordered from nearest to furthest ancestor.
         public var elements: [ElementRoles]
         
@@ -22,7 +22,7 @@ extension FinalCutPro.FCPXML {
 }
 extension FinalCutPro.FCPXML.AncestorRoles {
     /// Describes an ancestor element and its interpolated roles.
-    public struct ElementRoles: Equatable, Hashable {
+    public struct ElementRoles: Equatable, Hashable, Sendable {
         public var elementType: FinalCutPro.FCPXML.ElementType
         public var roles: [FinalCutPro.FCPXML.AnyInterpolatedRole]
         

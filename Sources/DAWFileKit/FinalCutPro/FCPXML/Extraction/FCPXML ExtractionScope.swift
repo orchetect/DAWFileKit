@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Scope applied when extracting FCPXML elements.
-    public struct ExtractionScope {
+    public struct ExtractionScope: Sendable {
         // MARK: - Public Properties
         
         /// Limit the top-level (main) timeline to the element that extraction is initiated upon.
@@ -54,11 +54,11 @@ extension FinalCutPro.FCPXML {
         
         /// Predicate to apply to element traversal.
         /// This predicate is applied last after all other filters and exclusions.
-        public var traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
+        public var traversalPredicate: (@Sendable (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
         
         /// Predicate to apply to element traversal.
         /// This predicate is applied last after all other filters and exclusions.
-        public var extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
+        public var extractionPredicate: (@Sendable (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)?
         
         // MARK: - Internal Properties
         
@@ -78,8 +78,8 @@ extension FinalCutPro.FCPXML {
             filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedExtractionTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
-            traversalPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil,
-            extractionPredicate: ((_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil
+            traversalPredicate: (@Sendable (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil,
+            extractionPredicate: (@Sendable (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Bool)? = nil
         ) {
             self.constrainToLocalTimeline = constrainToLocalTimeline
             self.maxContainerDepth = maxContainerDepth

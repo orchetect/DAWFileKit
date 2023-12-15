@@ -11,8 +11,10 @@ import TimecodeKit
 import OTCore
 
 extension FinalCutPro.FCPXML {
+    // TODO: XMLElement is not Sendable
+    
     /// Extracted element and its context.
-    public struct ExtractedElement {
+    public struct ExtractedElement: @unchecked Sendable {
         public let element: XMLElement
         public let breadcrumbs: [XMLElement]
         public let resources: XMLElement?

@@ -11,7 +11,7 @@ import TimecodeKit
 import OTCore
 
 /// Protocol for extracted elements that adds contextual properties.
-public protocol FCPXMLExtractedElement {
+public protocol FCPXMLExtractedElement where Self: Sendable {
     /// The extracted XML element.
     var element: XMLElement { get }
     

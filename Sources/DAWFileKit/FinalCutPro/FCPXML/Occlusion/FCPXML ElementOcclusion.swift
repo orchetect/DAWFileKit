@@ -9,7 +9,7 @@
 import Foundation
 
 extension FinalCutPro.FCPXML {
-    public enum ElementOcclusion: Equatable, Hashable, CaseIterable {
+    public enum ElementOcclusion: Equatable, Hashable, CaseIterable, Sendable {
         /// The element is not occluded at all by its parent.
         case notOccluded
         

@@ -10,7 +10,7 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     /// Type-erased box containing a specialized role instance.
-    public enum AnyRole: Equatable, Hashable {
+    public enum AnyRole: Equatable, Hashable, Sendable {
         /// An audio role.
         case audio(_ role: AudioRole)
         

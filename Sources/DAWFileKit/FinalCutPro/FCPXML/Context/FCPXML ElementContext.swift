@@ -10,8 +10,8 @@ import Foundation
 import OTCore
 
 extension FinalCutPro.FCPXML {
-    /// Wrapper for a dictionary key name that also contains strong type information about its
-    /// expected value.
+    /// Element context identity and value builder to produce strongly-typed information gathered
+    /// from an element.
     public struct ElementContext<Value> {
         public let valueBuilder: ValueBuilder
         

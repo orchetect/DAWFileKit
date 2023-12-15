@@ -13,7 +13,7 @@ extension FinalCutPro.FCPXML {
     // TODO: this list is by no means complete, the DTD contains more element names we're not utilizing yet
     
     /// FCPXML element types.
-    public enum ElementType: String, Equatable, Hashable, CaseIterable {
+    public enum ElementType: String, Equatable, Hashable, CaseIterable, Sendable {
         // root
         case fcpxml
         

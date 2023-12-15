@@ -11,7 +11,7 @@ import Foundation
 // MARK: - AnyElementModelType
 
 extension FinalCutPro.FCPXML {
-    public struct AnyElementModelType {
+    public struct AnyElementModelType: Sendable {
         public var base: any FCPXMLElementModelTypeProtocol
         
         public var supportedElementTypes: Set<FinalCutPro.FCPXML.ElementType> {

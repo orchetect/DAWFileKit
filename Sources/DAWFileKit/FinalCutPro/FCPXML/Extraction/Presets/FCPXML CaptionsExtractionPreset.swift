@@ -38,8 +38,10 @@ extension FCPXMLExtractionPreset where Self == FinalCutPro.FCPXML.CaptionsExtrac
 }
 
 extension FinalCutPro.FCPXML {
+    // TODO: XMLElement is not Sendable
+    
     /// An extracted caption element with pertinent data.
-    public struct ExtractedCaption: FCPXMLExtractedModelElement {
+    public struct ExtractedCaption: FCPXMLExtractedModelElement, @unchecked Sendable {
         public typealias Model = Caption
         public let element: XMLElement
         public let breadcrumbs: [XMLElement]

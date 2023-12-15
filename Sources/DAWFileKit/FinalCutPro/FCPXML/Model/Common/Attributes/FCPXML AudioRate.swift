@@ -11,7 +11,7 @@ import Foundation
 extension FinalCutPro.FCPXML {
     /// `audioRate` attribute value.
     /// These are all of the rates that are selectable within Final Cut Pro 10.6.10.
-    public enum AudioRate: Equatable, Hashable, CaseIterable {
+    public enum AudioRate: Equatable, Hashable, CaseIterable, Sendable {
         case rate32kHz
         case rate44_1kHz
         case rate48kHz

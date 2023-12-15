@@ -10,7 +10,7 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     /// Clip source enable value. (Used with `asset-clip` and `mc-clip`)
-    public enum ClipSourceEnable: String, Equatable, Hashable, CaseIterable {
+    public enum ClipSourceEnable: String, Equatable, Hashable, CaseIterable, Sendable {
         /// Audio and Video.
         case all
         

@@ -10,7 +10,7 @@ import Foundation
 
 extension FinalCutPro.FCPXML {
     /// Type-erased box containing a specialized interpolated role instance.
-    public enum AnyInterpolatedRole: Equatable, Hashable {
+    public enum AnyInterpolatedRole: Equatable, Hashable, Sendable {
         /// Element's role is a custom role assigned by the user.
         case assigned(AnyRole)
         

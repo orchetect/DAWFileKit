@@ -38,8 +38,10 @@ extension FCPXMLExtractionPreset where Self == FinalCutPro.FCPXML.MarkersExtract
 }
 
 extension FinalCutPro.FCPXML {
+    // TODO: XMLElement is not Sendable
+    
     /// An extracted marker element with pertinent data.
-    public struct ExtractedMarker: FCPXMLExtractedModelElement {
+    public struct ExtractedMarker: FCPXMLExtractedModelElement, @unchecked Sendable {
         public typealias Model = Marker
         public let element: XMLElement
         public let breadcrumbs: [XMLElement]

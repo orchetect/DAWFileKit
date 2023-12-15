@@ -27,4 +27,6 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.FrameRateSource: Sendable { }
+
 #endif

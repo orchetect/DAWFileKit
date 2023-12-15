@@ -11,7 +11,7 @@ import TimecodeKit
 
 extension FinalCutPro.FCPXML {
     /// Role type/classification.
-    public enum RoleType: String, Equatable, Hashable, CaseIterable {
+    public enum RoleType: String, Equatable, Hashable, CaseIterable, Sendable {
         /// Audio role.
         case audio
         

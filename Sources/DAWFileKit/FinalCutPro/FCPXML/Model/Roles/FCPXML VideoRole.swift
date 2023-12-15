@@ -19,7 +19,7 @@ extension FinalCutPro.FCPXML {
     /// > string in FCPXML.
     /// > This is how Final Cut Pro separates role and sub-role.
     /// > Otherwise, any other Unicode character is valid, including accented characters and emojis.
-    public struct VideoRole: Equatable, Hashable {
+    public struct VideoRole: Equatable, Hashable, Sendable {
         public let role: String
         public let subRole: String?
         

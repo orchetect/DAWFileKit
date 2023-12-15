@@ -8,7 +8,9 @@
 
 import Foundation
 
-public protocol FCPXMLElementModelTypeProtocol<ModelType> where Self: Equatable, Self: Hashable {
+public protocol FCPXMLElementModelTypeProtocol<ModelType> 
+where Self: Equatable, Self: Hashable, Self: Sendable
+{
     associatedtype ModelType: FCPXMLElement
     var supportedElementTypes: Set<FinalCutPro.FCPXML.ElementType> { get }
 }
