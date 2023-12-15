@@ -49,7 +49,7 @@ extension FinalCutPro.FCPXML.Marker {
     /// Initialize a new marker by providing its name and configuration.
     public init(
         name: String,
-        configuration: FinalCutPro.FCPXML.Marker.MarkerConfiguration,
+        configuration: FinalCutPro.FCPXML.Marker.Configuration,
         start: Fraction,
         duration: Fraction? = nil,
         note: String? = nil
@@ -129,7 +129,7 @@ extension FinalCutPro.FCPXML.Marker {
         set { element.fcpNote = newValue }
     }
     
-    public var configuration: MarkerConfiguration {
+    public var configuration: Configuration {
         get { element.fcpMarkerConfiguration ?? .standard }
         set { element.fcpMarkerConfiguration = newValue }
     }
@@ -181,7 +181,7 @@ extension XMLElement {
     // TODO: needs unit testing :)
     /// FCPXML: Get or set the marker type and configuration. Setting `nil` has no effect.
     /// Call on a `marker` or `chapter-marker` element.
-    public var fcpMarkerConfiguration: FinalCutPro.FCPXML.Marker.MarkerConfiguration? {
+    public var fcpMarkerConfiguration: FinalCutPro.FCPXML.Marker.Configuration? {
         get {
             guard let markerElementType = fcpMarkerElementType
             else { return nil }
@@ -316,10 +316,10 @@ extension XMLElement {
     }
 }
 
-// MARK: - MarkerConfiguration
+// MARK: - Configuration
 
 extension FinalCutPro.FCPXML.Marker {
-    public enum MarkerConfiguration: Equatable, Hashable, Sendable {
+    public enum Configuration: Equatable, Hashable, Sendable {
         /// Standard Marker.
         /// Contains no additional metadata.
         case standard
@@ -336,7 +336,7 @@ extension FinalCutPro.FCPXML.Marker {
     }
 }
 
-extension FinalCutPro.FCPXML.Marker.MarkerConfiguration {
+extension FinalCutPro.FCPXML.Marker.Configuration {
     /// Returns the associated element type.
     internal var markerElementType: FinalCutPro.FCPXML.Marker.MarkerElementType {
         switch self {
@@ -369,9 +369,9 @@ extension XMLElement { // Any Marker
     /// FCPXML: Returns the marker kind.
     /// Call on `marker` or `chapter-marker` elements.
     public var fcpMarkerKind: FinalCutPro.FCPXML.Marker.MarkerKind? {
-        guard let fcpMarkerConfiguration = fcpMarkerConfiguration else { return nil }
+        guard let markerConfiguration = fcpMarkerConfiguration else { return nil }
         
-        switch fcpMarkerConfiguration {
+        switch markerConfiguration {
         case .standard: return .standard
         case .chapter: return .chapter
         case .toDo: return .toDo

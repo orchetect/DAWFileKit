@@ -73,7 +73,7 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Marker configuration.
-        public var configuration: FinalCutPro.FCPXML.Marker.MarkerConfiguration {
+        public var configuration: FinalCutPro.FCPXML.Marker.Configuration {
             model.configuration
         }
         

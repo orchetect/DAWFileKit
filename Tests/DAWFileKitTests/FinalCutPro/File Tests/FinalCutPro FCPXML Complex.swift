@@ -284,7 +284,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         timecode: Timecode,
         name: String,
         note: String?,
-        config: FinalCutPro.FCPXML.Marker.MarkerConfiguration,
+        config: FinalCutPro.FCPXML.Marker.Configuration,
         clip: ClipInfo
         // inheritedRoles: [FinalCutPro.FCPXML.Role]
     )
