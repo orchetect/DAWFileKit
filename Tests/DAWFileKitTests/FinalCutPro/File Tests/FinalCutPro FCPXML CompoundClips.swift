@@ -27,7 +27,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
     
     /// Ensure that markers directly attached to compound clips (`ref-clip`s) on the main timeline
     /// are preserved, while all markers within compound clips are discarded.
-    func testExtractElements_MainTimeline() async throws {
+    func testExtract_MainTimeline() async throws {
         // load file
         let rawData = try fileContents
         
@@ -39,7 +39,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .mainTimeline)
+            .extract(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
         
@@ -52,7 +52,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         )
     }
     
-    func testExtractElements_Deep() async throws {
+    func testExtract_Deep() async throws {
         // load file
         let rawData = try fileContents
         
@@ -64,12 +64,12 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .deep())
+            .extract(preset: .markers, scope: .deep())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 5)
     }
     
-    func testExtractElements_allElementTypes() async throws {
+    func testExtract_allElementTypes() async throws {
         // load file
         let rawData = try fileContents
         
@@ -80,7 +80,7 @@ final class FinalCutPro_FCPXML_CompoundClips: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = await event.extractElements(
+        let extractedMarkers = await event.extract(
             types: [.marker, .chapterMarker],
             scope: FinalCutPro.FCPXML.ExtractionScope(
                 auditions: .all,

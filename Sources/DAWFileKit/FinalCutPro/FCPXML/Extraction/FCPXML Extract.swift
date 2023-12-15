@@ -22,7 +22,7 @@ extension XMLElement {
     /// > to any parent timelines above it.
     /// >
     /// > If full context is required, do not use this method, but use
-    /// > ``fcpExtractElements(scope:)`` instead.
+    /// > ``fcpExtract(types:scope:)`` instead.
     ///
     /// - Parameters:
     ///   - constrainToLocalTimeline: If `true`, calculations for interior elements that involve the
@@ -46,7 +46,7 @@ extension XMLElement {
         )
         
         guard let elementType = fcpElementType,
-              let extractedElement = await fcpExtractElements(
+              let extractedElement = await fcpExtract(
                   types: [elementType],
                   scope: scope
               )

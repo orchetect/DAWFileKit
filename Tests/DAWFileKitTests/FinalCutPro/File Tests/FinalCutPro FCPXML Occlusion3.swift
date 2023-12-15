@@ -152,7 +152,7 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .mainTimeline)
+            .extract(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 2)
         
@@ -174,7 +174,7 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         var scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
         scope.occlusions = .allCases
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: scope)
+            .extract(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 2)
         
@@ -195,7 +195,7 @@ final class FinalCutPro_FCPXML_Occlusion3: FCPXMLTestCase {
         // extract markers
         var scope: FinalCutPro.FCPXML.ExtractionScope = .deep()
         scope.occlusions = .allCases
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(extractedMarkers.map(\.name), ["Marker 1", "Marker 2"])

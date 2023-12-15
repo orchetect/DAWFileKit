@@ -18,11 +18,11 @@ extension FCPXMLElement {
     /// - Parameters:
     ///   - types: Element types to include. If empty, all element types will be returned.
     ///   - scope: Extraction scope.
-    public func extractElements(
+    public func extract(
         types elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
         scope: FinalCutPro.FCPXML.ExtractionScope
     ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
-        await element.fcpExtractElements(
+        await element.fcpExtract(
             types: elementTypes,
             scope: scope
         )
@@ -33,11 +33,11 @@ extension FCPXMLElement {
     /// - Parameters:
     ///   - preset: Extraction preset.
     ///   - scope: Extraction scope.
-    public func extractElements<Result>(
+    public func extract<Result>(
         preset: some FCPXMLExtractionPreset<Result>,
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
     ) async -> Result {
-        await element.fcpExtractElements(
+        await element.fcpExtract(
             preset: preset,
             scope: scope
         )
@@ -52,11 +52,11 @@ extension XMLElement {
     /// - Parameters:
     ///   - types: Element types to include. If empty, all element types will be returned.
     ///   - scope: Extraction scope.
-    public func fcpExtractElements(
+    public func fcpExtract(
         types elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
         scope: FinalCutPro.FCPXML.ExtractionScope
     ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
-        await _fcpExtractElements(
+        await _fcpExtract(
             types: elementTypes,
             scope: scope,
             ancestors: ancestorElements(includingSelf: false),
@@ -69,7 +69,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - preset: Extraction preset.
     ///   - scope: Extraction scope.
-    public func fcpExtractElements<Result>(
+    public func fcpExtract<Result>(
         preset: some FCPXMLExtractionPreset<Result>,
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
     ) async -> Result {
@@ -94,7 +94,7 @@ extension XMLElement {
     ///     If `nil`, the `resources` found in the document will be used if present.
     ///   - overrideDirectChildren: Uses the direct children rule supplied instead of the default
     ///     rule for the element type.
-    func _fcpExtractElements<A: Sequence<XMLElement>>(
+    func _fcpExtract<A: Sequence<XMLElement>>(
         types elementTypes: Set<FinalCutPro.FCPXML.ElementType>,
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: A,
@@ -109,7 +109,7 @@ extension XMLElement {
         var scope = scope
         scope.filteredExtractionTypes = elementTypes
         
-        return await _fcpExtractElements(
+        return await _fcpExtract(
             scope: scope,
             ancestors: ancestors,
             resources: resources
@@ -126,7 +126,7 @@ extension XMLElement {
     ///     If `nil`, the `resources` found in the document will be used if present.
     ///   - overrideDirectChildren: Uses the direct children rule supplied instead of the default
     ///     rule for the element type.
-    private func _fcpExtractElements<A: Sequence<XMLElement>>(
+    private func _fcpExtract<A: Sequence<XMLElement>>(
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: A,
         resources: XMLElement?,
@@ -227,7 +227,7 @@ extension XMLElement {
             .filter { ($0.fcpLane ?? 0) != 0 }
         
         let extracted = await withOrderedTaskGroup(sequence: elements) { element in
-            await element._fcpExtractElements(
+            await element._fcpExtract(
                 scope: scope,
                 ancestors: [self] + ancestors,
                 resources: resources
@@ -262,7 +262,7 @@ extension XMLElement {
             .filter { ($0.fcpLane ?? 0) == 0 }
         
         let extracted = await withOrderedTaskGroup(sequence: elements) { element in
-            await element._fcpExtractElements(
+            await element._fcpExtract(
                 scope: scope,
                 ancestors: [self] + ancestors,
                 resources: resources
@@ -306,7 +306,7 @@ extension XMLElement {
         // parse from nearest descendent to furthest, which is the same as
         // parsing ancestors from furthest to nearest
         let extracted = await withOrderedTaskGroup(sequence: iterator) { (descendant, accum) in
-            await descendant.element._fcpExtractElements(
+            await descendant.element._fcpExtract(
                 scope: scope,
                 ancestors: accum + [self] + ancestors,
                 resources: resources,

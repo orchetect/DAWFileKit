@@ -185,7 +185,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         let refClip1 = try XCTUnwrap(storyElements[safe: 4]?.fcpAsRefClip)
         XCTAssertEqual(refClip1.name, "Occlusion Clip 1")
         
-        #warning("> TODO: occlusion within a ref-clip must be tested with fcpExtractElements() and not fcpExtract()")
+        #warning("> TODO: occlusion within a ref-clip must be tested with `fcpExtract(types:scope:)` and not `fcpExtract()`")
 //        let refClip1Sequence = refClip1.sequence
 //        XCTAssertEqual(refClip1Sequence.context[.occlusion], .notOccluded)
 //        XCTAssertEqual(refClip1Sequence.context[.effectiveOcclusion], .notOccluded)
@@ -243,7 +243,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
             == [.notOccluded, .partiallyOccluded]
         )
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .mainTimeline)
+            .extract(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 4)
         
@@ -268,7 +268,7 @@ final class FinalCutPro_FCPXML_Occlusion: FCPXMLTestCase {
         var scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
         scope.occlusions = .allCases
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: scope)
+            .extract(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 7)
         

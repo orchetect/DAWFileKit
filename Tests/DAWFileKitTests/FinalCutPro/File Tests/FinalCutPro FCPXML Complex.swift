@@ -478,7 +478,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: .deep())
+        let extractedMarkers = await event.extract(preset: .markers, scope: .deep())
         XCTAssertEqual(extractedMarkers.count, Self.markerData.count)
         
         // print(debugString(for: extractedMarkers))

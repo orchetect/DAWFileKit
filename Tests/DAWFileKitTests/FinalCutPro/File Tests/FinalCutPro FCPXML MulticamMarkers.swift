@@ -208,7 +208,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: .mainTimeline)
+        let extractedMarkers = await event.extract(preset: .markers, scope: .mainTimeline)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(
@@ -232,7 +232,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
         scope.mcClipAngles = .active
         scope.occlusions = .allCases
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(
@@ -260,7 +260,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
         scope.mcClipAngles = .all
         scope.occlusions = .allCases
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 2)
         
         XCTAssertEqual(
@@ -281,7 +281,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = await event.extractElements(
+        let extractedMarkers = await event.extract(
             preset: .markers,
             scope: .deep(mcClipAngles: .active)
         )
@@ -309,7 +309,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = await event.extractElements(
+        let extractedMarkers = await event.extract(
             preset: .markers,
             scope: .deep(mcClipAngles: .all)
         )

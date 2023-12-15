@@ -81,7 +81,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .mainTimeline)
+            .extract(preset: .markers, scope: .mainTimeline)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
         
@@ -109,7 +109,7 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
         
         // extract markers
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .deep())
+            .extract(preset: .markers, scope: .deep())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 3)
         

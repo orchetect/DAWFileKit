@@ -163,7 +163,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         let event = try XCTUnwrap(fcpxml.allEvents().first)
         
         // extract markers
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: .mainTimeline)
+        let extractedMarkers = await event.extract(preset: .markers, scope: .mainTimeline)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         XCTAssertEqual(
@@ -186,7 +186,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         // extract markers
         var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
         scope.occlusions = .allCases
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         XCTAssertEqual(extractedMarkers.count, 1)
         
         XCTAssertEqual(
@@ -210,7 +210,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         var scope = FinalCutPro.FCPXML.ExtractionScope.deep()
         scope.mcClipAngles = .active
         scope.occlusions = .allCases
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         // 1 on mc-clip, and 5 with the mc-clip
         XCTAssertEqual(extractedMarkers.count, 1 + 2)
         
@@ -237,7 +237,7 @@ final class FinalCutPro_FCPXML_MulticamMarkers2: FCPXMLTestCase {
         var scope = FinalCutPro.FCPXML.ExtractionScope.deep()
         scope.mcClipAngles = .all
         scope.occlusions = .allCases
-        let extractedMarkers = await event.extractElements(preset: .markers, scope: scope)
+        let extractedMarkers = await event.extract(preset: .markers, scope: scope)
         // 1 on mc-clip, and 5 with the mc-clip
         XCTAssertEqual(extractedMarkers.count, 1 + 5)
         

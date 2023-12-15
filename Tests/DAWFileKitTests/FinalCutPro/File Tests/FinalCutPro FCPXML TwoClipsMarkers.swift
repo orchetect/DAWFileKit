@@ -183,7 +183,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
         // extract markers
         
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: .init())
+            .extract(preset: .markers, scope: .init())
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 3)
         
@@ -260,7 +260,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             excludedTraversalTypes: [.title]
         )
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: scope)
+            .extract(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 1)
         
@@ -283,7 +283,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             excludedTraversalTypes: [.gap]
         )
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: scope)
+            .extract(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 2)
         
@@ -309,7 +309,7 @@ final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {
             excludedTraversalTypes: [.gap, .title]
         )
         let extractedMarkers = await event
-            .extractElements(preset: .markers, scope: scope)
+            .extract(preset: .markers, scope: scope)
             .zeroIndexed
         XCTAssertEqual(extractedMarkers.count, 0)
     }
