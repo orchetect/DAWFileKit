@@ -37,7 +37,8 @@ extension FinalCutPro.FCPXML.Text {
         rollUpHeight: String? = nil,
         position: String? = nil,
         placement: Placement? = nil,
-        alignment: Alignment? = nil
+        alignment: Alignment? = nil,
+        textStyles: [XMLElement] = []
     ) {
         self.init()
         
@@ -130,9 +131,14 @@ extension FinalCutPro.FCPXML.Text {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.Text {
-    /// Returns child `text-style` elements.
+    /// Get or set child `text-style` elements.
     public var textStyles: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        element.fcpTextStyles
+        get {
+            element.fcpTextStyles
+        }
+        set {
+            element._updateChildElements(ofType: elementType, with: newValue)
+        }
     }
 }
 

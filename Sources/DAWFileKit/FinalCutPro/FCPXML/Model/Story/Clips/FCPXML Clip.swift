@@ -157,9 +157,13 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLElementOptionalModDate { }
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.Clip {
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
     
     /// Returns child story elements.

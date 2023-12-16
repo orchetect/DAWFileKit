@@ -81,9 +81,13 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.Media.Multicam.Angle {
-    /// Story elements contained within the angle.
+    /// Get or set story elements contained within the angle.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
 }
 

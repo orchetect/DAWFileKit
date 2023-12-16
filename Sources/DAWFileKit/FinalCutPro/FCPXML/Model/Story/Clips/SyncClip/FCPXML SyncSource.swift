@@ -82,9 +82,10 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.SyncClip.SyncSource {
-    /// Returns child `audio-role-source` elements.
+    /// Get or set child `audio-role-source` elements.
     public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
-        element.fcpAudioRoleSources()
+        get { element.fcpAudioRoleSources }
+        set { element.fcpAudioRoleSources = newValue }
     }
 }
 
@@ -103,8 +104,9 @@ extension XMLElement {
 extension XMLElement {
     /// FCPXML: Returns child `sync-source` elements.
     /// Use on `sync-clip` elements only.
-    public func fcpSyncSources() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.SyncClip.SyncSource> {
-        children(whereFCPElement: .syncSource)
+    public var fcpSyncSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.SyncClip.SyncSource> {
+        get { children(whereFCPElement: .syncSource) }
+        set { _updateChildElements(ofType: .syncSource, with: newValue) }
     }
 }
 

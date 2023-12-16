@@ -141,20 +141,14 @@ extension FinalCutPro.FCPXML.Sequence {
     /// Get or set the child `spine` element. (Required)
     public var spine: FinalCutPro.FCPXML.Spine {
         get {
-            if let existingElement = element.fcpSpine() {
-                return existingElement
-            }
-            
-            // create new element and attach
-            let newElement = FinalCutPro.FCPXML.Spine()
-            element.addChild(newElement.element)
-            return newElement
+            element.firstChild(whereFCPElement: .spine, defaultChild: .init())
         }
         set {
-            let current = spine
-            guard current.element != newValue.element else { return }
-            current.element.detach()
-            element.addChild(newValue.element)
+            element._updateFirstChildElement(
+                ofType: .spine,
+                withChild: newValue,
+                default: .init()
+            )
         }
     }
 }

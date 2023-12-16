@@ -92,20 +92,13 @@ extension FinalCutPro.FCPXML.Project {
     /// Get or set the child `sequence` element. (Required)
     public var sequence: FinalCutPro.FCPXML.Sequence {
         get {
-            if let seq = element.firstChild(whereFCPElement: .sequence) {
-                return seq
-            }
-            
-            // create new element and attach
-            let newSequence = FinalCutPro.FCPXML.Sequence()
-            element.addChild(newSequence.element)
-            return newSequence
+            element.firstChild(whereFCPElement: .sequence, defaultChild: .init())
         }
         set {
-            let current = sequence
-            guard current.element != newValue.element else { return }
-            current.element.detach()
-            element.addChild(newValue.element)
+            element._updateFirstChildElement(
+                ofType: .sequence,
+                withChild: newValue
+            )
         }
     }
 }

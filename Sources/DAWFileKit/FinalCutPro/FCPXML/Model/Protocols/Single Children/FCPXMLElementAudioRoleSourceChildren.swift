@@ -16,17 +16,18 @@ public protocol FCPXMLElementAudioRoleSourceChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementAudioRoleSourceChildren {
-    // TODO: add set support, not just read-only
     public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
-        element.fcpAudioRoleSources()
+        get { element.fcpAudioRoleSources }
+        set { element.fcpAudioRoleSources = newValue }
     }
 }
 
 extension XMLElement {
     /// FCPXML: Returns child `audio-role-source` elements.
     /// Use on `ref-clip`, `sync-source`, or `mc-source` elements.
-    public func fcpAudioRoleSources() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
-        children(whereFCPElement: .audioRoleSource)
+    public var fcpAudioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
+        get { children(whereFCPElement: .audioRoleSource) }
+        set { _updateChildElements(ofType: .audioRoleSource, with: newValue) }
     }
 }
 

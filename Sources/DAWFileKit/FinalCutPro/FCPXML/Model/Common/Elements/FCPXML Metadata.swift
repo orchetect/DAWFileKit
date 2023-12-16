@@ -41,12 +41,8 @@ extension FinalCutPro.FCPXML.Metadata {
 extension FinalCutPro.FCPXML.Metadata {
     /// Wraps children in a `metadata` container element.
     public init(from children: [XMLElement]) {
-        let container = (try? XMLElement(xmlString: "<metadata></metadata>")) ?? XMLElement()
-        
-        children.forEach {
-            container.addChild($0)
-        }
-        
+        let container = XMLElement(name: elementType.rawValue)
+        container.addChildren(children)
         element = container
     }
 }
@@ -64,9 +60,13 @@ extension FinalCutPro.FCPXML.Metadata {
 extension FinalCutPro.FCPXML.Metadata {
     // TODO: add strongly-typed enums/structs for metadata types
     
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
 }
 

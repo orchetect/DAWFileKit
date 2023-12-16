@@ -152,9 +152,13 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLElementOptionalModDate { }
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.MCClip {
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
     
     /// Returns child story elements.
@@ -170,7 +174,8 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetadataChild { }
 extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
     /// Returns child `mc-source` elements.
     public var sources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.MulticamSource> {
-        element.fcpMulticamSources
+        get { element.fcpMulticamSources }
+        set { element.fcpMulticamSources = newValue }
     }
 }
 

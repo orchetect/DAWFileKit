@@ -64,7 +64,7 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
     public enum Attributes: String {
         /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
         case sourceChannels = "srcCh"
-        /// Output audio channels (comma separated, from: `L,R,C,LFE,Ls,Rs,X`)
+        /// Output audio channels (comma separated, from: `L, R, C, LFE, Ls, Rs, X`)
         case outputChannels = "outCh"
         /// Output role assignment.
         case role
@@ -119,9 +119,13 @@ extension FinalCutPro.FCPXML.AudioChannelSource: FCPXMLElementOptionalDuration {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.AudioChannelSource {
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
     
     // TODO: public var adjusts: []

@@ -82,9 +82,13 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.AudioRoleSource {
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
 }
 

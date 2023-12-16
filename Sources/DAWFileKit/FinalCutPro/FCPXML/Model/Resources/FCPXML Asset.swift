@@ -243,20 +243,14 @@ extension FinalCutPro.FCPXML.Asset {
     // only used by `asset`
     public var mediaRep: FinalCutPro.FCPXML.MediaRep {
         get {
-            if let existingElement = element.firstChild(whereFCPElement: .mediaRep) {
-                return existingElement
-            }
-            
-            // create new element and attach
-            let newElement = FinalCutPro.FCPXML.MediaRep()
-            element.addChild(newElement.element)
-            return newElement
+            element.firstChild(whereFCPElement: .mediaRep, defaultChild: .init())
         }
         set {
-            let current = mediaRep
-            guard current.element != newValue.element else { return }
-            current.element.detach()
-            element.addChild(newValue.element)
+            element._updateFirstChildElement(
+                ofType: .mediaRep,
+                withChild: newValue,
+                default: .init()
+            )
         }
     }
 }

@@ -78,6 +78,43 @@ extension XMLElement {
     ) -> XMLElement? {
         childElements.first(whereFCPElementType: elementType)
     }
+    
+    /// FCPXML: Returns the first child element of the given element type.
+    /// If no matching child is found, the default is added as a child and returned.
+    ///
+    /// - Warning: Ensure the `defaultChild` is a new instance not already attached to any parent.
+    public func firstChildElement(
+        whereFCPElementType elementType: FinalCutPro.FCPXML.ElementType,
+        defaultChild: @autoclosure () -> XMLElement
+    ) -> XMLElement {
+        if let existingChild = childElements
+            .first(whereFCPElementType: elementType)
+        {
+            return existingChild
+        } else {
+            let dc = defaultChild()
+            addChild(dc)
+            return dc
+        }
+    }
+    
+    /// FCPXML: Returns the first child element of the given element type.
+    /// If no matching child is found, the default is added as a child and returned.
+    ///
+    /// - Warning: Ensure the `defaultChild` is a new instance not already attached to any parent.
+    public func firstDefaultedChildElement(
+        whereFCPElementType elementType: FinalCutPro.FCPXML.ElementType
+    ) -> XMLElement {
+        if let existingChild = childElements
+            .first(whereFCPElementType: elementType)
+        {
+            return existingChild
+        } else {
+            let defaultChild = XMLElement(name: elementType.rawValue)
+            addChild(defaultChild)
+            return defaultChild
+        }
+    }
 }
 
 #endif

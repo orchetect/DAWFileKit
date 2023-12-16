@@ -111,19 +111,29 @@ extension FinalCutPro.FCPXML.Audition {
     /// Returns the audition clips.
     /// The first clip is the active audition and subsequent clips are inactive.
     /// The convenience property ``activeClip`` is also available to return the first clip.
-    public var clips: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        element.fcpStoryElements
+    public var clips: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
     
     /// Convenience to return the active audition clip.
     public var activeClip: XMLElement? {
-        clips.first
+        get { clips.first }
+        set {
+            guard let newValue = newValue else { return }
+            guard !clips.isEmpty else {
+                element.addChild(newValue)
+                return
+            }
+            element.replaceChild(at: 0, with: newValue)
+        }
     }
     
     /// Convenience to return the inactive audition clips, if any.
-    public var inactiveClips: LazyFilterSequence<
-        LazyCompactMapSequence<[XMLNode], XMLElement>.Elements
-    >.SubSequence {
+    public var inactiveClips: LazyCompactMapSequence<[XMLNode], XMLElement>.SubSequence {
         clips.dropFirst()
     }
 }

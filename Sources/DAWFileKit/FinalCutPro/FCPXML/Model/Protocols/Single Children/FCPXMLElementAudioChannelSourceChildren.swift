@@ -16,17 +16,18 @@ public protocol FCPXMLElementAudioChannelSourceChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementAudioChannelSourceChildren {
-    // TODO: add set support, not just read-only
     public var audioChannelSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioChannelSource> {
-        element.fcpAudioChannelSources()
+        get { element.fcpAudioChannelSources }
+        set { element.fcpAudioChannelSources = newValue }
     }
 }
 
 extension XMLElement {
     /// FCPXML: Returns child `audio-channel-source` elements.
     /// Use on `clip` or `asset-clip` elements.
-    public func fcpAudioChannelSources() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioChannelSource> {
-        children(whereFCPElement: .audioChannelSource)
+    public var fcpAudioChannelSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioChannelSource> {
+        get { children(whereFCPElement: .audioChannelSource) }
+        set { _updateChildElements(ofType: .audioChannelSource, with: newValue) }
     }
 }
 #endif

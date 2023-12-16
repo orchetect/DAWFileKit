@@ -149,9 +149,13 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.SyncClip {
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
     
     /// Returns child story elements.
@@ -167,7 +171,8 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetadataChild { }
 extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
     /// Returns child `sync-source` elements.
     public var syncSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.SyncClip.SyncSource> {
-        element.fcpSyncSources()
+        get { element.fcpSyncSources }
+        set { element.fcpSyncSources = newValue }
     }
 }
 

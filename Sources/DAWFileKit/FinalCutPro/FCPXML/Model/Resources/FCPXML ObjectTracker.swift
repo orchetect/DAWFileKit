@@ -48,7 +48,7 @@ extension FinalCutPro.FCPXML.ObjectTracker {
     ) {
         self.init()
         
-        trackingShapes.forEach { element.addChild($0.element) }
+        element._addChildren(trackingShapes)
     }
 }
 

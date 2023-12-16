@@ -16,16 +16,18 @@ public protocol FCPXMLElementTextChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementTextChildren {
-    // TODO: add set support, not just read-only
     public var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
-        element.fcpTexts()
+        get { element.fcpTexts }
+        set { element.fcpTexts = newValue }
     }
 }
 
 extension XMLElement {
     /// FCPXML: Returns child `text` elements.
-    public func fcpTexts() -> LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
-        children(whereFCPElement: .text)
+    public var fcpTexts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
+        get { children(whereFCPElement: .text) }
+        set { _updateChildElements(ofType: .text, with: newValue) }
     }
 }
+
 #endif

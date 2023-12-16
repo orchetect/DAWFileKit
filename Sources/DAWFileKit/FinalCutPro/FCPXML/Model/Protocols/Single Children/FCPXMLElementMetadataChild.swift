@@ -16,20 +16,8 @@ public protocol FCPXMLElementMetadataChild: FCPXMLElement {
 
 extension FCPXMLElementMetadataChild {
     public var metadata: FinalCutPro.FCPXML.Metadata? {
-        get {
-            element
-                .firstChild(whereFCPElement: .metadata)
-        }
-        set {
-            if let existingElement = element
-                .firstChildElement(whereFCPElementType: .metadata)
-            {
-                existingElement.detach()
-            }
-            if let newValue = newValue {
-                element.addChild(newValue.element)
-            }
-        }
+        get { element.firstChild(whereFCPElement: .metadata) }
+        set { element._updateChildElements(ofType: .metadata, withChild: newValue) }
     }
 }
 

@@ -161,12 +161,24 @@ extension FinalCutPro.FCPXML.Media: FCPXMLElementOptionalModDate { }
 extension FinalCutPro.FCPXML.Media {
     /// Returns the `multicam` child element if one exists.
     public var multicam: Multicam? {
-        element.firstChild(whereFCPElement: .multicam)
+        get { element.firstChild(whereFCPElement: .multicam) }
+        set {
+            // there can only be a sequence or multicam, so remove old one if present
+            element._removeChildren(ofType: .sequence)
+            
+            element._updateChildElements(ofType: .multicam, withChild: newValue)
+        }
     }
     
     /// Returns the `sequence` child element if one exists.
     public var sequence: FinalCutPro.FCPXML.Sequence? {
-        element.firstChild(whereFCPElement: .sequence)
+        get { element.firstChild(whereFCPElement: .sequence) }
+        set {
+            // there can only be a sequence or multicam, so remove old one if present
+            element._removeChildren(ofType: .multicam)
+            
+            element._updateChildElements(ofType: .sequence, withChild: newValue)
+        }
     }
 }
 

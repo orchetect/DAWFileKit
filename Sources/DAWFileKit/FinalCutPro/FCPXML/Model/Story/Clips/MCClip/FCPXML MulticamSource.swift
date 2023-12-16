@@ -99,7 +99,8 @@ extension XMLElement { // MCClip
     /// FCPXML: Returns child `mc-source` elements.
     /// Use on `multicam` elements.
     public var fcpMulticamSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.MulticamSource> {
-        children(whereFCPElement: .mcSource)
+        get { children(whereFCPElement: .mcSource) }
+        set { _updateChildElements(ofType: .mcSource, with: newValue) }
     }
 }
 

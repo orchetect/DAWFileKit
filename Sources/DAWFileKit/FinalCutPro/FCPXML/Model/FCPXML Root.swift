@@ -65,27 +65,17 @@ extension FinalCutPro.FCPXML.Root {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.Root {
-    /// Utility:
-    /// Returns the `resources` XML element if it exists.
+    /// Get or set the `resources` XML element.
     /// Exactly one of these elements is always required.
     public var resources: XMLElement {
         get {
-            if let existingElement = element
-                .firstChildElement(whereFCPElementType: .resources)
-            {
-                return existingElement
-            }
-            
-            // create new element and attach
-            let newElement = XMLElement(name: FinalCutPro.FCPXML.ElementType.resources.rawValue)
-            element.addChild(newElement)
-            return newElement
+            element.firstDefaultedChildElement(whereFCPElementType: .resources)
         }
         set {
-            let current = resources
-            guard current != newValue else { return }
-            current.detach()
-            element.addChild(newValue)
+            element._updateFirstChildElement(
+                ofType: .resources,
+                withChild: newValue
+            )
         }
     }
     

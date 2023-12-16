@@ -16,9 +16,9 @@ public protocol FCPXMLElementTextStyleDefinitionChildren: FCPXMLElement {
 }
 
 extension FCPXMLElementTextStyleDefinitionChildren {
-    // TODO: add set support, not just read-only
     public var fcpTextStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        element.fcpTextStyleDefinitions()
+        get { element.fcpTextStyleDefinitions }
+        set { element.fcpTextStyleDefinitions = newValue }
     }
 }
 
@@ -26,9 +26,14 @@ extension XMLElement {
     // TODO: no model objects yet, so just return the bare XML
     
     /// FCPXML: Returns child `text-style-def` elements.
-    public func fcpTextStyleDefinitions() -> LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
-        childElements
-            .filter(whereFCPElementType: .textStyleDef)
+    public var fcpTextStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
+        get {
+            childElements
+                .filter(whereFCPElementType: .textStyleDef)
+        }
+        set {
+            _updateChildElements(ofType: .textStyleDef, with: newValue)
+        }
     }
 }
 #endif

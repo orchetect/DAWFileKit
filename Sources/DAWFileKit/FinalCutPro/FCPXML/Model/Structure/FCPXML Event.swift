@@ -81,9 +81,10 @@ extension FinalCutPro.FCPXML.Event {
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.Event {
-    /// Returns child `project` elements.
+    /// Get or set child `project` elements.
     public var projects: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Project> {
-        element.children(whereFCPElement: .project)
+        get { element.children(whereFCPElement: .project) }
+        set { element._updateChildElements(ofType: .project, with: newValue) }
     }
     
     /// Returns child story elements.
@@ -91,9 +92,13 @@ extension FinalCutPro.FCPXML.Event {
         element.fcpStoryElements
     }
     
-    /// Returns all child elements.
+    /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
-        element.childElements
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
     }
 }
 

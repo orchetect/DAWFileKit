@@ -67,14 +67,6 @@ extension Sequence where Element == XMLElement {
     ) -> LazyCompactMapSequence<LazySequence<Self>.Elements, Model> {
         self.lazy.compactMap { Model(element: $0) }
     }
-    
-    /// FCPXML: Filter the element sequence by a specific concrete FCPXML model types.
-    /// Multiple types may be specified, provided that they have the same concrete return type.
-    public func filter<Model>(
-        whereFCPElements elementTypes: Set<FinalCutPro.FCPXML.ElementModelType<Model>>
-    ) -> LazyCompactMapSequence<LazySequence<Self>.Elements, Model> {
-        self.lazy.compactMap { Model(element: $0) }
-    }
 }
 
 // MARK: - LazySequence Filter (Strongly-Typed)
@@ -90,14 +82,6 @@ extension LazySequence where Element == XMLElement {
     /// FCPXML: Filter the element sequence by a specific concrete FCPXML model type.
     public func filter<Model>(
         whereFCPElement modelType: FinalCutPro.FCPXML.ElementModelType<Model>
-    ) -> LazyCompactMapSequence<Base, Model?> {
-        compactMap { Model(element: $0) }
-    }
-    
-    /// FCPXML: Filter the element sequence by a specific concrete FCPXML model types.
-    /// Multiple types may be specified, provided that they have the same concrete return type.
-    public func filter<Model>(
-        whereFCPElements modelTypes: Set<FinalCutPro.FCPXML.ElementModelType<Model>>
     ) -> LazyCompactMapSequence<Base, Model?> {
         compactMap { Model(element: $0) }
     }
@@ -126,7 +110,27 @@ extension XMLElement {
     public func firstChild<Model>(
         whereFCPElement modelType: FinalCutPro.FCPXML.ElementModelType<Model>
     ) -> Model? {
-        childElements.first(whereFCPElement: modelType)
+        childElements
+            .first(whereFCPElement: modelType)
+    }
+    
+    /// FCPXML: Returns the first child element of the given element type wrapped in a model object.
+    /// If no matching child is found, the default is added as a child and returned.
+    ///
+    /// - Warning: Ensure the `defaultChild` is a new instance not already attached to any parent.
+    public func firstChild<Model>(
+        whereFCPElement modelType: FinalCutPro.FCPXML.ElementModelType<Model>,
+        defaultChild: @autoclosure () -> Model
+    ) -> Model {
+        if let existingChild = childElements
+            .first(whereFCPElement: modelType)
+        {
+            return existingChild
+        } else {
+            let dc = defaultChild()
+            addChild(dc.element)
+            return dc
+        }
     }
 }
 

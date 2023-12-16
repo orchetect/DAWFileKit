@@ -22,7 +22,12 @@ public protocol FCPXMLElementBookmarkChild: FCPXMLElement {
 extension FCPXMLElementBookmarkChild {
     // TODO: add set support, not just read-only
     public var bookmark: XMLElement? {
-        element.firstChildElement(named: "bookmark")
+        get {
+            element.firstChildElement(named: FinalCutPro.FCPXML.ElementType.bookmark.rawValue)
+        }
+        set {
+            element._updateChildElements(ofType: .bookmark, withChild: newValue)
+        }
     }
     
     public var bookmarkData: Data? {
