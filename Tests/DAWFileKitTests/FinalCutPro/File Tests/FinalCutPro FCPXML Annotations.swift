@@ -29,21 +29,16 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
     
     func testParse() throws {
         // load file
-        
         let rawData = try fileContents
         
         // parse file
-        
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        
         XCTAssertEqual(fcpxml.version, .ver1_11)
         
         // resources
-        
         let resources = fcpxml.root.resources
-        
         XCTAssertEqual(resources.childElements.count, 3)
         
         let r1 = try XCTUnwrap(resources.childElements[safe: 0]?.fcpAsFormat)
@@ -113,14 +108,12 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(r3.stereoscopic, nil)
         
         // library
-        
         let library = try XCTUnwrap(fcpxml.root.library)
         
         let libraryURL = URL(string: "file:///Users/user/Movies/MyLibrary.fcpbundle/")
         XCTAssertEqual(library.location, libraryURL)
         
         // events
-        
         let events = fcpxml.allEvents()
         XCTAssertEqual(events.count, 1)
         
@@ -128,7 +121,6 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(event.name, "Test Event")
         
         // projects
-        
         let projects = try XCTUnwrap(events[safe: 0]).projects.zeroIndexed
         XCTAssertEqual(projects.count, 1)
 
@@ -137,7 +129,6 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(project.startTimecode(), Self.tc("01:00:00:00", .fps25))
         
         // sequence
-        
         let sequence = try XCTUnwrap(projects[safe: 0]?.sequence)
         XCTAssertEqual(sequence.format, "r1")
         XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("01:00:00:00", .fps25))
@@ -148,7 +139,6 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
         // story elements (clips etc.)
-        
         let spine = try XCTUnwrap(sequence.spine)
         XCTAssertEqual(spine.storyElements.count, 1)
         
@@ -167,55 +157,58 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         #warning("> TODO: finish this - but can't test absolute timecodes without running element extraction")
         // markers
         
-        let element1Markers = element1.contents.filter(whereFCPElement: .marker)
+        let element1Markers = element1.contents
+            .filter(whereFCPElement: .marker)
+            .zeroIndexed
         XCTAssertEqual(element1Markers.count, 1)
         
-//        let expectedE1Marker0 = FinalCutPro.FCPXML.Marker(
-//            start: Self.tc("00:00:27:10", .fps25),
-//            duration: Self.tc("00:00:00:01", .fps25),
-//            name: "marker1",
-//            configuration: .standard,
-//            note: "m1 notes"
-//        )
-//        XCTAssertEqual(element1Markers[safe: 0], expectedE1Marker0)
+        let expectedE1Marker0 = try XCTUnwrap(element1Markers[safe: 0])
+        XCTAssertEqual(expectedE1Marker0.startAsTimecode(), Self.tc("00:00:27:10", .fps25))
+        XCTAssertEqual(expectedE1Marker0.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
+        XCTAssertEqual(expectedE1Marker0.name, "marker1")
+        XCTAssertEqual(expectedE1Marker0.configuration, .standard)
+        XCTAssertEqual(expectedE1Marker0.note, "m1 notes")
+        
+        XCTAssertEqual(element1Markers[safe: 0], expectedE1Marker0)
         
         // keywords
         
-//        let element1Keywords = element1.contents.annotations().keywords()
-//        XCTAssertEqual(element1Keywords.count, 2)
-//        
-//        // this keyword applies to entire video clip
-//        let expectedE1Keyword0 = FinalCutPro.FCPXML.Keyword(
-//            name: "keyword1",
-//            start: Self.tc("00:00:00:00", .fps25),
-//            duration: Self.tc("00:00:29:13", .fps25),
-//            note: "k1 notes"
-//        )
-//        XCTAssertEqual(element1Keywords[safe: 0], expectedE1Keyword0)
-//        
-//        let expectedE1Keyword1 = FinalCutPro.FCPXML.Keyword(
-//            name: "keyword2",
-//            start: Self.tc("00:00:15:20", .fps25),
-//            duration: Self.tc("00:00:08:11", .fps25),
-//            note: "k2 notes"
-//        )
-//        XCTAssertEqual(element1Keywords[safe: 1], expectedE1Keyword1)
-//        
-//        // captions
-//        
-//        let element1Captions = element1.contents.annotations().captions()
-//        XCTAssertEqual(element1Captions.count, 2)
-//        
+        let element1Keywords = element1.contents
+            .filter(whereFCPElement: .keyword)
+            .zeroIndexed
+        XCTAssertEqual(element1Keywords.count, 2)
+        
+        // this keyword applies to entire video clip
+        let expectedE1Keyword0 = try XCTUnwrap(element1Keywords[safe: 0])
+        XCTAssertEqual(expectedE1Keyword0.keywords, "keyword1")
+        XCTAssertEqual(expectedE1Keyword0.startAsTimecode(), Self.tc("00:00:00:00", .fps25))
+        XCTAssertEqual(expectedE1Keyword0.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
+        XCTAssertEqual(expectedE1Keyword0.note, "k1 notes")
+        
+        let expectedE1Keyword1 = try XCTUnwrap(element1Keywords[safe: 1])
+        XCTAssertEqual(expectedE1Keyword1.keywords, "keyword2")
+        XCTAssertEqual(expectedE1Keyword1.startAsTimecode(), Self.tc("00:00:15:20", .fps25))
+        XCTAssertEqual(expectedE1Keyword1.durationAsTimecode(), Self.tc("00:00:08:11", .fps25))
+        XCTAssertEqual(expectedE1Keyword1.note, "k2 notes")
+        
+        // captions
+        
+        let element1Captions = element1.contents
+            .filter(whereFCPElement: .caption)
+            .zeroIndexed
+        XCTAssertEqual(element1Captions.count, 2)
+        
 //        let element1Caption0 = try XCTUnwrap(element1Captions[safe: 0])
 //        XCTAssertEqual(element1Caption0.note, nil)
 //        XCTAssertEqual(element1Caption0.role?.rawValue, "iTT?captionFormat=ITT.en")
-//        XCTAssertEqual(element1Caption0.texts, [
+//        XCTAssertEqual(Array(element1Caption0.texts), [
 //            FinalCutPro.FCPXML.Text(
+//                displayStyle: nil,
 //                rollUpHeight: nil,
 //                position: nil,
-//                placement: "bottom",
+//                placement: .bottom,
 //                alignment: nil,
-//                textStrings: [
+//                textStyles: [
 //                    FinalCutPro.FCPXML.Text.TextString(ref: "ts1", string: "caption1 text")
 //                ]
 //            )
@@ -246,7 +239,7 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
 //                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!)
 //            ]
 //        )
-//        
+        
 //        let element1Caption1 = try XCTUnwrap(element1Captions[safe: 1])
 //        XCTAssertEqual(element1Caption1.note, nil)
 //        XCTAssertEqual(element1Caption1.role?.rawValue, "iTT?captionFormat=ITT.en")
