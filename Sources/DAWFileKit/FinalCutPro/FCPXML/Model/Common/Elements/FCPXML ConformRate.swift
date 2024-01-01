@@ -91,20 +91,17 @@ extension FinalCutPro.FCPXML.ConformRate {
         }
     }
     
+    private var _frameSamplingDefault: FinalCutPro.FCPXML.FrameSampling { .floor }
     /// Frame sampling. (Default: floor)
     public var frameSampling: FinalCutPro.FCPXML.FrameSampling {
         get {
-            let defaultValue: FinalCutPro.FCPXML.FrameSampling = .floor
-            
             guard let value = element.stringValue(forAttributeNamed: Attributes.frameSampling.rawValue)
-            else { return defaultValue }
+            else { return _frameSamplingDefault }
             
-            return FinalCutPro.FCPXML.FrameSampling(rawValue: value) ?? defaultValue
+            return FinalCutPro.FCPXML.FrameSampling(rawValue: value) ?? _frameSamplingDefault
         }
         set {
-            let defaultValue: FinalCutPro.FCPXML.FrameSampling = .floor
-            
-            if newValue == defaultValue {
+            if newValue == _frameSamplingDefault {
                 // can remove attribute if value is default
                 element.removeAttribute(forName: Attributes.frameSampling.rawValue)
             } else {
