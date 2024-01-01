@@ -91,6 +91,15 @@ extension FinalCutPro.FCPXML.Spine {
     public var storyElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         element.fcpStoryElements
     }
+    
+    /// Get or set child elements.
+    public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
+        get { element.childElements }
+        set {
+            element.removeAllChildren()
+            element.addChildren(newValue)
+        }
+    }
 }
 
 // MARK: - Typing
