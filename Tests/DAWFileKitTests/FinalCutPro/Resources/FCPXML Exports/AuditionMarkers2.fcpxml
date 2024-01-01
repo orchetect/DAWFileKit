@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p2997" frameDuration="1001/30000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+    </resources>
+    <library location="file:///Users/stef/Dropbox/_coding/MarkersExtractor/Library/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
+            <project name="AuditionMarkers2" uid="A1ABFB05-77A4-4534-BFAD-E2F63046A53D" modDate="2024-01-01 00:43:54 -0800">
+                <sequence format="r1" duration="21621600/2400000s" tcStart="8648640000/2400000s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <gap name="Gap" offset="8648640000/2400000s" start="8639991360/2400000s" duration="2402400/2400000s"/>
+                        <audition offset="8651042400/2400000s">
+                            <title ref="r2" name="Basic Title 1" start="108168060/30000s" duration="960960/120000s">
+                                <text>
+                                    <text-style ref="ts1">Title</text-style>
+                                </text>
+                                <text-style-def id="ts1">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="721721/200s" duration="1001/30000s" value="Marker 1"/>
+                            </title>
+                            <title ref="r2" name="Basic Title 2" start="108108000/30000s" duration="1201200/120000s">
+                                <text>
+                                    <text-style ref="ts2">Title</text-style>
+                                </text>
+                                <text-style-def id="ts2">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="1802801/500s" duration="1001/30000s" value="Marker 2"/>
+                            </title>
+                        </audition>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+        <smart-collection name="Projects" match="all">
+            <match-clip rule="is" type="project"/>
+        </smart-collection>
+        <smart-collection name="All Video" match="any">
+            <match-media rule="is" type="videoOnly"/>
+            <match-media rule="is" type="videoWithAudio"/>
+        </smart-collection>
+        <smart-collection name="Audio Only" match="all">
+            <match-media rule="is" type="audioOnly"/>
+        </smart-collection>
+        <smart-collection name="Stills" match="all">
+            <match-media rule="is" type="stills"/>
+        </smart-collection>
+        <smart-collection name="Favorites" match="all">
+            <match-ratings value="favorites"/>
+        </smart-collection>
+    </library>
+</fcpxml>
