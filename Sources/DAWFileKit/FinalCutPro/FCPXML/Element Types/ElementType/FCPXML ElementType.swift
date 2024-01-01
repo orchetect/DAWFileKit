@@ -85,6 +85,7 @@ extension FinalCutPro.FCPXML {
         
         // misc.
         case bookmark
+        case conformRate
     }
 }
 
