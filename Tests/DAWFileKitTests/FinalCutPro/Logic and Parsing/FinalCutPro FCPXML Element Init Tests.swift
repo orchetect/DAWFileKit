@@ -671,6 +671,32 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertEqual(project.uid, "js9ajdf9dj")
         XCTAssertEqual(project.modDate, "2022-12-30 20:47:39 -0800")
     }
+    
+    // MARK: - Misc.
+    
+    func testConformRateA() {
+        let conformRate = FinalCutPro.FCPXML.ConformRate(
+            scaleEnabled: true,
+            srcFrameRate: .fps24,
+            frameSampling: .frameBlending
+        )
+        
+        XCTAssertEqual(conformRate.scaleEnabled, true)
+        XCTAssertEqual(conformRate.srcFrameRate, .fps24)
+        XCTAssertEqual(conformRate.frameSampling, .frameBlending)
+    }
+    
+    func testConformRateB() {
+        let conformRate = FinalCutPro.FCPXML.ConformRate(
+            scaleEnabled: false,
+            srcFrameRate: nil,
+            frameSampling: .floor
+        )
+        
+        XCTAssertEqual(conformRate.scaleEnabled, false)
+        XCTAssertEqual(conformRate.srcFrameRate, nil)
+        XCTAssertEqual(conformRate.frameSampling, .floor)
+    }
 }
 
 #endif

@@ -213,13 +213,13 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         )
         XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
-        // extract markers
-        let extractedMarkers = element1.element
+        // markers
+        let markers = element1.element
             .children(whereFCPElement: .marker)
             .zeroIndexed
-        XCTAssertEqual(extractedMarkers.count, 1)
+        XCTAssertEqual(markers.count, 1)
         
-        let marker = try XCTUnwrap(extractedMarkers[safe: 0])
+        let marker = try XCTUnwrap(markers[safe: 0])
         XCTAssertEqual(marker.name, "Marker 2")
         XCTAssertEqual(marker.configuration, .standard)
         XCTAssertEqual(
