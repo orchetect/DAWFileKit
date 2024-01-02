@@ -1,5 +1,5 @@
 //
-//  FinalCutPro FCPXML 23.98_V1.swift
+//  FinalCutPro FCPXML AuditionMarkers3.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
@@ -11,7 +11,7 @@ import XCTest
 import OTCore
 import TimecodeKit
 
-final class FinalCutPro_FCPXML_2398V1: FCPXMLTestCase {
+final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
@@ -19,7 +19,7 @@ final class FinalCutPro_FCPXML_2398V1: FCPXMLTestCase {
     
     var fileContents: Data { get throws {
         try XCTUnwrap(loadFileContents(
-            forResource: "23.98_V1",
+            forResource: "AuditionMarkers3",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
@@ -49,14 +49,14 @@ final class FinalCutPro_FCPXML_2398V1: FCPXMLTestCase {
         XCTAssertEqual(events.count, 1)
         
         let event = try XCTUnwrap(events[safe: 0])
-        XCTAssertEqual(event.name, "11-9-22")
+        XCTAssertEqual(event.name, "Test Event")
         
         // project
         let projects = event.projects.zeroIndexed
         XCTAssertEqual(projects.count, 1)
         
         let project = try XCTUnwrap(projects[safe: 0])
-        XCTAssertEqual(project.name, "23.98_V1")
+        XCTAssertEqual(project.name, "Test Project")
         XCTAssertEqual(project.startTimecode(), Self.tc("00:00:00:00", .fps23_976))
         
         // sequence
@@ -73,7 +73,7 @@ final class FinalCutPro_FCPXML_2398V1: FCPXMLTestCase {
         let spine = try XCTUnwrap(sequence.spine)
         
         let contents = spine.contents.zeroIndexed
-        XCTAssertEqual(contents.count, 8)
+        XCTAssertEqual(contents.count, 3)
         
         // story elements
         let audition = try XCTUnwrap(contents[safe: 2]?.fcpAsAudition)
@@ -137,7 +137,7 @@ final class FinalCutPro_FCPXML_2398V1: FCPXMLTestCase {
             .extract(preset: .markers, scope: .mainTimeline)
             .sortedByAbsoluteStartTimecode()
         
-        XCTAssertEqual(markers.count, 12)
+        XCTAssertEqual(markers.count, 4)
         
         print("Markers sorted by absolute timecode:")
         print(Self.debugString(for: markers))
