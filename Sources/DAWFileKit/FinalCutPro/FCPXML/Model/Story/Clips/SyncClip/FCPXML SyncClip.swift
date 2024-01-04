@@ -146,6 +146,8 @@ extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementAudioStartAndDuration { }
 
 extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementOptionalModDate { }
 
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementTimingParams { }
+
 // MARK: - Children
 
 extension FinalCutPro.FCPXML.SyncClip {

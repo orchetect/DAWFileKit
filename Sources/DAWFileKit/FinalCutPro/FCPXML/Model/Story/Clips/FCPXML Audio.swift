@@ -166,6 +166,8 @@ extension FinalCutPro.FCPXML.Audio {
 
 extension FinalCutPro.FCPXML.Audio: FCPXMLElementNoteChild { }
 
+extension FinalCutPro.FCPXML.Audio: FCPXMLElementTimingParams { }
+
 // MARK: - Properties
 
 // Audio

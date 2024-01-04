@@ -148,6 +148,8 @@ extension FinalCutPro.FCPXML.Video {
 
 extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
 
+extension FinalCutPro.FCPXML.Video: FCPXMLElementTimingParams { }
+
 // MARK: - Typing
 
 // Video

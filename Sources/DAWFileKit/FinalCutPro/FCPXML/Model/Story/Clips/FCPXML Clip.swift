@@ -178,6 +178,8 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetadataChild { }
 
 extension FinalCutPro.FCPXML.Clip: FCPXMLElementAudioChannelSourceChildren { }
 
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementTimingParams { }
+
 // MARK: - Typing
 
 // Clip

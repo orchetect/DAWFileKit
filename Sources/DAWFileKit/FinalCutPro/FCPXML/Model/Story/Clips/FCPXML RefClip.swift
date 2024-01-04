@@ -195,6 +195,8 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetadataChild { }
 
 extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
 
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementTimingParams { }
+
 // MARK: - Resource
 
 extension FinalCutPro.FCPXML.RefClip {

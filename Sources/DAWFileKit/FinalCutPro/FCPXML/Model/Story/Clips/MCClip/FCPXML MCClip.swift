@@ -179,6 +179,8 @@ extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
     }
 }
 
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementTimingParams { }
+
 // MARK: - Properties
 
 extension FinalCutPro.FCPXML.MCClip {

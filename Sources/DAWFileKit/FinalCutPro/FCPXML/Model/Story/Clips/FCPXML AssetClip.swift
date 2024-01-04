@@ -224,6 +224,8 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementMetadataChild { }
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioChannelSourceChildren { }
 
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementTimingParams { }
+
 // MARK: - Typing
 
 // AssetClip
