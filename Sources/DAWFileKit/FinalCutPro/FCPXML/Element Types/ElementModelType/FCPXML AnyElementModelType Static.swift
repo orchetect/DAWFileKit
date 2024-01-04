@@ -190,6 +190,14 @@ extension FinalCutPro.FCPXML.AnyElementModelType {
     public static var conformRate: Self {
         .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ConformRate>.conformRate)
     }
+    
+    public static var timeMap: Self {
+        .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.TimeMap>.timeMap)
+    }
+    
+    public static var timePoint: Self {
+        .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.TimeMap.TimePoint>.timePoint)
+    }
 }
 
 #endif

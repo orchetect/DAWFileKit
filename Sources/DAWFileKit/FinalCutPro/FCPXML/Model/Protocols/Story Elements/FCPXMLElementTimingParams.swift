@@ -17,9 +17,21 @@ import TimecodeKit
 /// <!ENTITY % timing-params "(conform-rate?, timeMap?)">
 /// ```
 public protocol FCPXMLElementTimingParams: FCPXMLElement {
+    /// Clip conform rate.
+    ///
+    /// > FCPXML 1.11 DTD:
+    /// >
+    /// > "A `conform-rate` defines how the clip's frame rate should be conformed to the sequence frame rate".
     var conformRate: FinalCutPro.FCPXML.ConformRate? { get set }
     
-    // TODO: add timeMap
+    /// Clip time map.
+    ///
+    /// > FCPXML 1.11 DTD:
+    /// >
+    /// > "A `timeMap` is a container for `timept` elements that change the output speed of the clip's local timeline.
+    /// > When present, a `timeMap` defines a new adjusted time range for the clip using the first and last `timept`
+    /// > elements. All other time values are interpolated from the specified `timept` elements."
+    var timeMap: FinalCutPro.FCPXML.TimeMap? { get set }
 }
 
 extension FCPXMLElementTimingParams {
@@ -32,7 +44,14 @@ extension FCPXMLElementTimingParams {
         }
     }
     
-    // TODO: add timeMap
+    public var timeMap: FinalCutPro.FCPXML.TimeMap? {
+        get {
+            element.firstChild(whereFCPElement: .timeMap)
+        }
+        set {
+            element._updateFirstChildElement(ofType: .timeMap, withChild: newValue)
+        }
+    }
 }
 
 #endif

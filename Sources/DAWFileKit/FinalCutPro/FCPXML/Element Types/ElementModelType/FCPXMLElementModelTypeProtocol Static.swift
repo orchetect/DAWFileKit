@@ -338,4 +338,20 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ConformRate
     }
 }
 
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.TimeMap>
+{
+    public static var timeMap: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.TimeMap> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.TimeMap.TimePoint>
+{
+    public static var timePoint: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.TimeMap.TimePoint> {
+        .init()
+    }
+}
+
 #endif

@@ -86,6 +86,8 @@ extension FinalCutPro.FCPXML {
         // misc.
         case bookmark
         case conformRate
+        case timeMap
+        case timePoint = "timept"
     }
 }
 
@@ -140,7 +142,6 @@ extension Set<FinalCutPro.FCPXML.ElementType> {
 }
 
 extension FinalCutPro.FCPXML.ElementType {
-    
     // structure elements
     public static let allStructureCases: Set<Self> = .allStructureCases
     public var isStructure: Bool {

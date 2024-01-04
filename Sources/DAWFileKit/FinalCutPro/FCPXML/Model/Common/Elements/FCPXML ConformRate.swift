@@ -11,8 +11,11 @@ import OTCore
 import TimecodeKit
 
 extension FinalCutPro.FCPXML {
-    /// FCPXML 1.11 DTD:
-    /// "A `conform-rate` defines how the clip's frame rate should be conformed to the sequence frame rate".
+    /// Clip conform rate.
+    ///
+    /// > FCPXML 1.11 DTD:
+    /// >
+    /// > "A `conform-rate` defines how the clip's frame rate should be conformed to the sequence frame rate".
     public struct ConformRate: FCPXMLElement, Equatable, Hashable {
         public let element: XMLElement
         
@@ -90,26 +93,9 @@ extension FinalCutPro.FCPXML.ConformRate {
             element.addAttribute(withName: Attributes.srcFrameRate.rawValue, value: newValue?.rawValue)
         }
     }
-    
-    private var _frameSamplingDefault: FinalCutPro.FCPXML.FrameSampling { .floor }
-    /// Frame sampling. (Default: floor)
-    public var frameSampling: FinalCutPro.FCPXML.FrameSampling {
-        get {
-            guard let value = element.stringValue(forAttributeNamed: Attributes.frameSampling.rawValue)
-            else { return _frameSamplingDefault }
-            
-            return FinalCutPro.FCPXML.FrameSampling(rawValue: value) ?? _frameSamplingDefault
-        }
-        set {
-            if newValue == _frameSamplingDefault {
-                // can remove attribute if value is default
-                element.removeAttribute(forName: Attributes.frameSampling.rawValue)
-            } else {
-                element.addAttribute(withName: Attributes.frameSampling.rawValue, value: newValue.rawValue)
-            }
-        }
-    }
 }
+
+extension FinalCutPro.FCPXML.ConformRate: FCPXMLElementFrameSampling { }
 
 // MARK: - Typing
 

@@ -697,6 +697,52 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertEqual(conformRate.srcFrameRate, nil)
         XCTAssertEqual(conformRate.frameSampling, .floor)
     }
+    
+    func testTimeMapA() {
+        let timeMap = FinalCutPro.FCPXML.TimeMap(
+            frameSampling: .nearestNeighbor,
+            preservesPitch: false
+        )
+        
+        XCTAssertEqual(timeMap.frameSampling, .nearestNeighbor)
+        XCTAssertEqual(timeMap.preservesPitch, false)
+        
+        let readTimePoints = Array(timeMap.timePoints)
+        XCTAssertEqual(readTimePoints.count, 0)
+    }
+    
+    func testTimeMapB() {
+        let timePoints: [FinalCutPro.FCPXML.TimeMap.TimePoint] = [timePoint]
+        
+        let timeMap = FinalCutPro.FCPXML.TimeMap(
+            frameSampling: .floor,
+            preservesPitch: true,
+            timePoints: timePoints
+        )
+        
+        XCTAssertEqual(timeMap.frameSampling, .floor)
+        XCTAssertEqual(timeMap.preservesPitch, true)
+        
+        let readTimePoints = Array(timeMap.timePoints)
+        XCTAssertEqual(readTimePoints.count, 1)
+        XCTAssertEqual(readTimePoints, timePoints)
+    }
+    
+    let timePoint = FinalCutPro.FCPXML.TimeMap.TimePoint(
+        time: Fraction(2, 1),
+        originalTime: Fraction(1, 1),
+        interpolation: .linear,
+        transitionInTime: Fraction(3, 1),
+        transitionOutTime: Fraction(4, 1)
+    )
+    
+    func testTimePoint() {
+        XCTAssertEqual(timePoint.time, Fraction(2, 1))
+        XCTAssertEqual(timePoint.originalTime, Fraction(1, 1))
+        XCTAssertEqual(timePoint.interpolation, .linear)
+        XCTAssertEqual(timePoint.transitionInTime, Fraction(3, 1))
+        XCTAssertEqual(timePoint.transitionOutTime, Fraction(4, 1))
+    }
 }
 
 #endif

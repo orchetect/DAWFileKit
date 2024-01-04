@@ -42,7 +42,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat? = nil,
         // Element Attributes
         renderFormat: String? = nil,
-        angles: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Media.Multicam.Angle>? = nil,
+        angles: (some Sequence<FinalCutPro.FCPXML.Media.Multicam.Angle>)? = nil,
         metadata: FinalCutPro.FCPXML.Metadata? = nil
     ) {
         self.init()
