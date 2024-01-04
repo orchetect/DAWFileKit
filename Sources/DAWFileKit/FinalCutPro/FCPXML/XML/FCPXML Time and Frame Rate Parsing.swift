@@ -112,10 +112,6 @@ extension XMLElement {
         var ancestors = Array(ancestorElements(overrideWith: ancestors, includingSelf: true))
         var consumedAncestors: [XMLElement] = []
         
-        if fcpElementType == .marker {
-            print("")
-        }
-        
         while let ancestor = ancestors.popLast() {
             let elementType = ancestor.fcpElementType
             
