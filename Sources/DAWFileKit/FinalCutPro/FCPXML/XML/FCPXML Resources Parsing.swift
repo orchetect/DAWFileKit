@@ -87,9 +87,9 @@ extension XMLElement {
 
 extension XMLElement {
     /// FCPXML: Returns the timecode frame rate for the given timeline.
-    func _fcpTimecodeFrameRate(
+    func _fcpTimecodeFrameRate<S: Sequence<XMLElement>>(
         source frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
-        breadcrumbs: [XMLElement]? = nil,
+        breadcrumbs: S? = nil as [XMLElement]?,
         resources: XMLElement?
     ) -> TimecodeFrameRate? {
         switch frameRateSource {

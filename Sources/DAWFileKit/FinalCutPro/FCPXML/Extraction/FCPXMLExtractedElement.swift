@@ -48,6 +48,7 @@ extension FCPXMLExtractedElement {
         return try? element._fcpTimecode(
             fromRational: duration,
             frameRateSource: frameRateSource,
+            autoScale: true,
             breadcrumbs: breadcrumbs,
             resources: resources
         )

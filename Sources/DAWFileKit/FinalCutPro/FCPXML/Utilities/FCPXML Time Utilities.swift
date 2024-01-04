@@ -17,19 +17,19 @@ extension XMLElement {
     func _fcpTimecode(
         fromRational rawString: String,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat,
+        autoScale: Bool,
         resourceID: String,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
-        guard let frameRate = _fcpTimecodeFrameRate(
-            forResourceID: resourceID,
-            tcFormat: tcFormat,
-            in: resources
-        )
+        guard let fraction = Fraction(fcpxmlString: rawString)
         else { return nil }
         
-        return try FinalCutPro.FCPXML._timecode(
-            fromRational: rawString,
-            frameRate: frameRate
+        return try _fcpTimecode(
+            fromRational: fraction,
+            tcFormat: tcFormat,
+            autoScale: autoScale,
+            resourceID: resourceID,
+            resources: resources
         )
     }
     
@@ -37,6 +37,7 @@ extension XMLElement {
     func _fcpTimecode(
         fromRational fraction: Fraction,
         tcFormat: FinalCutPro.FCPXML.TimecodeFormat,
+        autoScale: Bool,
         resourceID: String,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
@@ -47,8 +48,16 @@ extension XMLElement {
         )
         else { return nil }
         
+        var seconds = fraction.doubleValue
+        
+        if autoScale,
+           let scalingFactor = _fcpConformRateScalingFactor(resources: resources)
+        {
+            seconds *= scalingFactor
+        }
+        
         return try FinalCutPro.FCPXML._timecode(
-            fromRational: fraction,
+            fromRealTime: seconds,
             frameRate: frameRate
         )
     }
@@ -62,6 +71,7 @@ extension XMLElement {
     func _fcpTimecode(
         fromRational rawString: String,
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        autoScale: Bool,
         breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
@@ -71,6 +81,7 @@ extension XMLElement {
         return try _fcpTimecode(
             fromRational: fraction,
             frameRateSource: frameRateSource,
+            autoScale: autoScale,
             breadcrumbs: breadcrumbs,
             resources: resources
         )
@@ -81,12 +92,14 @@ extension XMLElement {
     func _fcpTimecode(
         fromRational fraction: Fraction,
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        autoScale: Bool,
         breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
         try _fcpTimecode(
             fromRealTime: fraction.doubleValue,
             frameRateSource: frameRateSource,
+            autoScale: autoScale,
             breadcrumbs: breadcrumbs,
             resources: resources
         )
@@ -96,6 +109,7 @@ extension XMLElement {
     func _fcpTimecode(
         fromRealTime seconds: TimeInterval,
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        autoScale: Bool,
         breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> Timecode? {
@@ -105,12 +119,24 @@ extension XMLElement {
             resources: resources
         ) else { return nil }
         
+        var seconds = seconds
+        
+        if autoScale,
+           let scalingFactor = _fcpConformRateScalingFactor(
+            ancestors: breadcrumbs,
+            resources: resources
+           )
+        {
+            seconds *= scalingFactor
+        }
+        
         return try FinalCutPro.formTimecode(realTime: seconds, at: frameRate)
     }
 }
 
 extension FinalCutPro.FCPXML {
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
+    /// Does not auto-scale.
     static func _timecode(
         fromRational rawString: String,
         frameRate: TimecodeFrameRate
@@ -125,6 +151,7 @@ extension FinalCutPro.FCPXML {
     }
     
     /// FCPXML: Convert raw time attribute value string to `Timecode`.
+    /// Does not auto-scale.
     static func _timecode(
         fromRational fraction: Fraction,
         frameRate: TimecodeFrameRate
@@ -133,6 +160,7 @@ extension FinalCutPro.FCPXML {
     }
     
     /// FCPXML: Convert raw time in seconds to `Timecode`.
+    /// Does not auto-scale.
     static func _timecode(
         fromRealTime seconds: TimeInterval,
         frameRate: TimecodeFrameRate
@@ -149,6 +177,7 @@ extension XMLElement {
     func _fcpTimecodeInterval(
         fromRational rawString: String,
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        autoScale: Bool,
         breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
@@ -158,6 +187,7 @@ extension XMLElement {
         return try _fcpTimecodeInterval(
             fromRational: fraction,
             frameRateSource: frameRateSource,
+            autoScale: autoScale,
             breadcrumbs: breadcrumbs,
             resources: resources
         )
@@ -168,12 +198,14 @@ extension XMLElement {
     func _fcpTimecodeInterval(
         fromRational fraction: Fraction,
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        autoScale: Bool,
         breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
         try _fcpTimecodeInterval(
             fromRealTime: fraction.doubleValue,
             frameRateSource: frameRateSource,
+            autoScale: autoScale,
             breadcrumbs: breadcrumbs,
             resources: resources
         )
@@ -184,6 +216,7 @@ extension XMLElement {
     func _fcpTimecodeInterval(
         fromRealTime seconds: TimeInterval,
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource,
+        autoScale: Bool,
         breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) throws -> TimecodeInterval? {
@@ -192,6 +225,17 @@ extension XMLElement {
             breadcrumbs: breadcrumbs,
             resources: resources
         ) else { return nil }
+        
+        var seconds = seconds
+        
+        if autoScale,
+           let scalingFactor = _fcpConformRateScalingFactor(
+            ancestors: breadcrumbs,
+            resources: resources
+           )
+        {
+            seconds *= scalingFactor
+        }
         
         return try FinalCutPro.FCPXML._timecodeInterval(
             fromRealTime: seconds,

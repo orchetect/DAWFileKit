@@ -85,7 +85,7 @@ extension FinalCutPro.FCPXML {
         
         // misc.
         case bookmark
-        case conformRate
+        case conformRate = "conform-rate"
         case timeMap
         case timePoint = "timept"
     }

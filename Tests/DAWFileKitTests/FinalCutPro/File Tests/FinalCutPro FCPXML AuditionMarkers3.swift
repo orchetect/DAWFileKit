@@ -96,8 +96,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
             marker0.startAsTimecode(frameRateSource: .mainTimeline), // local clip timeline is 25fps
             Self.tc("00:00:07:09", .fps23_976) // confirmed in FCP
         )
-        XCTAssertEqual(marker0.durationAsTimecode(frameRateSource: .mainTimeline),
-                       Self.tc("00:00:00:01", .fps23_976))
+        XCTAssertEqual(
+            marker0.durationAsTimecode(frameRateSource: .mainTimeline),
+            Self.tc("00:00:00:01.03", .fps23_976) // 1 frame, scaled
+        )
         XCTAssertEqual(marker0.note, nil)
         
         let marker1 = try XCTUnwrap(markers[safe: 1])
@@ -107,8 +109,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
             marker1.startAsTimecode(frameRateSource: .mainTimeline), // local clip timeline is 25fps
             Self.tc("00:00:14:08", .fps23_976) // confirmed in FCP
         )
-        XCTAssertEqual(marker1.durationAsTimecode(frameRateSource: .mainTimeline),
-                       Self.tc("00:00:00:01", .fps23_976))
+        XCTAssertEqual(
+            marker1.durationAsTimecode(frameRateSource: .mainTimeline),
+            Self.tc("00:00:00:01.03", .fps23_976) // 1 frame, scaled
+        )
         XCTAssertEqual(marker1.note, nil)
         
         let marker2 = try XCTUnwrap(markers[safe: 2])
@@ -118,8 +122,10 @@ final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
             marker2.startAsTimecode(frameRateSource: .mainTimeline), // local clip timeline is 25fps
             Self.tc("00:00:22:22", .fps23_976) // confirmed in FCP
         )
-        XCTAssertEqual(marker2.durationAsTimecode(frameRateSource: .mainTimeline),
-                       Self.tc("00:00:00:01", .fps23_976))
+        XCTAssertEqual(
+            marker2.durationAsTimecode(frameRateSource: .mainTimeline),
+            Self.tc("00:00:00:01.03", .fps23_976) // 1 frame, scaled
+        )
         XCTAssertEqual(marker2.note, nil)
     }
     

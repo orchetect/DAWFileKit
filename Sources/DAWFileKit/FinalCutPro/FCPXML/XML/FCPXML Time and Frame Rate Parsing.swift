@@ -85,56 +85,100 @@ extension XMLElement {
     ///
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
+    ///   - resources: Optional replacement for resources.
     ///
     /// - Returns: Elapsed seconds from zero timecode as a floating-point `TimeInterval` (`Double`).
     func _fcpCalculateAbsoluteStart<S: Sequence<XMLElement>>(
-        ancestors: S? = nil as [XMLElement]?
+        ancestors: S? = nil as [XMLElement]?,
+        resources: XMLElement? = nil
     ) -> TimeInterval? {
         var accum: TimeInterval?
         var lastStart: TimeInterval?
+        var scaleFactor: Double?
         
-        func add(_ other: TimeInterval?) {
-            guard let other = other else { return }
+        func add(_ value: TimeInterval?) {
+            guard let value = value else { return }
             let base = accum ?? 0.0
-            accum = base + other/*Rounded*/
+            accum = base + value
+        }
+        
+        func scale(_ value: TimeInterval) -> TimeInterval {
+            guard let scaleFactor else { return value }
+            return value * scaleFactor
         }
         
         // iterate from root to current element
         
         var ancestors = Array(ancestorElements(overrideWith: ancestors, includingSelf: true))
+        var consumedAncestors: [XMLElement] = []
+        
+        if fcpElementType == .marker {
+            print("")
+        }
         
         while let ancestor = ancestors.popLast() {
+            let elementType = ancestor.fcpElementType
+            
+            defer {
+                // check for `conform-rate` scale factor
+                if let elementType = elementType,
+                   FinalCutPro.FCPXML.ElementType.allClipCases.contains(elementType)
+                {
+                    if let sf = ancestor._fcpConformRateScalingFactor(
+                        ancestors: consumedAncestors,
+                        sequenceFrameRate: nil,
+                        includeSelf: true,
+                        resources: resources
+                    ) {
+                        scaleFactor = sf
+                    } else {
+                        // reset scaling if clip does not require it
+                        scaleFactor = nil
+                    }
+                }
+                
+                // add consumed ancestor to array
+                consumedAncestors.insert(ancestor, at: 0)
+            }
+            
             if let tcStart = ancestor.fcpTCStart {
                 assert(ancestor.fcpStart == nil)
-                add(tcStart.doubleValue)
-                lastStart = tcStart.doubleValue
+                
+                let tcStartScaled = scale(tcStart.doubleValue)
+                add(tcStartScaled)
+                lastStart = tcStartScaled
+                
                 continue
             }
             
             if let offset = ancestor.fcpOffset {
+                let offsetScaled = scale(offset.doubleValue)
+                
                 if let _lastStart = lastStart {
-                    let diff = offset.doubleValue - _lastStart
+                    let diff = offsetScaled - _lastStart
                     lastStart = nil
                     add(diff)
                 } else {
-                    add(offset.doubleValue)
+                    add(offsetScaled)
                 }
             }
-            
-            let elementType = ancestor.fcpElementType
             
             if let elementType = elementType {
                 switch elementType {
                 case .marker, .chapterMarker, .keyword:
                     // markers and keywords use `start` attribute as an offset, so handle it specially
                     if let elementStart = ancestor.fcpStart {
+                        let elementStartScaled = scale(elementStart.doubleValue)
+                        
                         if let ancestorParent = ancestor.parentElement,
                            let parentStart = ancestorParent.fcpStart
                         {
-                            let diff = elementStart.doubleValue - parentStart.doubleValue
-                            add(diff)
+                            let parentStartScaled = scale(parentStart.doubleValue)
+                            
+                            let diffScaled = elementStartScaled - parentStartScaled
+                            add(diffScaled)
                         } else {
-                            add(elementStart.doubleValue)
+                            add(elementStartScaled)
                         }
                     }
                 case .caption:
@@ -147,11 +191,71 @@ extension XMLElement {
             }
             
             if let start = ancestor.fcpStart {
-                lastStart = start.doubleValue
+                let startScaled = scale(start.doubleValue)
+                lastStart = startScaled
             }
         }
         
         return accum
+    }
+    
+    /// FCPXML: Returns the `conform-rate` element if it exists in the element's containing clip.
+    func _fcpAncestorClipConformRate<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        includeSelf: Bool = false
+    ) -> FinalCutPro.FCPXML.ConformRate? {
+        guard let container = fcpAncestorClip(ancestors: ancestors, includeSelf: includeSelf),
+              let conformRate = container.firstChild(whereFCPElement: .conformRate)
+        else { return nil }
+        
+        return conformRate
+    }
+    
+    /// FCPXML: Finds the element's containing clip (if any) and if it contains a `conform-rate` element, the time
+    /// scaling factor is returned.
+    ///
+    /// Scaling is based on source (local timeline) frame rate and parent (sequence) frame rate:
+    ///
+    /// `childTime x (SFD / MFD)`
+    /// 
+    /// Where:
+    /// 
+    /// - `childTime` is a rational fraction time value of a child of the scaling clip
+    /// - `SFD` is the sequence/parent frame duration (ie: 1/24), and
+    /// - `MFD` is the media frame duration derived from the `srcFrameRate` attribute of the clip's `conform-rate` child element
+    /// 
+    /// - Parameters:
+    ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
+    ///   - sequenceFrameRate: Optionally supply the sequence/parent's timecode frame rate if known.
+    ///     Otherwise it will be auto-discovered if possible.
+    ///   - includeSelf: Include the current element in the search for the containing clip.
+    ///   - resources: Optional replacement for resources.
+    ///
+    /// - Returns: Scaling factor which which to multiply child time values of the clip.
+    func _fcpConformRateScalingFactor<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        sequenceFrameRate: TimecodeFrameRate? = nil,
+        includeSelf: Bool = false,
+        resources: XMLElement? = nil
+    ) -> Double? {
+        guard let container = fcpAncestorClip(ancestors: ancestors, includeSelf: includeSelf),
+              let conformRate = _fcpAncestorClipConformRate(ancestors: ancestors, includeSelf: includeSelf),
+              conformRate.scaleEnabled,
+              let mediaFrameRate = conformRate.srcFrameRate
+        else { return nil }
+        
+        guard let sequenceFrameRate = sequenceFrameRate
+                ?? container.parentElement?._fcpTimecodeFrameRate(
+                    source: .localToElement,
+                    breadcrumbs: ancestors,
+                    resources: resources
+                )
+        else { return nil }
+        
+        let seqFrameDuration = sequenceFrameRate.frameDuration.doubleValue
+        let mediaFrameDuration = mediaFrameRate.timecodeFrameRate.frameDuration.doubleValue
+        
+        return seqFrameDuration / mediaFrameDuration
     }
 }
 
