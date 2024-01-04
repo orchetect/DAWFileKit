@@ -328,4 +328,14 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata>
     }
 }
 
+// MARK: - Misc
+
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ConformRate>
+{
+    public static var conformRate: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ConformRate> {
+        .init()
+    }
+}
+
 #endif

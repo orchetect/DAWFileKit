@@ -184,6 +184,12 @@ extension FinalCutPro.FCPXML.AnyElementModelType {
     public static var metadata: Self {
         .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata>.metadata)
     }
+    
+    // MARK: - Misc
+    
+    public static var conformRate: Self {
+        .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.ConformRate>.conformRate)
+    }
 }
 
 #endif
