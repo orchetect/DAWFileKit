@@ -26,8 +26,7 @@ extension FCPXMLElementRequiredStart {
     ) -> Timecode? {
         try? element._fcpTimecode(
             fromRational: start,
-            frameRateSource: frameRateSource,
-            autoScale: true
+            frameRateSource: frameRateSource
         )
     }
 }
@@ -50,8 +49,7 @@ extension FCPXMLElementOptionalStart {
         guard let start = start else { return nil }
         return try? element._fcpTimecode(
             fromRational: start,
-            frameRateSource: frameRateSource,
-            autoScale: true
+            frameRateSource: frameRateSource
         )
     }
 }

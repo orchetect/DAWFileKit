@@ -56,8 +56,7 @@ extension FCPXMLElementAnchorableAttributes {
         guard let offset = offset else { return nil }
         return try? element._fcpTimecode(
             fromRational: offset,
-            frameRateSource: frameRateSource,
-            autoScale: true
+            frameRateSource: frameRateSource
         )
     }
 }

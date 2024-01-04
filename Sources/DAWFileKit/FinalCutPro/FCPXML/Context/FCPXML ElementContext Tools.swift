@@ -51,7 +51,6 @@ extension FinalCutPro.FCPXML.ElementContext {
             return try? element._fcpTimecode(
                 fromRealTime: absoluteStart,
                 frameRateSource: frameRateSource,
-                autoScale: false,
                 breadcrumbs: breadcrumbs,
                 resources: resources
             )
@@ -75,7 +74,6 @@ extension FinalCutPro.FCPXML.ElementContext {
             return try? element._fcpTimecode(
                 fromRealTime: absoluteEnd,
                 frameRateSource: frameRateSource,
-                autoScale: true,
                 breadcrumbs: breadcrumbs,
                 resources: resources
             )
@@ -128,7 +126,6 @@ extension FinalCutPro.FCPXML.ElementContext {
             return try? element._fcpTimecode(
                 fromRealTime: parentAbsoluteStart,
                 frameRateSource: frameRateSource,
-                autoScale: false,
                 breadcrumbs: breadcrumbs,
                 resources: resources
             )
@@ -152,7 +149,6 @@ extension FinalCutPro.FCPXML.ElementContext {
             return try? element._fcpTimecode(
                 fromRealTime: parentAbsoluteEnd,
                 frameRateSource: frameRateSource,
-                autoScale: true,
                 breadcrumbs: breadcrumbs,
                 resources: resources
             )
@@ -175,7 +171,6 @@ extension FinalCutPro.FCPXML.ElementContext {
             return try? element._fcpTimecode(
                 fromRealTime: parentDuration,
                 frameRateSource: frameRateSource,
-                autoScale: true,
                 breadcrumbs: breadcrumbs,
                 resources: resources
             )

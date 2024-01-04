@@ -27,8 +27,7 @@ extension FCPXMLElementOptionalTCStart {
         guard let tcStart = tcStart else { return nil }
         return try? element._fcpTimecode(
             fromRational: tcStart,
-            frameRateSource: frameRateSource,
-            autoScale: true
+            frameRateSource: frameRateSource
         )
     }
 }

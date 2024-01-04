@@ -94,7 +94,6 @@ extension XMLElement {
     ) -> TimeInterval? {
         var accum: TimeInterval?
         var lastStart: TimeInterval?
-        var scaleFactor: Double?
         
         func add(_ value: TimeInterval?) {
             guard let value = value else { return }
@@ -102,60 +101,29 @@ extension XMLElement {
             accum = base + value
         }
         
-        func scale(_ value: TimeInterval) -> TimeInterval {
-            guard let scaleFactor else { return value }
-            return value * scaleFactor
-        }
-        
         // iterate from root to current element
         
         var ancestors = Array(ancestorElements(overrideWith: ancestors, includingSelf: true))
-        var consumedAncestors: [XMLElement] = []
         
         while let ancestor = ancestors.popLast() {
             let elementType = ancestor.fcpElementType
             
-            defer {
-                // check for `conform-rate` scale factor
-                if let elementType = elementType,
-                   FinalCutPro.FCPXML.ElementType.allClipCases.contains(elementType)
-                {
-                    if let sf = ancestor._fcpConformRateScalingFactor(
-                        ancestors: consumedAncestors,
-                        sequenceFrameRate: nil,
-                        includeSelf: true,
-                        resources: resources
-                    ) {
-                        scaleFactor = sf
-                    } else {
-                        // reset scaling if clip does not require it
-                        scaleFactor = nil
-                    }
-                }
-                
-                // add consumed ancestor to array
-                consumedAncestors.insert(ancestor, at: 0)
-            }
-            
             if let tcStart = ancestor.fcpTCStart {
                 assert(ancestor.fcpStart == nil)
                 
-                let tcStartScaled = scale(tcStart.doubleValue)
-                add(tcStartScaled)
-                lastStart = tcStartScaled
+                add(tcStart.doubleValue)
+                lastStart = tcStart.doubleValue
                 
                 continue
             }
             
             if let offset = ancestor.fcpOffset {
-                let offsetScaled = scale(offset.doubleValue)
-                
                 if let _lastStart = lastStart {
-                    let diff = offsetScaled - _lastStart
+                    let diff = offset.doubleValue - _lastStart
                     lastStart = nil
                     add(diff)
                 } else {
-                    add(offsetScaled)
+                    add(offset.doubleValue)
                 }
             }
             
@@ -164,17 +132,15 @@ extension XMLElement {
                 case .marker, .chapterMarker, .keyword:
                     // markers and keywords use `start` attribute as an offset, so handle it specially
                     if let elementStart = ancestor.fcpStart {
-                        let elementStartScaled = scale(elementStart.doubleValue)
-                        
                         if let ancestorParent = ancestor.parentElement,
                            let parentStart = ancestorParent.fcpStart
                         {
-                            let parentStartScaled = scale(parentStart.doubleValue)
+                            let parentStartScaled = parentStart.doubleValue
                             
-                            let diffScaled = elementStartScaled - parentStartScaled
+                            let diffScaled = elementStart.doubleValue - parentStartScaled
                             add(diffScaled)
                         } else {
-                            add(elementStartScaled)
+                            add(elementStart.doubleValue)
                         }
                     }
                 case .caption:
@@ -187,8 +153,7 @@ extension XMLElement {
             }
             
             if let start = ancestor.fcpStart {
-                let startScaled = scale(start.doubleValue)
-                lastStart = startScaled
+                lastStart = start.doubleValue
             }
         }
         

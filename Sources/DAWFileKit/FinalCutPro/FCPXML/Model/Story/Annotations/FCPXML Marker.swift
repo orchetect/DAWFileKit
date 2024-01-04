@@ -164,13 +164,15 @@ extension XMLElement {
     public var fcpPosterOffset: Fraction? {
         get {
             _fcpGetFraction(
-                forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue
+                forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue,
+                scaled: true
             )
         }
         set {
             _fcpSet(
                 fraction: newValue,
-                forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue
+                forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue,
+                scaled: true
             )
         }
     }
@@ -237,15 +239,20 @@ extension XMLElement {
             case let .toDo(completed: completed):
                 // note: don't allow deletion of this attribute, as the presence of `completed`
                 // attribute signifies that this marker is a to-do marker
-                set(bool: completed,
+                set(
+                    bool: completed,
                     forAttribute: FinalCutPro.FCPXML.Marker.Attributes.completed.rawValue,
                     defaultValue: true, // N/A
                     removeIfDefault: false,
-                    useInt: true)
+                    useInt: true
+                )
                 
             case let .chapter(posterOffset: posterOffset):
-                _fcpSet(fraction: posterOffset,
-                        forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue)
+                _fcpSet(
+                    fraction: posterOffset,
+                    forAttribute: FinalCutPro.FCPXML.Marker.Attributes.posterOffset.rawValue,
+                    scaled: true
+                )
             }
         }
     }

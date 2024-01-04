@@ -66,47 +66,54 @@ extension XMLElement {
 
 extension XMLElement {
     /// FCPXML: Get or set the value of the `audioStart` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioStart: Fraction? {
-        get { _fcpGetFraction(forAttribute: "audioStart") }
-        set { _fcpSet(fraction: newValue, forAttribute: "audioStart") }
+        get { _fcpGetFraction(forAttribute: "audioStart", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "audioStart", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `audioDuration` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     /// Use on `asset-clip`, `clip`, `mc-clip`, `ref-clip` or `sync-clip`.
     public var fcpAudioDuration: Fraction? {
-        get { _fcpGetFraction(forAttribute: "audioDuration") }
-        set { _fcpSet(fraction: newValue, forAttribute: "audioDuration") }
+        get { _fcpGetFraction(forAttribute: "audioDuration", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "audioDuration", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `duration` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     public var fcpDuration: Fraction? {
-        get { _fcpGetFraction(forAttribute: "duration") }
-        set { _fcpSet(fraction: newValue, forAttribute: "duration") }
+        get { _fcpGetFraction(forAttribute: "duration", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "duration", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `frameDuration` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     public var fcpFrameDuration: Fraction? {
-        get { _fcpGetFraction(forAttribute: "frameDuration") }
-        set { _fcpSet(fraction: newValue, forAttribute: "frameDuration") }
+        get { _fcpGetFraction(forAttribute: "frameDuration", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "frameDuration", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `start` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     public var fcpStart: Fraction? {
-        get { _fcpGetFraction(forAttribute: "start") }
-        set { _fcpSet(fraction: newValue, forAttribute: "start") }
+        get { _fcpGetFraction(forAttribute: "start", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "start", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `tcStart` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     public var fcpTCStart: Fraction? {
-        get { _fcpGetFraction(forAttribute: "tcStart") }
-        set { _fcpSet(fraction: newValue, forAttribute: "tcStart") }
+        get { _fcpGetFraction(forAttribute: "tcStart", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "tcStart", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `offset` attribute.
+    /// Scales value if containing clip has a `conform-rate` child element.
     public var fcpOffset: Fraction? {
-        get { _fcpGetFraction(forAttribute: "offset") }
-        set { _fcpSet(fraction: newValue, forAttribute: "offset") }
+        get { _fcpGetFraction(forAttribute: "offset", scaled: true) }
+        set { _fcpSet(fraction: newValue, forAttribute: "offset", scaled: true) }
     }
     
     /// FCPXML: Get or set the value of the `tcFormat` attribute.
@@ -216,17 +223,44 @@ extension XMLElement {
 
 extension XMLElement {
     /// FCPXML: Get an attribute time value as a `Fraction` instance.
-    func _fcpGetFraction(forAttribute attributeName: String) -> Fraction? {
-        guard let value = stringValue(forAttributeNamed: attributeName)
+    func _fcpGetFraction(
+        forAttribute attributeName: String,
+        scaled: Bool
+    ) -> Fraction? {
+        guard let value = stringValue(forAttributeNamed: attributeName),
+              let base = Fraction(fcpxmlString: value)
         else { return nil }
         
-        return Fraction(fcpxmlString: value)
+        // scale if necessary
+        if scaled,
+           let scalingFactor = _fcpConformRateScalingFactor()
+        {
+            return Fraction(double: base.doubleValue * scalingFactor)
+        } else {
+            return base
+        }
     }
     
     /// FCPXML: Set an attribute time value from a `Fraction` instance.
-    func _fcpSet(fraction newValue: Fraction?, forAttribute attributeName: String) {
-        addAttribute(withName: attributeName,
-                     value: newValue?.fcpxmlStringValue)
+    func _fcpSet(
+        fraction newValue: Fraction?,
+        forAttribute attributeName: String,
+        scaled: Bool
+    ) {
+        var newValue = newValue
+        
+        // scale if necessary
+        if scaled,
+           let _newValue = newValue,
+           let scalingFactor = _fcpConformRateScalingFactor()
+        {
+            newValue = Fraction(double: _newValue.doubleValue / scalingFactor)
+        }
+        
+        addAttribute(
+            withName: attributeName,
+            value: newValue?.fcpxmlStringValue
+        )
     }
 }
 

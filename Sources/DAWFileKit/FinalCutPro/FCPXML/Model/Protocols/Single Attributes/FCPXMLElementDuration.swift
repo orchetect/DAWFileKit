@@ -26,8 +26,7 @@ extension FCPXMLElementRequiredDuration {
     ) -> Timecode? {
         try? element._fcpTimecode(
             fromRational: duration,
-            frameRateSource: frameRateSource,
-            autoScale: true
+            frameRateSource: frameRateSource
         )
     }
 }
@@ -50,8 +49,7 @@ extension FCPXMLElementOptionalDuration {
         guard let duration = duration else { return nil }
         return try? element._fcpTimecode(
             fromRational: duration,
-            frameRateSource: frameRateSource,
-            autoScale: true
+            frameRateSource: frameRateSource
         )
     }
 }
