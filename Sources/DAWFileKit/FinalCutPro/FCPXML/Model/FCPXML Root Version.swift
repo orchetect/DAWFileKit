@@ -8,7 +8,7 @@
 
 extension FinalCutPro.FCPXML {
     /// FCPXML format version.
-    public enum Version: String, CaseIterable {
+    public enum Version: String, Equatable, Hashable, CaseIterable, Sendable {
         case ver1_0 = "1.0"
         case ver1_1 = "1.1"
         case ver1_2 = "1.2"
