@@ -158,63 +158,169 @@ extension XMLElement {
         return accum
     }
     
-    /// FCPXML: Returns the `conform-rate` element if it exists in the element's containing clip.
-    func _fcpAncestorClipConformRate<S: Sequence<XMLElement>>(
-        ancestors: S? = nil as [XMLElement]?,
-        includeSelf: Bool = false
-    ) -> FinalCutPro.FCPXML.ConformRate? {
-        guard let container = fcpAncestorClip(ancestors: ancestors, includeSelf: includeSelf),
-              let conformRate = container.firstChild(whereFCPElement: .conformRate)
-        else { return nil }
-        
-        return conformRate
-    }
-    
     /// FCPXML: Finds the element's containing clip (if any) and if it contains a `conform-rate` element, the time
     /// scaling factor is returned.
     ///
-    /// Scaling is based on source (local timeline) frame rate and parent (sequence) frame rate:
+    /// Scaling is based on source (local timeline) frame rate and parent timeline frame rate.
     ///
-    /// `childTime x (SFD / MFD)`
-    /// 
-    /// Where:
-    /// 
-    /// - `childTime` is a rational fraction time value of a child of the scaling clip
-    /// - `SFD` is the sequence/parent frame duration (ie: 1/24), and
-    /// - `MFD` is the media frame duration derived from the `srcFrameRate` attribute of the clip's `conform-rate` child element
-    /// 
     /// - Parameters:
     ///   - ancestors: Optional replacement for ancestors. Ordered nearest to furthest ancestor.
-    ///   - sequenceFrameRate: Optionally supply the sequence/parent's timecode frame rate if known.
+    ///   - timelineFrameRate: Optionally supply the parent's timecode frame rate if known.
     ///     Otherwise it will be auto-discovered if possible.
-    ///   - includeSelf: Include the current element in the search for the containing clip.
+    ///   - includingSelf: Include the current element in the search for the containing clip.
     ///   - resources: Optional replacement for resources.
     ///
     /// - Returns: Scaling factor which which to multiply child time values of the clip.
+    ///
+    /// See [`conform-rate` documentation.](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/conform-rate)
     func _fcpConformRateScalingFactor<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
-        sequenceFrameRate: TimecodeFrameRate? = nil,
-        includeSelf: Bool = false,
+        timelineFrameRate: TimecodeFrameRate? = nil,
+        includingSelf: Bool,
         resources: XMLElement? = nil
     ) -> Double? {
-        guard let container = fcpAncestorClip(ancestors: ancestors, includeSelf: includeSelf),
-              let conformRate = _fcpAncestorClipConformRate(ancestors: ancestors, includeSelf: includeSelf),
-              conformRate.scaleEnabled,
-              let mediaFrameRate = conformRate.srcFrameRate
+        guard let (container, remainingAncestors) = fcpAncestorTimeline(
+            ancestors: ancestors,
+            includingSelf: includingSelf
+        ),
+            let conformRate = container.firstChild(whereFCPElement: .conformRate),
+            conformRate.scaleEnabled,
+            let mediaFrameRate = conformRate.srcFrameRate?.timecodeFrameRate
         else { return nil }
         
-        guard let sequenceFrameRate = sequenceFrameRate
-                ?? container.parentElement?._fcpTimecodeFrameRate(
-                    source: .localToElement,
-                    breadcrumbs: ancestors,
-                    resources: resources
-                )
-        else { return nil }
+        var timelineFrameRate = timelineFrameRate
+        if timelineFrameRate == nil,
+           let (parent, remainingAncestors) = container._fcpFirstContainerAncestorWithZeroLane(
+               ancestors: remainingAncestors,
+               includingSelf: false
+           )
+        {
+            timelineFrameRate = parent._fcpTimecodeFrameRate(
+                source: .localToElement,
+                breadcrumbs: remainingAncestors,
+                resources: resources
+            )
+        }
         
-        let seqFrameDuration = sequenceFrameRate.frameDuration.doubleValue
-        let mediaFrameDuration = mediaFrameRate.timecodeFrameRate.frameDuration.doubleValue
+        guard let timelineFrameRate else { return nil }
         
-        return seqFrameDuration / mediaFrameDuration
+        // FCPXML shouldn't request conforming between the same frame rate
+        assert(timelineFrameRate != mediaFrameRate)
+        
+        let scalingFactor = Self._fcpConformRateScalingFactor(
+            timelineFrameRate: timelineFrameRate,
+            mediaFrameRate: mediaFrameRate
+        )
+        
+        return scalingFactor
+    }
+    
+    /// Returns the first ancestor with a lane of `0`.
+    ///
+    /// Ancestors are ordered nearest to furthest.
+    func _fcpFirstAncestorWithZeroLane<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        includingSelf: Bool
+    ) -> (element: XMLElement, remainingAncestors: AnySequence<XMLElement>)? {
+        var ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
+        
+        for ancestor in ancestors {
+            ancestors = ancestors.dropFirst()
+            if (ancestor.fcpLane ?? 0) == 0 {
+                return (element: ancestor, remainingAncestors: ancestors)
+            }
+        }
+        
+        return nil
+    }
+    
+    /// Returns the first container ancestor with a lane of `0`.
+    ///
+    /// Ancestors are ordered nearest to furthest.
+    func _fcpFirstContainerAncestorWithZeroLane<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        includingSelf: Bool
+    ) -> (element: XMLElement, remainingAncestors: AnySequence<XMLElement>)? {
+        var ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
+        let types: Set<FinalCutPro.FCPXML.ElementType> = // .allTimelineCases
+        [
+            /*.refClip, .syncClip, .mcClip,*/ .sequence, .spine, .mcAngle
+        ]
+        
+        for ancestor in ancestors {
+            ancestors = ancestors.dropFirst()
+            
+            let isAssetClip = ancestor.fcpElementType != nil
+                && ancestor.fcpElementType == .assetClip
+            
+            let nextAncestor = ancestors.first { _ in true }?.fcpElementType
+            let nextAncestorIsAssetClip = nextAncestor != nil 
+                && nextAncestor == .assetClip
+            
+            if let elementType = ancestor.fcpElementType,
+               types.contains(elementType),
+               (ancestor.fcpLane ?? 0) == 0,
+               !(isAssetClip && nextAncestorIsAssetClip)
+            {
+                return (element: ancestor, remainingAncestors: ancestors)
+            }
+        }
+        
+        return nil
+    }
+    
+    /// Table of conform scaling factors.
+    ///
+    /// See [`conform-rate` documentation.](https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/story_elements/conform-rate)
+    static func _fcpConformRateScalingFactor(
+        timelineFrameRate: TimecodeFrameRate,
+        mediaFrameRate: TimecodeFrameRate
+    ) -> Double? {
+        let t = timelineFrameRate.frameDuration.doubleValue
+        let m = mediaFrameRate.frameDuration.doubleValue
+        
+        // TODO: some of these values may be wrong. need to test more frame rates.
+        
+        switch mediaFrameRate.compatibleGroup {
+        case .ntscColor: // 23.976, 29.97, etc.
+            switch timelineFrameRate.compatibleGroup {
+            case .ntscColor: 
+                return nil
+            case .ntscColorWallTime:
+                return nil // not used by FCP
+            case .ntscDrop:
+                return nil
+            case .whole:
+                return 1 / 1.001 // works for 60fps timeline -> 23.98 media
+            }
+            
+        case .ntscColorWallTime: // 30d, 60d - not used by FCP
+            return nil
+            
+        case .ntscDrop: // 29.97d, 59.94d
+            switch timelineFrameRate.compatibleGroup {
+            case .ntscColor: 
+                return t / m
+            case .ntscColorWallTime:
+                return nil // not used by FCP
+            case .ntscDrop:
+                return nil
+            case .whole:
+                return t / m
+            }
+            
+        case .whole: // 24, 25, 30, 60
+            switch timelineFrameRate.compatibleGroup {
+            case .ntscColor: 
+                return t / m // works for 23.98 timeline -> 25 media
+            case .ntscColorWallTime:
+                return nil // not used by FCP
+            case .ntscDrop:
+                return m / t
+            case .whole:
+                return nil
+            }
+        }
     }
 }
 

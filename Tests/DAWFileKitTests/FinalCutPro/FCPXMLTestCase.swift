@@ -26,6 +26,10 @@ extension FCPXMLUtilities {
         try! Timecode(.rational(rational), at: fr, base: .max80SubFrames)
     }
     
+    static func tc(seconds: TimeInterval, _ fr: TimecodeFrameRate) -> Timecode {
+        try! Timecode(.realTime(seconds: seconds), at: fr, base: .max80SubFrames)
+    }
+    
     static func tcInterval(frames: Int, _ fr: TimecodeFrameRate) -> TimecodeInterval {
         if frames < 0 {
             return .negative(tc(frames: abs(frames), fr))

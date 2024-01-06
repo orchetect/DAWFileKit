@@ -455,6 +455,7 @@ extension XMLElement {
         for ancestor in ancestors {
             let elementType = ancestor.fcpElementType
             let isTimeline = elementType?.isTimeline == true
+                && (elementType != nil && elementType != .spine) // don't include spines
             let hasNoLane = (ancestor.fcpLane ?? 0) == 0
             
             if elementType == .assetClip {
@@ -481,7 +482,7 @@ extension XMLElement {
     func _fcpEffectiveLane<Ancestors: Sequence<XMLElement>>(
         ancestors: Ancestors
     ) -> Int? {
-        _fcpAncestorElementTypesAndLanes(ancestors: ancestors, includeSelf: true)
+        _fcpAncestorElementTypesAndLanes(ancestors: ancestors, includingSelf: true)
             .first(where: { $0.lane != nil })?
             .lane
     }

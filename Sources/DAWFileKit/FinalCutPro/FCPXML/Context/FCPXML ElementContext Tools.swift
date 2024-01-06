@@ -283,22 +283,22 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// Returns the first ancestor element of the given type.
         public func firstAncestor(
             ofType: FinalCutPro.FCPXML.ElementType,
-            includeSelf: Bool
+            includingSelf: Bool
         ) -> XMLElement? {
             element
-                .ancestorElements(includingSelf: includeSelf)
+                .ancestorElements(includingSelf: includingSelf)
                 .first(whereFCPElementType: ofType)
         }
         
         /// Returns the first ancestor element with the given name.
-        public func firstAncestor(named name: String, includeSelf: Bool) -> XMLElement? {
-            ((includeSelf ? [element] : []) + breadcrumbs)
+        public func firstAncestor(named name: String, includingSelf: Bool) -> XMLElement? {
+            ((includingSelf ? [element] : []) + breadcrumbs)
                 .first(whereElementNamed: name)
         }
         
         /// Returns the first ancestor element with the given name.
-        public func firstAncestor(named names: [String], includeSelf: Bool) -> XMLElement? {
-            ((includeSelf ? [element] : []) + breadcrumbs)
+        public func firstAncestor(named names: [String], includingSelf: Bool) -> XMLElement? {
+            ((includingSelf ? [element] : []) + breadcrumbs)
                 .first {
                     guard let name = $0.name else { return false }
                     return names.contains(name)
@@ -306,8 +306,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         }
         
         /// Returns the first ancestor element containing an attribute with the given name.
-        public func firstAncestor(withAttribute attrName: String, includeSelf: Bool) -> XMLElement? {
-            ((includeSelf ? [element] : []) + breadcrumbs)
+        public func firstAncestor(withAttribute attrName: String, includingSelf: Bool) -> XMLElement? {
+            ((includingSelf ? [element] : []) + breadcrumbs)
                 .first(withAttribute: attrName)?.element
         }
         
@@ -315,30 +315,30 @@ extension FinalCutPro.FCPXML.ElementContext {
         public func ancestorElementTypesAndLanes() -> some Swift.Sequence<
             (type: FinalCutPro.FCPXML.ElementType, lane: Int?)
         > {
-            element._fcpAncestorElementTypesAndLanes(ancestors: breadcrumbs, includeSelf: false)
+            element._fcpAncestorElementTypesAndLanes(ancestors: breadcrumbs, includingSelf: false)
         }
         
         /// Returns the ancestor `event`, if the element is an `event` or contained within a `event`.
         public func ancestorEvent() -> FinalCutPro.FCPXML.Event? {
-            firstAncestor(ofType: .event, includeSelf: true)?
+            firstAncestor(ofType: .event, includingSelf: true)?
                 .fcpAsEvent
         }
         
         /// Returns the ancestor `project`, if the element is a `project` or contained within a `project`.
         public func ancestorProject() -> FinalCutPro.FCPXML.Project? {
-            firstAncestor(ofType: .project, includeSelf: true)?
+            firstAncestor(ofType: .project, includingSelf: true)?
                 .fcpAsProject
         }
         
         /// Returns the ancestor `sequence`, if the element is a `sequence` or contained within a `sequence`.
         public func ancestorSequence() -> FinalCutPro.FCPXML.Sequence? {
-            firstAncestor(ofType: .sequence, includeSelf: true)?
+            firstAncestor(ofType: .sequence, includingSelf: true)?
                 .fcpAsSequence
         }
         
         /// Returns the first ancestor clip, if the element is contained within a clip.
-        public func ancestorClip(includeSelf: Bool) -> XMLElement? {
-            element.fcpAncestorClip(ancestors: breadcrumbs, includeSelf: includeSelf)
+        public func ancestorClip(includingSelf: Bool) -> XMLElement? {
+            element.fcpAncestorClip(ancestors: breadcrumbs, includingSelf: includingSelf)
         }
         
         /// Returns the timecode frame rate for the local timeline.

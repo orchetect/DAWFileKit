@@ -232,8 +232,10 @@ extension XMLElement {
         else { return nil }
         
         // scale if necessary
+        // a clip's local start will be scaled if the clip contains `conform-rate`
+        let isStartAttribute = ["start" /*, "tcStart" */].contains(attributeName)
         if scaled,
-           let scalingFactor = _fcpConformRateScalingFactor()
+           let scalingFactor = _fcpConformRateScalingFactor(includingSelf: isStartAttribute)
         {
             return Fraction(double: base.doubleValue * scalingFactor)
         } else {
@@ -250,9 +252,11 @@ extension XMLElement {
         var newValue = newValue
         
         // scale if necessary
+        // a clip's local start will be scaled if the clip contains `conform-rate`
+        let isStartAttribute = ["start" /*, "tcStart" */].contains(attributeName)
         if scaled,
            let _newValue = newValue,
-           let scalingFactor = _fcpConformRateScalingFactor()
+           let scalingFactor = _fcpConformRateScalingFactor(includingSelf: isStartAttribute)
         {
             newValue = Fraction(double: _newValue.doubleValue / scalingFactor)
         }

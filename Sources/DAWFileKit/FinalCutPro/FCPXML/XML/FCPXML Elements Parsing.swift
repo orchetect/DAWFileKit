@@ -216,17 +216,73 @@ extension XMLElement {
 // MARK: - Attributes Gathering
 
 extension XMLElement {
-    /// Returns the first ancestor clip, if the element is contained within a clip.
+    /// Returns the first ancestor clip, if the element is contained within one.
     ///
     /// Ancestors are ordered nearest to furthest.
     public func fcpAncestorClip<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
-        includeSelf: Bool
+        includingSelf: Bool
     ) -> XMLElement? {
-        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includeSelf)
+        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
         let clipTypes = FinalCutPro.FCPXML.ElementType.allClipCases
         return ancestors
             .first(whereFCPElementTypes: clipTypes)
+    }
+    
+    /// Returns the first ancestor timeline, if the element is contained within one.
+    ///
+    /// Ancestors are ordered nearest to furthest.
+    public func fcpAncestorTimeline<S: Sequence<XMLElement>>(
+        ancestors: S? = nil as [XMLElement]?,
+        includingSelf: Bool,
+        withLaneZero: Bool = false
+    ) -> (timeline: XMLElement, ancestors: AnySequence<XMLElement>)? {
+        var ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
+        let timelineTypes = FinalCutPro.FCPXML.ElementType.allTimelineCases
+        
+        var zeroLaneCount = 0
+        var nonZeroLaneCount = 0
+        
+        for ancestor in ancestors {
+            ancestors = ancestors.dropFirst()
+            
+            guard let elementType = ancestor.fcpElementType else { continue }
+            
+            let isTimeline = timelineTypes.contains(elementType)
+            guard isTimeline else { continue }
+            
+            // if we don't care about lane, just return early
+            guard withLaneZero else {
+                if isTimeline {
+                    return (timeline: ancestor, ancestors: ancestors)
+                } else {
+                    continue
+                }
+            }
+            
+            let isLaneZero = (ancestor.fcpLane ?? 0) == 0
+            
+            if isLaneZero {
+                zeroLaneCount += 1
+            } else {
+                nonZeroLaneCount += 1
+            }
+            
+            // first clip encountered has lane zero
+            if zeroLaneCount == 1, nonZeroLaneCount == 0 {
+                return (timeline: ancestor, ancestors: ancestors)
+            }
+            
+            // skip a generation because we want the clip that is the lane-zero parent
+            // clip, lane 0 <-- we want this
+            //   - clip, lane 1 <-- skip this
+            //     - element <-- self
+            if isLaneZero, nonZeroLaneCount > 0 {
+                return (timeline: ancestor, ancestors: ancestors)
+            }
+        }
+        
+        return nil
     }
     
     /// FCPXML: Returns type and lane for each of the element's ancestors.
@@ -234,7 +290,7 @@ extension XMLElement {
     /// Ancestors are ordered nearest to furthest.
     func _fcpAncestorElementTypesAndLanes<S: Sequence<XMLElement>>(
         ancestors: S? = nil as [XMLElement]?,
-        includeSelf: Bool
+        includingSelf: Bool
     ) -> LazyMapSequence<
         LazyFilterSequence<
             LazyMapSequence<
@@ -244,7 +300,7 @@ extension XMLElement {
         >,
         (type: FinalCutPro.FCPXML.ElementType, lane: Int?)
     > {
-        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includeSelf)
+        let ancestors = ancestorElements(overrideWith: ancestors, includingSelf: includingSelf)
         return ancestors
             .lazy
             .compactMap { ancestor -> (type: FinalCutPro.FCPXML.ElementType, lane: Int?)? in

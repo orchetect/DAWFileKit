@@ -62,7 +62,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
         // sequence
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps23_976))
         XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps23_976)
         XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
         XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:03:42:20", .fps23_976))
