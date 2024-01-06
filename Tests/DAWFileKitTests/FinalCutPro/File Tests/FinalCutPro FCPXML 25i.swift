@@ -177,13 +177,13 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual(project.name, "25i_V1")
         XCTAssertEqual(
             project.startTimecode(),
-            try Timecode(.rational(0, 1), at: .fps29_97, base: .max80SubFrames)
+            try Timecode(.rational(0, 1), at: .fps25, base: .max80SubFrames)
         )
         
         // sequence
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps29_97))
+        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps25))
         XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps25)
         XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
         XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
@@ -198,8 +198,6 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         
         // story elements
         let element1 = try XCTUnwrap(storyElements[safe: 0]?.fcpAsAssetClip)
-        // TODO: contains a `conform-rate` child - might we need to do math based on its attributes?
-        
         XCTAssertEqual(element1.ref, "r2")
         XCTAssertEqual(element1.offsetAsTimecode(), Self.tc("00:00:00:00", .fps29_97))
         XCTAssertEqual(element1.offsetAsTimecode()?.frameRate, .fps29_97)

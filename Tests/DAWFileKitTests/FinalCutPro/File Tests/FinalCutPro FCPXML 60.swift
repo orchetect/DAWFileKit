@@ -59,7 +59,7 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         XCTAssertEqual(project.name, "60_V1")
         XCTAssertEqual(
             project.startTimecode(),
-            try Timecode(.rational(0, 1), at: .fps29_97, base: .max80SubFrames)
+            try Timecode(.rational(0, 1), at: .fps60, base: .max80SubFrames)
         )
         
         // sequence
