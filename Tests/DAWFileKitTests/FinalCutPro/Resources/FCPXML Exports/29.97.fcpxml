@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p2997" frameDuration="1001/30000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r2" name="TestVideo2" uid="554B59605B289ECE8057E7FECBC3D3D0" start="0s" duration="101869/1000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="554B59605B289ECE8057E7FECBC3D3D0" src="file:///Users/user/Movies/TestVideo2.mp4"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-10 19:25:11 -0700"/>
+            </metadata>
+        </asset>
+        <media id="r3" name="29.97_CC" uid="GYR/OKBAQ/2tErV+GGXCuA" modDate="2023-11-22 03:29:21 -0800">
+            <sequence format="r1" duration="174174/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <asset-clip ref="r2" offset="0s" name="TestVideo2" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <marker start="247247/15000s" duration="1001/30000s" value="INSIDE 1"/>
+                        <marker start="181181/10000s" duration="1001/30000s" value="INSIDE 2"/>
+                        <marker start="49049/2500s" duration="1001/30000s" value="INSIDE 3"/>
+                    </asset-clip>
+                </spine>
+            </sequence>
+        </media>
+        <effect id="r4" name="50s TV" uid=".../Effects.localized/Looks.localized/50s TV.localized/50s TV.moef"/>
+        <effect id="r5" name="Aged Paper" uid=".../Effects.localized/Stylize.localized/Aged Paper.localized/Aged Paper.moef"/>
+        <effect id="r6" name="Color Correction" uid="FFColorCorrectionHDREffect"/>
+        <effect id="r7" name="Background Squares" uid=".../Effects.localized/Distortion.localized/Background Squares.localized/Background Squares.moef"/>
+        <effect id="r8" name="Color Adjustments" uid="FxPlug:7E2022A5-202B-4EEB-A311-AC2B585D01B0"/>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="11-9-22" uid="8A2EE1B4-CD4D-4D7E-8964-4CB0BA973669">
+            <project name="29.97_V1" uid="80610E15-6330-4219-B9B4-5AD38FD37508" modDate="2023-11-22 03:29:21 -0800">
+                <sequence format="r1" duration="887887/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <asset-clip ref="r2" offset="0s" name="TestVideo2" duration="103103/30000s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="11011/7500s" duration="1001/30000s" value="Marker 2"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="103103/30000s" name="TestVideo2" start="214214/30000s" duration="106106/30000s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="239239/30000s" duration="1001/30000s" value="Marker 3"/>
+                            <marker start="287287/30000s" duration="1001/30000s" value="Marker 4"/>
+                        </asset-clip>
+                        <ref-clip ref="r3" offset="209209/30000s" name="29.97_CC" duration="108108/30000s">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        </ref-clip>
+                        <asset-clip ref="r2" offset="317317/30000s" name="TestVideo2" start="427683/30000s" duration="100100/30000s" tcFormat="NDF" audioRole="dialogue">
+                            <timeMap>
+                                <timept time="0s" value="0s" interp="smooth2"/>
+                                <timept time="4436211/90000s" value="9168210/90000s" interp="smooth2"/>
+                            </timeMap>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="154573/10000s" duration="1001/30000s" value="Marker 8"/>
+                            <marker start="501757/30000s" duration="1001/30000s" value="Marker 9"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="417417/30000s" name="TestVideo2" start="1301300/30000s" duration="137137/30000s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <spine lane="1" offset="53053/1200s">
+                                <asset-clip ref="r2" offset="0s" name="TestVideo2" start="1690689/30000s" duration="6006/30000s" tcFormat="NDF" audioRole="dialogue">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="1692691/30000s" duration="1001/30000s" value="Marker 13"/>
+                                    <filter-video ref="r4" name="50s TV"/>
+                                </asset-clip>
+                                <asset-clip ref="r2" offset="6006/30000s" name="TestVideo2" start="1701700/30000s" duration="9009/30000s" tcFormat="NDF" audioRole="dialogue">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="851851/15000s" duration="1001/30000s" value="Marker 14"/>
+                                    <marker start="853853/15000s" duration="1001/30000s" value="Marker 15"/>
+                                    <filter-video ref="r5" name="Aged Paper"/>
+                                </asset-clip>
+                                <asset-clip ref="r2" offset="15015/30000s" name="TestVideo2" start="1720719/30000s" duration="9009/30000s" tcFormat="NDF" audioRole="dialogue">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <filter-video ref="r6" name="Color Correction">
+                                        <!-- info-asc-cdl: slope="1.68526 1.78081 1.38709" offset="-0.218905 -0.192776 -0.0995025" power="0.989591 0.762099 0.917057" -->
+                                        <param name="Color Global" key="2000" value="0.717452 0.5"/>
+                                        <param name="Color Highlights" key="2001" value="0.234166 0.604478"/>
+                                        <param name="Color Midtones" key="2002" value="0.386474 0.574627"/>
+                                        <param name="Color Shadows" key="2003" value="0.630194 0.559701"/>
+                                        <param name="Saturation Global" key="2004" value="0.29602"/>
+                                        <param name="Saturation Highlights" key="2005" value="0"/>
+                                        <param name="Saturation Midtones" key="2006" value="0.435323"/>
+                                        <param name="Saturation Shadows" key="2007" value="0.524876"/>
+                                        <param name="Exposure Highlights" key="2009" value="0.718905"/>
+                                        <param name="Exposure Midtones" key="2010" value="0.554726"/>
+                                        <param name="Exposure Shadows" key="2011" value="0.420398"/>
+                                    </filter-video>
+                                </asset-clip>
+                                <asset-clip ref="r2" offset="24024/30000s" name="TestVideo2" start="1739738/30000s" duration="8008/30000s" tcFormat="NDF" audioRole="dialogue">
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="871871/15000s" duration="1001/30000s" value="Marker 17"/>
+                                    <filter-video ref="r7" name="Background Squares"/>
+                                </asset-clip>
+                            </spine>
+                            <marker start="109109/2500s" duration="1001/30000s" value="Marker 1"/>
+                            <marker start="1314313/30000s" duration="1001/30000s" value="Marker 10"/>
+                            <marker start="11011/250s" duration="1001/30000s" value="Marker 11"/>
+                            <marker start="1328327/30000s" duration="1001/30000s" value="Marker 12"/>
+                            <marker start="673673/15000s" duration="1001/30000s" value="Marker 16"/>
+                            <filter-video ref="r8" name="Color Adjustments">
+                                <data key="effectConfig">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwVFhdVJG51bGzTDQ4PEBIUV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OhEYACoROAA4AEXXBsdWdpblZlcnNpb24QAtIYGRobWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oxocHVxOU0RpY3Rpb25hcnlYTlNPYmplY3QIERokKTI3SUxRU1lfZm55gIKEhoiKmJqfqrPJzdoAAAAAAAABAQAAAAAAAAAeAAAAAAAAAAAAAAAAAAAA4w==</data>
+                                <param name="Control Range" key="19" value="0 (SDR)"/>
+                                <param name="Exposure" key="3" value="-19"/>
+                                <param name="Contrast" key="17" value="-19"/>
+                                <param name="Brightness" key="2" value="-100"/>
+                                <param name="Saturation" key="16" value="64.8"/>
+                                <param name="Highlights" key="7" value="55"/>
+                                <param name="Black Point" key="1" value="120"/>
+                                <param name="Shadows" key="4" value="-1"/>
+                                <param name="Highlights Warmth" key="10" value="34.11"/>
+                                <param name="Highlights Tint" key="11" value="-25.79"/>
+                                <param name="Midtones Warmth" key="12" value="-23.37"/>
+                                <param name="Midtones Tint" key="13" value="82.48"/>
+                                <param name="Shadows Warmth" key="14" value="27.41"/>
+                                <param name="Shadows Tint" key="15" value="8.94"/>
+                                <param name="Auto Adjustment" key="18" value="0"/>
+                            </filter-video>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="554554/30000s" name="TestVideo2" start="1109174/30000s" duration="124124/30000s" tcFormat="NDF" audioRole="dialogue">
+                            <timeMap>
+                                <timept time="0s" value="0s" interp="smooth2"/>
+                                <timept time="4681557/90000s" value="9168210/90000s" interp="smooth2"/>
+                            </timeMap>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="76681/2000s" duration="1001/30000s" value="Marker 18"/>
+                            <marker start="1206271/30000s" duration="1001/30000s" value="Marker 19"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="678678/30000s" name="TestVideo2" start="2676674/30000s" duration="209209/30000s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <ref-clip ref="r3" lane="1" offset="899899/10000s" name="29.97_CC" duration="61061/30000s">
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <marker start="9009/10000s" duration="1001/30000s" value="Marker 23"/>
+                            </ref-clip>
+                            <marker start="227227/2500s" duration="1001/30000s" value="Marker 20"/>
+                            <marker start="187187/2000s" duration="1001/30000s" value="Marker 21"/>
+                            <marker start="953953/10000s" duration="1001/30000s" value="Marker 22"/>
+                        </asset-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
