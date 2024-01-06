@@ -135,10 +135,8 @@ extension XMLElement {
                         if let ancestorParent = ancestor.parentElement,
                            let parentStart = ancestorParent.fcpStart
                         {
-                            let parentStartScaled = parentStart.doubleValue
-                            
-                            let diffScaled = elementStart.doubleValue - parentStartScaled
-                            add(diffScaled)
+                            let diff = elementStart.doubleValue - parentStart.doubleValue
+                            add(diff)
                         } else {
                             add(elementStart.doubleValue)
                         }
