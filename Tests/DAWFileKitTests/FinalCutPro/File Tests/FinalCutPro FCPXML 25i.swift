@@ -25,6 +25,8 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         ))
     } }
     
+    let projectFrameRate: TimecodeFrameRate = .fps25
+    
     // MARK: Resources
     
     let r1 = FinalCutPro.FCPXML.Format(
@@ -48,20 +50,20 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         bookmark: nil
     )
     lazy var r2MetadataXML = try! XMLElement(xmlString: """
-            <metadata>
-                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
-                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
-                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
-                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
-                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
-                    <array>
-                        <string>'avc1'</string>
-                        <string>MPEG-4 AAC</string>
-                    </array>
-                </md>
-                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-10 19:25:11 -0700"/>
-            </metadata>
-            """
+        <metadata>
+            <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+            <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+            <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+            <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+            <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                <array>
+                    <string>'avc1'</string>
+                    <string>MPEG-4 AAC</string>
+                </array>
+            </md>
+            <md key="com.apple.proapps.mio.ingestDate" value="2022-09-10 19:25:11 -0700"/>
+        </metadata>
+        """
     )
     lazy var r2Metadata = FinalCutPro.FCPXML.Metadata(element: r2MetadataXML)
     lazy var r2 = FinalCutPro.FCPXML.Asset(
@@ -177,16 +179,16 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual(project.name, "25i_V1")
         XCTAssertEqual(
             project.startTimecode(),
-            try Timecode(.rational(0, 1), at: .fps25, base: .max80SubFrames)
+            try Timecode(.rational(0, 1), at: projectFrameRate, base: .max80SubFrames)
         )
         
         // sequence
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps25))
-        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps25)
+        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", projectFrameRate))
+        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, projectFrameRate)
         XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
+        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:00:29:13", projectFrameRate))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -206,8 +208,8 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual(element1.durationAsTimecode(), Self.tc("00:00:03:11.71", .fps29_97))
         XCTAssertEqual(element1.durationAsTimecode()?.frameRate, .fps29_97)
         XCTAssertEqual( // compare to parent's frame rate
-            element1.durationAsTimecode(frameRateSource: .rate(.fps25)),
-            Self.tc("00:00:03:10", .fps25) // confirmed in FCP
+            element1.durationAsTimecode(frameRateSource: .rate(projectFrameRate)),
+            Self.tc("00:00:03:10", projectFrameRate) // confirmed in FCP
         )
         XCTAssertEqual(element1.audioRole?.rawValue, "dialogue")
         
@@ -221,8 +223,8 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         XCTAssertEqual(marker.name, "Marker 2")
         XCTAssertEqual(marker.configuration, .standard)
         XCTAssertEqual(
-            marker.startAsTimecode(frameRateSource: .rate(.fps25)), // (local timeline is 29.97)
-            Self.tc("00:00:01:11.56", .fps25) // confirmed in FCP
+            marker.startAsTimecode(frameRateSource: .rate(projectFrameRate)), // (local timeline is 29.97)
+            Self.tc("00:00:01:11.56", projectFrameRate) // confirmed in FCP
         )
         XCTAssertEqual(marker.durationAsTimecode(), Self.tc("00:00:00:01", .fps29_97))
         XCTAssertEqual(marker.note, nil)
@@ -253,175 +255,175 @@ final class FinalCutPro_FCPXML_25i: FCPXMLTestCase {
         
         // check frame rate of Timecode from perspective of the main timeline
         XCTAssertTrue(markers.allSatisfy {
-            $0.timecode(frameRateSource: .mainTimeline)?.frameRate == .fps25
+            $0.timecode(frameRateSource: .mainTimeline)?.frameRate == projectFrameRate
         })
         
         // Clip 1
         
         XCTAssertEqual(markers[safe: 0]?.name, "Marker 2")
         let marker2Timecode = try XCTUnwrap(markers[safe: 0]?.timecode())
-        XCTAssertEqual(marker2Timecode, Self.tc("00:00:01:11.56", .fps25))
-        XCTAssertEqual(marker2Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker2Timecode, Self.tc("00:00:01:11.56", projectFrameRate))
+        XCTAssertEqual(marker2Timecode.frameRate, projectFrameRate)
         
         // Clip 2
         XCTAssertEqual(markers[safe: 1]?.name, "Marker 3")
         let marker3Timecode = try XCTUnwrap(markers[safe: 1]?.timecode())
-        XCTAssertEqual(marker3Timecode, Self.tc("00:00:04:05.68", .fps25))
-        XCTAssertEqual(marker3Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker3Timecode, Self.tc("00:00:04:05.68", projectFrameRate))
+        XCTAssertEqual(marker3Timecode.frameRate, projectFrameRate)
         
         // Clip 2
         XCTAssertEqual(markers[safe: 2]?.name, "Marker 4")
         let marker4Timecode = try XCTUnwrap(markers[safe: 2]?.timecode())
-        XCTAssertEqual(marker4Timecode, Self.tc("00:00:05:20.71", .fps25))
-        XCTAssertEqual(marker4Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker4Timecode, Self.tc("00:00:05:20.71", projectFrameRate))
+        XCTAssertEqual(marker4Timecode.frameRate, projectFrameRate)
         
         // Media Clip
         XCTAssertEqual(markers[safe: 3]?.name, "Marker 5")
         let marker5Timecode = try XCTUnwrap(markers[safe: 3]?.timecode())
         XCTAssertEqual(
             marker5Timecode,
-            Self.tc("00:00:06:23", .fps25) + Self.tc("00:00:01:12", .fps29_97)
+            Self.tc("00:00:06:23", projectFrameRate) + Self.tc("00:00:01:12", .fps29_97)
         )
-        XCTAssertEqual(marker5Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker5Timecode.frameRate, projectFrameRate)
         
         // Media Clip
         XCTAssertEqual(markers[safe: 4]?.name, "Marker 6")
         let marker6Timecode = try XCTUnwrap(markers[safe: 4]?.timecode())
         XCTAssertEqual(
             marker6Timecode,
-            Self.tc("00:00:06:23", .fps25) + Self.tc("00:00:03:01", .fps29_97)
+            Self.tc("00:00:06:23", projectFrameRate) + Self.tc("00:00:03:01", .fps29_97)
         )
-        XCTAssertEqual(marker6Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker6Timecode.frameRate, projectFrameRate)
         
         // Media Clip - technically out of bounds of the ref-clip
         XCTAssertEqual(markers[safe: 5]?.name, "Marker 7")
         let marker7Timecode = try XCTUnwrap(markers[safe: 5]?.timecode())
         XCTAssertEqual(
             marker7Timecode,
-            Self.tc("00:00:06:23", .fps25) + Self.tc("00:00:04:16", .fps29_97)
+            Self.tc("00:00:06:23", projectFrameRate) + Self.tc("00:00:04:16", .fps29_97)
         )
-        XCTAssertEqual(marker7Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker7Timecode.frameRate, projectFrameRate)
         
         // Clip 4
         XCTAssertEqual(markers[safe: 6]?.name, "Marker 8")
         let marker8Timecode = try XCTUnwrap(markers[6].timecode())
-        XCTAssertEqual(marker8Timecode, Self.tc("00:00:11:18.19", .fps25))
-        XCTAssertEqual(marker8Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker8Timecode, Self.tc("00:00:11:18.19", projectFrameRate))
+        XCTAssertEqual(marker8Timecode.frameRate, projectFrameRate)
         
         // Clip 4
         XCTAssertEqual(markers[safe: 7]?.name, "Marker 9")
         let marker9Timecode = try XCTUnwrap(markers[7].timecode())
-        XCTAssertEqual(marker9Timecode, Self.tc("00:00:12:24.75", .fps25))
-        XCTAssertEqual(marker9Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker9Timecode, Self.tc("00:00:12:24.75", projectFrameRate))
+        XCTAssertEqual(marker9Timecode.frameRate, projectFrameRate)
         
         // Clip 5
         XCTAssertEqual(markers[safe: 8]?.name, "Marker 1")
         let marker1Timecode = try XCTUnwrap(markers[8].timecode())
-        XCTAssertEqual(marker1Timecode, Self.tc("00:00:14:03.54", .fps25))
-        XCTAssertEqual(marker1Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker1Timecode, Self.tc("00:00:14:03.54", projectFrameRate))
+        XCTAssertEqual(marker1Timecode.frameRate, projectFrameRate)
         
         // Clip 5
         XCTAssertEqual(markers[safe: 9]?.name, "Marker 10")
         let marker10Timecode = try XCTUnwrap(markers[9].timecode())
-        XCTAssertEqual(marker10Timecode, Self.tc("00:00:14:07.67", .fps25))
-        XCTAssertEqual(marker10Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker10Timecode, Self.tc("00:00:14:07.67", projectFrameRate))
+        XCTAssertEqual(marker10Timecode.frameRate, projectFrameRate)
         
         // Clip 5
         XCTAssertEqual(markers[safe: 10]?.name, "Marker 11")
         let marker11Timecode = try XCTUnwrap(markers[safe: 10]?.timecode())
-        XCTAssertEqual(marker11Timecode, Self.tc("00:00:14:13.54", .fps25))
-        XCTAssertEqual(marker11Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker11Timecode, Self.tc("00:00:14:13.54", projectFrameRate))
+        XCTAssertEqual(marker11Timecode.frameRate, projectFrameRate)
         
         // Clip 5 - FCP shows 00:00:14:19.42
         XCTAssertEqual(markers[safe: 11]?.name, "Marker 12")
         let marker12Timecode = try XCTUnwrap(markers[safe: 11]?.timecode())
         XCTAssertEqual(
             marker12Timecode,
-            try Self.tc("00:00:14:19.42", .fps25)
+            try Self.tc("00:00:14:19.42", projectFrameRate)
                 .subtracting(.frames(0, subFrames: 1)) // TODO: subframe aliasing/rounding
         )
-        XCTAssertEqual(marker12Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker12Timecode.frameRate, projectFrameRate)
         
         // Clip 5.2
         XCTAssertEqual(markers[safe: 12]?.name, "Marker 14")
         let marker14Timecode = try XCTUnwrap(markers[safe: 12]?.timecode())
-        XCTAssertEqual(marker14Timecode, Self.tc("00:00:14:23.53", .fps25))
-        XCTAssertEqual(marker14Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker14Timecode, Self.tc("00:00:14:23.53", projectFrameRate))
+        XCTAssertEqual(marker14Timecode.frameRate, projectFrameRate)
         
         // Clip 5.2
         XCTAssertEqual(markers[safe: 13]?.name, "Marker 15")
         let marker15Timecode = try XCTUnwrap(markers[safe: 13]?.timecode())
-        XCTAssertEqual(marker15Timecode, Self.tc("00:00:15:02.00", .fps25))
-        XCTAssertEqual(marker15Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker15Timecode, Self.tc("00:00:15:02.00", projectFrameRate))
+        XCTAssertEqual(marker15Timecode.frameRate, projectFrameRate)
         
         // Clip 5
         XCTAssertEqual(markers[safe: 14]?.name, "Marker 16")
         let marker16Timecode = try XCTUnwrap(markers[safe: 14]?.timecode())
-        XCTAssertEqual(marker16Timecode, Self.tc("00:00:15:10.29", .fps25))
-        XCTAssertEqual(marker16Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker16Timecode, Self.tc("00:00:15:10.29", projectFrameRate))
+        XCTAssertEqual(marker16Timecode.frameRate, projectFrameRate)
         
         // Clip 5.2
         XCTAssertEqual(markers[safe: 15]?.name, "Marker 17")
         let marker17Timecode = try XCTUnwrap(markers[safe: 15]?.timecode())
-        XCTAssertEqual(marker17Timecode, Self.tc("00:00:15:14.27", .fps25))
-        XCTAssertEqual(marker17Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker17Timecode, Self.tc("00:00:15:14.27", projectFrameRate))
+        XCTAssertEqual(marker17Timecode.frameRate, projectFrameRate)
         
         // Clip 6
         XCTAssertEqual(markers[safe: 16]?.name, "Marker 18")
         let marker18Timecode = try XCTUnwrap(markers[safe: 16]?.timecode())
-        XCTAssertEqual(marker18Timecode, Self.tc("00:00:19:20.20", .fps25))
-        XCTAssertEqual(marker18Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker18Timecode, Self.tc("00:00:19:20.20", projectFrameRate))
+        XCTAssertEqual(marker18Timecode.frameRate, projectFrameRate)
         
         // Clip 6
         XCTAssertEqual(markers[safe: 17]?.name, "Marker 19")
         let marker19Timecode = try XCTUnwrap(markers[safe: 17]?.timecode())
-        XCTAssertEqual(marker19Timecode, Self.tc("00:00:21:16.77", .fps25))
-        XCTAssertEqual(marker19Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker19Timecode, Self.tc("00:00:21:16.77", projectFrameRate))
+        XCTAssertEqual(marker19Timecode.frameRate, projectFrameRate)
         
         // Clip 7
         XCTAssertEqual(markers[safe: 18]?.name, "Marker 20")
         let marker20Timecode = try XCTUnwrap(markers[safe: 18]?.timecode())
-        XCTAssertEqual(marker20Timecode, Self.tc("00:00:24:06.56", .fps25))
-        XCTAssertEqual(marker20Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker20Timecode, Self.tc("00:00:24:06.56", projectFrameRate))
+        XCTAssertEqual(marker20Timecode.frameRate, projectFrameRate)
         
         // Media Clip - FCP shows 00:00:24:19.03 @ 25 fps
         XCTAssertEqual(markers[safe: 19]?.name, "Marker 5")
         let marker5BTimecode = try XCTUnwrap(markers[safe: 19]?.timecode())
         XCTAssertEqual(
             marker5BTimecode,
-            Self.tc("00:00:23:09", .fps25) + Self.tc("00:00:01:12", .fps29_97)
+            Self.tc("00:00:23:09", projectFrameRate) + Self.tc("00:00:01:12", .fps29_97)
         )
-        XCTAssertEqual(marker5BTimecode.frameRate, .fps25)
+        XCTAssertEqual(marker5BTimecode.frameRate, projectFrameRate)
         
         // Media Clip - FCP shows 00:00:26:09.90 @ 25 fps, technically out of bounds of the ref-clip
         XCTAssertEqual(markers[safe: 20]?.name, "Marker 6")
         let marker6BTimecode = try XCTUnwrap(markers[safe: 20]?.timecode())
         XCTAssertEqual(
             marker6BTimecode,
-            Self.tc("00:00:23:09", .fps25) + Self.tc("00:00:03:01", .fps29_97)
+            Self.tc("00:00:23:09", projectFrameRate) + Self.tc("00:00:03:01", .fps29_97)
         )
-        XCTAssertEqual(marker6BTimecode.frameRate, .fps25)
+        XCTAssertEqual(marker6BTimecode.frameRate, projectFrameRate)
         
         // Clip 7
         XCTAssertEqual(markers[safe: 21]?.name, "Marker 21")
         let marker21Timecode = try XCTUnwrap(markers[safe: 21]?.timecode())
-        XCTAssertEqual(marker21Timecode, Self.tc("00:00:26:24.22", .fps25))
-        XCTAssertEqual(marker21Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker21Timecode, Self.tc("00:00:26:24.22", projectFrameRate))
+        XCTAssertEqual(marker21Timecode.frameRate, projectFrameRate)
         
         // Media Clip - FCP shows 00:00:27:22.44 @ 25 fps, technically out of bounds of the ref-clip
         XCTAssertEqual(markers[safe: 22]?.name, "Marker 7")
         let marker7BTimecode = try XCTUnwrap(markers[safe: 22]?.timecode())
         XCTAssertEqual(
             marker7BTimecode,
-            Self.tc("00:00:23:09", .fps25) + Self.tc("00:00:04:16", .fps29_97)
+            Self.tc("00:00:23:09", projectFrameRate) + Self.tc("00:00:04:16", .fps29_97)
         )
-        XCTAssertEqual(marker7BTimecode.frameRate, .fps25)
+        XCTAssertEqual(marker7BTimecode.frameRate, projectFrameRate)
         
         // Clip 7
         XCTAssertEqual(markers[safe: 23]?.name, "Marker 22")
         let marker22Timecode = try XCTUnwrap(markers[safe: 23]?.timecode())
-        XCTAssertEqual(marker22Timecode, Self.tc("00:00:28:19.25", .fps25))
-        XCTAssertEqual(marker22Timecode.frameRate, .fps25)
+        XCTAssertEqual(marker22Timecode, Self.tc("00:00:28:19.25", projectFrameRate))
+        XCTAssertEqual(marker22Timecode.frameRate, projectFrameRate)
     }
     
     func testExtractMarkers() async throws {

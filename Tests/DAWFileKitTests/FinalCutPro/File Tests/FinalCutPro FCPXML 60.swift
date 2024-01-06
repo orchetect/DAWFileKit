@@ -27,6 +27,8 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
     
     /// Project @ 60fps.
     /// Contains media @ 23.976fps and 29.97fps.
+    let projectFrameRate: TimecodeFrameRate = .fps60
+    
     func testParse() throws {
         // load
         let rawData = try fileContents
@@ -59,16 +61,16 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         XCTAssertEqual(project.name, "60_V1")
         XCTAssertEqual(
             project.startTimecode(),
-            try Timecode(.rational(0, 1), at: .fps60, base: .max80SubFrames)
+            try Timecode(.rational(0, 1), at: projectFrameRate, base: .max80SubFrames)
         )
         
         // sequence
         let sequence = try XCTUnwrap(projects[safe: 0]).sequence
         XCTAssertEqual(sequence.format, "r1")
-        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps60))
-        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps60)
+        XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", projectFrameRate))
+        XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, projectFrameRate)
         XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:04:23:10", .fps60))
+        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:04:23:10", projectFrameRate))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -218,8 +220,8 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
             
             // absolute timecode
             let tc = try XCTUnwrap(marker.timecode(), marker.name)
-            XCTAssertEqual(tc, Self.tc(markerData.absTC, .fps60), desc)
-            XCTAssertEqual(tc.frameRate, .fps60, desc)
+            XCTAssertEqual(tc, Self.tc(markerData.absTC, projectFrameRate), desc)
+            XCTAssertEqual(tc.frameRate, projectFrameRate, desc)
             
             // occlusion
             XCTAssertEqual(marker.value(forContext: .effectiveOcclusion), markerData.occ, desc)
