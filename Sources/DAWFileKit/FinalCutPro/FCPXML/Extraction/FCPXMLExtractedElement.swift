@@ -58,7 +58,7 @@ extension FCPXMLExtractedElement {
 
 extension Sequence where Element: FCPXMLExtractedElement {
     /// Sort collection by absolute start timecode.
-    public func sortedByAbsoluteStartTimecode() -> [Element] {
+    public func sortedByAbsoluteStartTimecode(thenByName: Bool = true) -> [Element] {
         sorted { lhs, rhs in
             guard let lhsTimecode = lhs.timecode(),
                   let rhsTimecode = rhs.timecode()
@@ -66,7 +66,16 @@ extension Sequence where Element: FCPXMLExtractedElement {
                 // sort by `start` attribute as fallback
                 return lhs.element.fcpStart ?? .zero < rhs.element.fcpStart ?? .zero
             }
-            return lhsTimecode < rhsTimecode
+            
+            if lhsTimecode == rhsTimecode, 
+                thenByName,
+               let lhsName = lhs.element.fcpName ?? lhs.element.fcpValue,
+               let rhsName = rhs.element.fcpName ?? rhs.element.fcpValue
+            {
+                return lhsName.localizedStandardCompare(rhsName) == .orderedAscending
+            } else {
+                return lhsTimecode < rhsTimecode
+            }
         }
     }
     
