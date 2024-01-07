@@ -284,7 +284,22 @@ extension XMLElement {
         switch mediaFrameRate.compatibleGroup {
         case .ntscColor: // 23.976, 29.97, etc.
             switch timelineFrameRate.compatibleGroup {
-            case .ntscColor: 
+            case .ntscColor:
+                switch mediaFrameRate {
+                case .fps23_976, .fps47_952:
+                    switch timelineFrameRate {
+                    case .fps23_976, .fps47_952: return nil
+                    case .fps29_97, .fps59_94, .fps119_88: return 1 / 1.001
+                    default: break
+                    }
+                case .fps29_97, .fps59_94, .fps119_88:
+                    switch timelineFrameRate {
+                    case .fps23_976, .fps47_952: return 1.001
+                    case .fps29_97, .fps59_94, .fps119_88: return nil
+                    default: break
+                    }
+                default: return nil
+                }
                 return nil
             case .ntscColorWallTime:
                 return nil // not used by FCP
