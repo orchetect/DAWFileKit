@@ -40,8 +40,8 @@
     </resources>
     <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
         <event name="11-9-22" uid="8A2EE1B4-CD4D-4D7E-8964-4CB0BA973669">
-            <project name="29.97_V1" uid="80610E15-6330-4219-B9B4-5AD38FD37508" modDate="2023-11-22 03:29:21 -0800">
-                <sequence format="r1" duration="887887/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+            <project name="29.97d_V1" uid="E5C99399-C3EC-4C5C-8F4A-C522837CF67F" modDate="2024-01-06 16:44:31 -0800">
+                <sequence format="r1" duration="887887/30000s" tcStart="0s" tcFormat="DF" audioLayout="stereo" audioRate="48k">
                     <spine>
                         <asset-clip ref="r2" offset="0s" name="TestVideo" duration="103103/30000s" tcFormat="NDF" audioRole="dialogue">
                             <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
