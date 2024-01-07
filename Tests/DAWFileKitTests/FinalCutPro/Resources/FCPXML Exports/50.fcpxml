@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p50" frameDuration="100/5000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Cross Dissolve" uid="FxPlug:4731E73A-8DAC-4113-9A30-AE85B1761265"/>
+        <effect id="r3" name="Audio Crossfade" uid="FFAudioTransition"/>
+        <asset id="r4" name="TestVideo" uid="B613657FA4D7B37DC8E2B485DCEB6B21" start="0s" duration="416166/1000s" hasVideo="1" format="r5" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="B613657FA4D7B37DC8E2B485DCEB6B21" src="file:///Users/user/Movies/TestVideo.mp4"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="SD (6-1-6)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2024-01-01 01:54:58 -0800"/>
+            </metadata>
+        </asset>
+        <format id="r5" name="FFVideoFormat1080p2398" frameDuration="15015/360000s" width="1920" height="1080" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
+        <asset id="r6" name="TestVideo2" uid="554B59605B289ECE8057E7FECBC3D3D0" start="0s" duration="101869/1000s" hasVideo="1" format="r7" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="554B59605B289ECE8057E7FECBC3D3D0" src="file:///Users/user/Movies/TestVideo2.mp4"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-10 19:25:11 -0700"/>
+            </metadata>
+        </asset>
+        <format id="r7" name="FFVideoFormat1080p2997" frameDuration="1001/30000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <media id="r8" name="29.97_CC" uid="GYR/OKBAQ/2tErV+GGXCuA" modDate="2023-11-22 03:29:21 -0800">
+            <sequence format="r7" duration="174174/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <asset-clip ref="r6" offset="0s" name="TestVideo2" start="452452/30000s" duration="174174/30000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <marker start="247247/15000s" duration="1001/30000s" value="INSIDE 1"/>
+                        <marker start="181181/10000s" duration="1001/30000s" value="INSIDE 2"/>
+                        <marker start="49049/2500s" duration="1001/30000s" value="INSIDE 3"/>
+                    </asset-clip>
+                </spine>
+            </sequence>
+        </media>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="11-9-22" uid="8A2EE1B4-CD4D-4D7E-8964-4CB0BA973669">
+            <project name="50_V1" uid="9247B7E8-A656-4E46-A0E0-3A0B9852A5CB" modDate="2023-11-22 03:29:21 -0800">
+                <sequence format="r1" duration="1264100/5000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <transition name="Cross Dissolve" offset="0s" duration="59200/5000s">
+                            <filter-video ref="r2" name="Cross Dissolve">
+                                <data key="effectConfig">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwVFhdVJG51bGzTDQ4PEBIUV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OhEYACoROAA4AEXXBsdWdpblZlcnNpb24QAdIYGRobWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oxocHVxOU0RpY3Rpb25hcnlYTlNPYmplY3QIERokKTI3SUxRU1lfZm55gIKEhoiKmJqfqrPJzdoAAAAAAAABAQAAAAAAAAAeAAAAAAAAAAAAAAAAAAAA4w==</data>
+                                <param name="Look" key="1" value="11 (Video)"/>
+                                <param name="Amount" key="2" value="50"/>
+                                <param name="Ease" key="50" value="2 (In &amp; Out)"/>
+                                <param name="Ease Amount" key="51" value="0"/>
+                                <param name="disableDRT" key="3733" value="1"/>
+                            </filter-video>
+                            <filter-audio ref="r3" name="Audio Crossfade"/>
+                        </transition>
+                        <asset-clip ref="r4" offset="0s" name="TestVideo" start="13013/5000000s" duration="158400/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate srcFrameRate="23.98"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="199199/12000s" duration="1001/24000s" value="Shot_01" completed="0"/>
+                        </asset-clip>
+                        <transition name="Cross Dissolve" offset="116000/5000s" duration="84800/5000s">
+                            <filter-video ref="r2" name="Cross Dissolve">
+                                <data key="effectConfig">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwVFhdVJG51bGzTDQ4PEBIUV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OhEYACoROAA4AEXXBsdWdpblZlcnNpb24QAdIYGRobWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oxocHVxOU0RpY3Rpb25hcnlYTlNPYmplY3QIERokKTI3SUxRU1lfZm55gIKEhoiKmJqfqrPJzdoAAAAAAAABAQAAAAAAAAAeAAAAAAAAAAAAAAAAAAAA4w==</data>
+                                <param name="Look" key="1" value="11 (Video)"/>
+                                <param name="Amount" key="2" value="50"/>
+                                <param name="Ease" key="50" value="2 (In &amp; Out)"/>
+                                <param name="Ease Amount" key="51" value="0"/>
+                                <param name="disableDRT" key="3733" value="1"/>
+                            </filter-video>
+                            <filter-audio ref="r3" name="Audio Crossfade"/>
+                        </transition>
+                        <asset-clip ref="r4" offset="158400/5000s" name="TestVideo" start="49390341/1000000s" duration="187800/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate srcFrameRate="23.98"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="839839/12000s" duration="1001/24000s" value="Shot_02" completed="0"/>
+                        </asset-clip>
+                        <asset-clip ref="r4" offset="346200/5000s" name="TestVideo" start="54353299/625000s" duration="130300/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate srcFrameRate="23.98"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="417417/4000s" duration="1001/24000s" value="Shot_03"/>
+                        </asset-clip>
+                        <asset-clip ref="r4" offset="476500/5000s" name="TestVideo" start="248165/5000s" duration="145100/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <timeMap>
+                                <timept time="0s" value="0s" interp="smooth2"/>
+                                <timept time="65872008/360000s" value="149819760/360000s" interp="smooth2"/>
+                            </timeMap>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="10881/160s" duration="1001/24000s" value="Shot_04" completed="0"/>
+                        </asset-clip>
+                        <asset-clip ref="r4" offset="621600/5000s" name="TestVideo" start="13969956/78125s" duration="301900/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate srcFrameRate="23.98"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <spine lane="1" offset="29766737/156250s" format="r1">
+                                <transition name="Cross Dissolve" offset="0s" duration="5300/5000s">
+                                    <filter-video ref="r2" name="Cross Dissolve">
+                                        <data key="effectConfig">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwVFhdVJG51bGzTDQ4PEBIUV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OhEYACoROAA4AEXXBsdWdpblZlcnNpb24QAdIYGRobWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oxocHVxOU0RpY3Rpb25hcnlYTlNPYmplY3QIERokKTI3SUxRU1lfZm55gIKEhoiKmJqfqrPJzdoAAAAAAAABAQAAAAAAAAAeAAAAAAAAAAAAAAAAAAAA4w==</data>
+                                        <param name="Look" key="1" value="11 (Video)"/>
+                                        <param name="Amount" key="2" value="50"/>
+                                        <param name="Ease" key="50" value="2 (In &amp; Out)"/>
+                                        <param name="Ease Amount" key="51" value="0"/>
+                                        <param name="disableDRT" key="3733" value="1"/>
+                                    </filter-video>
+                                    <filter-audio ref="r3" name="Audio Crossfade"/>
+                                </transition>
+                                <asset-clip ref="r4" offset="0s" name="TestVideo" start="828547/5000s" duration="18900/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                                    <timeMap>
+                                        <timept time="0s" value="0s" interp="smooth2"/>
+                                        <timept time="82927998/360000s" value="149819760/360000s" interp="smooth2"/>
+                                    </timeMap>
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="161441/960s" duration="1001/24000s" value="Shot_06" completed="0"/>
+                                    <!-- <marker start="166687/960s" duration="1001/24000s" value="Shot_06" completed="0"/> -->
+                                </asset-clip>
+                                <asset-clip ref="r4" offset="18900/5000s" name="TestVideo" start="1546421877/5000000s" duration="78200/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                                    <conform-rate srcFrameRate="23.98"/>
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="2509507/8000s" duration="1001/24000s" value="Shot_07" completed="0"/>
+                                </asset-clip>
+                                <transition name="Cross Dissolve" offset="70100/5000s" duration="27000/5000s">
+                                    <filter-video ref="r2" name="Cross Dissolve">
+                                        <data key="effectConfig">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwVFhdVJG51bGzTDQ4PEBIUV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OhEYACoROAA4AEXXBsdWdpblZlcnNpb24QAdIYGRobWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oxocHVxOU0RpY3Rpb25hcnlYTlNPYmplY3QIERokKTI3SUxRU1lfZm55gIKEhoiKmJqfqrPJzdoAAAAAAAABAQAAAAAAAAAeAAAAAAAAAAAAAAAAAAAA4w==</data>
+                                        <param name="Look" key="1" value="11 (Video)"/>
+                                        <param name="Amount" key="2" value="50"/>
+                                        <param name="Ease" key="50" value="2 (In &amp; Out)"/>
+                                        <param name="Ease Amount" key="51" value="0"/>
+                                        <param name="disableDRT" key="3733" value="1"/>
+                                    </filter-video>
+                                    <filter-audio ref="r3" name="Audio Crossfade"/>
+                                </transition>
+                            </spine>
+                            <marker start="4445441/24000s" duration="1001/24000s" value="Shot_05"/>
+                        </asset-clip>
+                        <asset-clip ref="r4" offset="923500/5000s" name="TestVideo" start="512178/5000s" duration="130100/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <timeMap>
+                                <timept time="0s" value="0s" interp="smooth2"/>
+                                <timept time="64160328/360000s" value="149819760/360000s" interp="smooth2"/>
+                            </timeMap>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <chapter-marker start="2757197/24000s" duration="1001/24000s" value="Shot_08" posterOffset="11/24s"/>
+                        </asset-clip>
+                        <asset-clip ref="r4" offset="1053600/5000s" name="TestVideo" start="1910481573/5000000s" duration="114200/5000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate srcFrameRate="23.98"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <asset-clip ref="r4" lane="1" offset="1945916973/5000000s" name="TestVideo" start="299890591/1000000s" duration="77100/5000s" tcFormat="NDF" audioRole="dialogue">
+                                <conform-rate srcFrameRate="23.98"/>
+                                <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                <marker start="23023/75s" duration="1001/24000s" value="Shot_10"/>
+                            </asset-clip>
+                            <marker start="1550549/4000s" duration="1001/24000s" value="Shot_09" completed="0"/>
+                        </asset-clip>
+                        <gap name="Gap" offset="1167800/5000s" start="3600s" duration="900/5000s"/>
+                        <asset-clip ref="r6" offset="1168700/5000s" name="TestVideo2" duration="17100/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="11011/7500s" duration="1001/30000s" value="Marker 2"/>
+                        </asset-clip>
+                        <asset-clip ref="r6" offset="1185800/5000s" name="TestVideo2" start="35536/5000s" duration="17600/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="239239/30000s" duration="1001/30000s" value="Marker 3"/>
+                            <marker start="287287/30000s" duration="1001/30000s" value="Marker 4"/>
+                        </asset-clip>
+                        <ref-clip ref="r8" offset="1203400/5000s" name="29.97_CC" duration="18000/5000s">
+                            <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        </ref-clip>
+                        <asset-clip ref="r6" offset="21985200/90000s" name="TestVideo2" start="1279278/90000s" duration="16800/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                            <timeMap>
+                                <timept time="0s" value="0s" interp="smooth2"/>
+                                <timept time="4436211/90000s" value="9168210/90000s" interp="smooth2"/>
+                            </timeMap>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <marker start="154573/10000s" duration="1001/30000s" value="Marker 8"/>
+                            <marker start="501757/30000s" duration="1001/30000s" value="Marker 9"/>
+                        </asset-clip>
+                        <asset-clip ref="r6" offset="1238200/5000s" name="TestVideo2" start="216883/5000s" duration="22800/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <spine lane="1" offset="220983/5000s" format="r1">
+                                <asset-clip ref="r6" offset="0s" name="TestVideo2" start="281615/5000s" duration="1000/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                                    <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="1692691/30000s" duration="1001/30000s" value="Marker 13"/>
+                                </asset-clip>
+                                <asset-clip ref="r6" offset="1000/5000s" name="TestVideo2" start="283617/5000s" duration="1500/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                                    <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="851851/15000s" duration="1001/30000s" value="Marker 14"/>
+                                    <marker start="853853/15000s" duration="1001/30000s" value="Marker 15"/>
+                                </asset-clip>
+                                <asset-clip ref="r6" offset="2500/5000s" name="TestVideo2" start="286787/5000s" duration="1500/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                                    <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                </asset-clip>
+                                <asset-clip ref="r6" offset="4000/5000s" name="TestVideo2" start="289790/5000s" duration="1500/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                                    <conform-rate scaleEnabled="0" srcFrameRate="29.97"/>
+                                    <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                                    <marker start="871871/15000s" duration="1001/30000s" value="Marker 17"/>
+                                </asset-clip>
+                            </spine>
+                            <marker start="109109/2500s" duration="1001/30000s" value="Marker 1"/>
+                            <marker start="1314313/30000s" duration="1001/30000s" value="Marker 10"/>
+                            <marker start="11011/250s" duration="1001/30000s" value="Marker 11"/>
+                            <marker start="1328327/30000s" duration="1001/30000s" value="Marker 12"/>
+                            <marker start="673673/15000s" duration="1001/30000s" value="Marker 16"/>
+                        </asset-clip>
+                        <asset-clip ref="r6" offset="1261000/5000s" name="TestVideo2" start="184851/5000s" duration="3100/5000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                            <timeMap>
+                                <timept time="0s" value="0s" interp="smooth2"/>
+                                <timept time="4681557/90000s" value="9168210/90000s" interp="smooth2"/>
+                            </timeMap>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        </asset-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
