@@ -61,6 +61,26 @@ extension ProTools.SessionInfo {
         /// Marker name.
         public let name: String
         
+        /// Track name.
+        ///
+        /// For marker rulers, the ruler name will be returned: "Markers", "Markers 2", "Markers 3", "Markers 4" or "Markers 5".
+        ///
+        /// For track markers, this will return the name of the track the marker was inserted on.
+        ///
+        /// > Note:
+        /// >
+        /// > Pro Tools 2023.12 introduced exporting track name information in the session info text file.
+        public let trackName: String?
+        
+        /// Marker track type.
+        ///
+        /// > Note:
+        /// >
+        /// > Pro Tools 2023.6 added the ability to insert markers directly on tracks using a marker lane.
+        /// >
+        /// > Pro Tools 2023.12 introduced exporting track type information in the session info text file.
+        public let trackType: TrackType
+        
         /// Marker comment, if present.
         public let comment: String?
         
@@ -71,13 +91,41 @@ extension ProTools.SessionInfo {
             location: TimeValue?,
             timeReference: TimeValue,
             name: String,
+            trackName: String? = nil,
+            trackType: TrackType = .ruler,
             comment: String? = nil
         ) {
             self.number = number
             self.location = location
             self.timeReference = timeReference
             self.name = name
+            self.trackName = trackName
+            self.trackType = trackType
             self.comment = comment
         }
+    }
+}
+
+extension ProTools.SessionInfo.Marker {
+    /// Marker track type.
+    public enum TrackType: String, Equatable, Hashable {
+        /// Marker ruler.
+        ///
+        /// > Note:
+        /// >
+        /// > Pro Tools 2023.12 added four additional session marker rulers for a total of five.
+        /// >
+        /// > Prior to Pro Tools 2023.12, only one session marker ruler was available.
+        case ruler = "Ruler"
+        
+        /// Track.
+        ///
+        /// > Note:
+        /// >
+        /// > Pro Tools 2023.6 added the ability to insert markers directly on tracks using a marker lane.
+        /// >
+        /// > Prior to Pro Tools 2023.6, only one session marker ruler was available and markers could
+        /// > not be inserted directly on tracks.
+        case track = "Track"
     }
 }
