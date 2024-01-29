@@ -1,0 +1,19 @@
+SESSION NAME:	Test
+SAMPLE RATE:	48000.000000
+BIT DEPTH:	24-bit
+SESSION START TIMECODE:	00:59:50:00
+TIMECODE FORMAT:	24 Frame
+# OF AUDIO TRACKS:	2
+# OF AUDIO CLIPS:	0
+# OF AUDIO FILES:	0
+
+
+M A R K E R S  L I S T I N G
+#   	LOCATION     	TIME REFERENCE    	UNITS    	NAME                             	TRACK NAME                       	TRACK TYPE   	COMMENTS
+1   	01:00:00:00  	480000            	Samples  	Marker 1                         	Markers                          	Ruler                            	
+2   	01:00:01:00  	528000            	Samples  	Marker 2                         	Markers 2                        	Ruler                            	Some comments
+3   	01:00:02:00  	576000            	Samples  	Marker 3                         	Markers 3                        	Ruler                            	
+4   	01:00:03:00  	624000            	Samples  	Marker 4                         	Markers 4                        	Ruler                            	
+5   	01:00:04:00  	672000            	Samples  	Marker 5                         	Markers 5                        	Ruler                            	
+6   	01:00:05:00  	720000            	Samples  	Marker 6                         	Audio 1                          	Track                            	More comments
+7   	01:00:06:00  	768000            	Samples  	Marker 7                         	Audio 2                          	Track                            	
