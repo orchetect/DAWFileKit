@@ -15,3 +15,19 @@ extension ProTools.SessionInfo {
         case pt2023_12
     }
 }
+
+extension ProTools.SessionInfo.MarkersListingVersion {
+    public var columnCount: Int {
+        switch self {
+        case .legacy: return 6
+        case .pt2023_12: return 8
+        }
+    }
+    
+    public var commentColumnIndex: Int {
+        switch self {
+        case .legacy: return 5
+        case .pt2023_12: return 7
+        }
+    }
+}

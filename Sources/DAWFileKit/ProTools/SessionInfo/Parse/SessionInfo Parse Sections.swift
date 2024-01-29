@@ -219,7 +219,8 @@ extension ProTools.SessionInfo {
             for line in lines {
                 if line.isEmpty { break }
                 
-                let columnData = line.split(separator: "\t")
+                let columnData = line
+                    .split(separator: "\t")
                     .map { String($0) } // split into array by tab character
                 
                 guard let strFilename = columnData[safe: 0]?.trimmed,
@@ -309,7 +310,8 @@ extension ProTools.SessionInfo {
             for line in lines {
                 if line.isEmpty { break }
                 
-                let columnData = line.split(separator: "\t")
+                let columnData = line
+                    .split(separator: "\t")
                     .map { String($0) } // split into array by tab character
                 
                 guard let name = columnData[safe: 0]?.trimmed,
@@ -402,7 +404,8 @@ extension ProTools.SessionInfo {
             for line in lines {
                 if line.isEmpty { break }
                 
-                let columnData = line.split(separator: "\t")
+                let columnData = line
+                    .split(separator: "\t")
                     .map { String($0) } // split into array by tab character
                 
                 guard let manufacturer = columnData[safe: 0]?.trimmed,
@@ -651,7 +654,9 @@ extension ProTools.SessionInfo {
             let clips: [TrackComponents.ClipComponents] = clipList
                 .components(separatedBy: .newlines)
                 .reduce(into: []) { base, clip in
-                    let columns = clip.components(separatedBy: "\t").map { $0.trimmed }
+                    let columns = clip
+                        .components(separatedBy: "\t")
+                        .map { $0.trimmed }
                     
                     // check for empty line
                     if columns.count == 1 { return }
@@ -868,12 +873,16 @@ extension ProTools.SessionInfo {
                 return ([], messages)
             }
             
-            if !section[0].contains(caseInsensitive: "LOCATION") ||
-                !section[0].contains(caseInsensitive: "TIME REFERENCE") ||
-                !section[0].contains(caseInsensitive: "UNITS") ||
-                !section[0].contains(caseInsensitive: "NAME") ||
-                !section[0].contains(caseInsensitive: "COMMENTS")
-            {
+            let sectionVersion: ProTools.SessionInfo.MarkersListingVersion
+            
+            let legacyHeaderLinePattern = ##"\#[\s]+LOCATION[\s]+TIME REFERENCE[\s]+UNITS[\s]+NAME[\s]+COMMENTS"##
+            let pt2023_12_HeaderLinePattern = ##"\#[\s]+LOCATION[\s]+TIME REFERENCE[\s]+UNITS[\s]+NAME[\s]+TRACK NAME[\s]+TRACK TYPE[\s]+COMMENTS"##
+            
+            if section[0].regexMatches(pattern: legacyHeaderLinePattern).count == 1 {
+                sectionVersion = .legacy
+            } else if section[0].regexMatches(pattern: pt2023_12_HeaderLinePattern).count == 1 {
+                sectionVersion = .pt2023_12
+            } else {
                 addParseMessage(.error(
                     "Error: text file does not appear to contain \(debugSectionName) listing. Columns header is not formatted as expected. Aborting parsing this section."
                 ))
@@ -891,13 +900,14 @@ extension ProTools.SessionInfo {
             
             // break markers list into raw text of individual markers so we can further parse then
             
-            // due to the fact that newline and tab characters can exist within the NAME and COMMENtS,
+            // due to the fact that newline and tab characters can exist within the NAME and COMMENTS,
             // we have to implement a more nuanced parser to accommodate.
             // - if line starts with #, LOCATION, TIME REFERENCE, UNITS, and NAME with expected contents,
             //   we can reasonably assume it's the start of a marker
             // - if the next line does not match, assume it's part of the currently parsed marker
             
             // this pattern is designed to detect if a line is the start of a marker
+            // (works for all session info text file versions)
             let markerPrefixPattern = #"^(\d+)\s+\t([^\t\n]+)\s*\t([^\t\n]+)\s+\t(Samples|Ticks)\s+\t([\s\S]*?)$"#
             
             var rawMarkers: [String] = []
@@ -946,7 +956,13 @@ extension ProTools.SessionInfo {
                 // as long as the NAME does not contain newlines, Pro Tools will align the start of each
                 // newline in the COMMENTS with the COMMENTS column offset by essentially inserting a blank marker
                 // formatted in the same tab-delimited layout but using empty spaces.
-                let commentNewLinePrefix = "    \t             \t                  \t           \t                                 \t"
+                let commentNewLinePrefix: String
+                switch sectionVersion {
+                case .legacy:
+                    commentNewLinePrefix = "    \t             \t                  \t           \t                                 \t"
+                case .pt2023_12:
+                    commentNewLinePrefix = "    \t             \t                  \t           \t                                 \t                                 \t                                 \t"
+                }
                 
                 var commentsSuffix: String? = nil
                 if let firstCommentNewLineOffset = rawMarker.firstIndex(of: commentNewLinePrefix) {
@@ -955,7 +971,8 @@ extension ProTools.SessionInfo {
                     rawMarker = String(rawMarker[..<firstCommentNewLineOffset])
                 }
                 
-                let columnData = rawMarker.split(separator: "\t")
+                let columnData = rawMarker
+                    .split(separator: "\t")
                     .map { String($0).trimmed } // split into array by tab character
                 
                 guard let strNumber = columnData[safe: 0], // always index 0
@@ -974,10 +991,46 @@ extension ProTools.SessionInfo {
                 // always starts at index 4. will be self-contained if no tab characters are within the name.
                 let strName: String
                 
+                // track name
+                // (PT 2023.12 and later only)
+                var strTrackName: String? = nil
+                switch sectionVersion {
+                case .legacy: 
+                    break
+                case .pt2023_12:
+                    guard let tn = columnData[safe: 5] else {
+                        addParseMessage(.error(
+                            "Could not determine marker's track name. Text file may be malformed."
+                        ))
+                        return
+                    }
+                    strTrackName = tn
+                }
+                
+                // track type
+                // (PT 2023.12 and later only)
+                var strTrackType: String? = nil
+                switch sectionVersion {
+                case .legacy:
+                    break
+                case .pt2023_12:
+                    guard let tt = columnData[safe: 6] else {
+                        addParseMessage(.error(
+                            "Could not determine marker's track name. Text file may be malformed."
+                        ))
+                        return
+                    }
+                    strTrackType = tt
+                }
+                
                 // marker comment
+                // legacy: always index 5
+                // PT 2023.12 and later: always index 7
                 var strComment: String?
                 if let commentsSuffix {
-                    guard columnData.count >= 6, let lastComponent = columnData.last else {
+                    guard columnData.count >= sectionVersion.columnCount,
+                          let lastComponent = columnData.last
+                    else {
                         addParseMessage(.error(
                             "One or more \(debugSectionName) item elements failed to parse. Text file may be malformed."
                         ))
@@ -985,9 +1038,16 @@ extension ProTools.SessionInfo {
                     }
                     
                     // assume if there are more than one remaining component, there are tab characters in the name
+                    
+                    let dropLastCount: Int
+                    switch sectionVersion {
+                    case .legacy: dropLastCount = 1
+                    case .pt2023_12: dropLastCount = 3
+                    }
+                    
                     strName = columnData
                         .dropFirst(4)
-                        .dropLast(1)
+                        .dropLast(dropLastCount)
                         .joined(separator: "\t")
                     
                     // add the last component to the partial trailing comments
@@ -995,7 +1055,8 @@ extension ProTools.SessionInfo {
                 } else {
                     // no newlines in the comments
                     strName = columnData[safe: 4] ?? ""
-                    strComment = columnData[safe: 5...]?.joined(separator: "\t")
+                    strComment = columnData[safe: sectionVersion.commentColumnIndex...]?
+                        .joined(separator: "\t")
                 }
                 
                 if strComment?.isEmpty == true { strComment = nil }
@@ -1007,6 +1068,8 @@ extension ProTools.SessionInfo {
                         timeReference: strTimeReference,
                         timeReferenceFormat: strTimeReferenceBase,
                         name: strName,
+                        trackName: strTrackName,
+                        trackType: strTrackType,
                         comment: strComment
                     )
                 )
@@ -1029,6 +1092,8 @@ extension ProTools.SessionInfo {
             let timeReference: String
             let timeReferenceFormat: String
             let name: String
+            let trackName: String?
+            let trackType: String?
             let comment: String?
         }
         
@@ -1140,12 +1205,30 @@ extension ProTools.SessionInfo {
                     ))
                 }
                 
+                // track type
+                let trackType: ProTools.SessionInfo.Marker.TrackType
+                if let trackTypeString = line.trackType {
+                    if let tt = ProTools.SessionInfo.Marker.TrackType(rawValue: trackTypeString) {
+                        trackType = tt
+                    } else {
+                        addParseMessage(.error(
+                            "Marker at \(line.location) had an unrecognized Track Type of \(trackTypeString.quoted). Defaulting to Ruler (legacy default)."
+                        ))
+                        trackType = .ruler
+                    }
+                } else {
+                    // legacy is always marker ruler
+                    trackType = .ruler
+                }
+                
                 // add new marker
                 let newItem = Marker(
                     number: number,
                     location: location,
                     timeReference: timeRef,
                     name: line.name,
+                    trackName: line.trackName,
+                    trackType: trackType,
                     comment: line.comment
                 )
                 markers.append(newItem)
