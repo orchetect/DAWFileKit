@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p24" frameDuration="100/2400s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r2" name="TestVideo" uid="30C3729DCEE936129873D803DC13B623" start="0s" duration="738000/25000s" hasVideo="1" format="r3" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="30C3729DCEE936129873D803DC13B623" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Test%20Event/Original%20Media/TestVideo.m4v">
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.mio.cameraName" value="TestVideo Camera Name"/>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="SD (6-1-6)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2023-01-01 19:46:28 -0800"/>
+            </metadata>
+        </asset>
+        <format id="r3" name="FFVideoFormat640x480p25" frameDuration="100/2500s" width="640" height="480" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
+        <asset id="r4" name="TestVideo2" uid="C421E274EF3CBE5D43A6AE5414ED2E13" start="0s" duration="142040/1000s" hasVideo="1" format="r5" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="C421E274EF3CBE5D43A6AE5414ED2E13" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Test%20Event/Original%20Media/TestVideo2.mp4"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.mio.ingestDate" value="2023-11-22 04:01:31 -0800"/>
+            </metadata>
+        </asset>
+        <format id="r5" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
+            <project name="24With25Media" uid="F828BEE6-FBBE-4566-992F-B01BB44C0010" modDate="2024-02-09 15:31:00 -0800">
+                <sequence format="r1" duration="1564400/9600s" tcStart="3600s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <gap name="Gap" offset="3600s" start="3600s" duration="10s"/>
+                        <asset-clip ref="r2" offset="3610s" name="TestVideo" start="684/25s" duration="9/4s" format="r3" tcFormat="NDF" audioRole="dialogue">
+                            <note>asset notes in browser</note>
+                            <conform-rate srcFrameRate="25"/>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="0s" duration="738000/25000s" value="keyword1"/>
+                            <keyword start="79/5s" duration="211000/25000s" value="keyword2"/>
+                            <marker start="137/5s" duration="1000/25000s" value="Marker 1"/>
+                        </asset-clip>
+                        <gap name="Gap" offset="34677600/9600s" start="3600s" duration="6600/2400s"/>
+                        <asset-clip ref="r4" offset="3615s" name="TestVideo2" duration="3551/24s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <conform-rate srcFrameRate="25"/>
+                            <marker start="2753/25s" duration="100/2400s" value="Marker 2"/>
+                            <marker start="642/5s" duration="100/2400s" value="Marker 3"/>
+                        </asset-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>

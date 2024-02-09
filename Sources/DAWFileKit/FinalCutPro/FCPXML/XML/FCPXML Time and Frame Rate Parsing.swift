@@ -333,7 +333,19 @@ extension XMLElement {
             case .ntscDrop:
                 return m / t
             case .whole:
-                return nil
+                switch timelineFrameRate {
+                case .fps24:
+                    switch mediaFrameRate {
+                    case .fps25: return t / m
+                    default: return nil
+                    }
+                case .fps25:
+                    switch mediaFrameRate {
+                    case .fps24: return m / t // TODO: experimental until tested
+                    default: return nil
+                    }
+                default: return nil
+                }
             }
         }
     }
