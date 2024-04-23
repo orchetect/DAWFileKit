@@ -58,6 +58,7 @@ extension FCPXMLRole {
 // MARK: - Collection Methods
 
 extension Sequence<FinalCutPro.FCPXML.AnyRole> {
+    @_disfavoredOverload
     public func contains(_ element: any FCPXMLRole) -> Bool {
         contains(where: { $0.wrapped.isEqual(to: element) })
     }
@@ -70,6 +71,7 @@ extension Dictionary where Value == FinalCutPro.FCPXML.AnyRole {
 }
 
 extension Sequence where Element: FCPXMLRole {
+    @_disfavoredOverload
     public func contains(_ element: FinalCutPro.FCPXML.AnyRole) -> Bool {
         contains(where: { $0.asAnyRole() == element })
     }
