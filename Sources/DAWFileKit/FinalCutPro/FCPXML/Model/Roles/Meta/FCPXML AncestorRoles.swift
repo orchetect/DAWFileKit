@@ -150,6 +150,15 @@ extension XMLElement {
             }
         }
         
+        // special case: <title> element can never have audio role(s)
+        let clip = fcpAncestorClip(ancestors: ancestors, includingSelf: true)
+        if clip?.fcpElementType == .title {
+            // remove all audio roles from the hierarchy
+            for index in ancestorRoles.elements.indices {
+                ancestorRoles.elements[index].roles.removeAll { $0.isAudio }
+            }
+        }
+        
         // print(ancestorRoles.elements.map {
         //     $0.elementType.rawValue + ": " + $0.roles.map(\.wrapped).map(\.rawValue).joined(separator: " - ")
         // })
