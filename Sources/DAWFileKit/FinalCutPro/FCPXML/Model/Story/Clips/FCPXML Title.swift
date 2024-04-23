@@ -111,8 +111,8 @@ extension FinalCutPro.FCPXML.Title {
     }
     
     public var role: FinalCutPro.FCPXML.VideoRole? {
-        get { element.fcpVideoRole }
-        set { element.fcpVideoRole = newValue }
+        get { element.fcpRole(as: FinalCutPro.FCPXML.VideoRole.self) }
+        set { element.fcpSet(role: newValue) }
     }
 }
 
