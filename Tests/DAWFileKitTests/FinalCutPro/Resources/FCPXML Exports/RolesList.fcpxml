@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Metal" uid=".../Generators.localized/Textures.localized/Metal.localized/Metal.motn"/>
+        <effect id="r3" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <effect id="r4" name="Gradient" uid=".../Generators.localized/Textures.localized/Gradient.localized/Gradient.motn"/>
+        <effect id="r5" name="Grey Scale" uid=".../Generators.localized/Solids.localized/Grey Scale.localized/Grey Scale.motn"/>
+        <effect id="r6" name="Vivid" uid=".../Generators.localized/Solids.localized/Vivid.localized/Vivid.motn"/>
+        <effect id="r7" name="Pastel" uid=".../Generators.localized/Solids.localized/Pastel.localized/Pastel.motn"/>
+    </resources>
+    <library location="file:///Users/user/Movies/Test.fcpbundle/">
+        <event name="Demo 1" uid="E7ECA5C2-1A8C-4222-B275-2BF527559891">
+            <project name="Roles-Test" uid="1AAA91FA-81C9-4485-B255-D1472922AAA2" modDate="2024-01-29 17:44:54 -0800">
+                <sequence format="r1" duration="228700/2500s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <video ref="r2" offset="0s" name="Metal" start="3600s" duration="13800/2500s">
+                            <title ref="r3" lane="-1" offset="90017/25s" name="TO-DO - Basic Title" start="3600s" duration="2s" role="TO-DO.TO-DO-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts1">TO-DO</text-style>
+                                </text>
+                                <text-style-def id="ts1">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="TD-001" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-2" offset="90058/25s" name="VFX - Basic Title" start="3600s" duration="3700/2500s" role="VFX.VFX-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893147/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts2">VFX
+</text-style>
+                                </text>
+                                <text-style-def id="ts2">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="VFX-001"/>
+                            </title>
+                            <title ref="r3" lane="-3" offset="90086/25s" name="FIXING - Basic Title" start="3600s" duration="3700/2500s" role="FIXING.FIXING-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893154/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts3">FIXING
+</text-style>
+                                </text>
+                                <text-style-def id="ts3">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="FIX-001" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90128/25s" name="VFX - Basic Title" start="3600s" duration="6700/2500s" role="VFX.VFX-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893140/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts4">VFX
+</text-style>
+                                </text>
+                                <text-style-def id="ts4">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="VFX-002"/>
+                            </title>
+                        </video>
+                        <video ref="r4" offset="13800/2500s" name="Gradient" start="3600s" duration="60800/2500s">
+                            <title ref="r3" lane="-1" offset="18016/5s" name="FIXING - Basic Title" start="3600s" duration="3700/2500s" role="FIXING.FIXING-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893165/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts5">FIXING
+</text-style>
+                                </text>
+                                <text-style-def id="ts5">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="FIX-002" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90168/25s" name="TO-DO - Basic Title" start="3600s" duration="2s" role="TO-DO.TO-DO-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts6">TO-DO</text-style>
+                                </text>
+                                <text-style-def id="ts6">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="TD-002" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90283/25s" name="FIXING - Basic Title" start="3600s" duration="15500/2500s" role="FIXING.FIXING-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893178/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts7">FIXING
+</text-style>
+                                </text>
+                                <text-style-def id="ts7">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="[!]FIX-003" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90459/25s" name="VFX - Basic Title" start="3600s" duration="3700/2500s" role="VFX.VFX-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893185/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts8">VFX
+</text-style>
+                                </text>
+                                <text-style-def id="ts8">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="VFX-003"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90527/25s" name="VFX - Basic Title" start="3600s" duration="8100/2500s" role="VFX.VFX-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893192/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts9">VFX
+</text-style>
+                                </text>
+                                <text-style-def id="ts9">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="VFX-004"/>
+                            </title>
+                        </video>
+                        <video ref="r5" offset="74600/2500s" name="Grey Scale" start="3600s" duration="84900/2500s">
+                            <title ref="r3" lane="-1" offset="90102/25s" name="VFX - Basic Title" start="3600s" duration="8100/2500s" role="VFX.VFX-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893203/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts10">VFX
+</text-style>
+                                </text>
+                                <text-style-def id="ts10">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="VFX-005"/>
+                            </title>
+                            <title ref="r3" lane="-2" offset="18029/5s" name="TO-DO - Basic Title" start="3600s" duration="2s" role="TO-DO.TO-DO-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts11">TO-DO</text-style>
+                                </text>
+                                <text-style-def id="ts11">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="TD-003" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="18071/5s" name="FIXING - Basic Title" start="3600s" duration="15500/2500s" role="FIXING.FIXING-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893210/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts12">FIXING
+</text-style>
+                                </text>
+                                <text-style-def id="ts12">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="FIX-004" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90721/25s" name="TO-DO - Basic Title" start="3600s" duration="2s" role="TO-DO.TO-DO-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts13">TO-DO</text-style>
+                                </text>
+                                <text-style-def id="ts13">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="TD-004" completed="0"/>
+                            </title>
+                            <title ref="r3" lane="-1" offset="90812/25s" name="FIXING - Basic Title" start="3600s" duration="15500/2500s" role="FIXING.FIXING-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/1999893223/401" value="1 (Center)"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts14">FIXING
+</text-style>
+                                </text>
+                                <text-style-def id="ts14">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="FIX-005" completed="0"/>
+                            </title>
+                        </video>
+                        <video ref="r6" offset="159500/2500s" name="Vivid" start="3600s" duration="52800/2500s">
+                            <title ref="r3" lane="-1" offset="90234/25s" name="TO-DO - Basic Title" start="3600s" duration="2s" role="TO-DO.TO-DO-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts15">TO-DO</text-style>
+                                </text>
+                                <text-style-def id="ts15">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="TD-005" completed="0"/>
+                            </title>
+                        </video>
+                        <video ref="r7" offset="212300/2500s" name="Pastel" start="3600s" duration="16400/2500s">
+                            <title ref="r3" lane="-1" offset="3600s" name="TO-DO - Basic Title" start="3600s" duration="2s" role="TO-DO.TO-DO-1">
+                                <param name="Flatten" key="9999/999166631/999166633/2/351" value="1"/>
+                                <param name="Alignment" key="9999/999166631/999166633/2/354/999169573/401" value="1 (Center)"/>
+                                <text>
+                                    <text-style ref="ts16">TO-DO</text-style>
+                                </text>
+                                <text-style-def id="ts16">
+                                    <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                                </text-style-def>
+                                <marker start="3600s" duration="100/2500s" value="TD-006" completed="0"/>
+                            </title>
+                        </video>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
