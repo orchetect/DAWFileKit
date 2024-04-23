@@ -392,6 +392,11 @@ extension XMLElement {
             return false
         }
         
+        let enabledState = extractedElement.element.fcpGetEnabled(default: true)
+        if !scope.includeDisabled, !enabledState {
+            return false
+        }
+        
         if let predicate = scope.extractionPredicate,
            !predicate(extractedElement)
         {
@@ -432,6 +437,11 @@ extension XMLElement {
         if let maxContainerDepth = scope.maxContainerDepth,
            _fcpContainerDepth(in: ancestors) > maxContainerDepth
         {
+            return false
+        }
+        
+        let enabledState = extractedElement.element.fcpGetEnabled(default: true)
+        if !scope.includeDisabled, !enabledState {
             return false
         }
         

@@ -32,6 +32,9 @@ extension FinalCutPro.FCPXML {
         /// Filter to apply to Multicam clip contents.
         public var mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask
         
+        /// Include disabled clips.
+        public var includeDisabled: Bool
+        
         /// Occlusion conditions of elements to include.
         /// By default, all are included.
         public var occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion>
@@ -74,6 +77,7 @@ extension FinalCutPro.FCPXML {
             maxContainerDepth: Int? = nil,
             auditions: FinalCutPro.FCPXML.Audition.AuditionMask = .active,
             mcClipAngles: FinalCutPro.FCPXML.MCClip.AngleMask = .active,
+            includeDisabled: Bool = true,
             occlusions: Set<FinalCutPro.FCPXML.ElementOcclusion> = .allCases,
             filteredTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
             excludedTraversalTypes: Set<FinalCutPro.FCPXML.ElementType> = [],
@@ -85,6 +89,7 @@ extension FinalCutPro.FCPXML {
             self.maxContainerDepth = maxContainerDepth
             self.auditions = auditions
             self.mcClipAngles = mcClipAngles
+            self.includeDisabled = includeDisabled
             self.occlusions = occlusions
             self.filteredTraversalTypes = filteredTraversalTypes
             self.excludedTraversalTypes = excludedTraversalTypes
@@ -108,6 +113,7 @@ extension FinalCutPro.FCPXML.ExtractionScope {
             maxContainerDepth: nil,
             auditions: auditions,
             mcClipAngles: mcClipAngles,
+            includeDisabled: true,
             occlusions: .allCases,
             filteredTraversalTypes: [],
             excludedTraversalTypes: [],
@@ -124,6 +130,7 @@ extension FinalCutPro.FCPXML.ExtractionScope {
         maxContainerDepth: 2,
         auditions: .active,
         mcClipAngles: .active,
+        includeDisabled: false,
         occlusions: [.notOccluded, .partiallyOccluded],
         filteredTraversalTypes: [],
         excludedTraversalTypes: [],
