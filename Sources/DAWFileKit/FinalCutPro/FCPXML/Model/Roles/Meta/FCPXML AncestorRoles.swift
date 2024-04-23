@@ -44,8 +44,9 @@ extension FinalCutPro.FCPXML.AncestorRoles {
         
         let elementVideoRoles = elements.map { $0.roles.videoRoles() }
         let videoRoles = _flatten(singleRoleType: elementVideoRoles)
-        outputRoles.append(contentsOf: videoRoles)
-        
+        if let videoRole = videoRoles.last { // only allow one video role
+            outputRoles.append(videoRole)
+        }
         let elementAudioRoles = elements.map { $0.roles.audioRoles() }
         let audioRoles = _flatten(singleRoleType: elementAudioRoles)
         outputRoles.append(contentsOf: audioRoles)
