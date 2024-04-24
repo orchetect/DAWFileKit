@@ -371,7 +371,8 @@ extension FinalCutPro.FCPXML {
         // MARK: clips
             
         case .assetClip:
-            return [defaultVideoRole]
+            // note that an asset-clip can contain video and/or audio
+            return []
         case .audio:
             return [defaultAudioRole]
         case .audition:
