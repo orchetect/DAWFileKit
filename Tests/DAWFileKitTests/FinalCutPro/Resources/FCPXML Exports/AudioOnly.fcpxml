@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p2398" frameDuration="1001/24000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r2" name="Forest Day" uid="8047F659131C2FB5F4D5722B0990604F" start="0s" duration="3102929/48000s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="8047F659131C2FB5F4D5722B0990604F" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Demo%201/Original%20Media/Forest%20Day.caf"/>
+            <metadata>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-06 05:11:46 -0700"/>
+            </metadata>
+        </asset>
+        <asset id="r3" name="Water Lake 3" uid="0741EB3AFB4F413146FB52090CBF9BBE" start="0s" duration="2993454/48000s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000">
+            <media-rep kind="original-media" sig="0741EB3AFB4F413146FB52090CBF9BBE" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Demo%201/Original%20Media/Water%20Lake%203.caf"/>
+            <metadata>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-09-06 05:24:47 -0700"/>
+            </metadata>
+        </asset>
+        <format id="r4" name="FFVideoFormatRateUndefined"/>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Demo 1" uid="A8A44D6B-F004-41D1-B1A5-3A396F9557E2">
+            <project name="Audio Only_01" uid="924AE2FC-18A9-4DAE-9EC3-8659297E8627" modDate="2024-04-23 22:04:42 -0700">
+                <sequence format="r1" duration="4651647/24000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <asset-clip ref="r2" offset="0s" name="Forest Day" duration="1550549/24000s" audioRole="effects">
+                            <asset-clip ref="r3" lane="-1" offset="0s" name="Water Lake 3" duration="44901810/720000s" format="r4" audioRole="effects">
+                                <marker start="5017843/120000s" duration="1/48000s" value="Marker 3"/>
+                                <marker start="3433261/60000s" duration="1/48000s" value="Marker 4"/>
+                            </asset-clip>
+                            <marker start="998393/120000s" duration="1/48000s" value="Marker 1"/>
+                            <marker start="9607913/360000s" duration="1/48000s" value="Marker 2"/>
+                            <audio-channel-source srcCh="1, 2" role="music.music-1"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="1550549/24000s" name="Forest Day" duration="1550549/24000s" audioRole="effects">
+                            <asset-clip ref="r3" lane="-1" offset="455817/20000s" name="Water Lake 3" duration="44901810/720000s" format="r4" audioRole="effects">
+                                <marker start="5017843/120000s" duration="1/48000s" value="Marker 3"/>
+                                <marker start="3433261/60000s" duration="1/48000s" value="Marker 4"/>
+                            </asset-clip>
+                            <marker start="998393/120000s" duration="1/48000s" value="Marker 1"/>
+                            <marker start="9607913/360000s" duration="1/48000s" value="Marker 2"/>
+                            <audio-channel-source srcCh="1, 2" role="music.music-1"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="3101098/24000s" name="Forest Day" duration="1550549/24000s" audioRole="effects">
+                            <marker start="998393/120000s" duration="1/48000s" value="Marker 1"/>
+                            <marker start="9607913/360000s" duration="1/48000s" value="Marker 2"/>
+                            <audio-channel-source srcCh="1, 2" role="music.music-1"/>
+                        </asset-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
