@@ -33,7 +33,7 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Keyword {
     public init(
-        keywords: String,
+        keywords: [String],
         start: Fraction,
         duration: Fraction? = nil,
         note: String? = nil
@@ -64,10 +64,22 @@ extension FinalCutPro.FCPXML.Keyword {
 // MARK: - Attributes
 
 extension FinalCutPro.FCPXML.Keyword {
-    /// Comma-separated list of keywords.
-    public var keywords: String {
-        get { element.fcpValue ?? "" }
-        set { element.fcpValue = newValue }
+    /// Keywords.
+    /// Internally this is stored in the XML as a comma-separated list.
+    public var keywords: [String] {
+        get {
+            element.fcpValue?
+                .split(separator: ",")
+                .map { String($0) }
+            ?? []
+        }
+        set {
+            if newValue.isEmpty {
+                element.fcpValue = nil
+            } else {
+                element.fcpValue = newValue.joined(separator: ",")
+            }
+        }
     }
     
     /// Optional note.

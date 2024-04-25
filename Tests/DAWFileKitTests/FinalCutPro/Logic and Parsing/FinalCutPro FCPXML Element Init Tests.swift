@@ -74,13 +74,13 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
     
     func testKeyword() {
         let keyword = FinalCutPro.FCPXML.Keyword(
-            keywords: "keyword1,keyword2",
+            keywords: ["keyword1", "keyword2"],
             start: Fraction(10, 1),
             duration: Fraction(25, 1),
             note: "Some notes"
         )
         
-        XCTAssertEqual(keyword.keywords, "keyword1,keyword2")
+        XCTAssertEqual(keyword.keywords, ["keyword1", "keyword2"])
         XCTAssertEqual(keyword.note, "Some notes")
         XCTAssertEqual(keyword.start, Fraction(10, 1))
         XCTAssertEqual(keyword.duration, Fraction(25, 1))

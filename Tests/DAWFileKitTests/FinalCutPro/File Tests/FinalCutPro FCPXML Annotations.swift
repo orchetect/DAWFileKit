@@ -180,13 +180,13 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         
         // this keyword applies to entire video clip
         let expectedE1Keyword0 = try XCTUnwrap(element1Keywords[safe: 0])
-        XCTAssertEqual(expectedE1Keyword0.keywords, "keyword1")
+        XCTAssertEqual(expectedE1Keyword0.keywords, ["keyword1"])
         XCTAssertEqual(expectedE1Keyword0.startAsTimecode(), Self.tc("00:00:00:00", .fps25))
         XCTAssertEqual(expectedE1Keyword0.durationAsTimecode(), Self.tc("00:00:29:13", .fps25))
         XCTAssertEqual(expectedE1Keyword0.note, "k1 notes")
         
         let expectedE1Keyword1 = try XCTUnwrap(element1Keywords[safe: 1])
-        XCTAssertEqual(expectedE1Keyword1.keywords, "keyword2")
+        XCTAssertEqual(expectedE1Keyword1.keywords, ["keyword2"])
         XCTAssertEqual(expectedE1Keyword1.startAsTimecode(), Self.tc("00:00:15:20", .fps25))
         XCTAssertEqual(expectedE1Keyword1.durationAsTimecode(), Self.tc("00:00:08:11", .fps25))
         XCTAssertEqual(expectedE1Keyword1.note, "k2 notes")
