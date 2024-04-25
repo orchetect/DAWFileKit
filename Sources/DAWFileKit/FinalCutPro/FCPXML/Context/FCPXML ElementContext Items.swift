@@ -152,6 +152,16 @@ extension FinalCutPro.FCPXML.ElementContext {
             tools.parentDurationAsTimecode(frameRateSource: frameRateSource)
         }
     }
+    
+    /// Returns keywords applied to the element if the element is a clip, otherwise returns keywords applied to the
+    /// first ancestor clip.
+    public static func keywords(
+        constrainToKeywordRanges: Bool = true
+    ) -> FinalCutPro.FCPXML.ElementContext<[FinalCutPro.FCPXML.Keyword]> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.keywords(constrainToKeywordRanges: constrainToKeywordRanges)
+        }
+    }
 }
 
 #endif

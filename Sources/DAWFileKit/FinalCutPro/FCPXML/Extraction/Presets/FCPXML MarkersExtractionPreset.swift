@@ -78,8 +78,16 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Inherited roles from container(s).
+        /// (convenience accessor for `.inheritedRoles` context value).
         public var roles: [AnyInterpolatedRole] {
             value(forContext: .inheritedRoles)
+        }
+        
+        /// Applicable clip keywords.
+        /// (convenience accessor for `.keywords(constrainToKeywordRanges:)` context value).
+        public func keywords(constrainToKeywordRanges: Bool = true) -> [String] {
+            value(forContext: .keywords(constrainToKeywordRanges: constrainToKeywordRanges))
+                .flatMap(\.keywords)
         }
     }
 }

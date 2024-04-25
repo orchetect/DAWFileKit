@@ -38,7 +38,8 @@ extension FinalCutPro.FCPXML.ElementContext {
         /// This is calculated based on ancestor elements.
         public var absoluteStart: TimeInterval? {
             element._fcpCalculateAbsoluteStart(
-                ancestors: breadcrumbs
+                ancestors: breadcrumbs,
+                resources: resources
             )
         }
         
@@ -202,6 +203,18 @@ extension FinalCutPro.FCPXML.ElementContext {
                 mcClipAngles: .active
             )
             .flattenedInterpolatedRoles()
+        }
+        
+        /// Returns keywords applied to the element if the element is a clip, otherwise returns keywords applied to the
+        /// first ancestor clip.
+        public func keywords(
+            constrainToKeywordRanges: Bool = true
+        ) -> [FinalCutPro.FCPXML.Keyword] {
+            element._fcpApplicableKeywords(
+                constrainToKeywordRanges: constrainToKeywordRanges,
+                breadcrumbs: breadcrumbs,
+                resources: resources
+            )
         }
         
         /// Returns occlusion information for the current element in relation to its parent.
