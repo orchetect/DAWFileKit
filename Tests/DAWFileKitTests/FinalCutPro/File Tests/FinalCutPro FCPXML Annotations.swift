@@ -160,16 +160,28 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
         let element1Markers = element1.contents
             .filter(whereFCPElement: .marker)
             .zeroIndexed
-        XCTAssertEqual(element1Markers.count, 1)
+        XCTAssertEqual(element1Markers.count, 3)
         
         let expectedE1Marker0 = try XCTUnwrap(element1Markers[safe: 0])
-        XCTAssertEqual(expectedE1Marker0.startAsTimecode(), Self.tc("00:00:27:10", .fps25))
+        XCTAssertEqual(expectedE1Marker0.startAsTimecode(), Self.tc("00:00:13:00", .fps25))
         XCTAssertEqual(expectedE1Marker0.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
-        XCTAssertEqual(expectedE1Marker0.name, "marker1")
+        XCTAssertEqual(expectedE1Marker0.name, "Marker 1")
         XCTAssertEqual(expectedE1Marker0.configuration, .standard)
-        XCTAssertEqual(expectedE1Marker0.note, "m1 notes")
+        XCTAssertEqual(expectedE1Marker0.note, nil)
         
-        XCTAssertEqual(element1Markers[safe: 0], expectedE1Marker0)
+        let expectedE1Marker1 = try XCTUnwrap(element1Markers[safe: 1])
+        XCTAssertEqual(expectedE1Marker1.startAsTimecode(), Self.tc("00:00:18:00", .fps25))
+        XCTAssertEqual(expectedE1Marker1.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
+        XCTAssertEqual(expectedE1Marker1.name, "Marker 2")
+        XCTAssertEqual(expectedE1Marker1.configuration, .standard)
+        XCTAssertEqual(expectedE1Marker1.note, nil)
+        
+        let expectedE1Marker2 = try XCTUnwrap(element1Markers[safe: 2])
+        XCTAssertEqual(expectedE1Marker2.startAsTimecode(), Self.tc("00:00:27:10", .fps25))
+        XCTAssertEqual(expectedE1Marker2.durationAsTimecode(), Self.tc("00:00:00:01", .fps25))
+        XCTAssertEqual(expectedE1Marker2.name, "Marker 3")
+        XCTAssertEqual(expectedE1Marker2.configuration, .standard)
+        XCTAssertEqual(expectedE1Marker2.note, "m3 notes")
         
         // keywords
         
@@ -280,6 +292,47 @@ final class FinalCutPro_FCPXML_Annotations: FCPXMLTestCase {
 //                .assigned(.caption(raw: "iTT?captionFormat=ITT.en")!)
 //            ]
 //        )
+    }
+    
+    /// Test keywords that apply to each marker.
+    func testExtractMarkers() async throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let extractedMarkers = await project
+            .extract(preset: .markers, scope: .mainTimeline)
+            .sortedByAbsoluteStartTimecode()
+        // .zeroIndexed // not necessary after sorting - sort returns new array
+        
+        let markers = extractedMarkers
+        
+        let expectedMarkerCount = 3
+        XCTAssertEqual(markers.count, expectedMarkerCount)
+        
+        print("Markers sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
+        
+        // markers
+        
+        let marker1 = try XCTUnwrap(markers[safe: 0])
+        let marker2 = try XCTUnwrap(markers[safe: 1])
+        let marker3 = try XCTUnwrap(markers[safe: 2])
+        
+        // Check keywords while constraining to keyword ranges
+        XCTAssertEqual(marker1.keywords(constrainToKeywordRanges: true), ["keyword1"])
+        XCTAssertEqual(marker2.keywords(constrainToKeywordRanges: true), ["keyword1", "keyword2"])
+        XCTAssertEqual(marker3.keywords(constrainToKeywordRanges: true), ["keyword1"])
+        
+        // Check keywords while NOT constraining to keyword ranges
+        XCTAssertEqual(marker1.keywords(constrainToKeywordRanges: false), ["keyword1", "keyword2"])
+        XCTAssertEqual(marker2.keywords(constrainToKeywordRanges: false), ["keyword1", "keyword2"])
+        XCTAssertEqual(marker3.keywords(constrainToKeywordRanges: false), ["keyword1", "keyword2"])
     }
 }
 

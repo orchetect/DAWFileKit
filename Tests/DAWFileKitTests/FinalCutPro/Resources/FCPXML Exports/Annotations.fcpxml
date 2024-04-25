@@ -48,28 +48,14 @@
                                 </text-style-def>
                             </caption>
                             <keyword start="0s" duration="738000/25000s" value="keyword1" note="k1 notes"/>
+                            <marker start="13s" duration="100/2500s" value="Marker 1"/>
                             <keyword start="79/5s" duration="211000/25000s" value="keyword2" note="k2 notes"/>
-                            <marker start="137/5s" duration="1000/25000s" value="marker1" note="m1 notes"/>
+                            <marker start="18s" duration="100/2500s" value="Marker 2"/>
+                            <marker start="137/5s" duration="1000/25000s" value="Marker 3" note="m3 notes"/>
                         </asset-clip>
                     </spine>
                 </sequence>
             </project>
         </event>
-        <smart-collection name="Projects" match="all">
-            <match-clip rule="is" type="project"/>
-        </smart-collection>
-        <smart-collection name="All Video" match="any">
-            <match-media rule="is" type="videoOnly"/>
-            <match-media rule="is" type="videoWithAudio"/>
-        </smart-collection>
-        <smart-collection name="Audio Only" match="all">
-            <match-media rule="is" type="audioOnly"/>
-        </smart-collection>
-        <smart-collection name="Stills" match="all">
-            <match-media rule="is" type="stills"/>
-        </smart-collection>
-        <smart-collection name="Favorites" match="all">
-            <match-ratings value="favorites"/>
-        </smart-collection>
     </library>
 </fcpxml>
