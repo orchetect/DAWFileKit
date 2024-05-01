@@ -89,6 +89,7 @@ extension XMLElement {
         }
         
         return applicableKeywords
+            .removingDuplicates()
     }
 }
 
