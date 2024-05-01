@@ -83,8 +83,8 @@ extension XMLElement {
                     applicableKeywords.append(keyword)
                 }
             } else {
-                // if keyword range cannot be determined, just add the keyword
-                applicableKeywords.append(keyword)
+                // keyword range cannot be determined
+                // applicableKeywords.append(keyword)
             }
         }
         

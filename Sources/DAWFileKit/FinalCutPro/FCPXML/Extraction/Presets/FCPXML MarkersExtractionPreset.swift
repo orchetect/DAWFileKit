@@ -84,7 +84,8 @@ extension FinalCutPro.FCPXML {
         }
         
         /// Applicable clip keywords.
-        /// Removes duplicates and sorts alphabetically.
+        /// Keywords are flattened to an array of individual keyword strings, trimming leading and
+        /// trailing whitespace, removing duplicates and sorting alphabetically.
         /// (convenience accessor for `.keywords(constrainToKeywordRanges:)` context value).
         public func keywords(constrainToKeywordRanges: Bool = true) -> [String] {
             value(forContext: .keywordsFlat(constrainToKeywordRanges: constrainToKeywordRanges))
