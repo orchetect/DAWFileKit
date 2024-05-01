@@ -87,10 +87,7 @@ extension FinalCutPro.FCPXML {
         /// Removes duplicates and sorts alphabetically.
         /// (convenience accessor for `.keywords(constrainToKeywordRanges:)` context value).
         public func keywords(constrainToKeywordRanges: Bool = true) -> [String] {
-            value(forContext: .keywords(constrainToKeywordRanges: constrainToKeywordRanges))
-                .flatMap(\.keywords)
-                .removingDuplicates()
-                .sorted()
+            value(forContext: .keywordsFlat(constrainToKeywordRanges: constrainToKeywordRanges))
         }
     }
 }

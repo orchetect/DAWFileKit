@@ -162,6 +162,17 @@ extension FinalCutPro.FCPXML.ElementContext {
             tools.keywords(constrainToKeywordRanges: constrainToKeywordRanges)
         }
     }
+    
+    /// Returns keywords applied to the element if the element is a clip, otherwise returns keywords applied to the
+    /// first ancestor clip.
+    /// Keywords are flattened to an array of individual keyword strings, removing duplicates and sorting alphabetically.
+    public static func keywordsFlat(
+        constrainToKeywordRanges: Bool = true
+    ) -> FinalCutPro.FCPXML.ElementContext<[String]> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.keywordsFlat(constrainToKeywordRanges: constrainToKeywordRanges)
+        }
+    }
 }
 
 #endif

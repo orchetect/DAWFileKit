@@ -217,6 +217,18 @@ extension FinalCutPro.FCPXML.ElementContext {
             )
         }
         
+        /// Returns keywords applied to the element if the element is a clip, otherwise returns keywords applied to the
+        /// first ancestor clip.
+        /// Keywords are flattened to an array of individual keyword strings, removing duplicates and sorting alphabetically.
+        public func keywordsFlat(
+            constrainToKeywordRanges: Bool = true
+        ) -> [String] {
+            keywords(constrainToKeywordRanges: constrainToKeywordRanges)
+                .flatMap(\.keywords)
+                .removingDuplicates()
+                .sorted()
+        }
+        
         /// Returns occlusion information for the current element in relation to its parent.
         public var occlusion: FinalCutPro.FCPXML.ElementOcclusion {
             guard let parentStart = parentAbsoluteStart,
