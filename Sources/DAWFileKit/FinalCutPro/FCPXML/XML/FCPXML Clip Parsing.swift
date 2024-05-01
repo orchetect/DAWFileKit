@@ -60,13 +60,13 @@ extension XMLElement {
                 ancestors: [timeline] + timelineAncestors,
                 resources: resources
             ),
-                  let kwAbsStartTimecode = try? keyword.element._fcpTimecode(
+                let kwAbsStartTimecode = try? keyword.element._fcpTimecode(
                     fromRealTime: kwAbsStart,
                     frameRateSource: .mainTimeline,
                     breadcrumbs: [timeline] + timelineAncestors,
                     resources: resources
-                  ),
-                  let kwDuration = keyword.durationAsTimecode()
+                ),
+                let kwDuration = keyword.durationAsTimecode()
             else { return nil }
             
             let lbound = kwAbsStartTimecode
@@ -84,7 +84,14 @@ extension XMLElement {
                 }
             } else {
                 // keyword range cannot be determined
-                // applicableKeywords.append(keyword)
+                
+                // if start and duration attributes are missing, assume the keyword
+                // applies to the entire clip
+                if keyword.element.fcpStart == nil,
+                    keyword.element.fcpDuration == nil
+                {
+                    applicableKeywords.append(keyword)
+                }
             }
         }
         

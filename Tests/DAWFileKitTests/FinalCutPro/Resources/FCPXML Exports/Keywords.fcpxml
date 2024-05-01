@@ -97,6 +97,7 @@
                             <keyword start="1454/25s" duration="15872/12800s" value="flower"/>
                             <keyword start="1454/25s" duration="19456/12800s" value="nature"/>
                             <keyword start="297/5s" duration="3584/12800s" value="flower"/>
+                            <keyword value="noStartOrDuration"/>
                         </asset-clip>
                     </spine>
                 </sequence>

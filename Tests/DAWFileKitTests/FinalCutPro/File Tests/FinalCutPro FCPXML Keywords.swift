@@ -77,7 +77,7 @@ final class FinalCutPro_FCPXML_Keywords: FCPXMLTestCase {
         XCTAssertEqual(marker3.keywords(constrainToKeywordRanges: true), ["flower", "nature"])
         XCTAssertEqual(marker4.keywords(constrainToKeywordRanges: true), ["lava", "nature"])
         XCTAssertEqual(marker5.keywords(constrainToKeywordRanges: true), ["penguin"])
-        XCTAssertEqual(marker6.keywords(constrainToKeywordRanges: true), ["penguin"])
+        XCTAssertEqual(marker6.keywords(constrainToKeywordRanges: true), ["noStartOrDuration", "penguin"])
     }
 }
 
