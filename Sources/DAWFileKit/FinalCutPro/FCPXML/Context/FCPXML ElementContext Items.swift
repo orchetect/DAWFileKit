@@ -165,7 +165,8 @@ extension FinalCutPro.FCPXML.ElementContext {
     
     /// Returns keywords applied to the element if the element is a clip, otherwise returns keywords applied to the
     /// first ancestor clip.
-    /// Keywords are flattened to an array of individual keyword strings, removing duplicates and sorting alphabetically.
+    /// Keywords are flattened to an array of individual keyword strings, trimming leading and
+    /// trailing whitespace, removing duplicates and sorting alphabetically.
     public static func keywordsFlat(
         constrainToKeywordRanges: Bool = true
     ) -> FinalCutPro.FCPXML.ElementContext<[String]> {
