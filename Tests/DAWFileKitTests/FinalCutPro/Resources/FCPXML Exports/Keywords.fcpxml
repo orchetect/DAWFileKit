@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r2" name="Nature Makes You Happy" uid="53308E84E2E696489DF41ECEFBB51E41" start="0s" duration="142040/1000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="53308E84E2E696489DF41ECEFBB51E41" src="file:///Users/user/Movies/Nature%20Makes%20You%20Happy.mp4"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-08-02 17:21:28 -0700"/>
+            </metadata>
+        </asset>
+        <asset id="r3" name="Is This The Land of Fire or Ice" uid="978BD3B254D68A6FA69E87D0D90544FD" start="0s" duration="205800/1000s" hasVideo="1" format="r1" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="978BD3B254D68A6FA69E87D0D90544FD" src="file:///Users/user/Movies/Is%20This%20The%20Land%20of%20Fire%20or%20Ice.mp4"/>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-08-02 17:21:28 -0700"/>
+            </metadata>
+        </asset>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="26-4-24" uid="A06D8CC1-2585-4800-9531-8C66B094422F">
+            <project name="Marker Data Demo_V10" uid="D7ADFD0C-E215-4375-8DE9-B2B171FC7E76" modDate="2024-02-25 16:54:10 -0800">
+                <sequence format="r1" duration="101376/12800s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <asset-clip ref="r2" offset="0s" name="Nature Makes You Happy" start="550912/12800s" duration="9216/12800s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="99/5s" duration="25088/12800s" value="penguin"/>
+                            <keyword start="1076/25s" duration="9216/12800s" value="flower, nature"/>
+                            <marker start="1082/25s" duration="100/2500s" value="Yellow Flower" note="Notes 01"/>
+                            <keyword start="257/5s" duration="6656/12800s" value="penguin"/>
+                            <keyword start="1454/25s" duration="15872/12800s" value="flower"/>
+                            <keyword start="1454/25s" duration="19456/12800s" value="nature"/>
+                            <keyword start="297/5s" duration="3584/12800s" value="flower"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="9216/12800s" name="Nature Makes You Happy" start="61s" duration="27648/12800s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="99/5s" duration="25088/12800s" value="penguin"/>
+                            <keyword start="1076/25s" duration="9216/12800s" value="flower, nature"/>
+                            <keyword start="257/5s" duration="6656/12800s" value="penguin"/>
+                            <keyword start="1454/25s" duration="15872/12800s" value="flower"/>
+                            <keyword start="1454/25s" duration="19456/12800s" value="nature"/>
+                            <keyword start="297/5s" duration="3584/12800s" value="flower"/>
+                            <keyword start="61s" duration="27648/12800s" value="birds"/>
+                            <marker start="1544/25s" duration="100/2500s" value="Birds" note="Notes 02"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="36864/12800s" name="Nature Makes You Happy" start="744448/12800s" duration="19456/12800s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="99/5s" duration="25088/12800s" value="penguin"/>
+                            <keyword start="1076/25s" duration="9216/12800s" value="flower, nature"/>
+                            <keyword start="257/5s" duration="6656/12800s" value="penguin"/>
+                            <keyword start="1454/25s" duration="15872/12800s" value="flower"/>
+                            <keyword start="1454/25s" duration="19456/12800s" value="nature"/>
+                            <marker start="1469/25s" duration="100/2500s" value="While Flower" note="Notes 03"/>
+                            <keyword start="297/5s" duration="3584/12800s" value="flower"/>
+                        </asset-clip>
+                        <asset-clip ref="r3" offset="56320/12800s" name="Is This The Land of Fire or Ice" start="1335808/12800s" duration="13312/12800s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="2609/25s" duration="13312/12800s" value="lava, nature"/>
+                            <marker start="2623/25s" duration="100/2500s" value="Volcano" note="Notes 04"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="69632/12800s" name="Nature Makes You Happy" start="253440/12800s" duration="25088/12800s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="99/5s" duration="25088/12800s" value="penguin"/>
+                            <marker start="516/25s" duration="100/2500s" value="Penguin Sliding" note="Notes 05"/>
+                            <keyword start="1076/25s" duration="9216/12800s" value="flower, nature"/>
+                            <keyword start="257/5s" duration="6656/12800s" value="penguin"/>
+                            <keyword start="1454/25s" duration="15872/12800s" value="flower"/>
+                            <keyword start="1454/25s" duration="19456/12800s" value="nature"/>
+                            <keyword start="297/5s" duration="3584/12800s" value="flower"/>
+                        </asset-clip>
+                        <asset-clip ref="r2" offset="94720/12800s" name="Nature Makes You Happy" start="657920/12800s" duration="6656/12800s" tcFormat="NDF" audioRole="dialogue">
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="99/5s" duration="25088/12800s" value="penguin"/>
+                            <keyword start="1076/25s" duration="9216/12800s" value="flower, nature"/>
+                            <keyword start="257/5s" duration="6656/12800s" value="penguin"/>
+                            <marker start="1289/25s" duration="100/2500s" value="Penguin Walking" note="Notes 06"/>
+                            <keyword start="1454/25s" duration="15872/12800s" value="flower"/>
+                            <keyword start="1454/25s" duration="19456/12800s" value="nature"/>
+                            <keyword start="297/5s" duration="3584/12800s" value="flower"/>
+                        </asset-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
