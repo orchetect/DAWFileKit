@@ -333,6 +333,84 @@ final class FinalCutPro_FCPXML_MulticamMarkers: FCPXMLTestCase {
             ]
         )
     }
+    
+    /// Test metadata that applies to marker(s).
+    func testExtractMarkersMetadata_MainTimeline() async throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let extractedMarkers = await project
+            .extract(preset: .markers, scope: .mainTimeline)
+            .sortedByAbsoluteStartTimecode()
+        // .zeroIndexed // not necessary after sorting - sort returns new array
+        
+        let markers = extractedMarkers
+        
+        let expectedMarkerCount = 2
+        XCTAssertEqual(markers.count, expectedMarkerCount)
+        
+        print("Markers sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
+        
+        // markers
+        
+        func md(
+            in mdtm: [FinalCutPro.FCPXML.Metadata.Metadatum],
+            key: FinalCutPro.FCPXML.Metadata.Key
+        ) -> FinalCutPro.FCPXML.Metadata.Metadatum? {
+            let matches = mdtm.filter { $0.key == key }
+            XCTAssertLessThan(matches.count, 2)
+            return matches.first
+        }
+        
+        // marker 1
+        do {
+            let marker = try XCTUnwrap(markers[safe: 0])
+            let mtdm = marker.value(forContext: .metadata)
+            XCTAssertEqual(mtdm.count, 9)
+            
+            // metadata from media
+            XCTAssertEqual(md(in: mtdm, key: .cameraName)?.value, "Cam 4 Camera Name")
+            XCTAssertEqual(md(in: mtdm, key: .rawToLogConversion)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .colorProfile)?.value, nil)
+            XCTAssertEqual(md(in: mtdm, key: .cameraISO)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .cameraColorTemperature)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .codecs)?.valueArray, nil)
+            XCTAssertEqual(md(in: mtdm, key: .ingestDate)?.value, "2022-09-13 17:57:24 -0700")
+            // metadata from clip
+            XCTAssertEqual(md(in: mtdm, key: .reel)?.value, "Cam 4 Reel")
+            XCTAssertEqual(md(in: mtdm, key: .scene)?.value, "Cam 4 Scene")
+            XCTAssertEqual(md(in: mtdm, key: .take)?.value, "Cam 4 Take")
+            XCTAssertEqual(md(in: mtdm, key: .cameraAngle)?.value, "D")
+        }
+        
+        // marker 2
+        do {
+            let marker = try XCTUnwrap(markers[safe: 1])
+            let mtdm = marker.value(forContext: .metadata)
+            XCTAssertEqual(mtdm.count, 9)
+            
+            // metadata from media
+            XCTAssertEqual(md(in: mtdm, key: .cameraName)?.value, "Cam 2 Camera Name")
+            XCTAssertEqual(md(in: mtdm, key: .rawToLogConversion)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .colorProfile)?.value, nil)
+            XCTAssertEqual(md(in: mtdm, key: .cameraISO)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .cameraColorTemperature)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .codecs)?.valueArray, nil)
+            XCTAssertEqual(md(in: mtdm, key: .ingestDate)?.value, "2022-09-13 17:57:22 -0700")
+            // metadata from clip
+            XCTAssertEqual(md(in: mtdm, key: .reel)?.value, "Cam 2 Reel")
+            XCTAssertEqual(md(in: mtdm, key: .scene)?.value, "Cam 2 Scene")
+            XCTAssertEqual(md(in: mtdm, key: .take)?.value, "Cam 2 Take")
+            XCTAssertEqual(md(in: mtdm, key: .cameraAngle)?.value, "B")
+        }
+    }
 }
 
 #endif

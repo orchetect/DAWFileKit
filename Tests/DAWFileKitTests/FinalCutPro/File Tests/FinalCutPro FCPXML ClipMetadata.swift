@@ -38,8 +38,8 @@ final class FinalCutPro_FCPXML_ClipMetadata: FCPXMLTestCase {
         XCTAssertEqual(fcpxml.version, .ver1_11)
     }
     
-    /// Test keywords that apply to each marker.
-    func testExtractMarkers() async throws {
+    /// Test metadata that applies to marker(s).
+    func testExtractMarkersMetadata() async throws {
         // load file
         let rawData = try fileContents
         
