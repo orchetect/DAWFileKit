@@ -485,9 +485,10 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
     // TODO: replace with parameterized init once it's implemented on Metadata model
     let metadataXML = try! XMLElement(xmlString: """
             <metadata>
+                <md key="com.apple.proapps.mio.cameraName" value="TestVideo Camera Name"/>
                 <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
-                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
-                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="SD (6-1-6)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="120"/>
                 <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
                 <md key="com.apple.proapps.spotlight.kMDItemCodecs">
                     <array>
@@ -495,11 +496,129 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
                         <string>MPEG-4 AAC</string>
                     </array>
                 </md>
-                <md key="com.apple.proapps.mio.ingestDate" value="2022-12-25 22:06:44 -0800"/>
+                <md key="com.apple.proapps.mio.ingestDate" value="2023-01-01 19:46:28 -0800"/>
+                
+                <md key="com.apple.proapps.studio.reel" value="TestVideo Reel"/>
+                <md key="com.apple.proapps.studio.scene" value="TestVideo Scene"/>
+                <md key="com.apple.proapps.studio.shot" value="TestVideo Take"/>
+                <md key="com.apple.proapps.studio.angle" value="TestVideo Camera Angle"/>
             </metadata>
             """
     )
     lazy var metadata = FinalCutPro.FCPXML.Metadata(element: metadataXML)!
+    
+    func testMetadata() throws {
+        var md = FinalCutPro.FCPXML.Metadata()
+        
+        // test initial state
+        XCTAssertNil(md.cameraName)
+        XCTAssertNil(md.rawToLogConversion)
+        XCTAssertNil(md.colorProfile)
+        XCTAssertNil(md.cameraISO)
+        XCTAssertNil(md.cameraColorTemperature)
+        XCTAssertNil(md.codecs)
+        XCTAssertNil(md.ingestDate)
+        XCTAssertNil(md.reel)
+        XCTAssertNil(md.scene)
+        XCTAssertNil(md.shot)
+        XCTAssertNil(md.cameraAngle)
+        
+        // set new values
+        md.cameraName = "TestVideo Camera Name"
+        md.rawToLogConversion = "0"
+        md.colorProfile = "SD (6-1-6)"
+        md.cameraISO = "120"
+        md.cameraColorTemperature = "0"
+        md.codecs = ["'avc1'", "MPEG-4 AAC"]
+        md.ingestDate = "2023-01-01 19:46:28 -0800"
+        md.reel = "TestVideo Reel"
+        md.scene = "TestVideo Scene"
+        md.shot = "TestVideo Take"
+        md.cameraAngle = "TestVideo Camera Angle"
+        
+        // test new values
+        XCTAssertEqual(md.cameraName, "TestVideo Camera Name")
+        XCTAssertEqual(md.rawToLogConversion, "0")
+        XCTAssertEqual(md.colorProfile, "SD (6-1-6)")
+        XCTAssertEqual(md.cameraISO, "120")
+        XCTAssertEqual(md.cameraColorTemperature, "0")
+        XCTAssertEqual(md.codecs, ["'avc1'", "MPEG-4 AAC"])
+        XCTAssertEqual(md.ingestDate, "2023-01-01 19:46:28 -0800")
+        XCTAssertEqual(md.reel, "TestVideo Reel")
+        XCTAssertEqual(md.scene, "TestVideo Scene")
+        XCTAssertEqual(md.shot, "TestVideo Take")
+        XCTAssertEqual(md.cameraAngle, "TestVideo Camera Angle")
+        
+        // remove values
+        md.cameraName = nil
+        md.rawToLogConversion = nil
+        md.colorProfile = nil
+        md.cameraISO = nil
+        md.cameraColorTemperature = nil
+        md.codecs = nil
+        md.ingestDate = nil
+        md.reel = nil
+        md.scene = nil
+        md.shot = nil
+        md.cameraAngle = nil
+        
+        // test removed values
+        XCTAssertNil(md.cameraName)
+        XCTAssertNil(md.rawToLogConversion)
+        XCTAssertNil(md.colorProfile)
+        XCTAssertNil(md.cameraISO)
+        XCTAssertNil(md.cameraColorTemperature)
+        XCTAssertNil(md.codecs)
+        XCTAssertNil(md.ingestDate)
+        XCTAssertNil(md.reel)
+        XCTAssertNil(md.scene)
+        XCTAssertNil(md.shot)
+        XCTAssertNil(md.cameraAngle)
+        
+        // check codecs with empty array; should remove key entirely.
+        md.codecs = []
+        XCTAssertNil(md.codecs)
+    }
+    
+    func testMetadata_FromXML() throws {
+        XCTAssertEqual(metadata.cameraName, "TestVideo Camera Name")
+        XCTAssertEqual(metadata.rawToLogConversion, "0") // TODO: should be `Bool` instead of `String`?
+        XCTAssertEqual(metadata.colorProfile, "SD (6-1-6)")
+        XCTAssertEqual(metadata.cameraISO, "120")
+        XCTAssertEqual(metadata.cameraColorTemperature, "0")
+        XCTAssertEqual(metadata.codecs, ["'avc1'", "MPEG-4 AAC"])
+        XCTAssertEqual(metadata.ingestDate, "2023-01-01 19:46:28 -0800")
+        XCTAssertEqual(metadata.reel, "TestVideo Reel")
+        XCTAssertEqual(metadata.scene, "TestVideo Scene")
+        XCTAssertEqual(metadata.shot, "TestVideo Take")
+        XCTAssertEqual(metadata.cameraAngle, "TestVideo Camera Angle")
+    }
+    
+    func testMetadatum() throws {
+        var metadatum = FinalCutPro.FCPXML.Metadata.Metadatum()
+        
+        metadatum.key = .ingestDate
+        XCTAssertEqual(metadatum.key, .ingestDate)
+        
+        metadatum.keyString = "com.domain.some.key"
+        XCTAssertEqual(metadatum.keyString, "com.domain.some.key")
+        XCTAssertEqual(metadatum.key, nil) // will be nil since the key isn't recognized
+        
+        metadatum.value = "Value String"
+        XCTAssertEqual(metadatum.value, "Value String")
+        
+        metadatum.editable = true
+        XCTAssertEqual(metadatum.editable, true)
+        
+        metadatum.type = .timecode
+        XCTAssertEqual(metadatum.type, .timecode)
+        
+        metadatum.displayName = "Some MD Name"
+        XCTAssertEqual(metadatum.displayName, "Some MD Name")
+        
+        metadatum.displayDescription = "Description of some MD."
+        XCTAssertEqual(metadatum.displayDescription, "Description of some MD.")
+    }
     
     func testAsset() throws {
         let asset = FinalCutPro.FCPXML.Asset(
