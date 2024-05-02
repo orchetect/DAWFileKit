@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Clouds" uid=".../Generators.localized/Backgrounds.localized/Clouds.localized/Clouds.motn"/>
+        <effect id="r3" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <asset id="r4" name="TestVideo" uid="30C3729DCEE936129873D803DC13B623" start="0s" duration="738000/25000s" hasVideo="1" format="r5" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="30C3729DCEE936129873D803DC13B623" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Test%20Event/Original%20Media/Chapter%20Marker%20PosterOffset%20Test.m4v">
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.mio.cameraName" value="TestVideo Camera Name"/>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="SD (6-1-6)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2023-01-01 19:46:28 -0800"/>
+            </metadata>
+        </asset>
+        <format id="r5" name="FFVideoFormat640x480p25" frameDuration="100/2500s" width="640" height="480" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
+            <project name="ClipMetadata" uid="D7E48C4D-4453-43C4-B79D-FE2D8D9E4E78" modDate="2023-11-27 14:07:01 -0800">
+                <sequence format="r1" duration="4978000/50000s" tcStart="3600s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <video ref="r2" offset="3600s" name="Clouds" start="3600s" duration="60s"/>
+                        <title ref="r3" offset="3660s" name="Basic Title" start="3600s" duration="25100/2500s">
+                            <text>
+                                <text-style ref="ts1">Title</text-style>
+                            </text>
+                            <text-style-def id="ts1">
+                                <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                            </text-style-def>
+                        </title>
+                        <asset-clip ref="r4" offset="36700400/10000s" name="TestVideo" duration="738000/25000s" format="r5" tcFormat="NDF" audioRole="dialogue">
+                            <note>asset notes in browser</note>
+                            <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                            <keyword start="0s" duration="738000/25000s" value="keyword1"/>
+                            <keyword start="79/5s" duration="211000/25000s" value="keyword2"/>
+                            <marker start="137/5s" duration="1000/25000s" value="Marker 1"/>
+                            <metadata>
+                                <md key="com.apple.proapps.studio.reel" value="TestVideo Reel"/>
+                                <md key="com.apple.proapps.studio.scene" value="TestVideo Scene"/>
+                                <md key="com.apple.proapps.studio.shot" value="TestVideo Take"/>
+                                <md key="com.apple.proapps.studio.angle" value="TestVideo Camera Angle"/>
+                            </metadata>
+                        </asset-clip>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
