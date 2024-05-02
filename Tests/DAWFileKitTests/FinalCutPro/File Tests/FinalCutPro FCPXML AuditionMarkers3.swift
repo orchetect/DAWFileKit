@@ -65,7 +65,7 @@ final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
         XCTAssertEqual(sequence.tcStartAsTimecode(), Self.tc("00:00:00:00", .fps23_976))
         XCTAssertEqual(sequence.tcStartAsTimecode()?.frameRate, .fps23_976)
         XCTAssertEqual(sequence.tcStartAsTimecode()?.subFramesBase, .max80SubFrames)
-        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:03:42:20", .fps23_976))
+        XCTAssertEqual(sequence.durationAsTimecode(), Self.tc("00:00:59:17", .fps23_976))
         XCTAssertEqual(sequence.audioLayout, .stereo)
         XCTAssertEqual(sequence.audioRate, .rate48kHz)
         
@@ -161,6 +161,68 @@ final class FinalCutPro_FCPXML_AuditionMarkers3: FCPXMLTestCase {
         let marker2 = try XCTUnwrap(markers[safe: 3])
         XCTAssertEqual(marker2.name, "Audition 3") // just to identify marker
         XCTAssertEqual(marker2.timecode(), Self.tc("00:00:54:14", .fps23_976))
+    }
+    
+    /// Test metadata that applies to marker(s).
+    func testExtractMarkersMetadata_MainTimeline() async throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let extractedMarkers = await project
+            .extract(preset: .markers, scope: .mainTimeline)
+            .sortedByAbsoluteStartTimecode()
+        // .zeroIndexed // not necessary after sorting - sort returns new array
+        
+        let markers = extractedMarkers
+        
+        let expectedMarkerCount = 4
+        XCTAssertEqual(markers.count, expectedMarkerCount)
+        
+        print("Markers sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
+        
+        // markers
+        
+        func md(
+            in mdtm: [FinalCutPro.FCPXML.Metadata.Metadatum],
+            key: FinalCutPro.FCPXML.Metadata.Key
+        ) -> FinalCutPro.FCPXML.Metadata.Metadatum? {
+            let matches = mdtm.filter { $0.key == key }
+            XCTAssertLessThan(matches.count, 2)
+            return matches.first
+        }
+        
+        // skip testing marker 1, it's not on an audition clip
+        
+        // marker 2
+        do {
+            let marker = try XCTUnwrap(markers[safe: 1])
+            let mtdm = marker.value(forContext: .metadata)
+            XCTAssertEqual(mtdm.count, 11)
+            
+            XCTAssertEqual(marker.name, "Audition 1")
+            
+            // metadata from active audition clip
+            XCTAssertEqual(md(in: mtdm, key: .reel)?.value, "TestVideo2 Reel")
+            XCTAssertEqual(md(in: mtdm, key: .scene)?.value, "TestVideo2 Scene")
+            XCTAssertEqual(md(in: mtdm, key: .take)?.value, "TestVideo2 Take")
+            XCTAssertEqual(md(in: mtdm, key: .cameraAngle)?.value, "TestVideo2 Camera Angle")
+            
+            // metadata from active clip's resource
+            XCTAssertEqual(md(in: mtdm, key: .rawToLogConversion)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .colorProfile)?.value, "HD (1-1-1)")
+            XCTAssertEqual(md(in: mtdm, key: .cameraISO)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .cameraColorTemperature)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .codecs)?.valueArray, ["'avc1'", "MPEG-4 AAC"])
+            XCTAssertEqual(md(in: mtdm, key: .ingestDate)?.value, "2023-11-22 04:01:31 -0800")
+            XCTAssertEqual(md(in: mtdm, key: .cameraName)?.value, "TestVideo2 Camera Name")
+        }
     }
 }
 

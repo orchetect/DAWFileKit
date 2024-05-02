@@ -26,6 +26,7 @@
         <asset id="r6" name="TestVideo2" uid="53308E84E2E696489DF41ECEFBB51E41" start="0s" duration="142040/1000s" hasVideo="1" format="r7" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
             <media-rep kind="original-media" sig="53308E84E2E696489DF41ECEFBB51E41" src="file:///Users/user/Movies/TestVideo2.mp4"/>
             <metadata>
+                <md key="com.apple.proapps.mio.cameraName" value="TestVideo2 Camera Name"/>
                 <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
                 <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
                 <md key="com.apple.proapps.studio.cameraISO" value="0"/>
@@ -44,7 +45,7 @@
     <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
         <event name="Test Event" uid="8A2EE1B4-CD4D-4D7E-8964-4CB0BA973669">
             <project name="Test Project" uid="875AE696-C2E5-4E42-AFC3-D2A2EEA7ABDF" modDate="2023-12-24 16:21:00 -0800">
-                <sequence format="r1" duration="80300220/360000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <sequence format="r1" duration="1434433/24000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
                     <spine>
                         <transition name="Cross Dissolve" offset="0s" duration="286286/24000s">
                             <filter-video ref="r2" name="Cross Dissolve">
@@ -62,11 +63,17 @@
                             <marker start="199199/12000s" duration="1001/24000s" value="Shot_01" completed="0"/>
                         </asset-clip>
                         <audition offset="760760/24000s">
-                            <asset-clip ref="r6" name="TestVideo2" duration="646646/24000s" format="r7" tcFormat="NDF" audioRole="dialogue">
+                            <asset-clip ref="r6" name="TestVideo2" duration="673673/24000s" format="r7" tcFormat="NDF" audioRole="dialogue">
                                 <conform-rate srcFrameRate="25"/>
                                 <marker start="177/25s" duration="1001/24000s" value="Audition 1"/>
                                 <marker start="344/25s" duration="1001/24000s" value="Audition 2"/>
                                 <marker start="22s" duration="1001/24000s" value="Audition 3"/>
+                                <metadata>
+                                    <md key="com.apple.proapps.studio.reel" value="TestVideo2 Reel"/>
+                                    <md key="com.apple.proapps.studio.scene" value="TestVideo2 Scene"/>
+                                    <md key="com.apple.proapps.studio.shot" value="TestVideo2 Take"/>
+                                    <md key="com.apple.proapps.studio.angle" value="TestVideo2 Camera Angle"/>
+                                </metadata>
                             </asset-clip>
                             <asset-clip ref="r4" name="TestVideo" start="1186185/24000s" duration="901901/24000s" format="r5" tcFormat="NDF" audioRole="dialogue">
                                 <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
