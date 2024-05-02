@@ -17,6 +17,13 @@
                         <marker start="3606s" duration="100/2500s" value="Marker On Title Clip Within Title Compound Clip"/>
                     </title>
                 </spine>
+                <metadata>
+                    <md key="com.apple.proapps.studio.reel" value="Title Compound Clip Reel"/>
+                    <md key="com.apple.proapps.studio.scene" value="Title Compound Clip Scene"/>
+                    <md key="com.apple.proapps.studio.shot" value="Title Compound Clip Take"/>
+                    <md key="com.apple.proapps.studio.angle" value="Title Compound Clip Camera Angle"/>
+                    <md key="com.apple.proapps.mio.cameraName" value="Title Compound Clip Camera Name"/>
+                </metadata>
             </sequence>
         </media>
         <effect id="r3" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
@@ -37,31 +44,17 @@
     <library location="file:///Users/stef/Movies/MyLibrary.fcpbundle/">
         <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
             <project name="CompoundClip" uid="2CE6EE34-600B-4926-B438-1BD3E3B30A78" modDate="2023-11-22 13:48:58 -0800">
-                <sequence format="r1" duration="200400/10000s" tcStart="3600s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <sequence format="r1" duration="300800/10000s" tcStart="3600s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
                     <spine>
                         <ref-clip ref="r2" offset="3600s" name="Title Compound Clip" duration="100400/10000s">
-                            <marker start="4s" duration="100/2500s" value="Marker On Compound Clip in Main Timeline"/>
+                            <marker start="4s" duration="100/2500s" value="Marker On Title Compound Clip in Main Timeline"/>
                         </ref-clip>
-                        <ref-clip ref="r4" offset="36100400/10000s" name="Clouds Compound Clip" duration="10s"/>
+                        <ref-clip ref="r4" offset="36100400/10000s" name="Clouds Compound Clip" duration="50100/2500s">
+                            <marker start="374/25s" duration="100/2500s" value="Marker On Clouds Compound Clip in Main Timeline"/>
+                        </ref-clip>
                     </spine>
                 </sequence>
             </project>
         </event>
-        <smart-collection name="Projects" match="all">
-            <match-clip rule="is" type="project"/>
-        </smart-collection>
-        <smart-collection name="All Video" match="any">
-            <match-media rule="is" type="videoOnly"/>
-            <match-media rule="is" type="videoWithAudio"/>
-        </smart-collection>
-        <smart-collection name="Audio Only" match="all">
-            <match-media rule="is" type="audioOnly"/>
-        </smart-collection>
-        <smart-collection name="Stills" match="all">
-            <match-media rule="is" type="stills"/>
-        </smart-collection>
-        <smart-collection name="Favorites" match="all">
-            <match-ratings value="favorites"/>
-        </smart-collection>
     </library>
 </fcpxml>
