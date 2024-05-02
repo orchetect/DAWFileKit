@@ -77,6 +77,7 @@ extension FinalCutPro.FCPXML {
         
         // metadata
         case metadata
+        case metadatum = "md"
         
         // collections
         case collectionFolder = "collection-folder"

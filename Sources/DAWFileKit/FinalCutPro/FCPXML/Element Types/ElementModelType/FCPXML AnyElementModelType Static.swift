@@ -185,6 +185,10 @@ extension FinalCutPro.FCPXML.AnyElementModelType {
         .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata>.metadata)
     }
     
+    public static var metadatum: Self {
+        .init(base: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata.Metadatum>.metadatum)
+    }
+    
     // MARK: - Misc
     
     public static var conformRate: Self {

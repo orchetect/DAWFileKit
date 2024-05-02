@@ -328,6 +328,14 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata>
     }
 }
 
+extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata.Metadatum>
+{
+    public static var metadatum: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Metadata.Metadatum> {
+        .init()
+    }
+}
+
 // MARK: - Misc
 
 extension FCPXMLElementModelTypeProtocol
