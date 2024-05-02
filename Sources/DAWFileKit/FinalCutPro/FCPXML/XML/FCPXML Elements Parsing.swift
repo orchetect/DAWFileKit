@@ -213,7 +213,7 @@ extension XMLElement {
     }
 }
 
-// MARK: - Attributes Gathering
+// MARK: - Ancestors
 
 extension XMLElement {
     /// Returns the first ancestor clip, if the element is contained within one.
@@ -309,6 +309,20 @@ extension XMLElement {
                 let lane: Int? = laneStr != nil ? Int(laneStr!) : nil
                 return (type: type, lane: lane)
             }
+    }
+}
+
+// MARK: - Children
+
+extension XMLElement {
+    /// FCPXML: Finds the nearest child (descendent) timeline.
+    func _fcpFirstChildTimelineElement(
+        excluding: Set<FinalCutPro.FCPXML.ElementType> = []
+    ) -> XMLElement? {
+        fcpTimelineElements
+            .first(whereFCPElementType: { elementType in
+                !excluding.contains(elementType)
+            })
     }
 }
 

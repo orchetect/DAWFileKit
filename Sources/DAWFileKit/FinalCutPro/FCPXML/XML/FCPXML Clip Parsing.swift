@@ -110,6 +110,46 @@ extension XMLElement {
         )
         else { return [] }
         
+        func flatten(metadataIn e: XMLElement?) -> [FinalCutPro.FCPXML.Metadata.Metadatum] {
+            e?.children(whereFCPElement: .metadata)
+                .flatMap(\.metadatumContents)
+            ?? []
+        }
+        
+        // special case: multicam/mc-clip
+        //
+        // - markers:
+        //     - can exist as children in `mc-clip`
+        // - markers and/or metadata:
+        //     - can also exist as children in `multicam` -> `mc-angle` -> <first non-gap clip>
+        // - metadata never seems to exist within the `mc-clip` itself however
+        //
+        // which means:
+        // - if ancestor clip (or if self is a clip):
+        //   - is a `mc-clip`
+        //     - grab metadata from the clip within the multicam angle it points to
+        //     - also grab metadata from the resource the clip references
+        //   - is an `asset-clip`, regardless of whether it's in a main timeline or it's within a multicam resource's angle
+        //     - parse using default behavior for other clip types:
+        //       - grab local clip metadata
+        //       - grab the clip's resource's metadata
+        if let mcClip = timeline.fcpAsMCClip {
+            // let multicam = mcClip.multicamResource
+            
+            // 1. grab metadata from the clip within the multicam angle it points to
+            let (_ /* audioMCAngle */, videoMCAngle) = mcClip.audioVideoMCAngles
+            let angleTimeline = videoMCAngle?.element._fcpFirstChildTimelineElement(excluding: [.gap])
+            let angleMetadataFlat = flatten(metadataIn: angleTimeline)
+            
+            // 2. also grab metadata from the resource the clip references
+            let angleResource = angleTimeline?.fcpResource()
+            let angleResourceMetadataFlat = flatten(metadataIn: angleResource)
+            
+            let combinedMetadataFlat = Array(angleResourceMetadataFlat) + Array(angleMetadataFlat)
+            
+            return combinedMetadataFlat
+        }
+        
         // get clip metadata
         let timelineMetadata = timeline.children(whereFCPElement: .metadata)
         let timelineMetadataFlat = timelineMetadata.flatMap(\.metadatumContents)

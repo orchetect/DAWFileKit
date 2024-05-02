@@ -284,6 +284,8 @@ extension XMLElement {
         }
         
         func elements(for element: XMLElement) -> some Sequence<XMLElement> {
+            // TODO: refactor using `_fcpFirstChildTimelineElement(excluding: [.gap])`
+            
             var elements: AnySequence = firstElementEachGenerationOnly
                 ? element.fcpTimelineElements.prefix(1).asAnySequence
                 : element.fcpTimelineElements.asAnySequence
