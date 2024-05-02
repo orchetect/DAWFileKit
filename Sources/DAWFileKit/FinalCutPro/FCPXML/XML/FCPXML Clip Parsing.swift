@@ -127,26 +127,30 @@ extension XMLElement {
         // which means:
         // - if ancestor clip (or if self is a clip):
         //   - is a `mc-clip`
-        //     - grab metadata from the clip within the multicam angle it points to
-        //     - also grab metadata from the resource the clip references
+        //     1. get `mc-clip` local metadata
+        //     2. get metadata from the clip within the multicam angle it points to
+        //     3. also get metadata from the resource the clip references
         //   - is an `asset-clip`, regardless of whether it's in a main timeline or it's within a multicam resource's angle
-        //     - parse using default behavior for other clip types:
-        //       - grab local clip metadata
-        //       - grab the clip's resource's metadata
+        //     - parse using default behavior for other clip types (fall through):
+        //       1. get local clip metadata
+        //       2. get the clip's resource's metadata
         if let mcClip = timeline.fcpAsMCClip {
             // let multicam = mcClip.multicamResource
             
-            // 1. grab metadata from the clip within the multicam angle it points to
+            // 1. get `mc-clip` local metadata
+            let mcClipMetadataFlat = flatten(metadataIn: mcClip.element)
+            
+            // 2. get metadata from the clip within the multicam angle it points to
             let (_ /* audioMCAngle */, videoMCAngle) = mcClip.audioVideoMCAngles
             let angleTimeline = videoMCAngle?.element._fcpFirstChildTimelineElement(excluding: [.gap])
             let angleMetadataFlat = flatten(metadataIn: angleTimeline)
             
-            // 2. also grab metadata from the resource the clip references
+            // 3. also get metadata from the resource the clip references
             let angleResource = angleTimeline?.fcpResource()
             let angleResourceMetadataFlat = flatten(metadataIn: angleResource)
             
-            let combinedMetadataFlat = Array(angleResourceMetadataFlat) + Array(angleMetadataFlat)
-            
+            // combine
+            let combinedMetadataFlat = Array(angleResourceMetadataFlat) + Array(angleMetadataFlat) + Array(mcClipMetadataFlat)
             return combinedMetadataFlat
         }
         
@@ -154,17 +158,34 @@ extension XMLElement {
         //
         // - `sync-clip` can contain local metadata
         // - metadata needs to be also pulled from the first internal video timeline from the `sync-clip`'s resource
-        if let _ /* syncClip */ = timeline.fcpAsSyncClip {
-            // get clip metadata
-            let timelineMetadataFlat = flatten(metadataIn: timeline)
+        if let syncClip = timeline.fcpAsSyncClip {
+            // get local clip metadata
+            let timelineMetadataFlat = flatten(metadataIn: syncClip.element)
             
             // get media metadata
-            let firstInteriorClip = timeline._fcpFirstChildTimelineElement()
+            let firstInteriorClip = syncClip.element._fcpFirstChildTimelineElement()
             let resource = firstInteriorClip?.fcpResource()
             let resourceMetadataFlat = flatten(metadataIn: resource)
             
+            // combine
             let combinedMetadataFlat = Array(resourceMetadataFlat) + Array(timelineMetadataFlat)
+            return combinedMetadataFlat
+        }
+        
+        // special case: `ref-clip`
+        //
+        // - `ref-clip` itself may contain metadata
+        // - the `media` resource it references can contain a `metadata` child within its `sequence`
+        if let refClip = timeline.fcpAsRefClip {
+            // get clip metadata
+            let refClipMetadataFlat = flatten(metadataIn: refClip.element)
             
+            // get `media` metadata
+            let sequence = refClip.mediaSequence
+            let sequenceMetadataFlat = flatten(metadataIn: sequence?.element)
+            
+            // combine
+            let combinedMetadataFlat = Array(sequenceMetadataFlat) + Array(refClipMetadataFlat)
             return combinedMetadataFlat
         }
         
@@ -177,8 +198,8 @@ extension XMLElement {
         let resource = self.fcpResource()
         let resourceMetadataFlat = flatten(metadataIn: resource)
         
+        // combine
         let combinedMetadataFlat = Array(resourceMetadataFlat) + Array(timelineMetadataFlat)
-        
         return combinedMetadataFlat
     }
 }
