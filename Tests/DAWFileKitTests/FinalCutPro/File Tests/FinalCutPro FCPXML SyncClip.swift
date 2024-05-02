@@ -152,6 +152,65 @@ final class FinalCutPro_FCPXML_SyncClip: FCPXMLTestCase {
             .inherited(.audio(raw: "effects.effects-1")!) // markers can never have 'assigned' roles
         ])
     }
+    
+    /// Test metadata that applies to marker(s).
+    func testExtractMarkersMetadata_MainTimeline() async throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        let extractedMarkers = await project
+            .extract(preset: .markers, scope: .mainTimeline)
+            .sortedByAbsoluteStartTimecode()
+        // .zeroIndexed // not necessary after sorting - sort returns new array
+        
+        let markers = extractedMarkers
+        
+        let expectedMarkerCount = 1
+        XCTAssertEqual(markers.count, expectedMarkerCount)
+        
+        print("Markers sorted by absolute timecode:")
+        print(Self.debugString(for: markers))
+        
+        // markers
+        
+        func md(
+            in mdtm: [FinalCutPro.FCPXML.Metadata.Metadatum],
+            key: FinalCutPro.FCPXML.Metadata.Key
+        ) -> FinalCutPro.FCPXML.Metadata.Metadatum? {
+            let matches = mdtm.filter { $0.key == key }
+            XCTAssertLessThan(matches.count, 2)
+            return matches.first
+        }
+        
+        // marker 1
+        do {
+            let marker = try XCTUnwrap(markers[safe: 0])
+            let mtdm = marker.value(forContext: .metadata)
+            XCTAssertEqual(mtdm.count, 11)
+            
+            XCTAssertEqual(marker.name, "Marker on Sync Clip")
+            
+            // metadata from media
+            XCTAssertEqual(md(in: mtdm, key: .cameraName)?.value, "TestVideo Camera Name")
+            XCTAssertEqual(md(in: mtdm, key: .rawToLogConversion)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .colorProfile)?.value, "SD (6-1-6)")
+            XCTAssertEqual(md(in: mtdm, key: .cameraISO)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .cameraColorTemperature)?.value, "0")
+            XCTAssertEqual(md(in: mtdm, key: .codecs)?.valueArray, ["'avc1'", "MPEG-4 AAC"])
+            XCTAssertEqual(md(in: mtdm, key: .ingestDate)?.value, "2023-01-01 19:46:28 -0800")
+            // metadata from clip
+            XCTAssertEqual(md(in: mtdm, key: .reel)?.value, "SyncClip Reel")
+            XCTAssertEqual(md(in: mtdm, key: .scene)?.value, "SyncClip Scene")
+            XCTAssertEqual(md(in: mtdm, key: .take)?.value, "SyncClip Take")
+            XCTAssertEqual(md(in: mtdm, key: .cameraAngle)?.value, "SyncClip Camera Angle")
+        }
+    }
 }
 
 #endif
