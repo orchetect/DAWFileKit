@@ -231,6 +231,14 @@ extension FinalCutPro.FCPXML.ElementContext {
                 .sorted()
         }
         
+        /// Returns metadata applicable to the element.
+        public var metadata: [FinalCutPro.FCPXML.Metadata.Metadatum] {
+            element._fcpApplicableMetadata(
+                breadcrumbs: breadcrumbs,
+                resources: resources
+            )
+        }
+        
         /// Returns occlusion information for the current element in relation to its parent.
         public var occlusion: FinalCutPro.FCPXML.ElementOcclusion {
             guard let parentStart = parentAbsoluteStart,

@@ -520,7 +520,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertNil(md.ingestDate)
         XCTAssertNil(md.reel)
         XCTAssertNil(md.scene)
-        XCTAssertNil(md.shot)
+        XCTAssertNil(md.take)
         XCTAssertNil(md.cameraAngle)
         
         // set new values
@@ -533,7 +533,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         md.ingestDate = "2023-01-01 19:46:28 -0800"
         md.reel = "TestVideo Reel"
         md.scene = "TestVideo Scene"
-        md.shot = "TestVideo Take"
+        md.take = "TestVideo Take"
         md.cameraAngle = "TestVideo Camera Angle"
         
         // test new values
@@ -546,7 +546,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertEqual(md.ingestDate, "2023-01-01 19:46:28 -0800")
         XCTAssertEqual(md.reel, "TestVideo Reel")
         XCTAssertEqual(md.scene, "TestVideo Scene")
-        XCTAssertEqual(md.shot, "TestVideo Take")
+        XCTAssertEqual(md.take, "TestVideo Take")
         XCTAssertEqual(md.cameraAngle, "TestVideo Camera Angle")
         
         // remove values
@@ -559,7 +559,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         md.ingestDate = nil
         md.reel = nil
         md.scene = nil
-        md.shot = nil
+        md.take = nil
         md.cameraAngle = nil
         
         // test removed values
@@ -572,7 +572,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertNil(md.ingestDate)
         XCTAssertNil(md.reel)
         XCTAssertNil(md.scene)
-        XCTAssertNil(md.shot)
+        XCTAssertNil(md.take)
         XCTAssertNil(md.cameraAngle)
         
         // check codecs with empty array; should remove key entirely.
@@ -590,7 +590,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertEqual(metadata.ingestDate, "2023-01-01 19:46:28 -0800")
         XCTAssertEqual(metadata.reel, "TestVideo Reel")
         XCTAssertEqual(metadata.scene, "TestVideo Scene")
-        XCTAssertEqual(metadata.shot, "TestVideo Take")
+        XCTAssertEqual(metadata.take, "TestVideo Take")
         XCTAssertEqual(metadata.cameraAngle, "TestVideo Camera Angle")
     }
     

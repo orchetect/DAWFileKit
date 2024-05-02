@@ -15,7 +15,7 @@ extension XMLElement {
     /// otherwise returns keywords applied to the first ancestor clip.
     func _fcpApplicableKeywords(
         constrainToKeywordRanges: Bool = true,
-        breadcrumbs: [XMLElement],
+        breadcrumbs: [XMLElement]? = nil,
         resources: XMLElement? = nil
     ) -> [FinalCutPro.FCPXML.Keyword] {
         // find nearest timeline and determine its absolute start timecode
@@ -96,6 +96,38 @@ extension XMLElement {
         }
         
         return applicableKeywords
+    }
+    
+    /// FCPXML: Returns metadata applicable to the element.
+    func _fcpApplicableMetadata(
+        breadcrumbs: [XMLElement]? = nil,
+        resources: XMLElement? = nil
+    ) -> [FinalCutPro.FCPXML.Metadata.Metadatum] {
+        // find nearest timeline and determine its absolute start timecode
+        guard let (timeline, _ /* timelineAncestors */) = fcpAncestorTimeline(
+            ancestors: breadcrumbs,
+            includingSelf: true
+        )
+        else { return [] }
+        
+        // get clip metadata
+        let timelineMetadata = timeline.children(whereFCPElement: .metadata)
+        let timelineMetadataFlat = timelineMetadata.flatMap(\.metadatumContents)
+        
+        // get media metadata
+        let resource = self.fcpResource()
+        let resourceMetadata = resource?.children(whereFCPElement: .metadata)
+        let resourceMetadataFlat: [FinalCutPro.FCPXML.Metadata.Metadatum] = {
+            if let resourceMetadata {
+                return resourceMetadata.flatMap(\.metadatumContents)
+            } else {
+                return []
+            }
+        }()
+        
+        let combinedMetadataFlat = Array(resourceMetadataFlat) + Array(timelineMetadataFlat)
+        
+        return combinedMetadataFlat
     }
 }
 

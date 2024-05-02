@@ -174,6 +174,13 @@ extension FinalCutPro.FCPXML.ElementContext {
             tools.keywordsFlat(constrainToKeywordRanges: constrainToKeywordRanges)
         }
     }
+    
+    /// Returns metadata applicable to the element.
+    public static var metadata: FinalCutPro.FCPXML.ElementContext<[FinalCutPro.FCPXML.Metadata.Metadatum]> {
+        FinalCutPro.FCPXML.ElementContext { _, _, _, tools in
+            tools.metadata
+        }
+    }
 }
 
 #endif

@@ -88,10 +88,10 @@ extension FinalCutPro.FCPXML.Metadata {
         set { setStringValue(forKey: .scene, value: newValue) }
     }
     
-    /// Get or set **Shot** metadata value.
-    public var shot: String? {
-        get { getStringValue(forKey: .shot) }
-        set { setStringValue(forKey: .shot, value: newValue) }
+    /// Get or set **Take** metadata value (formerly called **Shot**).
+    public var take: String? {
+        get { getStringValue(forKey: .take) }
+        set { setStringValue(forKey: .take, value: newValue) }
     }
     
     /// Get or set **Camera Angle** metadata value.
@@ -208,7 +208,7 @@ extension FinalCutPro.FCPXML.Metadata {
         // typically found within clip element
         case reel = "com.apple.proapps.studio.reel" // value attribute
         case scene = "com.apple.proapps.studio.scene" // value attribute
-        case shot = "com.apple.proapps.studio.shot" // value attribute
+        case take = "com.apple.proapps.studio.shot" // value attribute
         case cameraAngle = "com.apple.proapps.studio.angle" // value attribute
         
         // typically found within resource element
