@@ -116,7 +116,7 @@ extension XMLElement {
             ?? []
         }
         
-        // special case: multicam/mc-clip
+        // special case: `mc-clip`
         //
         // - markers:
         //     - can exist as children in `mc-clip`
@@ -150,20 +150,32 @@ extension XMLElement {
             return combinedMetadataFlat
         }
         
+        // special case: `sync-clip`
+        //
+        // - `sync-clip` can contain local metadata
+        // - metadata needs to be also pulled from the first internal video timeline from the `sync-clip`'s resource
+        if let _ /* syncClip */ = timeline.fcpAsSyncClip {
+            // get clip metadata
+            let timelineMetadataFlat = flatten(metadataIn: timeline)
+            
+            // get media metadata
+            let firstInteriorClip = timeline._fcpFirstChildTimelineElement()
+            let resource = firstInteriorClip?.fcpResource()
+            let resourceMetadataFlat = flatten(metadataIn: resource)
+            
+            let combinedMetadataFlat = Array(resourceMetadataFlat) + Array(timelineMetadataFlat)
+            
+            return combinedMetadataFlat
+        }
+        
+        // fall through to default behavior for other clip types:
+        
         // get clip metadata
-        let timelineMetadata = timeline.children(whereFCPElement: .metadata)
-        let timelineMetadataFlat = timelineMetadata.flatMap(\.metadatumContents)
+        let timelineMetadataFlat = flatten(metadataIn: timeline)
         
         // get media metadata
         let resource = self.fcpResource()
-        let resourceMetadata = resource?.children(whereFCPElement: .metadata)
-        let resourceMetadataFlat: [FinalCutPro.FCPXML.Metadata.Metadatum] = {
-            if let resourceMetadata {
-                return resourceMetadata.flatMap(\.metadatumContents)
-            } else {
-                return []
-            }
-        }()
+        let resourceMetadataFlat = flatten(metadataIn: resource)
         
         let combinedMetadataFlat = Array(resourceMetadataFlat) + Array(timelineMetadataFlat)
         
