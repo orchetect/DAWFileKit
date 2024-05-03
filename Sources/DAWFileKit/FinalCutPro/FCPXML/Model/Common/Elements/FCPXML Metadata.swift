@@ -202,23 +202,37 @@ extension XMLElement {
 
 extension FinalCutPro.FCPXML.Metadata {
     // TODO: This is not an exhaustive or complete list of metadata keys.
+    // see docs: https://developer.apple.com/documentation/professional_video_applications/fcpxml_reference/metadata_keys_and_sources
     
     /// Common/standard Final Cut Pro metadata keys.
     public enum Key: String, Equatable, Hashable, CaseIterable {
-        // typically found within clip element
-        case reel = "com.apple.proapps.studio.reel" // value attribute
-        case scene = "com.apple.proapps.studio.scene" // value attribute
-        case take = "com.apple.proapps.studio.shot" // value attribute
-        case cameraAngle = "com.apple.proapps.studio.angle" // value attribute
+        // swiftformat:disable all
         
-        // typically found within resource element
-        case cameraName = "com.apple.proapps.mio.cameraName" // value attribute
-        case rawToLogConversion = "com.apple.proapps.studio.rawToLogConversion" // value attribute
-        case colorProfile = "com.apple.proapps.spotlight.kMDItemProfileName" // value attribute
-        case cameraISO = "com.apple.proapps.studio.cameraISO" // value attribute
+        // FCP-defined keys
+        case anamorphicOverride     = "com.apple.proapps.studio.metadataAnamorphicType" // int value attribute 0-2
+        case alphaHandling          = "com.apple.proapps.studio.alphaHandling" // int value attribute 0-2
+        case reel                   = "com.apple.proapps.studio.reel" // string value attribute
+        case scene                  = "com.apple.proapps.studio.scene" // string value attribute
+        case take                   = "com.apple.proapps.studio.shot" // string value attribute
+        case cameraAngle            = "com.apple.proapps.studio.angle" // string value attribute
         case cameraColorTemperature = "com.apple.proapps.studio.cameraColorTemperature" // value attribute
-        case codecs = "com.apple.proapps.spotlight.kMDItemCodecs" // child string array
-        case ingestDate = "com.apple.proapps.mio.ingestDate" // value attribute
+        case cameraISO              = "com.apple.proapps.studio.cameraISO" // value attribute, not sure if int or string
+        case deinterlace            = "com.apple.proapps.studio.metadataDeinterlaceType" // bool value attribute
+        case fieldDominanceOverride = "com.apple.proapps.studio.metadataFieldDominanceOverride" // int value attribute 0-3
+        case location               = "com.apple.proapps.studio.metadataLocation" // string value attribute
+        case rawToLogConversion     = "com.apple.proapps.studio.rawToLogConversion" // value attribute, not sure if int or bool
+        
+        // camera
+        case cameraName             = "com.apple.proapps.mio.cameraName" // string value attribute
+        case ingestDate             = "com.apple.proapps.mio.ingestDate" // date value attribute
+        
+        // spotlight
+        case codecs                 = "com.apple.proapps.spotlight.kMDItemCodecs" // child string array
+        case colorProfile           = "com.apple.proapps.spotlight.kMDItemProfileName" // value attribute
+        
+        // TODO: keys possible for exif, image, IPTC, share, and custom prefixes
+        
+        // swiftformat:enable all
     }
 }
 
