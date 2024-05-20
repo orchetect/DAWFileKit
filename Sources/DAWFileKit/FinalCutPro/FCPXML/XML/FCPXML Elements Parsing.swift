@@ -22,7 +22,7 @@ extension XMLElement {
 // MARK: - Story Elements
 
 extension XMLElement {
-    /// FCPXML: Returns child story elements.
+    /// FCPXML: Returns immediate child story elements.
     public var fcpStoryElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.fcpElementType?.isStoryElement == true }
@@ -30,10 +30,62 @@ extension XMLElement {
 }
 
 extension XMLElement {
-    /// FCPXML: Returns child timeline elements.
+    /// FCPXML: Returns immediate child timeline elements.
     public var fcpTimelineElements: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         childElements
             .filter { $0.fcpElementType?.isTimeline == true }
+    }
+    
+    /// FCPXML: Returns immediate child timeline model objects wrapped in type-erased
+    /// ``FinalCutPro/FCPXML/AnyTimeline`` instances.
+    public var fcpTimelineElementsAsAnyTimeline: LazyMapSequence<
+        LazyFilterSequence<
+            LazyMapSequence<
+                LazyMapSequence<
+                    LazyFilterSequence<LazyMapSequence<
+                        LazySequence<[XMLNode]>.Elements,
+                        XMLElement?
+                    >>, XMLElement
+                >.Elements,
+                FinalCutPro.FCPXML.AnyTimeline?
+            >
+        >,
+        FinalCutPro.FCPXML.AnyTimeline
+    > {
+        childElements
+            .compactMap { $0.fcpAsAnyTimeline }
+    }
+    
+    /// FCPXML: Recursively returns descendant timelines, including within `library`, `event` and
+    /// `project` elements.
+    ///
+    /// - Returns: Sequence of timeline elements wrapped in a type-erased
+    ///   ``FinalCutPro/FCPXML/AnyTimeline`` instance.
+    func _fcpMetaTimelinesAsAnyTimelines() -> LazySequence<FlattenSequence<LazyMapSequence<
+        LazyMapSequence<LazyFilterSequence<LazyMapSequence<
+            LazyMapSequence<LazyFilterSequence<LazyMapSequence<
+                LazySequence<[XMLNode]>.Elements,
+                XMLElement?
+            >>, XMLElement>.Elements,
+            AnySequence<FinalCutPro.FCPXML.AnyTimeline>?
+        >>, AnySequence<FinalCutPro.FCPXML.AnyTimeline>>.Elements,
+        AnySequence<FinalCutPro.FCPXML.AnyTimeline>
+    >>> {
+        childElements
+            .compactMap { element -> AnySequence<FinalCutPro.FCPXML.AnyTimeline>? in
+                if let library = element.fcpAsLibrary {
+                    return library.childTimelinesAsAnyTimelines().asAnySequence
+                } else if let event = element.fcpAsEvent {
+                    return event.childTimelinesAsAnyTimelines().asAnySequence
+                } else if let project = element.fcpAsProject {
+                    return [project.sequenceAsAnyTimeline()].asAnySequence
+                } else if let timeline = element.fcpAsAnyTimeline {
+                    return [timeline].asAnySequence
+                } else {
+                    return nil
+                }
+            }
+            .flatMap { $0 }
     }
 }
 

@@ -93,24 +93,54 @@ extension FinalCutPro.FCPXML {
     }
     
     /// Returns all top-level timelines (sequences, clips, etc.) found in the FCPXML in the order
-    /// they are found.
-    public func allTimelines() -> [AnyTimeline] {
-        var timelines: [AnyTimeline] = []
-        
-        // timelines within projects
-        let projectsSequences = allProjects()
-            .map(\.sequence)
-            .map(\.element)
-            .compactMap(\.fcpAsAnyTimeline)
-        timelines.append(contentsOf: projectsSequences)
-        
-        // timelines within root `fcpxml` element
-        
-        let rootTimelines = root.element.childElements
-            .compactMap(\.fcpAsAnyTimeline)
-        timelines.append(contentsOf: rootTimelines)
-        
-        return timelines
+    /// they are found, including from within events and projects.
+    ///
+    /// - root `fcpxml` can contain:
+    ///   - `library` (one or zero)
+    ///   - `event` (zero or more)
+    ///   - `project` (zero or more)
+    ///   - individual timelines/clips (zero or more)
+    /// - the single optional `library` can contain:
+    ///   - `event` (zero or more)
+    ///   - `project` (zero or more)
+    ///   - individual timelines/clips (zero or more)
+    /// - an `event` can contain:
+    ///   - `project` (zero or more)
+    ///   - individual timelines/clips (zero or more)
+    /// - a `project` must always contain:
+    ///   - a single `sequence`
+    public func allTimelines() -> LazySequence<FlattenSequence<LazyMapSequence<
+        LazyMapSequence<LazyFilterSequence<LazyMapSequence<
+            LazyMapSequence<LazyFilterSequence<LazyMapSequence<
+                LazySequence<[XMLNode]>.Elements,
+                XMLElement?
+            >>, XMLElement>.Elements,
+            AnySequence<FinalCutPro.FCPXML.AnyTimeline>?
+        >>, AnySequence<FinalCutPro.FCPXML.AnyTimeline>>.Elements,
+        AnySequence<FinalCutPro.FCPXML.AnyTimeline>
+    >>> {
+        root.element._fcpMetaTimelinesAsAnyTimelines()
+    }
+}
+
+extension FinalCutPro.FCPXML.Library {
+    /// Wraps child timeline(s) in a type-erased ``FinalCutPro/FCPXML/AnyTimeline`` instances.
+    func childTimelinesAsAnyTimelines() -> some Sequence<FinalCutPro.FCPXML.AnyTimeline> {
+        element._fcpMetaTimelinesAsAnyTimelines()
+    }
+}
+
+extension FinalCutPro.FCPXML.Event {
+    /// Wraps child timeline(s) in a type-erased ``FinalCutPro/FCPXML/AnyTimeline`` instances.
+    func childTimelinesAsAnyTimelines() -> some Sequence<FinalCutPro.FCPXML.AnyTimeline> {
+        element._fcpMetaTimelinesAsAnyTimelines()
+    }
+}
+
+extension FinalCutPro.FCPXML.Project {
+    /// Wraps child `sequence` element in a type-erased ``FinalCutPro/FCPXML/AnyTimeline`` instances.
+    func sequenceAsAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline {
+        .sequence(self.sequence)
     }
 }
 
