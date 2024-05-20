@@ -40,10 +40,21 @@ extension FCPXMLElementMetaTimeline {
 
 extension XMLElement {
     func _fcpTimelineStartAsTimecode() -> Timecode? {
+        // check for local `tcstart` or `start` attribute
         if let localTC = _fcpTCStartAsTimecode(frameRateSource: .localToElement)
             ?? _fcpStartAsTimecode(frameRateSource: .localToElement)
         {
             return localTC
+        }
+        
+        // check for parent project if local timeline is a sequence or spine
+        if let fcpElementType,
+           fcpElementType == .sequence || fcpElementType == .spine,
+           let project = self.ancestorElements(includingSelf: false)
+               .first(whereFCPElement: .project),
+           let projectStart = project.startTimecode()
+        {
+            return projectStart
         }
         
         // cascade to inner timelines which may be necessary for clips like `ref-clip`
