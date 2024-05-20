@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <media id="r1" name="CompoundClip" uid="ei40O3RlQJK1czcuH2Wh+Q" modDate="2024-05-17 6:17:39 PM +0800">
+            <sequence format="r2" duration="29273600/320000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <asset-clip ref="r3" offset="0s" name="TestVideo2" start="1961/25s" duration="1766400/320000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <adjust-volume amount="-96dB"/>
+                        <keyword start="99/5s" duration="25088/12800s" value="Penguin"/>
+                        <marker start="402/5s" duration="100/2500s" value="Marker 53" note="Note 01"/>
+                        <marker start="2051/25s" duration="100/2500s" value="Marker 42" completed="0" note="Note 02"/>
+                    </asset-clip>
+                    <asset-clip ref="r3" offset="1766400/320000s" name="TestVideo2" start="146800/2500s" duration="7782400/320000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <adjust-volume amount="-96dB"/>
+                        <keyword start="99/5s" duration="25088/12800s" value="Penguin"/>
+                        <marker start="1593/25s" duration="100/2500s" value="Marker 44" completed="1" note="Note 03"/>
+                        <marker start="1748/25s" duration="100/2500s" value="Marker 39" note="Note 04"/>
+                    </asset-clip>
+                    <asset-clip ref="r4" offset="9548800/320000s" name="TestVideo" start="914/25s" duration="434688/12800s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <adjust-volume amount="-96dB"/>
+                        <marker start="1084/25s" duration="100/2500s" value="Marker 46" completed="0" note="Note 05"/>
+                        <marker start="1252/25s" duration="100/2500s" value="Marker 41" note="Note 06"/>
+                    </asset-clip>
+                    <asset-clip ref="r3" offset="20416000/320000s" name="TestVideo2" start="544/25s" duration="270336/12800s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <adjust-volume amount="-96dB"/>
+                        <keyword start="99/5s" duration="25088/12800s" value="Penguin"/>
+                        <marker start="129/5s" duration="100/2500s" value="Marker 45" completed="0" note="Note 07"/>
+                        <marker start="746/25s" duration="100/2500s" value="Marker 40" note="Note 08"/>
+                    </asset-clip>
+                    <asset-clip ref="r3" offset="27174400/320000s" name="TestVideo2" start="152/5s" duration="2099200/320000s" tcFormat="NDF" audioRole="dialogue">
+                        <adjust-colorConform enabled="1" autoOrManual="manual" conformType="conformNone" peakNitsOfPQSource="1000" peakNitsOfSDRToPQSource="203"/>
+                        <adjust-volume amount="-96dB"/>
+                        <keyword start="99/5s" duration="25088/12800s" value="Penguin"/>
+                        <marker start="164/5s" duration="100/2500s" value="Marker 43" completed="0" note="Note 09"/>
+                        <marker start="856/25s" duration="100/2500s" value="Marker 38" note="Note 10"/>
+                    </asset-clip>
+                </spine>
+            </sequence>
+        </media>
+        <format id="r2" name="FFVideoFormat1080p25" frameDuration="100/2500s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r3" name="TestVideo2" uid="53308E84E2E696489DF41ECEFBB51E41" start="0s" duration="142040/1000s" hasVideo="1" format="r2" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="53308E84E2E696489DF41ECEFBB51E41" src="file:///Users/user/Movies/TestVideo2.mp4">
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-08-03 08:21:28 +0800"/>
+            </metadata>
+        </asset>
+        <asset id="r4" name="TestVideo" uid="978BD3B254D68A6FA69E87D0D90544FD" start="0s" duration="205800/1000s" hasVideo="1" format="r2" hasAudio="1" videoSources="1" audioSources="1" audioChannels="2" audioRate="44100">
+            <media-rep kind="original-media" sig="978BD3B254D68A6FA69E87D0D90544FD" src="file:///Users/user//Movies/TestVideo.mp4">
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="HD (1-1-1)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>'avc1'</string>
+                        <string>MPEG-4 AAC</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2022-08-03 08:21:28 +0800"/>
+            </metadata>
+        </asset>
+    </resources>
+    <library location="file:///Users/user/FCPXMLTest.fcpbundle/">
+        <event name="Demo 1" uid="61AAD5FD-1E06-4347-BF03-A2E02FB17118">
+            <ref-clip ref="r1" name="CompoundClip" duration="29273600/320000s" modDate="2024-05-17 6:17:39 PM +0800"/>
+        </event>
+        <smart-collection name="Projects" match="all">
+            <match-clip rule="is" type="project"/>
+        </smart-collection>
+        <smart-collection name="All Video" match="any">
+            <match-media rule="is" type="videoOnly"/>
+            <match-media rule="is" type="videoWithAudio"/>
+        </smart-collection>
+        <smart-collection name="Audio Only" match="all">
+            <match-media rule="is" type="audioOnly"/>
+        </smart-collection>
+        <smart-collection name="Stills" match="all">
+            <match-media rule="is" type="stills"/>
+        </smart-collection>
+        <smart-collection name="Favorites" match="all">
+            <match-ratings value="favorites"/>
+        </smart-collection>
+    </library>
+</fcpxml>
