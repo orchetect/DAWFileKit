@@ -53,6 +53,7 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
         let anyTimeline = try XCTUnwrap(timelines.first)
         
         // AnyTimeline
+        
         let timelineStartTC = try XCTUnwrap(anyTimeline.timelineStartAsTimecode())
         XCTAssertEqual(timelineStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
         XCTAssertEqual(timelineStartTC.frameRate, .fps29_97)
@@ -61,7 +62,18 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
         XCTAssertEqual(timelineDurTC.frameRate, .fps29_97)
         
         // unwrap AssetClip
+        
         guard case .assetClip(let assetClip) = anyTimeline else { XCTFail() ; return }
+        
+        // FCPXMLElementMetaTimeline
+        let assetClipStartTC = try XCTUnwrap(anyTimeline.timelineStartAsTimecode())
+        XCTAssertEqual(assetClipStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
+        XCTAssertEqual(assetClipStartTC.frameRate, .fps29_97)
+        let assetClipDurTC = try XCTUnwrap(anyTimeline.timelineDurationAsTimecode())
+        XCTAssertEqual(assetClipDurTC.components, .init(h: 00, m: 00, s: 10, f: 00))
+        XCTAssertEqual(assetClipDurTC.frameRate, .fps29_97)
+        
+        // local XML attributes
         let clipStartTC = try XCTUnwrap(assetClip.startAsTimecode())
         XCTAssertEqual(clipStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
         XCTAssertEqual(clipStartTC.frameRate, .fps29_97)
