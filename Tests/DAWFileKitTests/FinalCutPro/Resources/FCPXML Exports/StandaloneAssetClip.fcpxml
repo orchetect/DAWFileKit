@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <asset id="r1" name="TestVideo" uid="D76A4653ECA00560C51B7BC07B87369E" start="107807700/30000s" duration="10010/1000s" hasVideo="1" format="r2" videoSources="1">
+            <media-rep kind="original-media" sig="D76A4653ECA00560C51B7BC07B87369E" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Test%20Event/Original%20Media/TestVideo.mov">
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="SD (6-1-6)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>Lavc59.37.100 libx264</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2024-05-19 21:09:55 -0700"/>
+            </metadata>
+        </asset>
+        <format id="r2" name="FFVideoFormat640x360p2997" frameDuration="1001/30000s" width="640" height="360" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
+    </resources>
+    <asset-clip ref="r1" name="TestVideo" start="107807700/30000s" duration="300300/30000s" format="r2" tcFormat="NDF" modDate="2024-05-19 21:10:18 -0700"/>
+</fcpxml>
