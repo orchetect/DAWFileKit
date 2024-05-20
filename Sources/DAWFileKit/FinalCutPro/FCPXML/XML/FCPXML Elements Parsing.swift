@@ -61,31 +61,21 @@ extension XMLElement {
     ///
     /// - Returns: Sequence of timeline elements wrapped in a type-erased
     ///   ``FinalCutPro/FCPXML/AnyTimeline`` instance.
-    func _fcpMetaTimelinesAsAnyTimelines() -> LazySequence<FlattenSequence<LazyMapSequence<
-        LazyMapSequence<LazyFilterSequence<LazyMapSequence<
-            LazyMapSequence<LazyFilterSequence<LazyMapSequence<
-                LazySequence<[XMLNode]>.Elements,
-                XMLElement?
-            >>, XMLElement>.Elements,
-            AnySequence<FinalCutPro.FCPXML.AnyTimeline>?
-        >>, AnySequence<FinalCutPro.FCPXML.AnyTimeline>>.Elements,
-        AnySequence<FinalCutPro.FCPXML.AnyTimeline>
-    >>> {
+    func _fcpMetaTimelinesAsAnyTimelines() -> [FinalCutPro.FCPXML.AnyTimeline] {
         childElements
-            .compactMap { element -> AnySequence<FinalCutPro.FCPXML.AnyTimeline>? in
+            .flatMap { element -> [FinalCutPro.FCPXML.AnyTimeline] in
                 if let library = element.fcpAsLibrary {
-                    return library.childTimelinesAsAnyTimelines().asAnySequence
+                    return library.childTimelinesAsAnyTimelines()
                 } else if let event = element.fcpAsEvent {
-                    return event.childTimelinesAsAnyTimelines().asAnySequence
+                    return event.childTimelinesAsAnyTimelines()
                 } else if let project = element.fcpAsProject {
-                    return [project.sequenceAsAnyTimeline()].asAnySequence
+                    return [project.sequenceAsAnyTimeline()]
                 } else if let timeline = element.fcpAsAnyTimeline {
-                    return [timeline].asAnySequence
+                    return [timeline]
                 } else {
-                    return nil
+                    return []
                 }
             }
-            .flatMap { $0 }
     }
 }
 
