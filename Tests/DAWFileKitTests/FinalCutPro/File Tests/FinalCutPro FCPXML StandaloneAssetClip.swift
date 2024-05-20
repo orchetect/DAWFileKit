@@ -47,7 +47,7 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // timelines
-        let timelines = Array(fcpxml.allTimelines())
+        let timelines = fcpxml.allTimelines()
         XCTAssertEqual(timelines.count, 1)
         
         let anyTimeline = try XCTUnwrap(timelines.first)
