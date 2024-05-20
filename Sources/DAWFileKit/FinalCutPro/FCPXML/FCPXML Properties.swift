@@ -91,6 +91,27 @@ extension FinalCutPro.FCPXML {
     public var version: FinalCutPro.FCPXML.Version {
         root.version
     }
+    
+    /// Returns all top-level timelines (sequences, clips, etc.) found in the FCPXML in the order
+    /// they are found.
+    public func allTimelines() -> [AnyTimeline] {
+        var timelines: [AnyTimeline] = []
+        
+        // timelines within projects
+        let projectsSequences = allProjects()
+            .map(\.sequence)
+            .map(\.element)
+            .compactMap(\.fcpAsAnyTimeline)
+        timelines.append(contentsOf: projectsSequences)
+        
+        // timelines within root `fcpxml` element
+        
+        let rootTimelines = root.element.childElements
+            .compactMap(\.fcpAsAnyTimeline)
+        timelines.append(contentsOf: rootTimelines)
+        
+        return timelines
+    }
 }
 
 #endif
