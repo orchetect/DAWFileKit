@@ -136,9 +136,20 @@ extension Set<FinalCutPro.FCPXML.ElementType> {
             + allAnnotationCases
     
     public static let allTimelineCases: Self = [
-        .assetClip, .audio, /* not audition */ .clip, .gap, .liveDrawing,
-            .mcClip, .refClip, .syncClip, .title, .video,
-            .mcAngle, .sequence, .spine
+        .assetClip,
+        .audio,
+        // audition
+        .clip,
+        .gap,
+        // .liveDrawing, // TODO: ?
+        .mcAngle,
+        .mcClip,
+        .refClip,
+        .sequence,
+        .spine,
+        .syncClip,
+        .title,
+        .video
     ]
 }
 
