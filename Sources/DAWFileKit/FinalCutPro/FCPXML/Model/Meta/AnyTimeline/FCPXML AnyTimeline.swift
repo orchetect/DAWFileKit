@@ -90,22 +90,34 @@ extension FinalCutPro.FCPXML.AnyTimeline {
         }
     }
     
-    /// Returns the timeline's local start timecode.
-    /// 
-    /// If `tcstart` is present, it is returned. Otherwise `start` is returned.
-    public func timelineStartAsTimecode(
-        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
-    ) -> Timecode? {
-        tcStartAsTimecode(frameRateSource: frameRateSource)
-            ?? startAsTimecode(frameRateSource: frameRateSource)
+    /// Returns the timeline's local start as timecode.
+    public func timelineStartAsTimecode() -> Timecode? {
+        if let localTC = element._fcpTCStartAsTimecode(frameRateSource: .localToElement)
+            ?? element._fcpStartAsTimecode(frameRateSource: .localToElement)
+        {
+            return localTC
+        }
+        
+        // cascade to inner timelines which may be necessary for clips like `ref-clip`
+        return element.fcpResource()?
+            ._fcpFirstChildTimelineElement()?
+            .fcpAsAnyTimeline?
+            .timelineStartAsTimecode()
+    }
+    
+    /// Returns the timeline's local duration as timecode.
+    public func timelineDurationAsTimecode() -> Timecode? {
+        if let localTC = element._fcpDurationAsTimecode(frameRateSource: .localToElement) {
+            return localTC
+        }
+        
+        // cascade to inner timelines which may be necessary for clips like `ref-clip`
+        return element.fcpResource()?
+            ._fcpFirstChildTimelineElement()?
+            .fcpAsAnyTimeline?
+            .timelineDurationAsTimecode()
     }
 }
-
-extension FinalCutPro.FCPXML.AnyTimeline: FCPXMLElementOptionalTCStart { }
-
-extension FinalCutPro.FCPXML.AnyTimeline: FCPXMLElementOptionalStart { }
-
-extension FinalCutPro.FCPXML.AnyTimeline: FCPXMLElementClipAttributesOptionalDuration { }
 
 // MARK: - Typing
 

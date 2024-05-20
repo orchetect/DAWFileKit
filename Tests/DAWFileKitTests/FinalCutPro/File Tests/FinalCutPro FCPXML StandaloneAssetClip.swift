@@ -56,7 +56,7 @@ final class FinalCutPro_FCPXML_StandaloneAssetClip: FCPXMLTestCase {
         let timelineStartTC = try XCTUnwrap(anyTimeline.timelineStartAsTimecode())
         XCTAssertEqual(timelineStartTC.components, .init(h: 00, m: 59, s: 50, f: 00))
         XCTAssertEqual(timelineStartTC.frameRate, .fps29_97)
-        let timelineDurTC = try XCTUnwrap(anyTimeline.durationAsTimecode())
+        let timelineDurTC = try XCTUnwrap(anyTimeline.timelineDurationAsTimecode())
         XCTAssertEqual(timelineDurTC.components, .init(h: 00, m: 00, s: 10, f: 00))
         XCTAssertEqual(timelineDurTC.frameRate, .fps29_97)
         
