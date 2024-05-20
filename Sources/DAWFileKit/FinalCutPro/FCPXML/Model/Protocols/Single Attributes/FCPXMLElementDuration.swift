@@ -24,9 +24,9 @@ extension FCPXMLElementRequiredDuration {
     public func durationAsTimecode(
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
     ) -> Timecode? {
-        try? element._fcpTimecode(
-            fromRational: duration,
-            frameRateSource: frameRateSource
+        element._fcpDurationAsTimecode(
+            frameRateSource: frameRateSource,
+            default: .zero
         )
     }
 }
@@ -46,9 +46,25 @@ extension FCPXMLElementOptionalDuration {
     public func durationAsTimecode(
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
     ) -> Timecode? {
-        guard let duration = duration else { return nil }
-        return try? element._fcpTimecode(
-            fromRational: duration,
+        guard duration != nil else { return nil }
+        return element._fcpDurationAsTimecode(
+            frameRateSource: frameRateSource,
+            default: nil
+        )
+    }
+}
+
+// MARK: - XML Utils
+
+extension XMLElement {
+    func _fcpDurationAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement,
+        default defaultDuration: Fraction? = .zero
+    ) -> Timecode? {
+        guard let dur = fcpDuration ?? defaultDuration else { return nil }
+        
+        return try? _fcpTimecode(
+            fromRational: dur,
             frameRateSource: frameRateSource
         )
     }

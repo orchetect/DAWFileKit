@@ -24,9 +24,9 @@ extension FCPXMLElementRequiredStart {
     public func startAsTimecode(
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
     ) -> Timecode? {
-        try? element._fcpTimecode(
-            fromRational: start,
-            frameRateSource: frameRateSource
+        element._fcpStartAsTimecode(
+            frameRateSource: frameRateSource,
+            default: .zero
         )
     }
 }
@@ -46,9 +46,25 @@ extension FCPXMLElementOptionalStart {
     public func startAsTimecode(
         frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement
     ) -> Timecode? {
-        guard let start = start else { return nil }
-        return try? element._fcpTimecode(
-            fromRational: start,
+        guard  start != nil else { return nil }
+        return element._fcpStartAsTimecode(
+            frameRateSource: frameRateSource,
+            default: .zero
+        )
+    }
+}
+
+// MARK: - XML Utils
+
+extension XMLElement {
+    func _fcpStartAsTimecode(
+        frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .localToElement,
+        default defaultStart: Fraction? = .zero
+    ) -> Timecode? {
+        guard let dur = fcpStart ?? defaultStart else { return nil }
+        
+        return try? _fcpTimecode(
+            fromRational: dur,
             frameRateSource: frameRateSource
         )
     }
