@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.11">
+    <resources>
+        <media id="r1" name="StandaloneRefClip" uid="mLTMvAmdQLGFji5zTT32TA" modDate="2024-05-19 22:21:50 -0700">
+            <sequence format="r2" duration="270270/30000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                <spine>
+                    <asset-clip ref="r3" offset="0s" name="TestVideo" start="107837730/30000s" duration="270270/30000s" format="r4" tcFormat="NDF">
+                        <marker start="1800799/500s" duration="1001/30000s" value="Marker 1"/>
+                    </asset-clip>
+                </spine>
+            </sequence>
+        </media>
+        <format id="r2" name="FFVideoFormat1080p2997" frameDuration="1001/30000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <asset id="r3" name="TestVideo" uid="D76A4653ECA00560C51B7BC07B87369E" start="107807700/30000s" duration="10010/1000s" hasVideo="1" format="r4" videoSources="1">
+            <media-rep kind="original-media" sig="D76A4653ECA00560C51B7BC07B87369E" src="file:///Users/user/Movies/FCPXMLTest.fcpbundle/Test%20Event/Original%20Media/TestVideo.mov">
+            </media-rep>
+            <metadata>
+                <md key="com.apple.proapps.studio.rawToLogConversion" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemProfileName" value="SD (6-1-6)"/>
+                <md key="com.apple.proapps.studio.cameraISO" value="0"/>
+                <md key="com.apple.proapps.studio.cameraColorTemperature" value="0"/>
+                <md key="com.apple.proapps.spotlight.kMDItemCodecs">
+                    <array>
+                        <string>Lavc59.37.100 libx264</string>
+                    </array>
+                </md>
+                <md key="com.apple.proapps.mio.ingestDate" value="2024-05-19 21:09:55 -0700"/>
+            </metadata>
+        </asset>
+        <format id="r4" name="FFVideoFormat640x360p2997" frameDuration="1001/30000s" width="640" height="360" colorSpace="6-1-6 (Rec. 601 (NTSC))"/>
+    </resources>
+    <ref-clip ref="r1" name="StandaloneRefClip" duration="270270/30000s" modDate="2024-05-19 22:21:50 -0700"/>
+</fcpxml>
