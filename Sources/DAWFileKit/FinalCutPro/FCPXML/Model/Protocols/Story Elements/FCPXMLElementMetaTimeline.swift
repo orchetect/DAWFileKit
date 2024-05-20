@@ -20,6 +20,11 @@ public protocol FCPXMLElementMetaTimeline: FCPXMLElement {
 }
 
 extension FCPXMLElementMetaTimeline {
+    /// Returns the timeline's name.
+    public var timelineName: String? {
+        element.fcpName
+    }
+    
     /// Returns the timeline's local start as timecode.
     public func timelineStartAsTimecode() -> Timecode? {
         element._fcpTimelineStartAsTimecode()
