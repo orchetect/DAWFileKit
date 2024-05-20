@@ -228,7 +228,9 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementTimingParams { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .assetClip(self) }
+}
 
 // MARK: - Typing
 

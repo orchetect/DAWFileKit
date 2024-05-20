@@ -180,7 +180,9 @@ extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .syncClip(self) }
+}
 
 // MARK: - Typing
 

@@ -183,7 +183,9 @@ extension FinalCutPro.FCPXML.MCClip: FCPXMLElementTimingParams { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .mcClip(self) }
+}
 
 // MARK: - Properties
 

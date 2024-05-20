@@ -182,7 +182,9 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLElementTimingParams { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .clip(self) }
+}
 
 
 // MARK: - Typing

@@ -93,7 +93,9 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.Media.Multicam.Angle: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.Media.Multicam.Angle: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .mcAngle(self) }
+}
 
 // MARK: - Typing
 

@@ -74,7 +74,9 @@ extension FinalCutPro.FCPXML {
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.AnyTimeline: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.AnyTimeline: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { self }
+}
 
 // MARK: - Properties
 

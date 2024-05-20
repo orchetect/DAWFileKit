@@ -124,7 +124,9 @@ extension FinalCutPro.FCPXML.Gap: FCPXMLElementNoteChild { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.Gap: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.Gap: FCPXMLElementMetaTimeline {
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .gap(self) }
+}
 
 
 // MARK: - Typing

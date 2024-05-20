@@ -199,7 +199,9 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLElementTimingParams { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetaTimeline {
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .refClip(self) }
+}
 
 // MARK: - Resource
 

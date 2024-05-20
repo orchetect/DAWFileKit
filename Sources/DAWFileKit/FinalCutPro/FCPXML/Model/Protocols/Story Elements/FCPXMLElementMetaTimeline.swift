@@ -11,7 +11,13 @@ import OTCore
 import TimecodeKit
 
 /// A meta protocol that all timeline and pseudo-timeline elements conform to.
-public protocol FCPXMLElementMetaTimeline: FCPXMLElement { }
+///
+/// This provides properties that can intelligently infer common properties such as timeline start
+/// timecode or duration timecode.
+public protocol FCPXMLElementMetaTimeline: FCPXMLElement {
+    /// Returns the timeline model wrapped in a type-erased ``FinalCutPro/FCPXML/AnyTimeline`` instance.
+    func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline
+}
 
 extension FCPXMLElementMetaTimeline {
     /// Returns the timeline's local start as timecode.

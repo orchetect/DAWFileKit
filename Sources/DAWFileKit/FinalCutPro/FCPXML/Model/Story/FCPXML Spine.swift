@@ -104,7 +104,9 @@ extension FinalCutPro.FCPXML.Spine {
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.Spine: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.Spine: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .spine(self) }
+}
 
 // MARK: - Typing
 

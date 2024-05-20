@@ -152,7 +152,9 @@ extension FinalCutPro.FCPXML.Video: FCPXMLElementTimingParams { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.Video: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.Video: FCPXMLElementMetaTimeline {
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .video(self) }
+}
 
 // MARK: - Typing
 

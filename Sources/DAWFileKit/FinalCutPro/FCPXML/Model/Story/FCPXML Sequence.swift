@@ -159,7 +159,9 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetadataChild { }
 
 // MARK: - Meta Conformances
 
-extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetaTimeline { }
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetaTimeline { 
+    public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .sequence(self) }
+}
 
 // MARK: - Properties
 
