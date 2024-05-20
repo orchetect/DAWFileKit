@@ -461,20 +461,20 @@ extension XMLElement {
         in ancestors: Ancestors
     ) -> Int {
         var count = 0
-        var isTraversingAssetClip = false
+        var isTraversingContainerClip = false
         for ancestor in ancestors {
             let elementType = ancestor.fcpElementType
             let isTimeline = elementType?.isTimeline == true
                 && (elementType != nil && elementType != .spine) // don't include spines
             let hasNoLane = (ancestor.fcpLane ?? 0) == 0
             
-            if elementType == .assetClip {
-                if isTraversingAssetClip {
+            if elementType == .assetClip || elementType == .refClip {
+                if isTraversingContainerClip {
                     // don't count asset clips within an asset clip
                     // TODO: should this also apply to other clip types?
                     continue
                 }
-                isTraversingAssetClip = true
+                isTraversingContainerClip = true
             }
             
             if isTimeline, hasNoLane { count += 1 }
