@@ -226,6 +226,10 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioChannelSourceChildren 
 
 extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementTimingParams { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementMetaTimeline { }
+
 // MARK: - Typing
 
 // AssetClip

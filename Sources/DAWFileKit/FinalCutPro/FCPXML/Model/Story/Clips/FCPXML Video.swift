@@ -150,6 +150,10 @@ extension FinalCutPro.FCPXML.Video: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.Video: FCPXMLElementTimingParams { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.Video: FCPXMLElementMetaTimeline { }
+
 // MARK: - Typing
 
 // Video

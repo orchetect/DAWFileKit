@@ -180,6 +180,11 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLElementAudioChannelSourceChildren { }
 
 extension FinalCutPro.FCPXML.Clip: FCPXMLElementTimingParams { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.Clip: FCPXMLElementMetaTimeline { }
+
+
 // MARK: - Typing
 
 // Clip

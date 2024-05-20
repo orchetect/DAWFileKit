@@ -72,6 +72,12 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.AnyTimeline: FCPXMLElementMetaTimeline { }
+
+// MARK: - Properties
+
 extension FinalCutPro.FCPXML.AnyTimeline {
     /// Return the wrapped model object typed as ``FCPXMLElement``.
     public var model: any FCPXMLElement {
@@ -88,34 +94,6 @@ extension FinalCutPro.FCPXML.AnyTimeline {
         case let .title(model): return model
         case let .video(model): return model
         }
-    }
-    
-    /// Returns the timeline's local start as timecode.
-    public func timelineStartAsTimecode() -> Timecode? {
-        if let localTC = element._fcpTCStartAsTimecode(frameRateSource: .localToElement)
-            ?? element._fcpStartAsTimecode(frameRateSource: .localToElement)
-        {
-            return localTC
-        }
-        
-        // cascade to inner timelines which may be necessary for clips like `ref-clip`
-        return element.fcpResource()?
-            ._fcpFirstChildTimelineElement()?
-            .fcpAsAnyTimeline?
-            .timelineStartAsTimecode()
-    }
-    
-    /// Returns the timeline's local duration as timecode.
-    public func timelineDurationAsTimecode() -> Timecode? {
-        if let localTC = element._fcpDurationAsTimecode(frameRateSource: .localToElement) {
-            return localTC
-        }
-        
-        // cascade to inner timelines which may be necessary for clips like `ref-clip`
-        return element.fcpResource()?
-            ._fcpFirstChildTimelineElement()?
-            .fcpAsAnyTimeline?
-            .timelineDurationAsTimecode()
     }
 }
 

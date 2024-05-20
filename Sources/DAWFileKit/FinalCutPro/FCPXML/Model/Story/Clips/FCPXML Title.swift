@@ -144,6 +144,10 @@ extension FinalCutPro.FCPXML.Title: FCPXMLElementTextChildren { }
 
 extension FinalCutPro.FCPXML.Title: FCPXMLElementTextStyleDefinitionChildren { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.Title: FCPXMLElementMetaTimeline { }
+
 // MARK: - Typing
 
 // Title

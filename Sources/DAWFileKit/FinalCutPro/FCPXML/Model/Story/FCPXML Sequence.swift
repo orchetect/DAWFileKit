@@ -157,6 +157,10 @@ extension FinalCutPro.FCPXML.Sequence: FCPXMLElementNoteChild { }
 
 extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetadataChild { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.Sequence: FCPXMLElementMetaTimeline { }
+
 // MARK: - Properties
 
 // Sequence

@@ -178,6 +178,10 @@ extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
     }
 }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.SyncClip: FCPXMLElementMetaTimeline { }
+
 // MARK: - Typing
 
 // SyncClip

@@ -197,6 +197,10 @@ extension FinalCutPro.FCPXML.RefClip: FCPXMLElementAudioRoleSourceChildren { }
 
 extension FinalCutPro.FCPXML.RefClip: FCPXMLElementTimingParams { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.RefClip: FCPXMLElementMetaTimeline { }
+
 // MARK: - Resource
 
 extension FinalCutPro.FCPXML.RefClip {

@@ -181,6 +181,10 @@ extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
 
 extension FinalCutPro.FCPXML.MCClip: FCPXMLElementTimingParams { }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.MCClip: FCPXMLElementMetaTimeline { }
+
 // MARK: - Properties
 
 extension FinalCutPro.FCPXML.MCClip {

@@ -102,6 +102,10 @@ extension FinalCutPro.FCPXML.Spine {
     }
 }
 
+// MARK: - Meta Conformances
+
+extension FinalCutPro.FCPXML.Spine: FCPXMLElementMetaTimeline { }
+
 // MARK: - Typing
 
 // Spine
