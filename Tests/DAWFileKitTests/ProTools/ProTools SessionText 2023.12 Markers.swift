@@ -150,4 +150,78 @@ class ProTools_SessionText_2023_12_Markers: XCTestCase {
         
         XCTAssertNil(sessionInfo.orphanData)       // none
     }
+    
+    func testDAWMarkerTrackConversion() throws {
+        // load file
+        
+        let filename = "SessionText_MarkerRulersAndTrackMarkers_PT2023.12"
+        guard let rawData = loadFileContents(
+            forResource: filename,
+            withExtension: "txt",
+            subFolder: .ptSessionTextExports
+        )
+        else { XCTFail("Could not form URL, possibly could not find file."); return }
+        
+        // parse
+        
+        var parseMessages: [ProTools.SessionInfo.ParseMessage] = []
+        let sessionInfo = try ProTools.SessionInfo(fileContent: rawData, messages: &parseMessages)
+        
+        let frameRate = try XCTUnwrap(sessionInfo.main.frameRate)
+        
+        // parse messages
+        
+        XCTAssertEqual(parseMessages.errors.count, 0)
+        if !parseMessages.errors.isEmpty {
+            dump(parseMessages.errors)
+        }
+        
+        // markers
+        
+        let dawMarkerTracks = try XCTUnwrap(
+            sessionInfo.markers?.convertToDAWMarkers(originalFrameRate: frameRate)
+        )
+        XCTAssertEqual(dawMarkerTracks.count, 7)
+        
+        // spot check a few, we won't check them all
+        
+        let dawMarkerTrack1 = try XCTUnwrap(dawMarkerTracks[safe: 0])
+        XCTAssertEqual(dawMarkerTrack1.name, "Markers")
+        XCTAssertEqual(dawMarkerTrack1.trackType, .ruler)
+        XCTAssertEqual(dawMarkerTrack1.markers.count, 1)
+        let marker1 = try XCTUnwrap(dawMarkerTrack1.markers.first)
+        XCTAssertEqual(marker1.name, "Marker 1")
+        XCTAssertEqual(
+            marker1.timeStorage,
+            .init(value: .timecodeString(absolute: "01:00:00:00"),
+                  frameRate: .fps24,
+                  base: .max100SubFrames)
+        )
+        
+        let dawMarkerTrack2 = try XCTUnwrap(dawMarkerTracks[safe: 1])
+        XCTAssertEqual(dawMarkerTrack2.name, "Markers 2")
+        XCTAssertEqual(dawMarkerTrack2.trackType, .ruler)
+        XCTAssertEqual(dawMarkerTrack2.markers.count, 1)
+        let marker2 = try XCTUnwrap(dawMarkerTrack2.markers.first)
+        XCTAssertEqual(marker2.name, "Marker 2")
+        XCTAssertEqual(
+            marker2.timeStorage,
+            .init(value: .timecodeString(absolute: "01:00:01:00"),
+                  frameRate: .fps24,
+                  base: .max100SubFrames)
+        )
+        
+        let dawMarkerTrack6 = try XCTUnwrap(dawMarkerTracks[safe: 5])
+        XCTAssertEqual(dawMarkerTrack6.name, "Audio 1")
+        XCTAssertEqual(dawMarkerTrack6.trackType, .track)
+        XCTAssertEqual(dawMarkerTrack6.markers.count, 1)
+        let marker6 = try XCTUnwrap(dawMarkerTrack6.markers.first)
+        XCTAssertEqual(marker6.name, "Marker 6")
+        XCTAssertEqual(
+            marker6.timeStorage,
+            .init(value: .timecodeString(absolute: "01:00:05:00"),
+                  frameRate: .fps24,
+                  base: .max100SubFrames)
+        )
+    }
 }
