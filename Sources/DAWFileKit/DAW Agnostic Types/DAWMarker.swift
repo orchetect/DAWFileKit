@@ -6,6 +6,7 @@
 
 import Foundation
 
+/// DAW-agnostic timeline marker.
 public struct DAWMarker: Codable {
     // MARK: Contents
     
