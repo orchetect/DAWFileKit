@@ -31,14 +31,26 @@ public struct DAWMarkerTrack: Codable {
     }
 }
 
+// MARK: - Collection Methods
+
 extension Collection where Element == DAWMarkerTrack {
     public func first(trackNamed name: String, trackType: DAWTrackType) -> Element? {
-        first {
+        guard let index = firstIndex(trackNamed: name, trackType: trackType) else { return nil }
+        return self[index]
+    }
+    
+    public func firstIndex(trackNamed name: String, trackType: DAWTrackType) -> Index? {
+        firstIndex {
             $0.name == name && $0.trackType == trackType
         }
     }
     
     public func first(trackNamed name: String) -> Element? {
-        first { $0.name == name }
+        guard let index = firstIndex(trackNamed: name) else { return nil }
+        return self[index]
+    }
+    
+    public func firstIndex(trackNamed name: String) -> Index? {
+        firstIndex { $0.name == name }
     }
 }
