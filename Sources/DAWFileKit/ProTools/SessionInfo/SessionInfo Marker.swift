@@ -70,7 +70,7 @@ extension ProTools.SessionInfo {
         /// > Note:
         /// >
         /// > Pro Tools 2023.12 introduced exporting track name information in the session info text file.
-        public let trackName: String?
+        public let trackName: String
         
         /// Marker track type.
         ///
@@ -91,7 +91,7 @@ extension ProTools.SessionInfo {
             location: TimeValue?,
             timeReference: TimeValue,
             name: String,
-            trackName: String? = nil,
+            trackName: String = "Markers",
             trackType: TrackType = .ruler,
             comment: String? = nil
         ) {

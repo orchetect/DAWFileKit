@@ -1209,6 +1209,10 @@ extension ProTools.SessionInfo {
                     ))
                 }
                 
+                // track name
+                let trackName: String = line.trackName 
+                    ?? "Markers" // legacy is always "Markers" ruler
+                
                 // track type
                 let trackType: ProTools.SessionInfo.Marker.TrackType
                 if let trackTypeString = line.trackType {
@@ -1221,7 +1225,7 @@ extension ProTools.SessionInfo {
                         trackType = .ruler
                     }
                 } else {
-                    // legacy is always marker ruler
+                    // legacy is always "Markers" ruler
                     trackType = .ruler
                 }
                 
@@ -1231,7 +1235,7 @@ extension ProTools.SessionInfo {
                     location: location,
                     timeReference: timeRef,
                     name: line.name,
-                    trackName: line.trackName,
+                    trackName: trackName,
                     trackType: trackType,
                     comment: line.comment
                 )
