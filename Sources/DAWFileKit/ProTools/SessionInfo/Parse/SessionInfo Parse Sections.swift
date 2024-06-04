@@ -996,7 +996,9 @@ extension ProTools.SessionInfo {
                 var strTrackName: String? = nil
                 switch sectionVersion {
                 case .legacy: 
-                    break
+                    // force ruler name for legacy Session Info text files
+                    strTrackName = "Markers"
+                    
                 case .pt2023_12:
                     guard let tn = columnData[safe: 5] else {
                         addParseMessage(.error(
@@ -1012,7 +1014,9 @@ extension ProTools.SessionInfo {
                 var strTrackType: String? = nil
                 switch sectionVersion {
                 case .legacy:
-                    break
+                    // force track type for legacy Session Info text files
+                    strTrackType = ProTools.SessionInfo.Marker.TrackType.ruler.rawValue
+                    
                 case .pt2023_12:
                     guard let tt = columnData[safe: 6] else {
                         addParseMessage(.error(

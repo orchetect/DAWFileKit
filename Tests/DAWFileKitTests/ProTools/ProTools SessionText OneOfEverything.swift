@@ -394,6 +394,8 @@ class ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(marker1.timeReference,      .samples(144_144))
         XCTAssertEqual(marker1.name,               "Marker 1")
         XCTAssertEqual(marker1.comment,            nil)
+        XCTAssertEqual(marker1.trackName,          "Markers") // default for old txt format
+        XCTAssertEqual(marker1.trackType,          .ruler) // will always be ruler for old txt format
         
         let marker2 = markers[1]
         XCTAssertEqual(marker2.number,             2)
@@ -404,6 +406,8 @@ class ProTools_SessionText_OneOfEverything: XCTestCase {
         XCTAssertEqual(marker2.timeReference,      .barsAndBeats(bar: 3, beat: 3, ticks: nil))
         XCTAssertEqual(marker2.name,               "Marker 2")
         XCTAssertEqual(marker2.comment,            "This marker has comments.")
+        XCTAssertEqual(marker2.trackName,          "Markers") // default for old txt format
+        XCTAssertEqual(marker2.trackType,          .ruler) // will always be ruler for old txt format
         
         // orphan data
         
