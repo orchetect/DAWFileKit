@@ -30,3 +30,15 @@ public struct DAWMarkerTrack: Codable {
         self.markers = markers
     }
 }
+
+extension Collection where Element == DAWMarkerTrack {
+    public func first(trackNamed name: String, trackType: DAWTrackType) -> Element? {
+        first {
+            $0.name == name && $0.trackType == trackType
+        }
+    }
+    
+    public func first(trackNamed name: String) -> Element? {
+        first { $0.name == name }
+    }
+}
