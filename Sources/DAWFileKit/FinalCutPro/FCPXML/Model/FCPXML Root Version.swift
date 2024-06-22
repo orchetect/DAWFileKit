@@ -19,14 +19,24 @@ extension FinalCutPro.FCPXML {
         case ver1_7 = "1.7"
         case ver1_8 = "1.8"
         case ver1_9 = "1.9"
+        
+        /// FCPXML 1.10.
+        /// Format is a fcpxmld bundle.
         case ver1_10 = "1.10"
+        
+        /// FCPXML 1.11.
+        /// Format is a fcpxmld bundle.
         case ver1_11 = "1.11"
+        
+        /// FCPXML 1.12 introduced in Final Cut Pro 10.8.
+        /// Format is a fcpxmld bundle.
+        case ver1_12 = "1.12"
     }
 }
 
 extension FinalCutPro.FCPXML.Version {
     /// Returns the latest FCPXML format version supported.
-    public static var latest: Self { Self.allCases.last ?? .ver1_11 }
+    public static var latest: Self { Self.allCases.last! }
 }
 
 #endif
