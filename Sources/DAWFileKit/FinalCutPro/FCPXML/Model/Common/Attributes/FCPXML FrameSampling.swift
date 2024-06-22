@@ -17,6 +17,7 @@ extension FinalCutPro.FCPXML {
         case frameBlending = "frame-blending"
         case opticalFlowClassic = "optical-flow-classic"
         case opticalFlow = "optical-flow"
+        case opticalFlowFRC = "optical-flow-frc"
     }
 }
 
