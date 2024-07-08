@@ -84,7 +84,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "Clouds")
+            XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 0) // generators don't have metadata in FCPXML
         }
         
         do {
@@ -94,7 +96,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "Clouds")
+            XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 0) // generators don't have metadata in FCPXML
         }
         
         do {
@@ -104,7 +108,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "Clouds")
+            XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 0) // generators don't have metadata in FCPXML
         }
         
         do {
@@ -114,7 +120,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "Clouds")
+            XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 0) // generators don't have metadata in FCPXML
         }
         
         do {
@@ -124,7 +132,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "Basic Title")
+            XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 0) // generators don't have metadata in FCPXML
         }
         
         do {
@@ -134,7 +144,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "Basic Title")
+            XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 0) // generators don't have metadata in FCPXML
         }
         
         do {
@@ -144,7 +156,69 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 11)
+        }
+        
+        do {
+            let tc = Self.tc("1:01:25:20.79", .fps25)
+            let _tcData = await fd.data(for: tc)
+            let tcData = try XCTUnwrap(_tcData)
+            
+            XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1"])
+            XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 11)
+        }
+        
+        do {
+            let tc = Self.tc("1:01:25:21", .fps25)
+            let _tcData = await fd.data(for: tc)
+            let tcData = try XCTUnwrap(_tcData)
+            
+            XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1", "keyword2"])
+            XCTAssertEqual(tcData.markers.count, 0)
+        }
+        
+        do {
+            let tc = Self.tc("1:01:34:06.79", .fps25)
+            let _tcData = await fd.data(for: tc)
+            let tcData = try XCTUnwrap(_tcData)
+            
+            XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1", "keyword2"])
+            XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 11)
+        }
+        
+        // TODO: should keyword range end timecode be included in its range?
+        do {
+            let tc = Self.tc("1:01:34:07", .fps25)
+            let _tcData = await fd.data(for: tc)
+            let tcData = try XCTUnwrap(_tcData)
+            
+            XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1", "keyword2"])
+            XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 11)
+        }
+        
+        do {
+            let tc = Self.tc("1:01:34:08", .fps25)
+            let _tcData = await fd.data(for: tc)
+            let tcData = try XCTUnwrap(_tcData)
+            
+            XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1"])
+            XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 11)
         }
         
         do {
@@ -154,7 +228,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 1)
+            XCTAssertEqual(tcData.metadata.count, 11)
             
             let marker = try XCTUnwrap(tcData.markers.first)
             XCTAssertEqual(marker.name, "Marker 1")
@@ -167,7 +243,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 1)
+            XCTAssertEqual(tcData.metadata.count, 11)
             
             let marker = try XCTUnwrap(tcData.markers.first)
             XCTAssertEqual(marker.name, "Marker 1")
@@ -180,7 +258,9 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
             
             XCTAssertEqual(tcData.timecode, tc)
             XCTAssertEqual(tcData.clipName, "TestVideo")
+            XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 0)
+            XCTAssertEqual(tcData.metadata.count, 11)
         }
         
         do {
