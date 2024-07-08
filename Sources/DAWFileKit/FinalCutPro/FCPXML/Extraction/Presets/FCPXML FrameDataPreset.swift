@@ -89,7 +89,9 @@ extension FinalCutPro.FCPXML {
         public struct FrameData {
             public let timecode: Timecode
             public let clipName: String
+            public let keywords: [String]
             public let markers: [FinalCutPro.FCPXML.ExtractedMarker]
+            public let metadata: [FinalCutPro.FCPXML.Metadata.Metadatum]
         }
         
         public func data(for timecode: Timecode) async -> FrameData? {
@@ -101,6 +103,19 @@ extension FinalCutPro.FCPXML {
             
             let clipName = clip.element.fcpName ?? ""
             
+            let keywords: [FinalCutPro.FCPXML.Keyword] = clip.value(forContext: .keywords())
+                .filter {
+                    guard let kwRange = $0.absoluteRangeAsTimecode(
+                        timeline: clip.element,
+                        timelineAncestors: clip.breadcrumbs.asAnySequence,
+                        resources: clip.resources
+                    )
+                    else { return true }
+                    
+                    return kwRange.contains(timecode)
+                }
+            let keywordsFlat = keywords.flattenedKeywords()
+            
             let markers = await clip.element
                 .fcpExtract(preset: .markers, scope: .mainTimeline)
                 .filter {
@@ -111,10 +126,14 @@ extension FinalCutPro.FCPXML {
                     return frameRange.contains(markerTimecode)
                 }
             
+            let md = clip.value(forContext: .metadata)
+            
             return FrameData(
                 timecode: timecode,
                 clipName: clipName,
-                markers: markers
+                keywords: keywordsFlat,
+                markers: markers,
+                metadata: md
             )
         }
     }
