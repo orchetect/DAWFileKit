@@ -105,6 +105,52 @@ extension XMLElement {
     }
 }
 
+// MARK: - Helpers
+
+extension FinalCutPro.FCPXML.Keyword {
+    func absoluteRangeAsTimecode(
+        breadcrumbs: [XMLElement]? = nil,
+        resources: XMLElement? = nil
+    ) -> ClosedRange<Timecode>? {
+        // find nearest timeline and determine its absolute start timecode
+        guard let (timeline, timelineAncestors) = element.fcpAncestorTimeline(
+            ancestors: breadcrumbs,
+            includingSelf: true
+        )
+        else { return nil }
+        
+        return absoluteRangeAsTimecode(
+            timeline: timeline,
+            timelineAncestors: timelineAncestors,
+            resources: resources
+        )
+    }
+    
+    func absoluteRangeAsTimecode(
+        timeline: XMLElement,
+        timelineAncestors: AnySequence<XMLElement>,
+        resources: XMLElement? = nil
+    ) -> ClosedRange<Timecode>? {
+        guard let kwAbsStart = element._fcpCalculateAbsoluteStart(
+            ancestors: [timeline] + timelineAncestors,
+            resources: resources
+        ),
+              let kwAbsStartTimecode = try? element._fcpTimecode(
+                fromRealTime: kwAbsStart,
+                frameRateSource: .mainTimeline,
+                breadcrumbs: [timeline] + timelineAncestors,
+                resources: resources
+              ),
+              let kwDuration = durationAsTimecode()
+        else { return nil }
+        
+        let lbound = kwAbsStartTimecode
+        let ubound = lbound + kwDuration
+        
+        return lbound ... ubound
+    }
+}
+
 // MARK: - Collection Methods
 
 extension Collection where Element == FinalCutPro.FCPXML.Keyword {
