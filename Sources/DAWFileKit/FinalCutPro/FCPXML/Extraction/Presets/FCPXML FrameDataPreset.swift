@@ -19,18 +19,18 @@ extension FinalCutPro.FCPXML {
             scope: FinalCutPro.FCPXML.ExtractionScope
         ) async -> FinalCutPro.FCPXML.ExtractedFrameData {
             let extracted = await extractable.fcpExtract(
-                types: .allTimelineCases,
+                types: .allClipCases,
                 scope: scope
             )
             
             let clips: [ExtractedClip] = extracted.compactMap {
                 guard let start = $0.value(forContext: .absoluteStartAsTimecode()),
-                      let dur = $0.value(forContext: .parentDurationAsTimecode())
+                      let end = $0.value(forContext: .absoluteEndAsTimecode())
                 else { return nil }
                 
                 return (
                     start: start,
-                    duration: dur,
+                    end: end,
                     clip: $0
                 )
             }
@@ -46,7 +46,7 @@ extension FinalCutPro.FCPXML {
         }
         
         public typealias ExtractedClip = (start: Timecode,
-                                          duration: Timecode,
+                                          end: Timecode,
                                           clip: FinalCutPro.FCPXML.ExtractedElement)
     }
 }
@@ -78,10 +78,44 @@ extension FinalCutPro.FCPXML {
         public func clip(for timecode: Timecode) -> FinalCutPro.FCPXML.ExtractedElement? {
             clips
                 .first {
-                    $0.start >= timecode &&
-                    ($0.start + $0.duration) < timecode
+                    timecode >= $0.start &&
+                    timecode < $0.end
                 }?
                 .clip
+        }
+        
+        // convenience
+        
+        public struct FrameData {
+            public let timecode: Timecode
+            public let clipName: String
+            public let markers: [FinalCutPro.FCPXML.ExtractedMarker]
+        }
+        
+        public func data(for timecode: Timecode) async -> FrameData? {
+            guard let clip = clip(for: timecode) else { return nil }
+            
+            let timecodeRoundedDown = timecode.roundedDown(toNearest: .frames)
+            guard let timecodeNextFrame = try? timecodeRoundedDown.adding(.frames(1)) else { return nil }
+            let frameRange = timecodeRoundedDown ..< timecodeNextFrame
+            
+            let clipName = clip.element.fcpName ?? ""
+            
+            let markers = await clip.element
+                .fcpExtract(preset: .markers, scope: .mainTimeline)
+                .filter {
+                    // keep markers that match the current frame's timecode
+                    guard let markerTimecode = $0.value(forContext: .absoluteStartAsTimecode())
+                    else { return false }
+                    
+                    return frameRange.contains(markerTimecode)
+                }
+            
+            return FrameData(
+                timecode: timecode,
+                clipName: clipName,
+                markers: markers
+            )
         }
     }
 }
