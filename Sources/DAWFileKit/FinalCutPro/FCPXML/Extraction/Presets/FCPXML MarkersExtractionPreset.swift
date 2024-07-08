@@ -23,7 +23,7 @@ extension FinalCutPro.FCPXML {
             )
             
             let wrapped = extracted
-                .compactMap { ExtractedMarker($0) }
+                .map { ExtractedMarker($0) }
             
             return wrapped
         }
@@ -47,7 +47,7 @@ extension FinalCutPro.FCPXML {
         public let breadcrumbs: [XMLElement]
         public let resources: XMLElement?
         
-        init?(_ extractedElement: ExtractedElement) {
+        init(_ extractedElement: ExtractedElement) {
             element = extractedElement.element
             breadcrumbs = extractedElement.breadcrumbs
             resources = extractedElement.resources
