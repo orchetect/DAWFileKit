@@ -8,6 +8,7 @@
 
 import Foundation
 import TimecodeKit
+import OTCore
 
 extension FinalCutPro.FCPXML {
     /// Represents a keyword.
@@ -101,6 +102,18 @@ extension XMLElement {
     /// Call this on a `keyword` element only.
     public var fcpAsKeyword: FinalCutPro.FCPXML.Keyword? {
         .init(element: self)
+    }
+}
+
+// MARK: - Collection Methods
+
+extension Collection where Element == FinalCutPro.FCPXML.Keyword {
+    /// Flattens a collection of keywords by removing duplicates and sorting.
+    public func flattenedKeywords() -> [String] {
+        flatMap(\.keywords)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .removingDuplicates()
+            .sorted()
     }
 }
 

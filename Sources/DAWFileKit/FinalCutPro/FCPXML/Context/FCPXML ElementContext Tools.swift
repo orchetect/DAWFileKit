@@ -225,10 +225,7 @@ extension FinalCutPro.FCPXML.ElementContext {
             constrainToKeywordRanges: Bool = true
         ) -> [String] {
             keywords(constrainToKeywordRanges: constrainToKeywordRanges)
-                .flatMap(\.keywords)
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .removingDuplicates()
-                .sorted()
+                .flattenedKeywords()
         }
         
         /// Returns metadata applicable to the element.
