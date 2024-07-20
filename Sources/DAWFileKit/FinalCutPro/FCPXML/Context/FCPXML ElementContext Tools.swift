@@ -43,19 +43,26 @@ extension FinalCutPro.FCPXML.ElementContext {
             )
         }
         
+        func _start(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> TimeInterval {
+            switch frameRateSource {
+            case .localToElement, .rate(_):
+                return element.fcpStart?.doubleValue
+                    ?? element.fcpTCStart?.doubleValue
+                    // ?? absoluteStart
+                    ?? 0
+            case .mainTimeline:
+                return absoluteStart ?? 0
+            }
+        }
+        
         /// The absolute start time of the current element expressed as timecode.
         /// This is calculated based on ancestor elements.
         public func absoluteStartAsTimecode(
             frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
         ) -> Timecode? {
-            var start: TimeInterval?
-            switch frameRateSource {
-            case .localToElement, .rate(_): 
-                start = element.fcpStart?.doubleValue ?? absoluteStart
-            case .mainTimeline:
-                start = absoluteStart
-            }
-            guard let start else { return nil }
+            let start = _start(frameRateSource: frameRateSource)
             
             return try? element._fcpTimecode(
                 fromRealTime: start,
@@ -84,11 +91,8 @@ extension FinalCutPro.FCPXML.ElementContext {
             case .localToElement, .rate(_):
                 guard let duration = element.fcpDuration else { return nil }
                 
-                if let start = element.fcpStart {
-                    end = start.doubleValue + duration.doubleValue
-                } else {
-                    end = absoluteEnd
-                }
+                let start = _start(frameRateSource: frameRateSource)
+                end = start + duration.doubleValue
             case .mainTimeline:
                 end = absoluteEnd
             }
