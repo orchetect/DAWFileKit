@@ -79,9 +79,23 @@ extension FinalCutPro.FCPXML.ElementContext {
         public func absoluteEndAsTimecode(
             frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
         ) -> Timecode? {
-            guard let absoluteEnd = absoluteEnd else { return nil }
+            var end: TimeInterval?
+            switch frameRateSource {
+            case .localToElement, .rate(_):
+                guard let duration = element.fcpDuration else { return nil }
+                
+                if let start = element.fcpStart {
+                    end = start.doubleValue + duration.doubleValue
+                } else {
+                    end = absoluteEnd
+                }
+            case .mainTimeline:
+                end = absoluteEnd
+            }
+            guard let end else { return nil }
+            
             return try? element._fcpTimecode(
-                fromRealTime: absoluteEnd,
+                fromRealTime: end,
                 frameRateSource: frameRateSource,
                 breadcrumbs: breadcrumbs,
                 resources: resources
