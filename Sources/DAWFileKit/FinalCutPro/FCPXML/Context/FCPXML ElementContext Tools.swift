@@ -48,9 +48,17 @@ extension FinalCutPro.FCPXML.ElementContext {
         public func absoluteStartAsTimecode(
             frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
         ) -> Timecode? {
-            guard let absoluteStart = absoluteStart else { return nil }
+            var start: TimeInterval?
+            switch frameRateSource {
+            case .localToElement, .rate(_): 
+                start = element.fcpStart?.doubleValue ?? absoluteStart
+            case .mainTimeline:
+                start = absoluteStart
+            }
+            guard let start else { return nil }
+            
             return try? element._fcpTimecode(
-                fromRealTime: absoluteStart,
+                fromRealTime: start,
                 frameRateSource: frameRateSource,
                 breadcrumbs: breadcrumbs,
                 resources: resources

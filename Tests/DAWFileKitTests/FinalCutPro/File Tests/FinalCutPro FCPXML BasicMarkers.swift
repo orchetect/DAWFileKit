@@ -15,21 +15,26 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
     override func setUp() { }
     override func tearDown() { }
     
-    func testParse() throws {
-        // load file
-        
-        let rawData = try XCTUnwrap(loadFileContents(
+    // MARK: - Test Data
+    
+    var fileContents: Data { get throws {
+        try XCTUnwrap(loadFileContents(
             forResource: "BasicMarkers",
             withExtension: "fcpxml",
             subFolder: .fcpxmlExports
         ))
+    } }
+    
+    // MARK: - Tests
+    
+    func testParse() throws {
+        // load file
+        let rawData = try fileContents
         
-        // load
-        
+        // parse file
         let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
         
         // version
-        
         XCTAssertEqual(fcpxml.version, .ver1_9)
         
         // resources (from XML document)
@@ -163,6 +168,49 @@ final class FinalCutPro_FCPXML_BasicMarkers: FCPXMLTestCase {
 //            note: nil
 //        )
 //        XCTAssertEqual(markers[safe: 3], expectedMarker3)
+    }
+    
+    func testExtractMarkers() async throws {
+        // load file
+        let rawData = try fileContents
+        
+        // load
+        let fcpxml = try FinalCutPro.FCPXML(fileContent: rawData)
+        
+        // project
+        let project = try XCTUnwrap(fcpxml.allProjects().first)
+        
+        var scope = FinalCutPro.FCPXML.ExtractionScope.mainTimeline
+        scope.occlusions = .allCases
+        
+        let extractedMarkers = await project
+            .extract(preset: .markers, scope: scope)
+            .sortedByAbsoluteStartTimecode()
+        // .zeroIndexed // not necessary after sorting - sort returns new array
+        
+        // note that all these markers are past the end of the clip (occluded)
+        XCTAssertEqual(extractedMarkers.count, 4)
+        
+        let marker0 = try XCTUnwrap(extractedMarkers[safe: 0])
+        let marker1 = try XCTUnwrap(extractedMarkers[safe: 1])
+        let marker2 = try XCTUnwrap(extractedMarkers[safe: 2])
+        let marker3 = try XCTUnwrap(extractedMarkers[safe: 3])
+        
+        // test timecode for both main timeline and local timeline
+        // main timeline start: 00:00:00:00
+        // local clip timeline start: 00:10:00:00
+        
+        XCTAssertEqual(marker0.timecode(frameRateSource: .mainTimeline), Self.tc("00:50:29:14", .fps29_97))
+        XCTAssertEqual(marker0.timecode(frameRateSource: .localToElement), Self.tc("01:00:29:14", .fps29_97))
+        
+        XCTAssertEqual(marker1.timecode(frameRateSource: .mainTimeline), Self.tc("00:50:29:15", .fps29_97))
+        XCTAssertEqual(marker1.timecode(frameRateSource: .localToElement), Self.tc("01:00:29:15", .fps29_97))
+        
+        XCTAssertEqual(marker2.timecode(frameRateSource: .mainTimeline), Self.tc("00:50:29:16", .fps29_97))
+        XCTAssertEqual(marker2.timecode(frameRateSource: .localToElement), Self.tc("01:00:29:16", .fps29_97))
+        
+        XCTAssertEqual(marker3.timecode(frameRateSource: .mainTimeline), Self.tc("00:50:29:17", .fps29_97))
+        XCTAssertEqual(marker3.timecode(frameRateSource: .localToElement), Self.tc("01:00:29:17", .fps29_97))
     }
 }
 
