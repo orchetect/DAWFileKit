@@ -88,6 +88,7 @@ extension FinalCutPro.FCPXML {
         
         public struct FrameData {
             public let timecode: Timecode
+            public let localTimecode: Timecode
             public let clipName: String
             public let keywords: [String]
             public let markers: [FinalCutPro.FCPXML.ExtractedMarker]
@@ -100,6 +101,17 @@ extension FinalCutPro.FCPXML {
             let timecodeRoundedDown = timecode.roundedDown(toNearest: .frames)
             guard let timecodeNextFrame = try? timecodeRoundedDown.adding(.frames(1)) else { return nil }
             let frameRange = timecodeRoundedDown ..< timecodeNextFrame
+            
+            let localTimecode: Timecode
+            if let clipStart = clip.value(forContext: .absoluteStartAsTimecode(frameRateSource: .mainTimeline)),
+               let clipLocalStart = clip.value(forContext: .absoluteStartAsTimecode(frameRateSource: .localToElement)) 
+            {
+                let offsetIntoClip = timecode - clipStart
+                localTimecode = clipLocalStart + offsetIntoClip
+            } else {
+                // failsafe
+                localTimecode = Timecode(.zero, using: timecode.properties)
+            }
             
             let clipName = clip.element.fcpName ?? ""
             
@@ -130,6 +142,7 @@ extension FinalCutPro.FCPXML {
             
             return FrameData(
                 timecode: timecode,
+                localTimecode: localTimecode,
                 clipName: clipName,
                 keywords: keywordsFlat,
                 markers: markers,
