@@ -78,11 +78,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         // check individual timecodes (frames)
         
         do {
-            let tc = Self.tc("1:00:00:00", .fps25)
+            let tc = Self.tc("01:00:00:00", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc) // happens to align with main timeline
             XCTAssertEqual(tcData.clipName, "Clouds")
             XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -90,11 +91,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:00:02:10", .fps25)
+            let tc = Self.tc("01:00:02:10", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc) // happens to align with main timeline
             XCTAssertEqual(tcData.clipName, "Clouds")
             XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -102,11 +104,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:00:59:24", .fps25)
+            let tc = Self.tc("01:00:59:24", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc) // happens to align with main timeline
             XCTAssertEqual(tcData.clipName, "Clouds")
             XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -114,11 +117,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:00:59:24.79", .fps25)
+            let tc = Self.tc("01:00:59:24.79", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc) // happens to align with main timeline
             XCTAssertEqual(tcData.clipName, "Clouds")
             XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -126,11 +130,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:00:00", .fps25)
+            let tc = Self.tc("01:01:00:00", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, Self.tc("01:00:00:00", .fps25))
             XCTAssertEqual(tcData.clipName, "Basic Title")
             XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -138,11 +143,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:10:00.79", .fps25)
+            let tc = Self.tc("01:01:10:00.79", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, Self.tc("01:00:10:00.79", .fps25))
             XCTAssertEqual(tcData.clipName, "Basic Title")
             XCTAssertEqual(tcData.keywords, [])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -150,11 +156,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:10:01", .fps25)
+            let tc = Self.tc("01:01:10:01", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -162,11 +169,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:25:20.79", .fps25)
+            let tc = Self.tc("01:01:25:20.79", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -174,22 +182,24 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:25:21", .fps25)
+            let tc = Self.tc("01:01:25:21", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1", "keyword2"])
             XCTAssertEqual(tcData.markers.count, 0)
         }
         
         do {
-            let tc = Self.tc("1:01:34:06.79", .fps25)
+            let tc = Self.tc("01:01:34:06.79", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1", "keyword2"])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -198,11 +208,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         
         // TODO: should keyword range end timecode be included in its range?
         do {
-            let tc = Self.tc("1:01:34:07", .fps25)
+            let tc = Self.tc("01:01:34:07", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1", "keyword2"])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -210,11 +221,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:34:08", .fps25)
+            let tc = Self.tc("01:01:34:08", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -222,11 +234,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:37:11", .fps25)
+            let tc = Self.tc("01:01:37:11", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 1)
@@ -237,11 +250,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:37:11.79", .fps25)
+            let tc = Self.tc("01:01:37:11.79", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 1)
@@ -252,11 +266,12 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:39:13.79", .fps25)
+            let tc = Self.tc("01:01:39:13.79", .fps25)
             let _tcData = await fd.data(for: tc)
             let tcData = try XCTUnwrap(_tcData)
             
             XCTAssertEqual(tcData.timecode, tc)
+            XCTAssertEqual(tcData.localTimecode, tc - Self.tc("01:01:10:01", .fps25))
             XCTAssertEqual(tcData.clipName, "TestVideo")
             XCTAssertEqual(tcData.keywords, ["keyword1"])
             XCTAssertEqual(tcData.markers.count, 0)
@@ -264,7 +279,7 @@ final class FinalCutPro_FCPXML_FrameData: FCPXMLTestCase {
         }
         
         do {
-            let tc = Self.tc("1:01:39:14", .fps25)
+            let tc = Self.tc("01:01:39:14", .fps25)
             let _tcData = await fd.data(for: tc)
             XCTAssertNil(_tcData)
         }
