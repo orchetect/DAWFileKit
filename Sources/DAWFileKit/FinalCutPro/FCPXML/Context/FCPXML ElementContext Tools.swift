@@ -43,14 +43,29 @@ extension FinalCutPro.FCPXML.ElementContext {
             )
         }
         
+        func _start(
+            frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
+        ) -> TimeInterval {
+            switch frameRateSource {
+            case .localToElement, .rate(_):
+                return element.fcpStart?.doubleValue
+                    ?? element.fcpTCStart?.doubleValue
+                    // ?? absoluteStart
+                    ?? 0
+            case .mainTimeline:
+                return absoluteStart ?? 0
+            }
+        }
+        
         /// The absolute start time of the current element expressed as timecode.
         /// This is calculated based on ancestor elements.
         public func absoluteStartAsTimecode(
             frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
         ) -> Timecode? {
-            guard let absoluteStart = absoluteStart else { return nil }
+            let start = _start(frameRateSource: frameRateSource)
+            
             return try? element._fcpTimecode(
-                fromRealTime: absoluteStart,
+                fromRealTime: start,
                 frameRateSource: frameRateSource,
                 breadcrumbs: breadcrumbs,
                 resources: resources
@@ -71,9 +86,20 @@ extension FinalCutPro.FCPXML.ElementContext {
         public func absoluteEndAsTimecode(
             frameRateSource: FinalCutPro.FCPXML.FrameRateSource = .mainTimeline
         ) -> Timecode? {
-            guard let absoluteEnd = absoluteEnd else { return nil }
+            var end: TimeInterval?
+            switch frameRateSource {
+            case .localToElement, .rate(_):
+                guard let duration = element.fcpDuration else { return nil }
+                
+                let start = _start(frameRateSource: frameRateSource)
+                end = start + duration.doubleValue
+            case .mainTimeline:
+                end = absoluteEnd
+            }
+            guard let end else { return nil }
+            
             return try? element._fcpTimecode(
-                fromRealTime: absoluteEnd,
+                fromRealTime: end,
                 frameRateSource: frameRateSource,
                 breadcrumbs: breadcrumbs,
                 resources: resources
@@ -225,10 +251,7 @@ extension FinalCutPro.FCPXML.ElementContext {
             constrainToKeywordRanges: Bool = true
         ) -> [String] {
             keywords(constrainToKeywordRanges: constrainToKeywordRanges)
-                .flatMap(\.keywords)
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .removingDuplicates()
-                .sorted()
+                .flattenedKeywords()
         }
         
         /// Returns metadata applicable to the element.

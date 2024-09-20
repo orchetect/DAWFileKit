@@ -54,30 +54,13 @@ extension XMLElement {
         
         // determine what keywords encompass the marker's position
         
-        /// Returns the absolute timecode range the keyword applies to.
-        func absRange(for keyword: FinalCutPro.FCPXML.Keyword) -> ClosedRange<Timecode>? {
-            guard let kwAbsStart = keyword.element._fcpCalculateAbsoluteStart(
-                ancestors: [timeline] + timelineAncestors,
-                resources: resources
-            ),
-                let kwAbsStartTimecode = try? keyword.element._fcpTimecode(
-                    fromRealTime: kwAbsStart,
-                    frameRateSource: .mainTimeline,
-                    breadcrumbs: [timeline] + timelineAncestors,
-                    resources: resources
-                ),
-                let kwDuration = keyword.durationAsTimecode()
-            else { return nil }
-            
-            let lbound = kwAbsStartTimecode
-            let ubound = lbound + kwDuration
-            
-            return lbound ... ubound
-        }
-        
         var applicableKeywords: [FinalCutPro.FCPXML.Keyword] = []
         for keyword in keywords {
-            if let kwAbsRange = absRange(for: keyword) {
+            if let kwAbsRange = keyword.absoluteRangeAsTimecode(
+                timeline: timeline,
+                timelineAncestors: timelineAncestors,
+                resources: resources
+            ) {
                 if kwAbsRange.contains(absoluteStartAsTimecode) {
                     // marker is within keyword range
                     applicableKeywords.append(keyword)

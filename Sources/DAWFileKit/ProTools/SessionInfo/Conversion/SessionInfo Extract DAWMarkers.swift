@@ -64,7 +64,7 @@ extension Array where Element == ProTools.SessionInfo.Marker {
             } else {
                 let newMarkerTrack = DAWMarkerTrack(
                     trackType: marker.trackType.dawTrackType,
-                    name: marker.trackName ?? "",
+                    name: marker.trackName,
                     markers: []
                 )
                 markerTracks.append(newMarkerTrack)
