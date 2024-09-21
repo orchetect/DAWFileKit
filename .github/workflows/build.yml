@@ -35,7 +35,7 @@ jobs:
       run: xcodebuild build -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "generic/platform=macOS,name=Any Mac" | xcpretty && exit ${PIPESTATUS[0]}
     - name: Unit Tests
       run: xcodebuild test -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "platform=macOS" | xcpretty && exit ${PIPESTATUS[0]}
-      
+  
   macCatalyst:
     name: macCatalyst
     runs-on: macos-latest
@@ -48,7 +48,7 @@ jobs:
       run: xcodebuild build -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "generic/platform=macOS,variant=Mac Catalyst,name=Any Mac" | xcpretty && exit ${PIPESTATUS[0]}
     - name: Unit Tests
       run: xcodebuild test -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "platform=macOS,variant=Mac Catalyst" | xcpretty && exit ${PIPESTATUS[0]}
-
+  
   iOS:
     name: iOS
     runs-on: macos-latest # this must be macos, GitHub does not offer iOS directly but we can use xcodebuild
@@ -61,7 +61,7 @@ jobs:
       run: xcodebuild build -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "generic/platform=iOS Simulator,name=Any iOS Device" | xcpretty && exit ${PIPESTATUS[0]}
     - name: iPhone 12 Simulator - Unit Tests
       run: xcodebuild test -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "platform=iOS Simulator,name=iPhone 15" | xcpretty && exit ${PIPESTATUS[0]}
-
+  
   tvOS:
     name: tvOS
     runs-on: macos-latest # this must be macos, GitHub does not offer tvOS directly but we can use xcodebuild
@@ -74,7 +74,19 @@ jobs:
       run: xcodebuild build -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "generic/platform=tvOS Simulator,name=Any tvOS Simulator Device" | xcpretty && exit ${PIPESTATUS[0]}
     - name: Apple TV - Unit Tests
       run: xcodebuild test -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "platform=tvOS Simulator,name=Apple TV 4K (3rd generation)" | xcpretty && exit ${PIPESTATUS[0]}
-
+  
+  watchOS:
+    name: watchOS
+    runs-on: macos-latest # this must be macos, GitHub does not offer watchOS directly but we can use xcodebuild
+    steps:
+    - uses: actions/checkout@main
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable # Sometimes a newer version of Xcode is available but isn't yet made default
+    - name: Apple Watch - Build
+      run: xcodebuild build -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "generic/platform=watchOS Simulator,name=Any watchOS Simulator Device" | xcpretty && exit ${PIPESTATUS[0]}
+    - name: Apple Watch - Unit Tests
+      run: xcodebuild test -workspace ".swiftpm/xcode/package.xcworkspace" -scheme "DAWFileKit-CI" -destination "platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)" | xcpretty && exit ${PIPESTATUS[0]}
 
 # xcodebuild test reference:
 # https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/08-automation.html
