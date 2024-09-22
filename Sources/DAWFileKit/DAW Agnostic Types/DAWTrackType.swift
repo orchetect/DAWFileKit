@@ -15,3 +15,9 @@ public enum DAWTrackType: Equatable, Hashable, Codable {
     /// A track used in a timeline. Usually reorder-able, deletable, and duplicatable.
     case track
 }
+
+extension DAWTrackType: Identifiable {
+    public var id: Self { self }
+}
+
+extension DAWTrackType: Sendable { }

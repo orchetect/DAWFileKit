@@ -31,6 +31,8 @@ public struct DAWMarkerTrack: Codable {
     }
 }
 
+extension DAWMarkerTrack: Sendable { }
+
 // MARK: - Collection Methods
 
 extension Collection where Element == DAWMarkerTrack {

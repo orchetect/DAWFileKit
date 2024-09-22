@@ -28,3 +28,5 @@ extension DAWMarker {
         }
     }
 }
+
+extension DAWMarker.Storage: Sendable { }

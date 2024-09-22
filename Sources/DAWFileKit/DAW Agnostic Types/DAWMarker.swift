@@ -34,3 +34,5 @@ public struct DAWMarker: Codable {
         self.comment = comment
     }
 }
+
+extension DAWMarker: Sendable { }

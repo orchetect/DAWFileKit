@@ -44,6 +44,12 @@ extension DAWMarker.Storage {
     }
 }
 
+extension DAWMarker.Storage.Value: Identifiable {
+    public var id: Self { self }
+}
+
+extension DAWMarker.Storage.Value: Sendable { }
+
 extension DAWMarker.Storage.Value: Codable {
     enum CodingKeys: CodingKey {
         case realTime
