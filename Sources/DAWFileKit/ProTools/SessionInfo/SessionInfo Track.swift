@@ -19,6 +19,10 @@ extension ProTools.SessionInfo {
     }
 }
 
+extension ProTools.SessionInfo.Track: Sendable { }
+
+// MARK: - State
+
 extension ProTools.SessionInfo.Track {
     /// A track's state.
     public enum State: String {
@@ -30,6 +34,10 @@ extension ProTools.SessionInfo.Track {
     }
 }
 
+extension ProTools.SessionInfo.Track.State: Sendable { }
+
+// MARK: - Clip
+
 extension ProTools.SessionInfo.Track {
     /// Represents a clip contained on a track.
     public struct Clip: Equatable, Hashable {
@@ -40,12 +48,20 @@ extension ProTools.SessionInfo.Track {
         public internal(set) var endTime: ProTools.SessionInfo.TimeValue?
         public internal(set) var duration: ProTools.SessionInfo.TimeValue?
         public internal(set) var state: State = .unmuted
-        
-        /// A clip's state (such as 'Muted', 'Unmuted')
-        public enum State: String {
-            // ***** there may be more states possible than this -- need to test
-            case muted   = "Muted"
-            case unmuted = "Unmuted"
-        }
     }
 }
+
+extension ProTools.SessionInfo.Track.Clip: Sendable { }
+
+// MARK: - Clip State
+
+extension ProTools.SessionInfo.Track.Clip {
+    /// A clip's state (such as 'Muted', 'Unmuted')
+    public enum State: String {
+        // TODO: there may be more states possible than this -- need to test
+        case muted   = "Muted"
+        case unmuted = "Unmuted"
+    }
+}
+
+extension ProTools.SessionInfo.Track.Clip.State: Sendable { }

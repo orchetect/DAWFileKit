@@ -17,3 +17,5 @@ extension ProTools.SessionInfo {
         public internal(set) var numberOfInstances: String = ""
     }
 }
+
+extension ProTools.SessionInfo.Plugin: Sendable { }

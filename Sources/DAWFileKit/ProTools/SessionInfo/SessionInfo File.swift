@@ -16,3 +16,5 @@ extension ProTools.SessionInfo {
         public internal(set) var online: Bool = true
     }
 }
+
+extension ProTools.SessionInfo.File: Sendable { }

@@ -16,6 +16,8 @@ extension ProTools.SessionInfo {
     }
 }
 
+extension ProTools.SessionInfo.MarkersListingVersion: Sendable { }
+
 extension ProTools.SessionInfo.MarkersListingVersion {
     public var columnCount: Int {
         switch self {

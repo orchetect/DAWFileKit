@@ -106,6 +106,8 @@ extension ProTools.SessionInfo {
     }
 }
 
+extension ProTools.SessionInfo.Marker: Sendable { }
+
 extension ProTools.SessionInfo.Marker {
     /// Marker track type.
     public enum TrackType: String, Equatable, Hashable {
@@ -129,3 +131,5 @@ extension ProTools.SessionInfo.Marker {
         case track = "Track"
     }
 }
+
+extension ProTools.SessionInfo.Marker.TrackType: Sendable { }

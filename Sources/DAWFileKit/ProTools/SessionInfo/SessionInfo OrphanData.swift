@@ -12,3 +12,5 @@ extension ProTools.SessionInfo {
         public internal(set) var content: [String]
     }
 }
+
+extension ProTools.SessionInfo.OrphanData: Sendable { }

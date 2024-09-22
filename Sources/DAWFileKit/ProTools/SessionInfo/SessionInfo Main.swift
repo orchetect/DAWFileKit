@@ -24,3 +24,5 @@ extension ProTools.SessionInfo {
         public internal(set) var audioFileCount: Int?
     }
 }
+
+extension ProTools.SessionInfo.Main: Sendable { }

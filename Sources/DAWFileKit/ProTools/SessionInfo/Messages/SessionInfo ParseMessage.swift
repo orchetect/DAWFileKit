@@ -7,7 +7,7 @@
 import Foundation
 
 extension ProTools.SessionInfo {
-    public enum ParseMessage: Error {
+    public enum ParseMessage {
         /// Info message.
         /// Can be disregarded and only useful for debugging.
         case info(String)

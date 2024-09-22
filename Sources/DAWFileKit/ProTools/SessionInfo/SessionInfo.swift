@@ -41,6 +41,8 @@ extension ProTools {
     }
 }
 
+extension ProTools.SessionInfo: Sendable { }
+
 // MARK: - Constants
 
 extension ProTools.SessionInfo {
