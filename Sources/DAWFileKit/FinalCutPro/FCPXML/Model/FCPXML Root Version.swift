@@ -82,6 +82,10 @@ extension FinalCutPro.FCPXML.Version {
     /// FCPXML 1.12 introduced in Final Cut Pro 10.8.
     /// Format is a `fcpxmld` bundle.
     public static let ver1_12: Self = Self(major: 1, minor: 12)
+    
+    /// FCPXML 1.13 introduced in Final Cut Pro 11.0.
+    /// Format is a `fcpxmld` bundle.
+    public static let ver1_13: Self = Self(major: 1, minor: 13)
 }
 
 extension FinalCutPro.FCPXML.Version: CaseIterable {
@@ -98,7 +102,8 @@ extension FinalCutPro.FCPXML.Version: CaseIterable {
         .ver1_9,
         .ver1_10,
         .ver1_11,
-        .ver1_12
+        .ver1_12,
+        .ver1_13
     ]
     
     /// Returns the latest FCPXML format version supported.
