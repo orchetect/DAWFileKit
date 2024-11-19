@@ -29,6 +29,7 @@ extension FinalCutPro.FCPXML {
             guard _isElementTypeSupported(element: element) else { return nil }
         }
     }
+    
     public enum RootChildren: String {
         case fcpxml
     }
@@ -71,7 +72,7 @@ extension FinalCutPro.FCPXML.Root {
         get {
             element.firstDefaultedChildElement(whereFCPElementType: .resources)
         }
-        set {
+        nonmutating set {
             element._updateFirstChildElement(
                 ofType: .resources,
                 withChild: newValue
@@ -89,7 +90,7 @@ extension FinalCutPro.FCPXML.Root {
                     (key: $0.fcpID ?? "", value: $0)
                 }
         }
-        set {
+        nonmutating set {
             let sortedElements = newValue.values.sorted(by: {
                 ($0.fcpID ?? "")
                     .caseInsensitiveCompare(($1.fcpID ?? ""))
@@ -106,8 +107,7 @@ extension FinalCutPro.FCPXML.Root {
     /// Returns the `fcpxml/library` element if it exists.
     /// One or zero of these elements may be present within the `fcpxml` element.
     public var library: FinalCutPro.FCPXML.Library? {
-        element
-            .firstChild(whereFCPElement: .library)
+        element.firstChild(whereFCPElement: .library)
     }
     
     /// Returns child `event` elements.

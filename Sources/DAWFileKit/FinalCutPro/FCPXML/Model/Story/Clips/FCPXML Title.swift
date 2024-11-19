@@ -107,12 +107,12 @@ extension FinalCutPro.FCPXML.Title {
     /// Effect ID (resource ID) for a Motion template. (Required)
     public var ref: String {
         get { element.fcpRef ?? "" }
-        set { element.fcpRef = newValue }
+        nonmutating set { element.fcpRef = newValue }
     }
     
     public var role: FinalCutPro.FCPXML.VideoRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.VideoRole.self) }
-        set { element.fcpSet(role: newValue) }
+        nonmutating set { element.fcpSet(role: newValue) }
     }
 }
 
@@ -124,7 +124,7 @@ extension FinalCutPro.FCPXML.Title {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

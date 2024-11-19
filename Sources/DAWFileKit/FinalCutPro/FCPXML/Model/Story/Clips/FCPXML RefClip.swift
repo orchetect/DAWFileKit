@@ -145,12 +145,12 @@ extension FinalCutPro.FCPXML.RefClip {
     /// Resource ID
     public var ref: String {
         get { element.fcpRef ?? "" }
-        set { element.fcpRef = newValue }
+        nonmutating set { element.fcpRef = newValue }
     }
     
     public var useAudioSubroles: Bool { // only used by `ref-clip`
         get { element.getBool(forAttribute: Attributes.useAudioSubroles.rawValue) ?? false }
-        set {
+        nonmutating set {
             element._fcpSet(
                 bool: newValue,
                 forAttribute: Attributes.useAudioSubroles.rawValue,
@@ -163,7 +163,7 @@ extension FinalCutPro.FCPXML.RefClip {
     /// Sources to enable for audio and video. (Default: `.all`)
     public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
         get { element.fcpClipSourceEnable }
-        set { element.fcpClipSourceEnable = newValue }
+        nonmutating set { element.fcpClipSourceEnable = newValue }
     }
 }
 
@@ -177,7 +177,7 @@ extension FinalCutPro.FCPXML.RefClip {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

@@ -70,17 +70,17 @@ extension FinalCutPro.FCPXML.Project {
 extension FinalCutPro.FCPXML.Project {
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     public var id: String? {
         get { element.fcpID }
-        set { element.fcpID = newValue }
+        nonmutating set { element.fcpID = newValue }
     }
     
     public var uid: String? {
         get { element.fcpUID }
-        set { element.fcpUID = newValue }
+        nonmutating set { element.fcpUID = newValue }
     }
 }
 
@@ -94,7 +94,7 @@ extension FinalCutPro.FCPXML.Project {
         get {
             element.firstChild(whereFCPElement: .sequence, defaultChild: .init())
         }
-        set {
+        nonmutating set {
             element._updateFirstChildElement(
                 ofType: .sequence,
                 withChild: newValue

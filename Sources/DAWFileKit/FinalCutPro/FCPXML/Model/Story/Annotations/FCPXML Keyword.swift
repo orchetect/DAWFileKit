@@ -74,7 +74,7 @@ extension FinalCutPro.FCPXML.Keyword {
                 .map { String($0) }
             ?? []
         }
-        set {
+        nonmutating set {
             if newValue.isEmpty {
                 element.fcpValue = nil
             } else {
@@ -86,7 +86,7 @@ extension FinalCutPro.FCPXML.Keyword {
     /// Optional note.
     public var note: String? {
         get { element.fcpNote }
-        set { element.fcpNote = newValue }
+        nonmutating set { element.fcpNote = newValue }
     }
 }
 

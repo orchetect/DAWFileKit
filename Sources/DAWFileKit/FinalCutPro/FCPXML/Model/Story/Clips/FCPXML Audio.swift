@@ -117,30 +117,30 @@ extension FinalCutPro.FCPXML.Audio {
     /// Resource ID
     public var ref: String {
         get { element.fcpRef ?? "" }
-        set { element.fcpRef = newValue }
+        nonmutating set { element.fcpRef = newValue }
     }
     
     public var role: FinalCutPro.FCPXML.AudioRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self) }
-        set { element.fcpSet(role: newValue) }
+        nonmutating set { element.fcpSet(role: newValue) }
     }
     
     /// Source/track identifier in asset (if not '1').
     public var srcID: String? {
         get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
-        set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
     }
     
     /// Source audio channels (comma separated, 1-based index, ie: "1, 2")
     public var sourceChannels: String? {
         get { element.fcpSourceChannels }
-        set { element.fcpSourceChannels = newValue }
+        nonmutating set { element.fcpSourceChannels = newValue }
     }
     
     /// Output audio channels (comma separated, from: `L, R, C, LFE, Ls, Rs, X`)
     public var outputChannels: String? {
         get { element.fcpOutputChannels }
-        set { element.fcpOutputChannels = newValue }
+        nonmutating set { element.fcpOutputChannels = newValue }
     }
 }
 
@@ -152,7 +152,7 @@ extension FinalCutPro.FCPXML.Audio {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

@@ -133,24 +133,24 @@ extension FinalCutPro.FCPXML.Media {
     
     public var id: String {
         get { element.fcpID ?? "" }
-        set { element.fcpID = newValue }
+        nonmutating set { element.fcpID = newValue }
     }
     
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     public var projectRef: String? {
         get { element.stringValue(forAttributeNamed: Attributes.projectRef.rawValue) }
-        set { element.addAttribute(withName: Attributes.projectRef.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.projectRef.rawValue, value: newValue) }
     }
     
     // asset attributes
     
     public var uid: String? {
         get { element.fcpUID }
-        set { element.fcpUID = newValue }
+        nonmutating set { element.fcpUID = newValue }
     }
 }
 
@@ -162,7 +162,7 @@ extension FinalCutPro.FCPXML.Media {
     /// Returns the `multicam` child element if one exists.
     public var multicam: Multicam? {
         get { element.firstChild(whereFCPElement: .multicam) }
-        set {
+        nonmutating set {
             // there can only be a sequence or multicam, so remove old one if present
             element._removeChildren(ofType: .sequence)
             
@@ -173,7 +173,7 @@ extension FinalCutPro.FCPXML.Media {
     /// Returns the `sequence` child element if one exists.
     public var sequence: FinalCutPro.FCPXML.Sequence? {
         get { element.firstChild(whereFCPElement: .sequence) }
-        set {
+        nonmutating set {
             // there can only be a sequence or multicam, so remove old one if present
             element._removeChildren(ofType: .multicam)
             

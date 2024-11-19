@@ -69,12 +69,12 @@ extension FinalCutPro.FCPXML.Event {
 extension FinalCutPro.FCPXML.Event {
     public var name: String {
         get { element.fcpName ?? "" }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     public var uid: String? {
         get { element.fcpUID }
-        set { element.fcpUID = newValue }
+        nonmutating set { element.fcpUID = newValue }
     }
 }
 
@@ -84,7 +84,7 @@ extension FinalCutPro.FCPXML.Event {
     /// Get or set child `project` elements.
     public var projects: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Project> {
         get { element.children(whereFCPElement: .project) }
-        set { element._updateChildElements(ofType: .project, with: newValue) }
+        nonmutating set { element._updateChildElements(ofType: .project, with: newValue) }
     }
     
     /// Returns child story elements.
@@ -95,7 +95,7 @@ extension FinalCutPro.FCPXML.Event {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

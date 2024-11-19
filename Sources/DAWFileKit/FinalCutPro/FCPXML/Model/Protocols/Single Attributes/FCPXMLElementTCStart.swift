@@ -11,13 +11,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementOptionalTCStart: FCPXMLElement {
     /// Local timeline origin time.
-    var tcStart: Fraction? { get set }
+    var tcStart: Fraction? { get nonmutating set }
 }
 
 extension FCPXMLElementOptionalTCStart {
     public var tcStart: Fraction? {
         get { element.fcpTCStart }
-        set { element.fcpTCStart = newValue }
+        nonmutating set { element.fcpTCStart = newValue }
     }
     
     /// Returns the start time of the element as timecode.

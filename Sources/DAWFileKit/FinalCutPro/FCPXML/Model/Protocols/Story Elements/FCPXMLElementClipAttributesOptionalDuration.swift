@@ -26,24 +26,24 @@ public protocol FCPXMLElementClipAttributesOptionalDuration: FCPXMLElement,
     FCPXMLElementOptionalStart, FCPXMLElementOptionalDuration
 {
     /// Clip name.
-    var name: String? { get set }
+    var name: String? { get nonmutating set }
     
     // FCPXMLElementStart
     /// Clip local timeline start time.
-    var start: Fraction? { get set }
+    var start: Fraction? { get nonmutating set }
     
     // FCPXMLElementOptionalDuration
     /// Clip duration.
-    var duration: Fraction? { get set }
+    var duration: Fraction? { get nonmutating set }
     
     /// Clip enabled state. (Default: `true`)
-    var enabled: Bool { get set }
+    var enabled: Bool { get nonmutating set }
 }
 
 extension FCPXMLElementClipAttributesOptionalDuration {
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     // implemented by FCPXMLElementOptionalStart
@@ -54,7 +54,7 @@ extension FCPXMLElementClipAttributesOptionalDuration {
     
     public var enabled: Bool {
         get { element.fcpGetEnabled(default: true) }
-        set { element.fcpSet(enabled: newValue, default: true) }
+        nonmutating set { element.fcpSet(enabled: newValue, default: true) }
     }
 }
 

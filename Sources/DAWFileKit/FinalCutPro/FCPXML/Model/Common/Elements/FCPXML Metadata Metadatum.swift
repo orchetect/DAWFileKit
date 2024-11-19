@@ -66,7 +66,7 @@ extension FinalCutPro.FCPXML.Metadata.Metadatum {
     /// Note that setting this property to `nil` has no effect since `key` is a required attribute.
     public var key: FinalCutPro.FCPXML.Metadata.Key? {
         get { FinalCutPro.FCPXML.Metadata.Key(rawValue: keyString) }
-        set {
+        nonmutating set {
             guard let newValue else { return }
             keyString = newValue.rawValue
         }
@@ -76,13 +76,13 @@ extension FinalCutPro.FCPXML.Metadata.Metadatum {
     /// This is stored as a reverse-DNS formatted string. ie: `"com.apple.proapps.studio.reel"`
     public var keyString: String {
         get { element.stringValue(forAttributeNamed: Attributes.key.rawValue) ?? "" }
-        set { element.addAttribute(withName: Attributes.key.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.key.rawValue, value: newValue) }
     }
     
     /// Metadata raw `value` attribute string.
     public var value: String? {
         get { element.fcpValue }
-        set { element.fcpValue = newValue }
+        nonmutating set { element.fcpValue = newValue }
     }
     
     /// Boolean value determining whether the metadatum's value is editable.
@@ -91,7 +91,7 @@ extension FinalCutPro.FCPXML.Metadata.Metadatum {
         get {
             element.getBool(forAttribute: Attributes.editable.rawValue) ?? false
         }
-        set {
+        nonmutating set {
             element._fcpSet(
                 bool: newValue,
                 forAttribute: Attributes.editable.rawValue,
@@ -109,7 +109,7 @@ extension FinalCutPro.FCPXML.Metadata.Metadatum {
             
             return FinalCutPro.FCPXML.Metadata.MetadatumType(rawValue: value)
         }
-        set { 
+        nonmutating set {
             element.addAttribute(withName: Attributes.type.rawValue, value: newValue?.rawValue)
         }
     }
@@ -117,13 +117,13 @@ extension FinalCutPro.FCPXML.Metadata.Metadatum {
     /// Display name for user interface.
     public var displayName: String? {
         get { element.stringValue(forAttributeNamed: Attributes.displayName.rawValue) }
-        set { element.addAttribute(withName: Attributes.displayName.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.displayName.rawValue, value: newValue) }
     }
     
     /// Description for user interface.
     public var displayDescription: String? {
         get { element.stringValue(forAttributeNamed: Attributes.description.rawValue) }
-        set { element.addAttribute(withName: Attributes.description.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.description.rawValue, value: newValue) }
     }
 }
 
@@ -133,7 +133,7 @@ extension FinalCutPro.FCPXML.Metadata.Metadatum {
     /// Returns the internal string array if applicable.
     public var valueArray: [String]? {
         get { element._getFirstChildStringArray() }
-        set { element._setFirstChildStringArray(newValue) }
+        nonmutating set { element._setFirstChildStringArray(newValue) }
     }
 }
 

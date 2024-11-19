@@ -142,7 +142,7 @@ extension FinalCutPro.FCPXML.Clip: FCPXMLElementClipAttributes { }
 extension FinalCutPro.FCPXML.Clip {
     public var format: String? { // DTD: default is same as parent
         get { element.fcpFormat }
-        set { element.fcpFormat = newValue }
+        nonmutating set { element.fcpFormat = newValue }
     }
 }
 
@@ -160,7 +160,7 @@ extension FinalCutPro.FCPXML.Clip {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

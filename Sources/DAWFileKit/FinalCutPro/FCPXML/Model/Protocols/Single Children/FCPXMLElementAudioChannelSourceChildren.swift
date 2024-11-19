@@ -12,13 +12,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementAudioChannelSourceChildren: FCPXMLElement {
     /// Child `audio-channel-source` elements.
-    var audioChannelSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioChannelSource> { get }
+    var audioChannelSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioChannelSource> { get nonmutating set }
 }
 
 extension FCPXMLElementAudioChannelSourceChildren {
     public var audioChannelSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioChannelSource> {
         get { element.fcpAudioChannelSources }
-        set { element.fcpAudioChannelSources = newValue }
+        nonmutating set { element.fcpAudioChannelSources = newValue }
     }
 }
 

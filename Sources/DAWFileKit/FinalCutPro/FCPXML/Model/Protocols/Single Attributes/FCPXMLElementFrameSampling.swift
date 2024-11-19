@@ -11,7 +11,7 @@ import TimecodeKit
 
 public protocol FCPXMLElementFrameSampling: FCPXMLElement {
     /// Frame sampling. (Default: floor)
-    var frameSampling: FinalCutPro.FCPXML.FrameSampling { get set }
+    var frameSampling: FinalCutPro.FCPXML.FrameSampling { get nonmutating set }
 }
 
 extension FCPXMLElementFrameSampling {
@@ -24,7 +24,7 @@ extension FCPXMLElementFrameSampling {
             
             return FinalCutPro.FCPXML.FrameSampling(rawValue: value) ?? _frameSamplingDefault
         }
-        set {
+        nonmutating set {
             if newValue == _frameSamplingDefault {
                 // can remove attribute if value is default
                 element.removeAttribute(forName: "frameSampling")

@@ -84,7 +84,7 @@ extension FinalCutPro.FCPXML.Text {
             
             return DisplayStyle(rawValue: value)
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.displayStyle.rawValue, value: newValue?.rawValue)
         }
     }
@@ -92,13 +92,13 @@ extension FinalCutPro.FCPXML.Text {
     /// For a CEA-608 caption text block with roll-up animation.
     public var rollUpHeight: String? {
         get { element.stringValue(forAttributeNamed: Attributes.rollUpHeight.rawValue) }
-        set { element.addAttribute(withName: Attributes.rollUpHeight.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.rollUpHeight.rawValue, value: newValue) }
     }
     
     /// For a CEA-608 caption text block, as "x y".
     public var position: String? {
         get { element.fcpPosition }
-        set { element.fcpPosition = newValue }
+        nonmutating set { element.fcpPosition = newValue }
     }
     
     /// For a ITT caption text block.
@@ -109,7 +109,7 @@ extension FinalCutPro.FCPXML.Text {
             
             return Placement(rawValue: value)
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.placement.rawValue, value: newValue?.rawValue)
         }
     }
@@ -122,7 +122,7 @@ extension FinalCutPro.FCPXML.Text {
             
             return Alignment(rawValue: value)
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.alignment.rawValue, value: newValue?.rawValue)
         }
     }
@@ -136,7 +136,7 @@ extension FinalCutPro.FCPXML.Text {
         get {
             element.fcpTextStyles
         }
-        set {
+        nonmutating set {
             element._updateChildElements(ofType: elementType, with: newValue)
         }
     }
@@ -211,12 +211,12 @@ extension FinalCutPro.FCPXML.Text {
         
         public var ref: String? {
             get { element.fcpRef }
-            set { element.fcpRef = newValue }
+            nonmutating set { element.fcpRef = newValue }
         }
         
         public var string: String? {
             get { element.stringValue }
-            set { element.stringValue = newValue }
+            nonmutating set { element.stringValue = newValue }
         }
         
         // TODO: parse potential additional attributes

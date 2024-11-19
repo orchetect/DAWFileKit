@@ -11,13 +11,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementOptionalTCFormat: FCPXMLElement {
     /// Local timeline timecode format.
-    var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? { get set }
+    var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? { get nonmutating set }
 }
 
 extension FCPXMLElementOptionalTCFormat {
     public var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? {
         get { element.fcpTCFormat }
-        set { element.fcpTCFormat = newValue }
+        nonmutating set { element.fcpTCFormat = newValue }
     }
 }
 

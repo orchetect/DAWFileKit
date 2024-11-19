@@ -68,13 +68,13 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
     /// Angle name.
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     /// Angle ID. (Required)
     public var angleID: String {
         get { element.stringValue(forAttributeNamed: Attributes.angleID.rawValue) ?? "" }
-        set { element.addAttribute(withName: Attributes.angleID.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.angleID.rawValue, value: newValue) }
     }
 }
 
@@ -84,7 +84,7 @@ extension FinalCutPro.FCPXML.Media.Multicam.Angle {
     /// Get or set story elements contained within the angle.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

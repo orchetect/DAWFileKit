@@ -69,13 +69,13 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
             element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self)
                 ?? .defaultAudioRole
         }
-        set { element.fcpSet(role: newValue) }
+        nonmutating set { element.fcpSet(role: newValue) }
     }
     
     /// Active state of the audio role source.
     public var active: Bool {
         get { element.fcpGetActive(default: true) }
-        set { element.fcpSet(active: newValue, default: true) }
+        nonmutating set { element.fcpSet(active: newValue, default: true) }
     }
 }
 
@@ -85,7 +85,7 @@ extension FinalCutPro.FCPXML.AudioRoleSource {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

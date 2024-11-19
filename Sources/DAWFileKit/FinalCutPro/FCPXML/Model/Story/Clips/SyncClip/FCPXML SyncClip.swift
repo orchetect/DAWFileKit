@@ -132,7 +132,7 @@ extension FinalCutPro.FCPXML.SyncClip {
 extension FinalCutPro.FCPXML.SyncClip {
     public var format: String? { // DTD: default is same as parent
         get { element.fcpFormat }
-        set { element.fcpFormat = newValue }
+        nonmutating set { element.fcpFormat = newValue }
     }
 }
 
@@ -154,7 +154,7 @@ extension FinalCutPro.FCPXML.SyncClip {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }
@@ -174,7 +174,7 @@ extension FinalCutPro.FCPXML.SyncClip /* : FCPXMLElementSyncSourceChildren */ {
     /// Returns child `sync-source` elements.
     public var syncSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.SyncClip.SyncSource> {
         get { element.fcpSyncSources }
-        set { element.fcpSyncSources = newValue }
+        nonmutating set { element.fcpSyncSources = newValue }
     }
 }
 

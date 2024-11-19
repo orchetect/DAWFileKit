@@ -97,7 +97,7 @@ extension FinalCutPro.FCPXML.Caption {
     /// ie: `iTT?captionFormat=ITT.en`.
     public var role: FinalCutPro.FCPXML.CaptionRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.CaptionRole.self) }
-        set { element.fcpSet(role: newValue) }
+        nonmutating set { element.fcpSet(role: newValue) }
     }
 }
 

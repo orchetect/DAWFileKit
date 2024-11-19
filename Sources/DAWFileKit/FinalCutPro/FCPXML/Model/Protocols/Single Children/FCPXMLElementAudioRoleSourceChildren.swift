@@ -12,13 +12,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementAudioRoleSourceChildren: FCPXMLElement {
     /// Child `audio-role-source` elements.
-    var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> { get }
+    var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> { get nonmutating set }
 }
 
 extension FCPXMLElementAudioRoleSourceChildren {
     public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
         get { element.fcpAudioRoleSources }
-        set { element.fcpAudioRoleSources = newValue }
+        nonmutating set { element.fcpAudioRoleSources = newValue }
     }
 }
 

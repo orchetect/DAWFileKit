@@ -72,7 +72,7 @@ extension FinalCutPro.FCPXML.Library {
     /// ) attributes.
     public var location: URL? {
         get { element.fcpLibraryLocation }
-        set { element.fcpLibraryLocation = newValue }
+        nonmutating set { element.fcpLibraryLocation = newValue }
     }
     
     /// Specifies whether the library supports `standard`, `wide`, or `wide-hdr` color gamut.
@@ -81,7 +81,7 @@ extension FinalCutPro.FCPXML.Library {
         get {
             element.stringValue(forAttributeNamed: Attributes.colorProcessing.rawValue)
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.colorProcessing.rawValue, value: newValue)
         }
     }

@@ -84,7 +84,7 @@ extension FinalCutPro.FCPXML.TimeMap.TimePoint {
         get {
             element._fcpGetFraction(forAttribute: Attributes.time.rawValue, scaled: true) ?? .zero
         }
-        set {
+        nonmutating set {
             element._fcpSet(fraction: newValue, forAttribute: Attributes.time.rawValue, scaled: true)
         }
     }
@@ -94,7 +94,7 @@ extension FinalCutPro.FCPXML.TimeMap.TimePoint {
         get { 
             element._fcpGetFraction(forAttribute: Attributes.originalTime.rawValue, scaled: true) ?? .zero
         }
-        set { 
+        nonmutating set {
             element._fcpSet(fraction: newValue, forAttribute: Attributes.originalTime.rawValue, scaled: true)
         }
     }
@@ -109,7 +109,7 @@ extension FinalCutPro.FCPXML.TimeMap.TimePoint {
             
             return interp
         }
-        set { 
+        nonmutating set {
             element.addAttribute(withName: Attributes.interpolation.rawValue, value: newValue.rawValue)
         }
     }
@@ -119,7 +119,7 @@ extension FinalCutPro.FCPXML.TimeMap.TimePoint {
         get { 
             element._fcpGetFraction(forAttribute: Attributes.transitionInTime.rawValue, scaled: true)
         }
-        set { 
+        nonmutating set {
             element._fcpSet(fraction: newValue, forAttribute: Attributes.transitionInTime.rawValue, scaled: true)
         }
     }
@@ -129,7 +129,7 @@ extension FinalCutPro.FCPXML.TimeMap.TimePoint {
         get {
             element._fcpGetFraction(forAttribute: Attributes.transitionOutTime.rawValue, scaled: true)
         }
-        set { 
+        nonmutating set { 
             element._fcpSet(fraction: newValue, forAttribute: Attributes.transitionOutTime.rawValue, scaled: true)
         }
     }

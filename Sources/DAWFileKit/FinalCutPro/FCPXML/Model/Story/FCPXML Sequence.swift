@@ -109,7 +109,7 @@ extension FinalCutPro.FCPXML.Sequence {
             
             return FinalCutPro.FCPXML.AudioLayout(rawValue: value)
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.audioLayout.rawValue, value: newValue?.rawValue)
         }
     }
@@ -117,19 +117,19 @@ extension FinalCutPro.FCPXML.Sequence {
     /// Audio sample rate in Hz.
     public var audioRate: FinalCutPro.FCPXML.AudioRate? {
         get { element.fcpSequenceAudioRate }
-        set { element.fcpSequenceAudioRate = newValue }
+        nonmutating set { element.fcpSequenceAudioRate = newValue }
     }
     
     public var renderFormat: String? {
         get { element.fcpRenderFormat }
-        set { element.fcpRenderFormat = newValue }
+        nonmutating set { element.fcpRenderFormat = newValue }
     }
     
     public var keywords: String? { // only exists on sequence
         get {
             element.stringValue(forAttributeNamed: Attributes.keywords.rawValue)
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.keywords.rawValue, value: newValue)
         }
     }
@@ -143,7 +143,7 @@ extension FinalCutPro.FCPXML.Sequence {
         get {
             element.firstChild(whereFCPElement: .spine, defaultChild: .init())
         }
-        set {
+        nonmutating set {
             element._updateFirstChildElement(
                 ofType: .spine,
                 withChild: newValue,

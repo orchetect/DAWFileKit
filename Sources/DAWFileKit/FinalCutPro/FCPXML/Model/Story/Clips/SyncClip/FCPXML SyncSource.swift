@@ -70,7 +70,7 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
             
             return SourceID(rawValue: value)
         }
-        set {
+        nonmutating set {
             // required attribute, don't allow setting nil
             guard let newValue = newValue else { return }
             
@@ -85,7 +85,7 @@ extension FinalCutPro.FCPXML.SyncClip.SyncSource {
     /// Get or set child `audio-role-source` elements.
     public var audioRoleSources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.AudioRoleSource> {
         get { element.fcpAudioRoleSources }
-        set { element.fcpAudioRoleSources = newValue }
+        nonmutating set { element.fcpAudioRoleSources = newValue }
     }
 }
 

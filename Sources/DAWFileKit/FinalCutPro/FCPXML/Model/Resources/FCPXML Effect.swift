@@ -87,13 +87,13 @@ extension FinalCutPro.FCPXML.Effect {
     /// Identifier. (Required)
     public var id: String {
         get { element.fcpID ?? "" }
-        set { element.fcpID = newValue }
+        nonmutating set { element.fcpID = newValue }
     }
     
     /// Name.
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     // effect attributes
@@ -101,13 +101,13 @@ extension FinalCutPro.FCPXML.Effect {
     /// UID. (Required)
     public var uid: String {
         get { element.fcpUID ?? "" }
-        set { element.fcpUID = newValue }
+        nonmutating set { element.fcpUID = newValue }
     }
     
     /// Source.
     public var src: String? {
         get { element.fcpSRC }
-        set { element.fcpSRC = newValue }
+        nonmutating set { element.fcpSRC = newValue }
     }
 }
 

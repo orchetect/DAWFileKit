@@ -71,7 +71,7 @@ extension FinalCutPro.FCPXML.TimeMap {
         get {
             element.getBool(forAttribute: Attributes.preservesPitch.rawValue) ?? true
         }
-        set {
+        nonmutating set {
             element.set(
                 bool: newValue,
                 forAttribute: Attributes.preservesPitch.rawValue,
@@ -92,7 +92,7 @@ extension FinalCutPro.FCPXML.TimeMap {
         get {
             element.children(whereFCPElement: .timePoint)
         }
-        set { 
+        nonmutating set { 
             element._updateChildElements(ofType: .timePoint, with: newValue)
         }
     }

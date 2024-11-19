@@ -161,18 +161,18 @@ extension FinalCutPro.FCPXML.AssetClip {
     /// Resource ID.
     public var ref: String {
         get { element.fcpRef ?? "" }
-        set { element.fcpRef = newValue }
+        nonmutating set { element.fcpRef = newValue }
     }
     
     /// Sources to enable for audio and video. (Default: `.all`)
     public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
         get { element.fcpClipSourceEnable }
-        set { element.fcpClipSourceEnable = newValue }
+        nonmutating set { element.fcpClipSourceEnable = newValue }
     }
     
     public var format: String? { // DTD: default is same as parent
         get { element.fcpFormat }
-        set { element.fcpFormat = newValue }
+        nonmutating set { element.fcpFormat = newValue }
     }
 }
 
@@ -187,14 +187,14 @@ extension FinalCutPro.FCPXML.AssetClip: FCPXMLElementAudioStartAndDuration { }
 extension FinalCutPro.FCPXML.AssetClip /* FCPXMLElementOptionalAudioRole */ {
     public var audioRole: FinalCutPro.FCPXML.AudioRole? {
         get { element.fcpAudioRole }
-        set { element.fcpAudioRole = newValue }
+        nonmutating set { element.fcpAudioRole = newValue }
     }
 }
 
 extension FinalCutPro.FCPXML.AssetClip /* FCPXMLElementOptionalVideoRole */ {
     public var videoRole: FinalCutPro.FCPXML.VideoRole? {
         get { element.fcpVideoRole }
-        set { element.fcpVideoRole = newValue }
+        nonmutating set { element.fcpVideoRole = newValue }
     }
 }
 
@@ -206,7 +206,7 @@ extension FinalCutPro.FCPXML.AssetClip {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

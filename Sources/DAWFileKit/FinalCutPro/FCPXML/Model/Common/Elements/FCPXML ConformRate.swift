@@ -70,7 +70,7 @@ extension FinalCutPro.FCPXML.ConformRate {
         get {
             element.getBool(forAttribute: Attributes.scaleEnabled.rawValue) ?? true
         }
-        set {
+        nonmutating set {
             element.set(
                 bool: newValue,
                 forAttribute: Attributes.scaleEnabled.rawValue,
@@ -89,7 +89,7 @@ extension FinalCutPro.FCPXML.ConformRate {
             
             return SourceFrameRate(rawValue: value)
         }
-        set { 
+        nonmutating set { 
             element.addAttribute(withName: Attributes.srcFrameRate.rawValue, value: newValue?.rawValue)
         }
     }

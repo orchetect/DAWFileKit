@@ -116,7 +116,7 @@ extension FinalCutPro.FCPXML.MediaRep {
             
             return Kind(rawValue: value) ?? defaultValue
         }
-        set {
+        nonmutating set {
             element.addAttribute(withName: Attributes.kind.rawValue, value: newValue.rawValue)
         }
     }
@@ -124,7 +124,7 @@ extension FinalCutPro.FCPXML.MediaRep {
     /// The unique identifier of a media representation, assigned by Final Cut Pro.
     public var sig: String? {
         get { element.stringValue(forAttributeNamed: Attributes.sig.rawValue) }
-        set { element.addAttribute(withName: Attributes.sig.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.sig.rawValue, value: newValue) }
     }
     
     /// Required.
@@ -132,7 +132,7 @@ extension FinalCutPro.FCPXML.MediaRep {
     /// May also be a relative URL based on the location of the FCPXML document itself, for example: `./Media/MyMovie.mov`.
     public var src: URL? {
         get { element.getURL(forAttribute: Attributes.src.rawValue) }
-        set { element.set(url: newValue, forAttribute: Attributes.src.rawValue) }
+        nonmutating set { element.set(url: newValue, forAttribute: Attributes.src.rawValue) }
     }
     
     /// The filename string to use when Final Cut Pro manages the media representation file.
@@ -145,7 +145,7 @@ extension FinalCutPro.FCPXML.MediaRep {
     /// ) for details.
     public var suggestedFilename: String? {
         get { element.stringValue(forAttributeNamed: Attributes.suggestedFilename.rawValue) }
-        set { element.addAttribute(withName: Attributes.suggestedFilename.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.suggestedFilename.rawValue, value: newValue) }
     }
 }
 

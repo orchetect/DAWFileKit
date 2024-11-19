@@ -73,12 +73,12 @@ extension FinalCutPro.FCPXML.Spine {
 extension FinalCutPro.FCPXML.Spine {
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     public var format: String? {
         get { element.fcpFormat }
-        set { element.fcpFormat = newValue }
+        nonmutating set { element.fcpFormat = newValue }
     }
 }
 
@@ -95,7 +95,7 @@ extension FinalCutPro.FCPXML.Spine {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

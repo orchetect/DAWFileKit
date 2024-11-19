@@ -86,29 +86,29 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
     /// Source audio channels (comma separated, 1-based index, ie: "1, 2") (Required)
     public var sourceChannels: String {
         get { element.fcpSourceChannels ?? "" }
-        set { element.fcpSourceChannels = newValue }
+        nonmutating set { element.fcpSourceChannels = newValue }
     }
     
     /// Output audio channels (comma separated, from: `L, R, C, LFE, Ls, Rs, X`)
     public var outputChannels: String? {
         get { element.fcpOutputChannels }
-        set { element.fcpOutputChannels = newValue }
+        nonmutating set { element.fcpOutputChannels = newValue }
     }
     
     /// Output role assignment.
     public var role: FinalCutPro.FCPXML.AudioRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.AudioRole.self) }
-        set { element.fcpSet(role: newValue) }
+        nonmutating set { element.fcpSet(role: newValue) }
     }
     
     public var enabled: Bool {
         get { element.fcpGetEnabled(default: true) }
-        set { element.fcpSet(enabled: newValue, default: true) }
+        nonmutating set { element.fcpSet(enabled: newValue, default: true) }
     }
     
     public var active: Bool {
         get { element.fcpGetActive(default: true) }
-        set { element.fcpSet(active: newValue, default: true) }
+        nonmutating set { element.fcpSet(active: newValue, default: true) }
     }
 }
 
@@ -122,7 +122,7 @@ extension FinalCutPro.FCPXML.AudioChannelSource {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

@@ -110,19 +110,19 @@ extension FinalCutPro.FCPXML.Video {
     /// Resource ID. (Required)
     public var ref: String {
         get { element.fcpRef ?? "" }
-        set { element.fcpRef = newValue }
+        nonmutating set { element.fcpRef = newValue }
     }
     
     /// Video role. (Default: Video)
     public var role: FinalCutPro.FCPXML.VideoRole? {
         get { element.fcpRole(as: FinalCutPro.FCPXML.VideoRole.self) }
-        set { element.fcpSet(role: newValue) }
+        nonmutating set { element.fcpSet(role: newValue) }
     }
     
     /// Source/track identifier in asset (if not '1').
     public var srcID: String? {
         get { element.stringValue(forAttributeNamed: Attributes.srcID.rawValue) }
-        set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.srcID.rawValue, value: newValue) }
     }
 }
 
@@ -134,7 +134,7 @@ extension FinalCutPro.FCPXML.Video {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

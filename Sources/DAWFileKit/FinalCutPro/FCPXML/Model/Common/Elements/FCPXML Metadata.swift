@@ -79,69 +79,69 @@ extension FinalCutPro.FCPXML.Metadata {
     /// Get or set **Reel** metadata value.
     public var reel: String? {
         get { getStringValue(forKey: .reel) }
-        set { setStringValue(forKey: .reel, value: newValue) }
+        nonmutating set { setStringValue(forKey: .reel, value: newValue) }
     }
     
     /// Get or set **Scene** metadata value.
     public var scene: String? {
         get { getStringValue(forKey: .scene) }
-        set { setStringValue(forKey: .scene, value: newValue) }
+        nonmutating set { setStringValue(forKey: .scene, value: newValue) }
     }
     
     /// Get or set **Take** metadata value (formerly called **Shot**).
     public var take: String? {
         get { getStringValue(forKey: .take) }
-        set { setStringValue(forKey: .take, value: newValue) }
+        nonmutating set { setStringValue(forKey: .take, value: newValue) }
     }
     
     /// Get or set **Camera Angle** metadata value.
     public var cameraAngle: String? {
         get { getStringValue(forKey: .cameraAngle) }
-        set { setStringValue(forKey: .cameraAngle, value: newValue) }
+        nonmutating set { setStringValue(forKey: .cameraAngle, value: newValue) }
     }
     
     /// Get or set **Camera Name** metadata value.
     public var cameraName: String? {
         get { getStringValue(forKey: .cameraName) }
-        set { setStringValue(forKey: .cameraName, value: newValue) }
+        nonmutating set { setStringValue(forKey: .cameraName, value: newValue) }
     }
     
     // TODO: Should be `Bool`?
     /// Get or set **Raw To Log Conversion** metadata value.
     public var rawToLogConversion: String? {
         get { getStringValue(forKey: .rawToLogConversion) }
-        set { setStringValue(forKey: .rawToLogConversion, value: newValue) }
+        nonmutating set { setStringValue(forKey: .rawToLogConversion, value: newValue) }
     }
     
     /// Get or set **Color Profile** metadata value.
     public var colorProfile: String? {
         get { getStringValue(forKey: .colorProfile) }
-        set { setStringValue(forKey: .colorProfile, value: newValue) }
+        nonmutating set { setStringValue(forKey: .colorProfile, value: newValue) }
     }
     
     /// Get or set **Camera ISO** metadata value.
     public var cameraISO: String? {
         get { getStringValue(forKey: .cameraISO) }
-        set { setStringValue(forKey: .cameraISO, value: newValue) }
+        nonmutating set { setStringValue(forKey: .cameraISO, value: newValue) }
     }
     
     /// Get or set **Camera Color Temperature** metadata value.
     public var cameraColorTemperature: String? {
         get { getStringValue(forKey: .cameraColorTemperature) }
-        set { setStringValue(forKey: .cameraColorTemperature, value: newValue) }
+        nonmutating set { setStringValue(forKey: .cameraColorTemperature, value: newValue) }
     }
     
     /// Get or set **Camera Color Temperature** metadata value.
     public var codecs: [String]? {
         get { getStringArrayValue(forKey: .codecs) }
-        set { setStringArrayValue(forKey: .codecs, value: newValue) }
+        nonmutating set { setStringArrayValue(forKey: .codecs, value: newValue) }
     }
     
     // TODO: Should be `Date`?
     /// Get or set **Ingest Date** metadata value.
     public var ingestDate: String? {
         get { getStringValue(forKey: .ingestDate) }
-        set { setStringValue(forKey: .ingestDate, value: newValue) }
+        nonmutating set { setStringValue(forKey: .ingestDate, value: newValue) }
     }
     
     // MARK: - Generic accessors for individual metadata key/value properties
@@ -171,7 +171,7 @@ extension FinalCutPro.FCPXML.Metadata {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }
@@ -180,7 +180,7 @@ extension FinalCutPro.FCPXML.Metadata {
     /// Get or set the metadata contents as model objects.
     public var metadatumContents: [Metadatum] {
         get { element.childElements.compactMap(\.fcpAsMetadatum) }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue.map(\.element))
         }

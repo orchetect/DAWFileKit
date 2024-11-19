@@ -72,14 +72,14 @@ extension FinalCutPro.FCPXML.Locator {
     /// Identifier.
     public var id: String {
         get { element.fcpID ?? "" }
-        set { element.fcpID = newValue }
+        nonmutating set { element.fcpID = newValue }
     }
     
     /// Required.
     /// Absolute URL or relative URL to library path.
     public var url: URL? {
         get { element.getURL(forAttribute: Attributes.url.rawValue) }
-        set { element.set(url: newValue, forAttribute: Attributes.url.rawValue) }
+        nonmutating set { element.set(url: newValue, forAttribute: Attributes.url.rawValue) }
     }
 }
 

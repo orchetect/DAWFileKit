@@ -14,19 +14,19 @@ import TimecodeKit
 /// Use `audioStart` and `audioDuration` attributes to define J/L cuts (i.e., split edits) on
 /// composite A/V clips.
 public protocol FCPXMLElementAudioStartAndDuration: FCPXMLElement {
-    var audioStart: Fraction? { get set }
-    var audioDuration: Fraction? { get set }
+    var audioStart: Fraction? { get nonmutating set }
+    var audioDuration: Fraction? { get nonmutating set }
 }
 
 extension FCPXMLElementAudioStartAndDuration {
     public var audioStart: Fraction? {
         get { element.fcpAudioStart }
-        set { element.fcpAudioStart = newValue }
+        nonmutating set { element.fcpAudioStart = newValue }
     }
     
     public var audioDuration: Fraction? {
         get { element.fcpAudioDuration }
-        set { element.fcpAudioDuration = newValue }
+        nonmutating set { element.fcpAudioDuration = newValue }
     }
 }
 

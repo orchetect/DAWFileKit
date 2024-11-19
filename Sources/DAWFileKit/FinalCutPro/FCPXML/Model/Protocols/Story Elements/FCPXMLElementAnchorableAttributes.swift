@@ -30,21 +30,21 @@ public protocol FCPXMLElementAnchorableAttributes: FCPXMLElement {
     /// - `0` = contained inside its parent (default)
     /// - `>0` = anchored above its parent
     /// - `<0` = anchored below its parent
-    var lane: Int? { get set }
+    var lane: Int? { get nonmutating set }
     
     /// Offset within parent timeline. (Default: 0)
-    var offset: Fraction? { get set }
+    var offset: Fraction? { get nonmutating set }
 }
 
 extension FCPXMLElementAnchorableAttributes {
     public var lane: Int? {
         get { element.fcpLane }
-        set { element.fcpLane = newValue }
+        nonmutating set { element.fcpLane = newValue }
     }
     
     public var offset: Fraction? {
         get { element.fcpOffset }
-        set { element.fcpOffset = newValue }
+        nonmutating set { element.fcpOffset = newValue }
     }
 }
 

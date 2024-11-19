@@ -12,13 +12,13 @@ import OTCore
 
 public protocol FCPXMLElementTextStyleDefinitionChildren: FCPXMLElement {
     /// Child `text-style-def` elements.
-    var fcpTextStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> { get }
+    var fcpTextStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> { get nonmutating set }
 }
 
 extension FCPXMLElementTextStyleDefinitionChildren {
     public var fcpTextStyleDefinitions: LazyFilteredCompactMapSequence<[XMLNode], XMLElement> {
         get { element.fcpTextStyleDefinitions }
-        set { element.fcpTextStyleDefinitions = newValue }
+        nonmutating set { element.fcpTextStyleDefinitions = newValue }
     }
 }
 

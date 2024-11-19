@@ -508,7 +508,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
     lazy var metadata = FinalCutPro.FCPXML.Metadata(element: metadataXML)!
     
     func testMetadata() throws {
-        var md = FinalCutPro.FCPXML.Metadata()
+        let md = FinalCutPro.FCPXML.Metadata()
         
         // test initial state
         XCTAssertNil(md.cameraName)
@@ -595,7 +595,7 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
     }
     
     func testMetadatum() throws {
-        var metadatum = FinalCutPro.FCPXML.Metadata.Metadatum()
+        let metadatum = FinalCutPro.FCPXML.Metadata.Metadatum()
         
         metadatum.key = .ingestDate
         XCTAssertEqual(metadatum.key, .ingestDate)

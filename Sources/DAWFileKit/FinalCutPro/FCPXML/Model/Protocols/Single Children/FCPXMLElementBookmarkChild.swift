@@ -12,20 +12,19 @@ import TimecodeKit
 public protocol FCPXMLElementBookmarkChild: FCPXMLElement {
     /// Security-scoped bookmark data in a base64-encoded string.
     /// Access the `stringValue` property on the returned element.
-    var bookmark: XMLElement? { get }
+    var bookmark: XMLElement? { get nonmutating set }
     
     /// Security-scoped bookmark data.
     /// Returns the decoded ``bookmark`` base64-encoded string as `Data`.
-    var bookmarkData: Data? { get set }
+    var bookmarkData: Data? { get nonmutating set }
 }
 
 extension FCPXMLElementBookmarkChild {
-    // TODO: add set support, not just read-only
     public var bookmark: XMLElement? {
         get {
             element.firstChildElement(named: FinalCutPro.FCPXML.ElementType.bookmark.rawValue)
         }
-        set {
+        nonmutating set {
             element._updateChildElements(ofType: .bookmark, withChild: newValue)
         }
     }
@@ -39,7 +38,7 @@ extension FCPXMLElementBookmarkChild {
             
             return Data(base64Encoded: value)
         }
-        set {
+        nonmutating set {
             let v = newValue?.base64EncodedString()
             element._updateChildElement(named: "bookmark", newStringValue: v)
         }

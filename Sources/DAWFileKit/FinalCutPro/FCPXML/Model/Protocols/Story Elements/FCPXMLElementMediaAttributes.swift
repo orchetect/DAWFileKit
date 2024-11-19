@@ -29,25 +29,25 @@ public protocol FCPXMLElementMediaAttributes: FCPXMLElement,
     FCPXMLElementOptionalTCFormat
 {
     /// Format resource ID. (Required)
-    var format: String { get set }
+    var format: String { get nonmutating set }
     
     // FCPXMLElementOptionalDuration
     /// Local timeline duration.
-    var duration: Fraction? { get set }
+    var duration: Fraction? { get nonmutating set }
     
     // FCPXMLElementTCStart
     /// Local timeline start time.
-    var tcStart: Fraction? { get set }
+    var tcStart: Fraction? { get nonmutating set }
     
     // FCPXMLElementTCFormat
     /// Local timeline timecode format.
-    var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? { get set }
+    var tcFormat: FinalCutPro.FCPXML.TimecodeFormat? { get nonmutating set }
 }
 
 extension FCPXMLElementMediaAttributes {
     public var format: String {
         get { element.fcpFormat ?? "" }
-        set { element.fcpFormat = newValue }
+        nonmutating set { element.fcpFormat = newValue }
     }
     
     // implemented by FCPXMLElementOptionalDuration

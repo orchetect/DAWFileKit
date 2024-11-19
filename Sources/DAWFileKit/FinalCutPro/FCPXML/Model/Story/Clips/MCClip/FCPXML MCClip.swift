@@ -133,13 +133,13 @@ extension FinalCutPro.FCPXML.MCClip {
     /// Resource ID. (Required)
     public var ref: String {
         get { element.fcpRef ?? "" }
-        set { element.fcpRef = newValue }
+        nonmutating set { element.fcpRef = newValue }
     }
     
     /// Sources to enable for audio and video. (Default: `.all`)
     public var srcEnable: FinalCutPro.FCPXML.ClipSourceEnable {
         get { element.fcpClipSourceEnable }
-        set { element.fcpClipSourceEnable = newValue }
+        nonmutating set { element.fcpClipSourceEnable = newValue }
     }
 }
 
@@ -155,7 +155,7 @@ extension FinalCutPro.FCPXML.MCClip {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }
@@ -175,7 +175,7 @@ extension FinalCutPro.FCPXML.MCClip /* FCPXMLElementMCSourceChildren */ {
     /// Returns child `mc-source` elements.
     public var sources: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.MulticamSource> {
         get { element.fcpMulticamSources }
-        set { element.fcpMulticamSources = newValue }
+        nonmutating set { element.fcpMulticamSources = newValue }
     }
 }
 

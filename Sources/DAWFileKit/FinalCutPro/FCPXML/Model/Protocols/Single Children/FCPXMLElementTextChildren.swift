@@ -12,13 +12,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementTextChildren: FCPXMLElement {
     /// Child `text` elements.
-    var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> { get }
+    var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> { get nonmutating set }
 }
 
 extension FCPXMLElementTextChildren {
     public var texts: LazyFCPXMLChildrenSequence<FinalCutPro.FCPXML.Text> {
         get { element.fcpTexts }
-        set { element.fcpTexts = newValue }
+        nonmutating set { element.fcpTexts = newValue }
     }
 }
 

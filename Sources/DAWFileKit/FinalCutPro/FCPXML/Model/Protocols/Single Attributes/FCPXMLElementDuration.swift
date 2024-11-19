@@ -11,13 +11,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementRequiredDuration: FCPXMLElement {
     /// Local timeline duration. (Required)
-    var duration: Fraction { get set }
+    var duration: Fraction { get nonmutating set }
 }
 
 extension FCPXMLElementRequiredDuration {
     public var duration: Fraction {
         get { element.fcpDuration ?? .zero }
-        set { element.fcpDuration = newValue }
+        nonmutating set { element.fcpDuration = newValue }
     }
     
     /// Returns the local timeline duration of the element as timecode.
@@ -33,13 +33,13 @@ extension FCPXMLElementRequiredDuration {
 
 public protocol FCPXMLElementOptionalDuration: FCPXMLElement {
     /// Local timeline duration.
-    var duration: Fraction? { get set }
+    var duration: Fraction? { get nonmutating set }
 }
 
 extension FCPXMLElementOptionalDuration {
     public var duration: Fraction? {
         get { element.fcpDuration }
-        set { element.fcpDuration = newValue }
+        nonmutating set { element.fcpDuration = newValue }
     }
     
     /// Returns the start time of the element as timecode.

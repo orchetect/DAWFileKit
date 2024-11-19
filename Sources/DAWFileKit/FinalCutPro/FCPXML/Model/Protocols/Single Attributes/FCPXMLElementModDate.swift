@@ -11,13 +11,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementOptionalModDate: FCPXMLElement {
     /// Modification date.
-    var modDate: String? { get set }
+    var modDate: String? { get nonmutating set }
 }
 
 extension FCPXMLElementOptionalModDate {
     public var modDate: String? {
         get { element.stringValue(forAttributeNamed: "modDate") }
-        set { element.addAttribute(withName: "modDate", value: newValue) }
+        nonmutating set { element.addAttribute(withName: "modDate", value: newValue) }
     }
 }
 

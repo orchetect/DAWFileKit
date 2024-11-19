@@ -80,7 +80,7 @@ extension FinalCutPro.FCPXML.Media.Multicam {
 extension FinalCutPro.FCPXML.Media.Multicam {
     public var renderFormat: String? {
         get { element.stringValue(forAttributeNamed: Attributes.renderFormat.rawValue) }
-        set { element.addAttribute(withName: Attributes.renderFormat.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.renderFormat.rawValue, value: newValue) }
     }
 }
 

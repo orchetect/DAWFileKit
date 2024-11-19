@@ -347,7 +347,6 @@ extension FinalCutPro.FCPXML.VideoRole {
 }
 
 extension FinalCutPro.FCPXML {
-    
     static let defaultAudioRole: AnyRole = .audio(.defaultAudioRole)
     static let defaultVideoRole: AnyRole = .video(.defaultVideoRole)
     static let titlesRole: AnyRole = .video(.titlesRole)

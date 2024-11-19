@@ -134,13 +134,13 @@ extension FinalCutPro.FCPXML.Asset {
     /// Identifier. (Required)
     public var id: String {
         get { element.fcpID ?? "" }
-        set { element.fcpID = newValue }
+        nonmutating set { element.fcpID = newValue }
     }
     
     /// Name.
     public var name: String? {
         get { element.fcpName }
-        set { element.fcpName = newValue }
+        nonmutating set { element.fcpName = newValue }
     }
     
     // base attributes
@@ -148,14 +148,14 @@ extension FinalCutPro.FCPXML.Asset {
     /// Asset format ID.
     public var format: String? {
         get { element.fcpFormat }
-        set { element.fcpFormat = newValue }
+        nonmutating set { element.fcpFormat = newValue }
     }
     
     // asset attributes
     
     public var uid: String? {
         get { element.fcpUID }
-        set { element.fcpUID = newValue }
+        nonmutating set { element.fcpUID = newValue }
     }
     
     // implied asset attributes
@@ -165,7 +165,7 @@ extension FinalCutPro.FCPXML.Asset {
         get {
             element.getBool(forAttribute: Attributes.hasAudio.rawValue) ?? false
         }
-        set {
+        nonmutating set {
             element._fcpSet(
                 bool: newValue,
                 forAttribute: Attributes.hasAudio.rawValue,
@@ -180,7 +180,7 @@ extension FinalCutPro.FCPXML.Asset {
         get {
             element.getBool(forAttribute: Attributes.hasVideo.rawValue) ?? false
         }
-        set {
+        nonmutating set {
             element._fcpSet(
                 bool: newValue,
                 forAttribute: Attributes.hasVideo.rawValue,
@@ -195,7 +195,7 @@ extension FinalCutPro.FCPXML.Asset {
         get {
             element.getInt(forAttribute: Attributes.audioSources.rawValue) ?? 0
         }
-        set {
+        nonmutating set {
             element.set(int: newValue, forAttribute: Attributes.audioSources.rawValue)
         }
     }
@@ -205,7 +205,7 @@ extension FinalCutPro.FCPXML.Asset {
         get {
             element.getInt(forAttribute: Attributes.audioChannels.rawValue) ?? 0
         }
-        set {
+        nonmutating set {
             element.set(int: newValue, forAttribute: Attributes.audioChannels.rawValue)
         }
     }
@@ -213,7 +213,7 @@ extension FinalCutPro.FCPXML.Asset {
     /// Audio sample rate in Hz.
     public var audioRate: FinalCutPro.FCPXML.AudioRate? {
         get { element.fcpAssetAudioRate }
-        set { element.fcpAssetAudioRate = newValue }
+        nonmutating set { element.fcpAssetAudioRate = newValue }
     }
     
     /// Number of video sources. Default is `0`.
@@ -221,14 +221,14 @@ extension FinalCutPro.FCPXML.Asset {
         get {
             element.getInt(forAttribute: Attributes.videoSources.rawValue) ?? 0
         }
-        set {
+        nonmutating set {
             element.set(int: newValue, forAttribute: Attributes.videoSources.rawValue)
         }
     }
     
     public var auxVideoFlags: String? { // only used by `asset`
         get { element.stringValue(forAttributeNamed: Attributes.auxVideoFlags.rawValue) }
-        set { element.addAttribute(withName: Attributes.auxVideoFlags.rawValue, value: newValue) }
+        nonmutating set { element.addAttribute(withName: Attributes.auxVideoFlags.rawValue, value: newValue) }
     }
 }
 
@@ -245,7 +245,7 @@ extension FinalCutPro.FCPXML.Asset {
         get {
             element.firstChild(whereFCPElement: .mediaRep, defaultChild: .init())
         }
-        set {
+        nonmutating set {
             element._updateFirstChildElement(
                 ofType: .mediaRep,
                 withChild: newValue,

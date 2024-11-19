@@ -11,7 +11,7 @@ import TimecodeKit
 
 public protocol FCPXMLElementNoteChild: FCPXMLElement {
     /// Optional note text.
-    var note: String? { get set }
+    var note: String? { get nonmutating set }
 }
 
 extension FCPXMLElementNoteChild {
@@ -21,7 +21,7 @@ extension FCPXMLElementNoteChild {
                 .firstChildElement(whereFCPElementType: .note)?
                 .stringValue
         }
-        set {
+        nonmutating set {
             element
                 ._updateFirstChildElement(ofType: .note, newStringValue: newValue)
         }

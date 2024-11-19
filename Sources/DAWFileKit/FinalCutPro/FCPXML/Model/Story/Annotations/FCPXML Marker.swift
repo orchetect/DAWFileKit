@@ -120,18 +120,18 @@ extension FinalCutPro.FCPXML.Marker {
     /// Name. (Required)
     public var name: String {
         get { element.fcpValue ?? "" }
-        set { element.fcpValue = newValue }
+        nonmutating set { element.fcpValue = newValue }
     }
     
     /// Optional note.
     public var note: String? {
         get { element.fcpNote }
-        set { element.fcpNote = newValue }
+        nonmutating set { element.fcpNote = newValue }
     }
     
     public var configuration: Configuration {
         get { element.fcpMarkerConfiguration ?? .standard }
-        set { element.fcpMarkerConfiguration = newValue }
+        nonmutating set { element.fcpMarkerConfiguration = newValue }
     }
 }
 

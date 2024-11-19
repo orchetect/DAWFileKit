@@ -22,7 +22,7 @@ public protocol FCPXMLElementTimingParams: FCPXMLElement {
     /// > FCPXML 1.11 DTD:
     /// >
     /// > "A `conform-rate` defines how the clip's frame rate should be conformed to the sequence frame rate".
-    var conformRate: FinalCutPro.FCPXML.ConformRate? { get set }
+    var conformRate: FinalCutPro.FCPXML.ConformRate? { get nonmutating set }
     
     /// Clip time map.
     ///
@@ -31,7 +31,7 @@ public protocol FCPXMLElementTimingParams: FCPXMLElement {
     /// > "A `timeMap` is a container for `timept` elements that change the output speed of the clip's local timeline.
     /// > When present, a `timeMap` defines a new adjusted time range for the clip using the first and last `timept`
     /// > elements. All other time values are interpolated from the specified `timept` elements."
-    var timeMap: FinalCutPro.FCPXML.TimeMap? { get set }
+    var timeMap: FinalCutPro.FCPXML.TimeMap? { get nonmutating set }
 }
 
 extension FCPXMLElementTimingParams {
@@ -39,7 +39,7 @@ extension FCPXMLElementTimingParams {
         get {
             element.firstChild(whereFCPElement: .conformRate)
         }
-        set { 
+        nonmutating set {
             element._updateFirstChildElement(ofType: .conformRate, withChild: newValue)
         }
     }
@@ -48,7 +48,7 @@ extension FCPXMLElementTimingParams {
         get {
             element.firstChild(whereFCPElement: .timeMap)
         }
-        set {
+        nonmutating set {
             element._updateFirstChildElement(ofType: .timeMap, withChild: newValue)
         }
     }

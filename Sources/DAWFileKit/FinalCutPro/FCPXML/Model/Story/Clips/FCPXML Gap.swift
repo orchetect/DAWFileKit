@@ -94,9 +94,10 @@ extension FinalCutPro.FCPXML.Gap {
 
 extension FinalCutPro.FCPXML.Gap: FCPXMLElementClipAttributes {
     // A kludge since Gap uses 5 of the 6 clip attributes, except `lane`.
+    @available(*, deprecated, message: "Can't set lane attribute on gap clip.")
     public var lane: Int? {
         get { nil }
-        set { assertionFailure("Can't set lane attribute on gap clip.") }
+        nonmutating set { assertionFailure("Can't set lane attribute on gap clip.") }
     }
 }
 
@@ -106,7 +107,7 @@ extension FinalCutPro.FCPXML.Gap {
     /// Get or set child elements.
     public var contents: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }

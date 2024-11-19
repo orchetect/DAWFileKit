@@ -83,25 +83,25 @@ extension FinalCutPro.FCPXML.Audition /* Clip Attributes */ {
     /// Get or set the active clip's `name` attribute.
     public var name: String? {
         get { activeClip?.fcpName }
-        set { activeClip?.fcpName = newValue }
+        nonmutating set { activeClip?.fcpName = newValue }
     }
     
     /// Get or set the active clip's `start` attribute.
     public var start: Fraction? {
         get { activeClip?.fcpStart }
-        set { activeClip?.fcpStart = newValue }
+        nonmutating set { activeClip?.fcpStart = newValue }
     }
     
     /// Get or set the active clip's `duration` attribute.
     public var duration: Fraction? {
         get { activeClip?.fcpDuration }
-        set { activeClip?.fcpDuration = newValue }
+        nonmutating set { activeClip?.fcpDuration = newValue }
     }
     
     /// Get or set the active clip's `enabled` attribute.
     public var enabled: Bool {
         get { activeClip?.fcpGetEnabled(default: true) ?? true }
-        set { activeClip?.fcpSet(enabled: newValue, default: true) }
+        nonmutating set { activeClip?.fcpSet(enabled: newValue, default: true) }
     }
 }
 
@@ -113,7 +113,7 @@ extension FinalCutPro.FCPXML.Audition {
     /// The convenience property ``activeClip`` is also available to return the first clip.
     public var clips: LazyCompactMapSequence<[XMLNode], XMLElement> {
         get { element.childElements }
-        set {
+        nonmutating set {
             element.removeAllChildren()
             element.addChildren(newValue)
         }
@@ -122,7 +122,7 @@ extension FinalCutPro.FCPXML.Audition {
     /// Convenience to return the active audition clip.
     public var activeClip: XMLElement? {
         get { clips.first }
-        set {
+        nonmutating set {
             guard let newValue = newValue else { return }
             guard !clips.isEmpty else {
                 element.addChild(newValue)

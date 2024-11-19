@@ -11,13 +11,13 @@ import TimecodeKit
 
 public protocol FCPXMLElementMetadataChild: FCPXMLElement {
     /// Metadata for the element.
-    var metadata: FinalCutPro.FCPXML.Metadata? { get set }
+    var metadata: FinalCutPro.FCPXML.Metadata? { get nonmutating set }
 }
 
 extension FCPXMLElementMetadataChild {
     public var metadata: FinalCutPro.FCPXML.Metadata? {
         get { element.firstChild(whereFCPElement: .metadata) }
-        set { element._updateChildElements(ofType: .metadata, withChild: newValue) }
+        nonmutating set { element._updateChildElements(ofType: .metadata, withChild: newValue) }
     }
 }
 
