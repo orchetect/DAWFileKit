@@ -33,7 +33,7 @@ extension FCPXMLElement {
     /// - Parameters:
     ///   - preset: Extraction preset.
     ///   - scope: Extraction scope.
-    public func extract<Result>(
+    public func extract<Result: Sendable>(
         preset: some FCPXMLExtractionPreset<Result>,
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
     ) async -> Result {
@@ -51,7 +51,7 @@ extension FCPXMLElement {
     /// - Parameters:
     ///   - transform: A closure to return data for each element.
     ///   - scope: Extraction scope.
-    public func extract<Result>(
+    public func extract<Result: Sendable>(
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline,
         transform: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Result
     ) async -> [Result] {
@@ -84,7 +84,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - preset: Extraction preset.
     ///   - scope: Extraction scope.
-    public func fcpExtract<Result>(
+    public func fcpExtract<Result: Sendable>(
         preset: some FCPXMLExtractionPreset<Result>,
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline
     ) async -> Result {
@@ -102,7 +102,7 @@ extension XMLElement {
     /// - Parameters:
     ///   - transform: A closure to return data for each element.
     ///   - scope: Extraction scope.
-    public func fcpExtract<Result>(
+    public func fcpExtract<Result: Sendable>(
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline,
         transform: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Result
     ) async -> [Result] {

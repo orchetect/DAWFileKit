@@ -25,6 +25,8 @@ extension FinalCutPro.FCPXML {
     }
 }
 
+extension FinalCutPro.FCPXML.ExtractableChildren: Sendable { }
+
 // MARK: - Static Constructors
 
 extension FinalCutPro.FCPXML.ExtractableChildren {
@@ -45,12 +47,20 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
         /// Specific direct child elements of the element.
         case specific(_ specificChildren: any Swift.Sequence<XMLElement>)
     }
-    
+}
+
+// TODO: XMLElement is not Sendable
+extension FinalCutPro.FCPXML.ExtractableChildren.DirectChildren: @unchecked Sendable { }
+
+extension FinalCutPro.FCPXML.ExtractableChildren {
     struct Descendant {
         let element: XMLElement
         let children: FinalCutPro.FCPXML.ExtractableChildren?
     }
 }
+
+// TODO: XMLElement is not Sendable
+extension FinalCutPro.FCPXML.ExtractableChildren.Descendant: @unchecked Sendable { }
 
 // MARK: - Init
 

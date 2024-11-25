@@ -295,7 +295,7 @@ final class FinalCutPro_FCPXML_Complex: FCPXMLTestCase {
     static let customRole = FinalCutPro.FCPXML.VideoRole(rawValue: "Sample Role.Sample Role-1")
     
     // swiftformat:options --maxwidth none
-    static var markerData: [MarkerDatum] = [
+    static let markerData: [MarkerDatum] = [
         (tc("00:00:20:16.00", .fps25), "(To-Do) Penguin", "Note Test 1", .toDo(completed: false), .nature),
         (tc("00:00:25:05.00", .fps25), "(Standard) Flamingo Bird", "Colour Fix", .standard, .nature),
         (tc("00:00:35:23.00", .fps25), "Chapter 1", "Note Test 2", .chapter(posterOffset: fraction(frames: 11, .fps25)), .nature),
