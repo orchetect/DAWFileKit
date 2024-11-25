@@ -53,7 +53,7 @@ extension FCPXMLElement {
     ///   - scope: Extraction scope.
     public func extract<Result: Sendable>(
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline,
-        transform: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Result
+        transform: @escaping @Sendable (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Result
     ) async -> [Result] {
         await element.fcpExtract(scope: scope, transform: transform)
     }
@@ -104,7 +104,7 @@ extension XMLElement {
     ///   - scope: Extraction scope.
     public func fcpExtract<Result: Sendable>(
         scope: FinalCutPro.FCPXML.ExtractionScope = .mainTimeline,
-        transform: @escaping (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Result
+        transform: @escaping @Sendable (_ element: FinalCutPro.FCPXML.ExtractedElement) -> Result
     ) async -> [Result] {
         let extractedElements = await _fcpExtract(
             types: [],
@@ -139,20 +139,23 @@ extension XMLElement {
         ancestors: Ancestors,
         resources: XMLElement?,
         overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
-    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
-        var ancestors: any Sequence<XMLElement> = ancestors
-        if scope.constrainToLocalTimeline {
-            ancestors = []
-        }
-        
-        var scope = scope
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] where Ancestors: Sendable {
+         var scope = scope
         scope.filteredExtractionTypes = elementTypes
         
-        return await _fcpExtract(
-            scope: scope,
-            ancestors: ancestors,
-            resources: resources
-        )
+        if scope.constrainToLocalTimeline {
+            return await _fcpExtract(
+                scope: scope,
+                ancestors: [],
+                resources: resources
+            )
+        } else {
+            return await _fcpExtract(
+                scope: scope,
+                ancestors: ancestors,
+                resources: resources
+            )
+        }
     }
     
     /// Internal extraction recursion method:
@@ -170,7 +173,7 @@ extension XMLElement {
         ancestors: Ancestors,
         resources: XMLElement?,
         overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
-    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] where Ancestors: Sendable {
         // self
         
         let selfExtractedElement = FinalCutPro.FCPXML.ExtractedElement(
@@ -257,12 +260,12 @@ extension XMLElement {
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: Ancestors,
         resources: XMLElement?
-    ) async -> some Sequence<FinalCutPro.FCPXML.ExtractedElement> {
+    ) async -> some Sequence<FinalCutPro.FCPXML.ExtractedElement> where Ancestors: Sendable {
         // gather immediate children with `lane != 0` which should be considered peers
         // with the current element
         
         let elements = childElements
-        // filter out peers of parent, which we already handled in main extraction method
+            // filter out peers of parent, which we already handled in main extraction method
             .filter { ($0.fcpLane ?? 0) != 0 }
         
         let extracted = await withOrderedTaskGroup(sequence: elements) { element in
@@ -286,7 +289,7 @@ extension XMLElement {
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: Ancestors,
         resources: XMLElement?
-    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] where Ancestors: Sendable {
         let childrenSource: any Sequence<XMLElement>
         
         switch childrenRule {
@@ -326,7 +329,7 @@ extension XMLElement {
         scope: FinalCutPro.FCPXML.ExtractionScope,
         ancestors: Ancestors,
         resources: XMLElement?
-    ) async -> [FinalCutPro.FCPXML.ExtractedElement] {
+    ) async -> [FinalCutPro.FCPXML.ExtractedElement] where Ancestors: Sendable {
         // each descendant record has an element, as well as an optional sequence of children
         
         var descendantAccum: [XMLElement] = []

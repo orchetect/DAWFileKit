@@ -9,6 +9,9 @@
 import Foundation
 import OTCore
 
+// TODO: forced Sendable conformance
+extension XMLElement: @retroactive @unchecked Sendable { }
+
 // MARK: - Ancestor Walking
 
 // TODO: remove or refactor?

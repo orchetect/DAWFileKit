@@ -9,7 +9,7 @@
 import Foundation
 
 /// Protocol describing an element extraction preset for FCPXML.
-public protocol FCPXMLExtractionPreset<Result> {
+public protocol FCPXMLExtractionPreset<Result> where Self: Sendable {
     associatedtype Result
     
     func perform(
