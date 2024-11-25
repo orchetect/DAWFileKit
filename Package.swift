@@ -29,7 +29,7 @@ let package = Package(
             dependencies: [
                 "OTCore",
                 "TimecodeKit",
-                .productItem(name: "MIDIKitSMF", package: "MIDIKit", condition: nil)
+                .product(name: "MIDIKitSMF", package: "MIDIKit")
             ]
         ),
         
