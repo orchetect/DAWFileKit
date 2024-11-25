@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:6.0
 // (be sure to update the .swift-version file when this Swift version changes)
 
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "DAWFileKit",
     platforms: [
-        .macOS(.v10_15), .iOS(.v10), .tvOS(.v10), .watchOS(.v6)
+        .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)
     ],
     products: [
         .library(name: "DAWFileKit", targets: ["DAWFileKit"])
