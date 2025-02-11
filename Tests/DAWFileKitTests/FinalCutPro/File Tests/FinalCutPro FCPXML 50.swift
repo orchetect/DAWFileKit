@@ -78,7 +78,7 @@ final class FinalCutPro_FCPXML_50: FCPXMLTestCase {
         let spine = try XCTUnwrap(sequence.spine)
         
         let storyElements = spine.storyElements.zeroIndexed
-        XCTAssertEqual(storyElements.count, 14)
+        XCTAssertEqual(storyElements.count, 16)
     }
     
     func testExtractMarkers() async throws {

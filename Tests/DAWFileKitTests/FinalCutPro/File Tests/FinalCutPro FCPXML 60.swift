@@ -78,7 +78,7 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         let spine = try XCTUnwrap(sequence.spine)
         
         let storyElements = spine.storyElements.zeroIndexed
-        XCTAssertEqual(storyElements.count, 15)
+        XCTAssertEqual(storyElements.count, 17)
     }
     
     func testExtractMarkers() async throws {
@@ -271,7 +271,7 @@ final class FinalCutPro_FCPXML_60: FCPXMLTestCase {
         let storyElements = spine.storyElements.zeroIndexed
         
         // asset-clip @ 00:03:30:34 absolute timecode
-        let assetClip1 = try XCTUnwrap(storyElements[safe: 6]?.fcpAsAssetClip)
+        let assetClip1 = try XCTUnwrap(storyElements[safe: 8]?.fcpAsAssetClip)
         XCTAssertEqual(
             assetClip1.offset?.doubleValue,
             Fraction(75804000, 360000).doubleValue // NOT scaled
