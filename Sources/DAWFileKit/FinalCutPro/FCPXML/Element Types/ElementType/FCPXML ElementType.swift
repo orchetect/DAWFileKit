@@ -54,6 +54,7 @@ extension FinalCutPro.FCPXML {
         case refClip = "ref-clip"
         case syncClip = "sync-clip"
         case title
+        case transition
         case video
         // asset-clip sub-elements
         case audioChannelSource = "audio-channel-source"

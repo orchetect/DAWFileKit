@@ -236,6 +236,14 @@ where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Title>
 }
 
 extension FCPXMLElementModelTypeProtocol
+where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Transition>
+{
+    public static var transition: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Transition> {
+        .init()
+    }
+}
+
+extension FCPXMLElementModelTypeProtocol
 where Self == FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Video>
 {
     public static var video: FinalCutPro.FCPXML.ElementModelType<FinalCutPro.FCPXML.Video> {

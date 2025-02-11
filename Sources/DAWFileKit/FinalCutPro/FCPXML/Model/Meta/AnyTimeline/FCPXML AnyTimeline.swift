@@ -25,6 +25,7 @@ extension FinalCutPro.FCPXML {
         case spine(Spine)
         case syncClip(SyncClip)
         case title(Title)
+        case transition(Transition)
         case video(Video)
         
         public var element: XMLElement {
@@ -39,6 +40,7 @@ extension FinalCutPro.FCPXML {
             case let .spine(model): return model.element
             case let .syncClip(model): return model.element
             case let .title(model): return model.element
+            case let .transition(model): return model.element
             case let .video(model): return model.element
             }
         }
@@ -63,6 +65,7 @@ extension FinalCutPro.FCPXML {
             else if let model = element.fcpAsSpine { self = .spine(model) }
             else if let model = element.fcpAsSyncClip { self = .syncClip(model) }
             else if let model = element.fcpAsTitle { self = .title(model) }
+            else if let model = element.fcpAsTransition { self = .transition(model) }
             else if let model = element.fcpAsVideo { self = .video(model) }
             else { return nil }
             
@@ -94,6 +97,7 @@ extension FinalCutPro.FCPXML.AnyTimeline {
         case let .spine(model): return model
         case let .syncClip(model): return model
         case let .title(model): return model
+        case let .transition(model): return model
         case let .video(model): return model
         }
     }
