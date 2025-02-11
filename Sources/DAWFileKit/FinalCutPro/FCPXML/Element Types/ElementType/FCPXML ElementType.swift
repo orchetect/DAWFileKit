@@ -124,7 +124,7 @@ extension Set<FinalCutPro.FCPXML.ElementType> {
     
     public static let allClipCases: Self = [
         .assetClip, .audio, .audition, .clip, .gap, .liveDrawing,
-            .mcClip, .refClip, .syncClip, .title, .video
+            .mcClip, .refClip, .syncClip, .title, .transition, .video
     ]
     
     public static let allAnnotationCases: Self = [
@@ -150,6 +150,7 @@ extension Set<FinalCutPro.FCPXML.ElementType> {
         .spine,
         .syncClip,
         .title,
+        .transition,
         .video
     ]
 }
