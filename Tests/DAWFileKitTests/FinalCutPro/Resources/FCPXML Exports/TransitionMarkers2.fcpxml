@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.13">
+    <resources>
+        <format id="r1" name="FFVideoFormat1080p24" frameDuration="100/2400s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)"/>
+        <effect id="r2" name="Cross Dissolve" uid="FxPlug:4731E73A-8DAC-4113-9A30-AE85B1761265"/>
+        <effect id="r3" name="Audio Crossfade" uid="FFAudioTransition"/>
+        <effect id="r4" name="Basic Title" uid=".../Titles.localized/Bumper:Opener.localized/Basic Title.localized/Basic Title.moti"/>
+        <effect id="r5" name="Band" uid="FxPlug:8AD995CC-8DD6-4652-A3D2-B1468DCC6203"/>
+        <effect id="r6" name="Basic 3D" uid=".../Titles.localized/3D.localized/Basic 3D.localized/Basic 3D.moti"/>
+    </resources>
+    <library location="file:///Users/user/Movies/FCPXMLTest.fcpbundle/">
+        <event name="Test Event" uid="BB995477-20D4-45DF-9204-1B1AA44BE054">
+            <project name="Test Project" uid="6D611B53-786C-4092-BB39-DCC85EC9854C" modDate="2025-02-11 15:12:23 -0800">
+                <sequence format="r1" duration="132000/9600s" tcStart="3600s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+                    <spine>
+                        <transition name="Cross Dissolve" offset="3600s" duration="2s">
+                            <filter-video ref="r2" name="Cross Dissolve">
+                                <data key="effectConfig">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGlCwwVFhdVJG51bGzTDQ4PEBIUV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OhEYACoROAA4AEXXBsdWdpblZlcnNpb24QAdIYGRobWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oxocHVxOU0RpY3Rpb25hcnlYTlNPYmplY3QIERokKTI3SUxRU1lfZm55gIKEhoiKmJqfqrPJzdoAAAAAAAABAQAAAAAAAAAeAAAAAAAAAAAAAAAAAAAA4w==</data>
+                                <param name="Look" key="1" value="11 (Video)"/>
+                                <param name="Amount" key="2" value="50"/>
+                                <param name="Ease" key="50" value="2 (In &amp; Out)"/>
+                                <param name="Ease Amount" key="51" value="0"/>
+                            </filter-video>
+                            <marker start="3600s" duration="100/2400s" value="Marker 1"/>
+                            <marker start="7201/2s" duration="100/2400s" value="Marker 2"/>
+                            <marker start="86447/24s" duration="100/2400s" value="Marker 3"/>
+                        </transition>
+                        <title ref="r4" offset="3600s" name="Basic Title" start="3600s" duration="96400/9600s">
+                            <text>
+                                <text-style ref="ts1">Title</text-style>
+                            </text>
+                            <text-style-def id="ts1">
+                                <text-style font="Helvetica" fontSize="63" fontFace="Regular" fontColor="1 1 1 1" alignment="center"/>
+                            </text-style-def>
+                            <marker start="3602s" duration="100/2400s" value="Marker 4"/>
+                            <marker start="86449/24s" duration="100/2400s" value="Marker 5"/>
+                            <marker start="7219/2s" duration="100/2400s" value="Marker 6"/>
+                        </title>
+                        <transition name="Band" offset="34651600/9600s" duration="1s">
+                            <filter-video ref="r5" name="Band">
+                                <param name="Direction" key="6" value="0 (Horizontal)"/>
+                                <param name="Band Count" key="8" value="6"/>
+                            </filter-video>
+                            <marker start="3600s" duration="100/2400s" value="Marker 7"/>
+                            <marker start="86401/24s" duration="100/2400s" value="Marker 8"/>
+                        </transition>
+                        <title ref="r6" offset="34656400/9600s" name="Basic 3D" start="3600s" duration="8900/2400s">
+                            <text>
+                                <text-style ref="ts2">BASIC 3</text-style>
+                                <text-style ref="ts3">D</text-style>
+                            </text>
+                            <text-style-def id="ts2">
+                                <text-style font="DIN Condensed" fontSize="225" fontColor="1 1 1 1" bold="1" kerning="3.6" alignment="center">
+                                    <param name="Depth Direction" key="506" value="2 (Centered)"/>
+                                    <param name="Front Edge" key="500" value="1 (Bevel)"/>
+                                    <param name="Front Edge Size" key="502" value="2 2"/>
+                                    <param name="Back Edge" key="501" value="0 (Same As Front)"/>
+                                    <param name="Lighting" key="527">
+                                        <param name="Lighting Style" key="508" value="1 (Standard)"/>
+                                        <param name="Intensity" key="526" value="1"/>
+                                        <param name="Environment" key="512">
+                                            <param name="Intensity" key="514" value="1"/>
+                                            <param name="Rotation" key="516" value="-21 0 0 0 (Use Rotation)"/>
+                                        </param>
+                                    </param>
+                                    <param name="Material" key="509">
+                                        <param name="Material" key="528" value="0 (Single)"/>
+                                    </param>
+                                    <param name="Hidden Channel" key="532" value="1"/>
+                                    <param name="Material" key="material:Basic">
+                                        <param name="Layer" key="layer:Substance:3 (Plastic)">
+                                            <param name="Layer Type" key="3" value="3 (Plastic)"/>
+                                            <param name="Type" key="4" value="0 (Shiny)"/>
+                                            <param name="Reflection Gradient" key="108">
+                                                <param name="RGB" key="1">
+                                                    <param name="RGB1" key="1">
+                                                        <param name="Color" key="3" value="0.996942 0.897967 0.625861"/>
+                                                    </param>
+                                                    <param name="RGB2" key="2">
+                                                        <param name="Location" key="1" value="0.226862"/>
+                                                        <param name="Middle" key="2" value="0.565176"/>
+                                                        <param name="Color" key="3" value="1 0.839877 0.48642"/>
+                                                    </param>
+                                                    <param name="RGB3" key="33356">
+                                                        <param name="Location" key="1" value="0.783242"/>
+                                                        <param name="Color" key="3" value="0.932229 0.634395 0.523004"/>
+                                                    </param>
+                                                    <param name="RGB4" key="2999992460">
+                                                        <param name="Location" key="1" value="0.997521"/>
+                                                        <param name="Color" key="3" value="0.96105 0.880994 0.72965"/>
+                                                    </param>
+                                                </param>
+                                            </param>
+                                            <param name="Shininess" key="109" value="0.796"/>
+                                            <param name="Color" key="106" value="0.686364 0.686364 0.686364"/>
+                                            <param name="Image Options" key="114">
+                                                <param name="Placement" key="7">
+                                                    <param name="Scale" key="6" value="0.3 0.3 1 72 1 1"/>
+                                                </param>
+                                            </param>
+                                            <param name="Enable Edge" key="116" enabled="0"/>
+                                        </param>
+                                        <param name="Sequence ID" key="2" value="2000"/>
+                                        <param name="Is Edited" key="5" value="1"/>
+                                    </param>
+                                    <param name="MotionSimpleValues" key="MotionTextStyle:SimpleValues">
+                                        <param name="motionTextTracking" key="tracking" value="3.6"/>
+                                    </param>
+                                </text-style>
+                            </text-style-def>
+                            <text-style-def id="ts3">
+                                <text-style font="DIN Condensed" fontSize="225" fontColor="1 1 1 1" bold="1" alignment="center">
+                                    <param name="Depth Direction" key="506" value="2 (Centered)"/>
+                                    <param name="Front Edge" key="500" value="1 (Bevel)"/>
+                                    <param name="Front Edge Size" key="502" value="2 2"/>
+                                    <param name="Back Edge" key="501" value="0 (Same As Front)"/>
+                                    <param name="Lighting" key="527">
+                                        <param name="Lighting Style" key="508" value="1 (Standard)"/>
+                                        <param name="Intensity" key="526" value="1"/>
+                                        <param name="Environment" key="512">
+                                            <param name="Intensity" key="514" value="1"/>
+                                            <param name="Rotation" key="516" value="-21 0 0 0 (Use Rotation)"/>
+                                        </param>
+                                    </param>
+                                    <param name="Material" key="509">
+                                        <param name="Material" key="528" value="0 (Single)"/>
+                                    </param>
+                                    <param name="Hidden Channel" key="532" value="1"/>
+                                    <param name="Material" key="material:Basic">
+                                        <param name="Layer" key="layer:Substance:3 (Plastic)">
+                                            <param name="Layer Type" key="3" value="3 (Plastic)"/>
+                                            <param name="Type" key="4" value="0 (Shiny)"/>
+                                            <param name="Reflection Gradient" key="108">
+                                                <param name="RGB" key="1">
+                                                    <param name="RGB1" key="1">
+                                                        <param name="Color" key="3" value="0.996942 0.897967 0.625861"/>
+                                                    </param>
+                                                    <param name="RGB2" key="2">
+                                                        <param name="Location" key="1" value="0.226862"/>
+                                                        <param name="Middle" key="2" value="0.565176"/>
+                                                        <param name="Color" key="3" value="1 0.839877 0.48642"/>
+                                                    </param>
+                                                    <param name="RGB3" key="33356">
+                                                        <param name="Location" key="1" value="0.783242"/>
+                                                        <param name="Color" key="3" value="0.932229 0.634395 0.523004"/>
+                                                    </param>
+                                                    <param name="RGB4" key="2999992460">
+                                                        <param name="Location" key="1" value="0.997521"/>
+                                                        <param name="Color" key="3" value="0.96105 0.880994 0.72965"/>
+                                                    </param>
+                                                </param>
+                                            </param>
+                                            <param name="Shininess" key="109" value="0.796"/>
+                                            <param name="Color" key="106" value="0.686364 0.686364 0.686364"/>
+                                            <param name="Image Options" key="114">
+                                                <param name="Placement" key="7">
+                                                    <param name="Scale" key="6" value="0.3 0.3 1 72 1 1"/>
+                                                </param>
+                                            </param>
+                                            <param name="Enable Edge" key="116" enabled="0"/>
+                                        </param>
+                                        <param name="Sequence ID" key="2" value="2000"/>
+                                        <param name="Is Edited" key="5" value="1"/>
+                                    </param>
+                                </text-style>
+                            </text-style-def>
+                            <marker start="7201/2s" duration="100/2400s" value="Marker 9"/>
+                            <marker start="86413/24s" duration="100/2400s" value="Marker 10"/>
+                        </title>
+                    </spine>
+                </sequence>
+            </project>
+        </event>
+    </library>
+</fcpxml>
