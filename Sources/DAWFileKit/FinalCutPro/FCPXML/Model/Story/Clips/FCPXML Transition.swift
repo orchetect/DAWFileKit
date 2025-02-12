@@ -1,7 +1,7 @@
 //
 //  FCPXML Transition.swift
 //  DAWFileKit • https://github.com/orchetect/DAWFileKit
-//  © 2022 Steffan Andrews • Licensed under MIT License
+//  © 2025 Steffan Andrews • Licensed under MIT License
 //
 
 #if os(macOS) // XMLNode only works on macOS
@@ -14,6 +14,15 @@ extension FinalCutPro.FCPXML {
     /// Transition element.
     ///
     /// Transition elements may only be present within a `spine` or an `mc-angle` element.
+    ///
+    /// The `offset` attribute defines the start of the transition in its parent timeline.
+    ///
+    /// ## Final Cut Pro UI Behavior
+    ///
+    /// When placing a new transition between two clips in Final Cut Pro, the default transition
+    /// `duration` is typically 1 second.
+    ///
+    /// ## FCPXML Reference
     ///
     /// > Final Cut Pro FCPXML 1.13 Reference:
     /// >
@@ -40,22 +49,17 @@ extension FinalCutPro.FCPXML {
 
 extension FinalCutPro.FCPXML.Transition {
     public init(
-        // Anchorable Attributes
-        // (no lane)
-        offset: Fraction? = nil,
         // Element Attributes
+        offset: Fraction? = nil,
         name: String? = nil,
-        duration: Fraction = Fraction(2, 1), // FCPXML DTD defaults to 2 seconds
+        duration: Fraction,
         // Metadata
         metadata: FinalCutPro.FCPXML.Metadata? = nil
     ) {
         self.init()
         
-        // Anchorable Attributes
-        // (no lane)
-        self.offset = offset
-        
         // Element Attributes
+        self.offset = offset
         self.name = name
         self.duration = duration
         
@@ -68,11 +72,8 @@ extension FinalCutPro.FCPXML.Transition {
 
 extension FinalCutPro.FCPXML.Transition {
     public enum Attributes: String {
-        // Anchorable Attributes
-        // (no lane)
-        case offset // optional
-        
         // Element Attributes
+        case offset // optional
         case name // optional
         case duration // required
     }
@@ -86,10 +87,6 @@ extension FinalCutPro.FCPXML.Transition {
 
 // MARK: - Attributes
 
-extension FinalCutPro.FCPXML.Transition: FCPXMLElementOptionalOffset { }
-
-extension FinalCutPro.FCPXML.Transition: FCPXMLElementRequiredDuration { }
-
 extension FinalCutPro.FCPXML.Transition {
     /// Transition name.
     public var name: String? {
@@ -97,6 +94,10 @@ extension FinalCutPro.FCPXML.Transition {
         nonmutating set { element.fcpName = newValue }
     }
 }
+
+extension FinalCutPro.FCPXML.Transition: FCPXMLElementOptionalOffset { }
+
+extension FinalCutPro.FCPXML.Transition: FCPXMLElementRequiredDuration { }
 
 // MARK: - Children
 
@@ -123,7 +124,6 @@ extension FinalCutPro.FCPXML.Transition: FCPXMLElementMetadataChild { }
 extension FinalCutPro.FCPXML.Transition: FCPXMLElementMetaTimeline {
     public func asAnyTimeline() -> FinalCutPro.FCPXML.AnyTimeline { .transition(self) }
 }
-
 
 // MARK: - Typing
 
