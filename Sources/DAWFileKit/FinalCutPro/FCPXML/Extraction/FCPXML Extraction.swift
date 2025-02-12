@@ -140,7 +140,7 @@ extension XMLElement {
         resources: XMLElement?,
         overrideDirectChildren: FinalCutPro.FCPXML.ExtractableChildren? = nil
     ) async -> [FinalCutPro.FCPXML.ExtractedElement] where Ancestors: Sendable {
-         var scope = scope
+        var scope = scope
         scope.filteredExtractionTypes = elementTypes
         
         if scope.constrainToLocalTimeline {
@@ -242,7 +242,6 @@ extension XMLElement {
         }
         
         // explicit descendants that are not automatically recursive, if any
-        
         if let descendants = recurse.descendants, !descendants.isEmpty {
             let extractedDescendants = await _fcpExtractDescendants(
                 descendants: descendants,
@@ -467,20 +466,21 @@ extension XMLElement {
         var isTraversingContainerClip = false
         for ancestor in ancestors {
             let elementType = ancestor.fcpElementType
-            let isTimeline = elementType?.isTimeline == true
-                && (elementType != nil && elementType != .spine) // don't include spines
+            let isIncrementingTimeline = (elementType?.isTimeline == true)
+                && elementType != nil
+                && elementType != .spine // don't include spines
             let hasNoLane = (ancestor.fcpLane ?? 0) == 0
             
             if elementType == .assetClip || elementType == .refClip {
                 if isTraversingContainerClip {
-                    // don't count asset clips within an asset clip
+                    // don't count asset clips within an asset-clip or ref-clip
                     // TODO: should this also apply to other clip types?
                     continue
                 }
                 isTraversingContainerClip = true
             }
             
-            if isTimeline, hasNoLane { count += 1 }
+            if isIncrementingTimeline, hasNoLane { count += 1 }
         }
         return count
     }

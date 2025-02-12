@@ -120,23 +120,32 @@ extension XMLElement {
             if let offset = ancestor.fcpOffset {
                 if let _lastStart = lastStart {
                     let diff = offset.doubleValue - _lastStart
-                    lastStart = nil
                     add(diff)
+                    if elementType != .transition {
+                        lastStart = nil
+                    }
                 } else {
                     add(offset.doubleValue)
                 }
             }
             
-            if let elementType = elementType {
+            if let elementType {
                 switch elementType {
                 case .marker, .chapterMarker, .keyword:
                     // markers and keywords use `start` attribute as an offset, so handle it specially
                     if let elementStart = ancestor.fcpStart {
-                        if let ancestorParent = ancestor.parentElement,
-                           let parentStart = ancestorParent.fcpStart
-                        {
-                            let diff = elementStart.doubleValue - parentStart.doubleValue
-                            add(diff)
+                        if let ancestorParent = ancestor.parentElement {
+                            if ancestorParent.fcpElementType == .transition,
+                               let lastStart
+                            {
+                                let diff = elementStart.doubleValue - lastStart
+                                add(diff)
+                            } else if let parentStart = ancestorParent.fcpStart {
+                                let diff = elementStart.doubleValue - parentStart.doubleValue
+                                add(diff)
+                            } else {
+                                add(elementStart.doubleValue)
+                            }
                         } else {
                             add(elementStart.doubleValue)
                         }

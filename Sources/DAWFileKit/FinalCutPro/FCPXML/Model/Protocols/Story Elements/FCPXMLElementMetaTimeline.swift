@@ -57,9 +57,17 @@ extension XMLElement {
         
         // check for local `tcstart` or `start` attribute
         if let localTC = _fcpTCStartAsTimecode(frameRateSource: .localToElement)
-            ?? _fcpStartAsTimecode(frameRateSource: .localToElement)
+            ?? _fcpStartAsTimecode(frameRateSource: .localToElement, default: nil)
         {
             return localTC
+        }
+        
+        // check for local `offset` attribute, which transition uses
+        if let fcpElementType,
+           fcpElementType == .transition,
+           let localOffset = _fcpOffsetAsTimecode(frameRateSource: .localToElement, default: nil)
+        {
+            return localOffset
         }
         
         // cascade to inner resource timelines which may be necessary for clips like `ref-clip`

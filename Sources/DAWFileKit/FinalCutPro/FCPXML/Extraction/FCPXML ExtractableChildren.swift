@@ -190,6 +190,9 @@ extension FinalCutPro.FCPXML.ExtractableChildren {
         case .title:
             self = .directChildren
             
+        case .transition:
+            self = .directChildren
+            
         case .video:
             self = .directChildren
             

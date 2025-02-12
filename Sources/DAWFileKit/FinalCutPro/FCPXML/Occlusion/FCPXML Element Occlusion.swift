@@ -26,8 +26,7 @@ extension FinalCutPro.FCPXML {
         let iEnd = internalEnd?.rounded(decimalPlaces: dp)
         
         // don't allow element start exactly on container upper bound
-        let isStartWithinParent = cRange.contains(iStart) &&
-        iStart < cEnd
+        let isStartWithinParent = cRange.contains(iStart) && iStart < cEnd
         
         guard isStartWithinParent else { return .fullyOccluded }
         
@@ -77,8 +76,8 @@ extension XMLElement {
             ancestorWalkedCount += 1
             let partialAncestors = ancestors.dropFirst(ancestorWalkedCount)
             
-            let value = ancestor.fcpLane
-            let lane = value != nil ? Int(value!) : nil
+            let getLane = ancestor.fcpLane
+            let lane = getLane != nil ? Int(getLane!) : nil
             defer { lastLane = lane }
             
             if let getLastLane = lastLane {
