@@ -389,6 +389,20 @@ final class FinalCutPro_FCPXML_ElementInit: FCPXMLTestCase {
         XCTAssertEqual(title.metadata, metadata)
     }
     
+    func testTransition() {
+        let transition = FinalCutPro.FCPXML.Transition(
+            offset: Fraction(3600, 1),
+            name: "Some Transition",
+            duration: Fraction(4, 1),
+            metadata: metadata
+        )
+        
+        XCTAssertEqual(transition.offset, Fraction(3600, 1))
+        XCTAssertEqual(transition.name, "Some Transition")
+        XCTAssertEqual(transition.duration, Fraction(4, 1))
+        XCTAssertEqual(transition.metadata, metadata)
+    }
+    
     func testVideo() {
         let title = FinalCutPro.FCPXML.Video(
             ref: "r2",
