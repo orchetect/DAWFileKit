@@ -11,12 +11,15 @@ import TimecodeKit
 
 extension Cubase.TrackArchive {
     /// Parses the contents and extracts marker events from marker tracks.
-    public func extractDAWMarkers() throws -> [[DAWMarker]] {
+    public func extractDAWMarkers() throws -> [DAWMarkerTrack] {
         guard let frameRate = main.frameRate else {
             throw ParseError.general(
                 "Could not determine frame rate."
             )
         }
+        
+        // init array so we can append to it
+        var dawMarkerTracks: [DAWMarkerTrack] = []
         
         // filter just marker tracks (in case there are other non-marker tracks in the data set)
         
@@ -42,15 +45,22 @@ extension Cubase.TrackArchive {
             }
         }
         
-        // translate to native Marker objects
-        
-        let markers = markerTracks.map {
-            $0.events.convertToDAWMarkers(
+        for markerTrack in markerTracks {
+            // translate to native Marker objects
+            let markers = markerTrack.events.convertToDAWMarkers(
                 originalFrameRate: frameRate
             )
+            
+            let dawMarkerTrack = DAWMarkerTrack(
+                trackType: .track,
+                name: markerTrack.name ?? "",
+                markers: markers
+            )
+            
+            dawMarkerTracks.append(dawMarkerTrack)
         }
         
-        return markers
+        return dawMarkerTracks
     }
 }
 

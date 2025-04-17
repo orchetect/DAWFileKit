@@ -32,7 +32,7 @@ extension Array where Element == ProTools.SessionInfo.Marker {
         let subFramesBase: Timecode.SubFramesBase = .max100SubFrames
         
         // init array so we can append to it
-        var markerTracks: [DAWMarkerTrack] = []
+        var dawMarkerTracks: [DAWMarkerTrack] = []
         
         for marker in self {
             // TODO: handle PT Session info text files that don't use Timecode as the primary time format
@@ -56,7 +56,7 @@ extension Array where Element == ProTools.SessionInfo.Marker {
             // create new track if necessary.
             
             let trackIndex: Int
-            if let ti = markerTracks.firstIndex(where: { dawMarkerTrack in
+            if let ti = dawMarkerTracks.firstIndex(where: { dawMarkerTrack in
                 dawMarkerTrack.name == marker.trackName &&
                 dawMarkerTrack.trackType == marker.trackType
             }) {
@@ -67,14 +67,14 @@ extension Array where Element == ProTools.SessionInfo.Marker {
                     name: marker.trackName,
                     markers: []
                 )
-                markerTracks.append(newMarkerTrack)
-                trackIndex = markerTracks.indices.last!
+                dawMarkerTracks.append(newMarkerTrack)
+                trackIndex = dawMarkerTracks.indices.last!
             }
             
-            markerTracks[trackIndex].markers.append(newMarker)
+            dawMarkerTracks[trackIndex].markers.append(newMarker)
         }
         
-        return markerTracks
+        return dawMarkerTracks
     }
 }
 
