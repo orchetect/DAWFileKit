@@ -6,7 +6,7 @@
 
 import Foundation
 
-public enum DAWTrackType: Equatable, Hashable, Codable {
+public enum DAWTrackType {
     /// Ruler.
     /// Typically pinned to the GUI's top edge of the timeline.
     case ruler
@@ -16,8 +16,15 @@ public enum DAWTrackType: Equatable, Hashable, Codable {
     case track
 }
 
+extension DAWTrackType: Equatable { }
+
+extension DAWTrackType: Hashable { }
+
 extension DAWTrackType: Identifiable {
     public var id: Self { self }
 }
 
 extension DAWTrackType: Sendable { }
+
+extension DAWTrackType: Codable { }
+

@@ -7,7 +7,7 @@
 import Foundation
 
 /// DAW-agnostic timeline marker.
-public struct DAWMarker: Codable {
+public struct DAWMarker {
     // MARK: Contents
     
     /// The core time value storage.
@@ -20,7 +20,7 @@ public struct DAWMarker: Codable {
     /// Comment associated with marker. Not all DAWs support comments; mainly Pro Tools.
     public var comment: String?
     
-    // MARK: init
+    // MARK: Init
     
     public init() { }
     
@@ -35,4 +35,30 @@ public struct DAWMarker: Codable {
     }
 }
 
+extension DAWMarker: Equatable {
+    public static func == (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
+        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: .max100Days),
+              let rhsTC = rhs.convertToTimecodeForComparison(limit: .max100Days)
+        else { return false }
+        
+        return lhsTC == rhsTC
+    }
+}
+
+extension DAWMarker: Comparable {
+    // useful for sorting markers or comparing markers chronologically
+    // this is purely linear, and does not consider 24-hour wrap around.
+    public static func < (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
+        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: .max100Days),
+              let rhsTC = rhs.convertToTimecodeForComparison(limit: .max100Days)
+        else { return false }
+        
+        return lhsTC < rhsTC
+    }
+}
+
+extension DAWMarker: Hashable { }
+
 extension DAWMarker: Sendable { }
+
+extension DAWMarker: Codable { }

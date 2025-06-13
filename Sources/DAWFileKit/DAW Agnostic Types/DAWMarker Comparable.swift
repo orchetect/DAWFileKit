@@ -7,28 +7,6 @@
 import Foundation
 import TimecodeKit
 
-extension DAWMarker: Equatable {
-    public static func == (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
-        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: .max100Days),
-              let rhsTC = rhs.convertToTimecodeForComparison(limit: .max100Days)
-        else { return false }
-        
-        return lhsTC == rhsTC
-    }
-}
-
-extension DAWMarker: Comparable {
-    // useful for sorting markers or comparing markers chronologically
-    // this is purely linear, and does not consider 24-hour wrap around.
-    public static func < (lhs: DAWMarker, rhs: DAWMarker) -> Bool {
-        guard let lhsTC = lhs.convertToTimecodeForComparison(limit: .max100Days),
-              let rhsTC = rhs.convertToTimecodeForComparison(limit: .max100Days)
-        else { return false }
-        
-        return lhsTC < rhsTC
-    }
-}
-
 extension DAWMarker {
     /// Compare two ``DAWMarker`` instances, optionally using a timeline that does not start at
     /// 00:00:00:00. Timeline length and wrap point is determined by the `timelineStart`'s
@@ -203,7 +181,7 @@ where Element == DAWMarker,
 // MARK: - Helpers
 
 extension DAWMarker {
-    fileprivate func convertToTimecodeForComparison(limit: Timecode.UpperLimit) -> Timecode? {
+    internal func convertToTimecodeForComparison(limit: Timecode.UpperLimit) -> Timecode? {
         originalTimecode(
             base: timeStorage?.base ?? .max80SubFrames,
             limit: limit

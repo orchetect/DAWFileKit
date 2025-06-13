@@ -7,7 +7,7 @@
 import TimecodeKit
 
 extension DAWMarker {
-    public struct Storage: Equatable, Hashable, Codable {
+    public struct Storage {
         /// Time value.
         public let value: Value
         
@@ -29,4 +29,10 @@ extension DAWMarker {
     }
 }
 
+extension DAWMarker.Storage: Equatable { }
+
+extension DAWMarker.Storage: Hashable { }
+
 extension DAWMarker.Storage: Sendable { }
+
+extension DAWMarker.Storage: Codable { }

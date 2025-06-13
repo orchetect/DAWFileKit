@@ -8,7 +8,7 @@ import Foundation
 import TimecodeKit
 
 extension DAWMarker.Storage {
-    public enum Value: Equatable, Hashable {
+    public enum Value {
         /// Real time in seconds, relative to the start time.
         case realTime(relativeToStart: TimeInterval)
         
@@ -16,39 +16,45 @@ extension DAWMarker.Storage {
         case timecodeString(absolute: String)
         
         case rational(relativeToStart: Fraction)
-        
-        /// Returns the backing storage formatted as a string, for use in writing to the document
-        /// file.
-        public var stringValue: String {
-            switch self {
-            case let .realTime(time):
-                return time.stringValueHighPrecision
-                
-            case let .timecodeString(string):
-                return string
-                
-            case let .rational(fraction):
-                return fraction.fcpxmlStringValue
-            }
-        }
-        
-        /// Returns whether persistent storage of the marker's associated original frame rate is
-        /// required to convert to real time.
-        public var requiresOriginalFrameRate: Bool {
-            switch self {
-            case .realTime: return false
-            case .timecodeString: return true
-            case .rational: return false
-            }
-        }
     }
 }
+
+extension DAWMarker.Storage.Value: Equatable { }
+
+extension DAWMarker.Storage.Value: Hashable { }
 
 extension DAWMarker.Storage.Value: Identifiable {
     public var id: Self { self }
 }
 
 extension DAWMarker.Storage.Value: Sendable { }
+
+extension DAWMarker.Storage.Value {
+    /// Returns the backing storage formatted as a string, for use in writing to the document
+    /// file.
+    public var stringValue: String {
+        switch self {
+        case let .realTime(time):
+            return time.stringValueHighPrecision
+            
+        case let .timecodeString(string):
+            return string
+            
+        case let .rational(fraction):
+            return fraction.fcpxmlStringValue
+        }
+    }
+    
+    /// Returns whether persistent storage of the marker's associated original frame rate is
+    /// required to convert to real time.
+    public var requiresOriginalFrameRate: Bool {
+        switch self {
+        case .realTime: return false
+        case .timecodeString: return true
+        case .rational: return false
+        }
+    }
+}
 
 extension DAWMarker.Storage.Value: Codable {
     enum CodingKeys: CodingKey {

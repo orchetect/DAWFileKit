@@ -7,7 +7,7 @@
 import Foundation
 
 /// DAW-agnostic timeline capable of containing markers only.
-public struct DAWMarkerTrack: Codable {
+public struct DAWMarkerTrack {
     // MARK: Contents
     
     /// Track name.
@@ -18,7 +18,7 @@ public struct DAWMarkerTrack: Codable {
     /// Markers contained in the track.
     public var markers: [DAWMarker]
     
-    // MARK: init
+    // MARK: Init
     
     public init(
         trackType: DAWTrackType,
@@ -31,7 +31,13 @@ public struct DAWMarkerTrack: Codable {
     }
 }
 
+extension DAWMarkerTrack: Equatable { }
+
+extension DAWMarkerTrack: Hashable { }
+
 extension DAWMarkerTrack: Sendable { }
+
+extension DAWMarkerTrack: Codable { }
 
 // MARK: - Collection Methods
 
