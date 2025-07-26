@@ -11,6 +11,8 @@ import TimecodeKit
 // MARK: - Parse methods
 
 extension ProTools.SessionInfo {
+    // TODO: add init(URL)
+    
     /// Parse text file contents exported from Pro Tools.
     ///
     /// - Parameters:
