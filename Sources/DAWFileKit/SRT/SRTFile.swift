@@ -79,10 +79,9 @@ public struct SRTFile {
     /// Subtitles (captions) contained in the SRT file.
     public var subtitles: [Subtitle]
     
-    /// Initialize by loading the contents of a file on disk.
-    public init(url: URL) throws {
-        let data = try Data(contentsOf: url)
-        try self.init(fileContent: data)
+    public init(encoding: String.Encoding = .windowsCP1252, subtitles: [Subtitle]) {
+        self.encoding = encoding
+        self.subtitles = subtitles
     }
 }
 
@@ -95,6 +94,12 @@ extension SRTFile: Sendable { }
 // MARK: - Raw Data
 
 extension SRTFile {
+    /// Initialize by loading the contents of a file on disk.
+    public init(url: URL) throws {
+        let data = try Data(contentsOf: url)
+        try self.init(fileContent: data)
+    }
+    
     /// Initialize by loading raw file contents.
     public init(fileContent data: Data) throws {
         // must use charset detection since there is no standard text encoding for SRT files.
