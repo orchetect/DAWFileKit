@@ -1,0 +1,21 @@
+﻿1
+00:00:36,038 --> 00:00:40,944
+- <font color="#D81D1D">Subtitles Author</font> -
+-- <font color="#138CE7">www.example.com</font> --
+
+2
+00:05:33,959 --> 00:05:35,961
+Hello.
+
+3
+00:05:38,005 --> 00:05:40,130
+Where are you?
+
+4
+00:55:46,427 --> 00:55:50,383
+♪ Song lyric ♪
+
+5
+00:55:50,380 --> 00:55:55,306
+♪ Another song lyric ♪
+

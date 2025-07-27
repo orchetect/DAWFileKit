@@ -12,6 +12,7 @@ enum ResourcesFolder: String {
     case cubaseTrackArchiveXML = "Cubase TrackArchive XML Exports"
     case ptSessionTextExports = "PT Session Text Exports"
     case fcpxmlExports = "FCPXML Exports"
+    case srtFiles = "SRT Files"
 }
 
 // MARK: - Utilities
