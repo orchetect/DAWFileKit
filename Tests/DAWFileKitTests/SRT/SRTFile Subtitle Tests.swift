@@ -47,7 +47,7 @@ import TimecodeKit
             This is the first subtitle.
             """
         
-        #expect(throws: SRTFile.DecodeError.invalidSequenceNumber) {
+        #expect(throws: SRTFile.DecodeError.unexpectedLineCount) {
             try SRTFile.Subtitle(string: encoded)
         }
     }
