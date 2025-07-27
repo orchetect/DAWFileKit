@@ -105,7 +105,7 @@ extension SRTFile.Subtitle {
             .trimmingCharacters(in: .newlines)
             .split(separator: "\n")
         
-        guard lines.count == 3 else {
+        guard lines.count >= 3 else {
             throw SRTFile.DecodeError.unexpectedLineCount
         }
         
@@ -156,7 +156,7 @@ extension SRTFile.Subtitle {
             textCoordinates = nil
         }
         
-        let text = String(lines[2])
+        let text = lines[2...].joined(separator: "\n")
         
         let subtitle = Self(timeRange: timeRange, text: text, textCoordinates: textCoordinates)
         
