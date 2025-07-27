@@ -185,3 +185,32 @@ extension SRTFile.Subtitle {
         return output
     }
 }
+
+// MARK: - Conversion
+
+extension SRTFile.Subtitle {
+    /// Convert the SRT subtitle to a ``DAWMarker``.
+    /// Note that this is a lossy process that discards the subtitle's out time.
+    public func convertToDAWMarker(
+        frameRate: TimecodeFrameRate
+    ) -> DAWMarker {
+        let storage = DAWMarker.Storage(
+            value: .realTime(relativeToStart: self.timeRange.lowerBound.interval),
+            frameRate: frameRate,
+            base: .max100SubFrames
+        )
+        return DAWMarker(storage: storage, name: text, comment: nil)
+    }
+}
+
+// MARK: - Sequence Category Methods
+
+extension Sequence where Element == SRTFile.Subtitle {
+    /// Convert the SRT subtitles to ``DAWMarker``s.
+    /// Note that this is a lossy process that discards the subtitles' out time.
+    public func convertToDAWMarkers(
+        frameRate: TimecodeFrameRate
+    ) -> [DAWMarker] {
+        map { $0.convertToDAWMarker(frameRate: frameRate) }
+    }
+}
