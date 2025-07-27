@@ -93,6 +93,12 @@ extension SRTFile.Subtitle {
 extension SRTFile.Subtitle {
     /// Initialize by parsing raw subtitle data block from an SRT file.
     public init(string: String) throws {
+        // don't store sequence number, since it's regenerated on file write
+        let (_, subtitle) = try Self.parse(string: string)
+        self = subtitle
+    }
+    
+    static func parse(string: String) throws -> (sequenceNumber: Int, subtitle: Self) {
         // accommodate text coordinates at the end of the timestamp line
         
         let lines = string
@@ -106,7 +112,6 @@ extension SRTFile.Subtitle {
         guard let sequenceNumber = lines[0].int else {
             throw SRTFile.DecodeError.invalidSequenceNumber
         }
-        _ = sequenceNumber // don't store seq number, since it's regenerated on file write
         
         let timeStampPattern = #"^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})(.*)$"#
         let timeStampMatches = lines[1].regexMatches(captureGroupsFromPattern: timeStampPattern)
@@ -124,8 +129,9 @@ extension SRTFile.Subtitle {
             throw SRTFile.DecodeError.invalidTimeStamps
         }
         
-        timeRange = timeIn ... timeOut
+        let timeRange = timeIn ... timeOut
         
+        let textCoordinates: TextCoordinates?
         if let textCoordinatesString = timeStampMatches[3]?.trimmed,
            !textCoordinatesString.isEmpty
         {
@@ -142,13 +148,19 @@ extension SRTFile.Subtitle {
                let y2 = coordMatches[4]?.int
             {
                 textCoordinates = TextCoordinates(x1: x1, x2: x2, y1: y1, y2: y2)
+            } else {
+                textCoordinates = nil
             }
             
         } else {
             textCoordinates = nil
         }
         
-        text = String(lines[2])
+        let text = String(lines[2])
+        
+        let subtitle = Self(timeRange: timeRange, text: text, textCoordinates: textCoordinates)
+        
+        return (sequenceNumber: sequenceNumber, subtitle: subtitle)
     }
     
     /// Returns the subtitle data encoded for an SRT file.
