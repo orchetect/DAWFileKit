@@ -123,7 +123,20 @@ extension SRTFile {
         let blocks = fileContent
             .trimmingCharacters(in: .newlines)
             .components(separatedBy: "\n\n")
-        subtitles = try blocks.map { try Subtitle(string: $0) }
+            .filter { !$0.isEmpty }
+        
+        // parse subtitles into a dictionary keyed by sequence number
+        let subtitlesDict: [Int: Subtitle] = try blocks
+            .mapDictionary { element in
+                let (sequenceNumber, subtitle) = try Subtitle.parse(string: element)
+                return (key: sequenceNumber, value: subtitle)
+            }
+        
+        // sort by sequence number
+        subtitles = subtitlesDict
+            .sorted(by: { $0.key < $1.key })
+            .map(\.value)
+            
     }
     
     /// Returns the raw SRT file contents.
