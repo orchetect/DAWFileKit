@@ -58,10 +58,9 @@ import Foundation
 /// ## Encoding
 ///
 /// SubRip's default output encoding is configured as Windows-1252. However, output options are also given for many
-/// Windows code pages as well Unicode encodings, such as UTF-8 and UTF-16, with or without byte order mark (BOM).
+/// Windows code pages as well as Unicode encodings, such as UTF-8 and UTF-16, with or without byte order mark (BOM).
 /// Therefore, there is no official character encoding standard for `.srt` files, which means that any SubRip file
-/// parser
-/// must attempt to use charset detection. Unicode BOMs are typically used to aid detection.
+/// parser must attempt to use charset detection. Unicode BOMs are typically used to aid detection.
 ///
 /// YouTube only supports UTF-8. The default encoding for subtitle files in FFmpeg is UTF-8. All text in a
 /// Matroska file is encoded in UTF-8.
@@ -69,8 +68,8 @@ public struct SRTFile {
     /// File text encoding.
     ///
     /// SubRip's default output encoding is configured as Windows-1252. However, output options are also given for many
-    /// Windows code pages as well Unicode encodings, such as UTF-8 and UTF-16, with or without byte order mark (BOM).
-    /// Therefore, there is no official character encoding standard for `.srt` files.
+    /// Windows code pages as well as Unicode encodings, such as UTF-8 and UTF-16, with or without byte order mark
+    /// (BOM). Therefore, there is no official character encoding standard for `.srt` files.
     ///
     /// YouTube only supports UTF-8. The default encoding for subtitle files in FFmpeg is UTF-8. All text in a
     /// Matroska file is encoded in UTF-8.
@@ -107,7 +106,16 @@ extension SRTFile {
         var nsString: NSString?
         guard case let rawValue = NSString.stringEncoding(
             for: data,
-            encodingOptions: nil,
+            encodingOptions: nil /*[
+                .suggestedEncodingsKey: [
+                    NSUTF8StringEncoding,
+                    NSUTF16StringEncoding,
+                    NSUTF32StringEncoding,
+                    NSUnicodeStringEncoding,
+                    NSWindowsCP1252StringEncoding
+                ],
+                .useOnlySuggestedEncodingsKey: true as NSNumber
+            ]*/,
             convertedString: &nsString,
             usedLossyConversion: &usedLossyConversion
         ),
@@ -127,6 +135,7 @@ extension SRTFile {
         
         let blocks = fileContent
             .trimmingCharacters(in: .newlines)
+            .replacingOccurrences(of: "\r\n", with: "\n") // TODO: hacky line-endings conversion
             .components(separatedBy: "\n\n")
             .filter { !$0.isEmpty }
         

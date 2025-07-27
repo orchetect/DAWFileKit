@@ -98,7 +98,7 @@ extension SRTFile.Subtitle {
         self = subtitle
     }
     
-    static func parse(string: String) throws -> (sequenceNumber: Int, subtitle: Self) {
+    static func parse<S: StringProtocol>(string: S) throws -> (sequenceNumber: Int, subtitle: Self) {
         // accommodate text coordinates at the end of the timestamp line
         
         let lines = string
