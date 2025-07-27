@@ -24,7 +24,7 @@ extension Time {
     ///   - strict: Enable strict parsing mode. When strict, only the "00:00:00,000" format is accepted.
     ///     When non-strict, a very loose heuristic is used to allow for superfluous whitespace, the
     ///     use of non-standard time separator characters and non-enforcement of character zero-padding.
-    init?<S: StringProtocol>(srtEncodedString: S, strict: Bool = false) {
+    public init?<S: StringProtocol>(srtEncodedString: S, strict: Bool = false) {
         let pattern = Self.decodeRegExPattern(strict: strict, matchLine: true)
         let matches = srtEncodedString.regexMatches(
             captureGroupsFromPattern: pattern,
@@ -44,7 +44,7 @@ extension Time {
     }
     
     /// Encode to SRT file timestamp format.
-    func srtEncodedString() -> String {
+    public func srtEncodedString() -> String {
         hours.string(paddedTo: 2)
             + ":"
             + minutes.string(paddedTo: 2)
