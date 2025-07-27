@@ -27,6 +27,41 @@ import TimecodeKit
     }
     
     @Test
+    func decodeSubtitleWithTwoLines() throws {
+        let encoded = """
+            1
+            00:00:05,217 --> 00:00:10,854
+            This is the first subtitle
+            with two lines in it.
+            """
+        
+        let subtitle = try SRTFile.Subtitle(string: encoded)
+        
+        #expect(subtitle.timeRange.lowerBound == Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217))
+        #expect(subtitle.timeRange.upperBound == Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854))
+        #expect(subtitle.text == "This is the first subtitle\nwith two lines in it.")
+        #expect(subtitle.textCoordinates == nil)
+    }
+    
+    @Test
+    func decodeSubtitleWithThreeLines() throws {
+        let encoded = """
+            1
+            00:00:05,217 --> 00:00:10,854
+            This is the first subtitle
+            with three total lines
+            which ends here.
+            """
+        
+        let subtitle = try SRTFile.Subtitle(string: encoded)
+        
+        #expect(subtitle.timeRange.lowerBound == Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217))
+        #expect(subtitle.timeRange.upperBound == Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854))
+        #expect(subtitle.text == "This is the first subtitle\nwith three total lines\nwhich ends here.")
+        #expect(subtitle.textCoordinates == nil)
+    }
+    
+    @Test
     func decodeSubtitle_InvalidSequenceNumber_A() throws {
         let encoded = """
             A

@@ -69,6 +69,38 @@ import TimecodeKit
     }
     
     @Test
+    func decodeSRT_TwoSubtitlesMultiline() throws {
+        let encoded = """
+            1
+            00:00:05,217 --> 00:00:10,854
+            This is the first subtitle
+            with another line here.
+            
+            2
+            00:00:12,100 --> 00:00:13,200 X1:100 X2:200 Y1:300 Y2:400
+            This is the second subtitle
+            with yet another line here.
+            """
+        
+        let srtFile = try SRTFile(fileContent: encoded)
+        
+        #expect(srtFile.encoding == .windowsCP1252) // default
+        try #require(srtFile.subtitles.count == 2)
+        
+        let subtitle1 = srtFile.subtitles[0]
+        #expect(subtitle1.timeRange.lowerBound == Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217))
+        #expect(subtitle1.timeRange.upperBound == Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854))
+        #expect(subtitle1.text == "This is the first subtitle\nwith another line here.")
+        #expect(subtitle1.textCoordinates == nil)
+        
+        let subtitle2 = srtFile.subtitles[1]
+        #expect(subtitle2.timeRange.lowerBound == Time(hours: 0, minutes: 0, seconds: 12, milliseconds: 100))
+        #expect(subtitle2.timeRange.upperBound == Time(hours: 0, minutes: 0, seconds: 13, milliseconds: 200))
+        #expect(subtitle2.text == "This is the second subtitle\nwith yet another line here.")
+        #expect(subtitle2.textCoordinates == SRTFile.Subtitle.TextCoordinates(x1: 100, x2: 200, y1: 300, y2: 400))
+    }
+    
+    @Test
     func decodeSRT_TwoSubtitles_NonConsecutiveSequenceNumbers() throws {
         let encoded = """
             2
@@ -187,4 +219,110 @@ import TimecodeKit
     }
     
     // TODO: write additional tests
+}
+
+@Suite struct SRTFileEncodeTests {
+    @Test
+    func encodeSRT_EmptyFile() throws {
+        let srtFile = SRTFile(subtitles: [])
+        
+        let data = try srtFile.rawData()
+        
+        #expect(data.isEmpty)
+    }
+    
+    @Test
+    func encodeSRT_OneSubtitle() throws {
+        let inTime1 = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
+        let outTime1 = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
+        let subtitle1 = SRTFile.Subtitle(
+            timeRange: inTime1 ... outTime1,
+            text: "This is the first subtitle.",
+            textCoordinates: nil
+        )
+        
+        let srtFile = SRTFile(subtitles: [subtitle1])
+        
+        let rawText = try srtFile.rawString()
+        
+        let encoded = """
+            1
+            00:00:05,217 --> 00:00:10,854
+            This is the first subtitle.
+            """
+        
+        #expect(rawText == encoded)
+    }
+    
+    @Test
+    func encodeSRT_TwoSubtitles() throws {
+        let inTime1 = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
+        let outTime1 = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
+        let subtitle1 = SRTFile.Subtitle(
+            timeRange: inTime1 ... outTime1,
+            text: "This is the first subtitle.",
+            textCoordinates: nil
+        )
+        
+        let inTime2 = Time(hours: 0, minutes: 0, seconds: 12, milliseconds: 100)
+        let outTime2 = Time(hours: 0, minutes: 0, seconds: 13, milliseconds: 200)
+        let subtitle2 = SRTFile.Subtitle(
+            timeRange: inTime2 ... outTime2,
+            text: "This is the second subtitle.",
+            textCoordinates: SRTFile.Subtitle.TextCoordinates(x1: 100, x2: 200, y1: 300, y2: 400)
+        )
+        
+        let srtFile = SRTFile(subtitles: [subtitle1, subtitle2])
+        
+        let rawText = try srtFile.rawString()
+        
+        let encoded = """
+            1
+            00:00:05,217 --> 00:00:10,854
+            This is the first subtitle.
+            
+            2
+            00:00:12,100 --> 00:00:13,200 X1:100 X2:200 Y1:300 Y2:400
+            This is the second subtitle.
+            """
+        
+        #expect(rawText == encoded)
+    }
+    
+    @Test
+    func encodeSRT_TwoSubtitlesMultiline() throws {
+        let inTime1 = Time(hours: 0, minutes: 0, seconds: 5, milliseconds: 217)
+        let outTime1 = Time(hours: 0, minutes: 0, seconds: 10, milliseconds: 854)
+        let subtitle1 = SRTFile.Subtitle(
+            timeRange: inTime1 ... outTime1,
+            text: "This is the first subtitle\nwith another line here.",
+            textCoordinates: nil
+        )
+        
+        let inTime2 = Time(hours: 0, minutes: 0, seconds: 12, milliseconds: 100)
+        let outTime2 = Time(hours: 0, minutes: 0, seconds: 13, milliseconds: 200)
+        let subtitle2 = SRTFile.Subtitle(
+            timeRange: inTime2 ... outTime2,
+            text: "This is the second subtitle\nwith yet another line here.",
+            textCoordinates: SRTFile.Subtitle.TextCoordinates(x1: 100, x2: 200, y1: 300, y2: 400)
+        )
+        
+        let srtFile = SRTFile(subtitles: [subtitle1, subtitle2])
+        
+        let rawText = try srtFile.rawString()
+        
+        let encoded = """
+            1
+            00:00:05,217 --> 00:00:10,854
+            This is the first subtitle
+            with another line here.
+            
+            2
+            00:00:12,100 --> 00:00:13,200 X1:100 X2:200 Y1:300 Y2:400
+            This is the second subtitle
+            with yet another line here.
+            """
+        
+        #expect(rawText == encoded)
+    }
 }
