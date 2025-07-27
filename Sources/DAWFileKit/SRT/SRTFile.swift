@@ -144,11 +144,11 @@ extension SRTFile {
             
     }
     
-    /// Returns the raw SRT file contents using the encoding as set in the ``encoding`` property.
-    public func rawData() throws -> Data {
+    /// Returns the raw SRT file contents.
+    public func rawString() throws -> String {
         guard !subtitles.isEmpty,
               let lastIndex = subtitles.indices.last
-        else { return Data() }
+        else { return "" }
         
         var output = ""
         
@@ -161,6 +161,13 @@ extension SRTFile {
                 output.append("\n\n")
             }
         }
+        
+        return output
+    }
+    
+    /// Returns the raw SRT file contents using the encoding as set in the ``encoding`` property.
+    public func rawData() throws -> Data {
+        let output = try rawString()
         
         // encode string
         guard let data = output.toData(using: encoding) else {
