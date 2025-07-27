@@ -15,6 +15,7 @@ extension DAWMarker.Storage {
         /// Timecode string, absolute timestamp (not an interval from start time).
         case timecodeString(absolute: String)
         
+        /// Rational (fraction) time value.
         case rational(relativeToStart: Fraction)
     }
 }
