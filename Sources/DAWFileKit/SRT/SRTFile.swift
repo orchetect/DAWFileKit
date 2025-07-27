@@ -144,7 +144,7 @@ extension SRTFile {
             
     }
     
-    /// Returns the raw SRT file contents.
+    /// Returns the raw SRT file contents using the encoding as set in the ``encoding`` property.
     public func rawData() throws -> Data {
         guard !subtitles.isEmpty,
               let lastIndex = subtitles.indices.last
