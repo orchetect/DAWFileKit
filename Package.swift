@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "DAWFileKit",
+    name: "swift-daw-file-tools",
     platforms: [
         .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v6)
     ],
     products: [
-        .library(name: "DAWFileKit", targets: ["DAWFileKit"])
+        .library(name: "DAWFileTools", targets: ["DAWFileTools"])
     ],
     dependencies: [
         .package(url: "https://github.com/orchetect/swift-extensions", from: "2.0.0"),
@@ -18,7 +18,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "DAWFileKit",
+            name: "DAWFileTools",
             dependencies: [
                 .product(name: "SwiftExtensions", package: "swift-extensions"),
                 .product(name: "TimecodeKitCore", package: "TimecodeKit"),
@@ -26,8 +26,8 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "DAWFileKitTests",
-            dependencies: ["DAWFileKit"],
+            name: "DAWFileToolsTests",
+            dependencies: ["DAWFileTools"],
             resources: [
                 .copy("Cubase/Resources/Cubase TrackArchive XML Exports"),
                 .copy("ProTools/Resources/PT Session Text Exports"),

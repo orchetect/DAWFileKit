@@ -23,7 +23,7 @@
 --funcattributes prev-line
 --groupedextension "MARK: %c"
 --guardelse auto
---header "\n {file}\n DAWFileKit • https://github.com/orchetect/DAWFileKit\n © {year} Steffan Andrews • Licensed under MIT License\n"
+--header "\n {file}\n swift-daw-file-tools • https://github.com/orchetect/swift-daw-file-tools\n © {year} Steffan Andrews • Licensed under MIT License\n"
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef no-indent
