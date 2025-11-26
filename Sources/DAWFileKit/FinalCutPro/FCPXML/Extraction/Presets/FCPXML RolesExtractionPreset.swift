@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML {
     /// FCPXML extraction preset that extracts roles within a specified scope.

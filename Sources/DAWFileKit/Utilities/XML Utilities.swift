@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import OTCore
+import SwiftExtensions
 
 // TODO: forced Sendable conformance
 extension XMLElement: @retroactive @unchecked Sendable { }

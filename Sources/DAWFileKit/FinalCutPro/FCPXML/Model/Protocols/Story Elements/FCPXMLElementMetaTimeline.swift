@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 
 /// A meta protocol that all timeline and pseudo-timeline elements conform to.

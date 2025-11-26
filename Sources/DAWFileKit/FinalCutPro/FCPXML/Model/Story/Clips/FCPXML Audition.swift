@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML {
     /// Contains one active story element followed by alternative story elements in the audition

@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "DAWFileKit", targets: ["DAWFileKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/orchetect/OTCore", from: "1.7.9"),
+        .package(url: "https://github.com/orchetect/swift-extensions", from: "2.0.0"),
         .package(url: "https://github.com/orchetect/TimecodeKit", from: "2.3.4"),
         .package(url: "https://github.com/orchetect/MIDIKit", from: "0.10.5")
     ],
@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "DAWFileKit",
             dependencies: [
-                "OTCore",
+                .product(name: "SwiftExtensions", package: "swift-extensions"),
                 "TimecodeKit",
                 .product(name: "MIDIKitSMF", package: "MIDIKit")
             ]

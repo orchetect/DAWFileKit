@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import OTCore
+import SwiftExtensions
 
 public protocol FCPXMLRole where Self: RawRepresentable, RawValue == String, Self: Sendable {
     /// Returns the role type enum case.

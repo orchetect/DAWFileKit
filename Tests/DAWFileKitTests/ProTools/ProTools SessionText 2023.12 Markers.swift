@@ -6,7 +6,7 @@
 
 import XCTest
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 
 class ProTools_SessionText_2023_12_Markers: XCTestCase {

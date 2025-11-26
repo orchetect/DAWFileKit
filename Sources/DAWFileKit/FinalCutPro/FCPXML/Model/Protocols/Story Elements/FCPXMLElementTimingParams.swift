@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 
 /// FCPXML 1.11 DTD:

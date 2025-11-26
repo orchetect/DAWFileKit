@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 public protocol FCPXMLElementTextStyleDefinitionChildren: FCPXMLElement {
     /// Child `text-style-def` elements.

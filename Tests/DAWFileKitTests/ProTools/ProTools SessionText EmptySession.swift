@@ -6,7 +6,7 @@
 
 import XCTest
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 
 class ProTools_SessionText_EmptySession: XCTestCase {

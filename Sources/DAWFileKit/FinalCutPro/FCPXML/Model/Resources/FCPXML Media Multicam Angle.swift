@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML.Media.Multicam {
     /// A container of story elements organized sequentially in time.

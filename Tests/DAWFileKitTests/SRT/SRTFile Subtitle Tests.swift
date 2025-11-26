@@ -5,7 +5,7 @@
 //
 
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 import Testing
 import TimecodeKit
 

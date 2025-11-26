@@ -6,7 +6,7 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML {
     /// FCPXML format version.

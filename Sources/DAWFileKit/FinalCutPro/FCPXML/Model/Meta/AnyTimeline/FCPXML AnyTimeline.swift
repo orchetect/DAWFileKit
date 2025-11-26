@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML {
     /// Type-erased box containing a FCPXML timeline element.

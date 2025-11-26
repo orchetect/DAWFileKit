@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 
 final class FinalCutPro_FCPXML_50: FCPXMLTestCase {

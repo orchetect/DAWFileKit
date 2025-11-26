@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import OTCore
+import SwiftExtensions
 
 extension Time {
     static func decodeRegExPattern(strict: Bool, matchLine: Bool) -> String {

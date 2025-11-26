@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 extension XMLElement {
     /// FCPXML: Returns keywords applied to the element if the element is a clip,

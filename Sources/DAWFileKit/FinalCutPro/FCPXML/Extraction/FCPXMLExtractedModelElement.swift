@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 /// Protocol for extracted elements that adds contextual properties.
 public protocol FCPXMLExtractedModelElement: FCPXMLExtractedElement {

@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 
 protocol FCPXMLUtilities { }

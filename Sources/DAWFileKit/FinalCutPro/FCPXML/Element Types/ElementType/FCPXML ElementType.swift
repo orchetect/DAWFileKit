@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML {
     // TODO: this list is by no means complete, the DTD contains more element names we're not utilizing yet

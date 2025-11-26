@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 import TimecodeKit
 import XCTest
 

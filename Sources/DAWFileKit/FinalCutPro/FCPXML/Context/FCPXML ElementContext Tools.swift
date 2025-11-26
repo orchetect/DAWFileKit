@@ -8,7 +8,7 @@
 
 import Foundation
 import TimecodeKit
-import OTCore
+import SwiftExtensions
 
 extension FinalCutPro.FCPXML.ElementContext {
     /// Class instance that provides useful context for a FCPXML element.

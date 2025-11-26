@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import OTCore
+import SwiftExtensions
 import MIDIKitSMF
 import TimecodeKit
 

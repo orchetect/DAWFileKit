@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import DAWFileKit
-import OTCore
+import SwiftExtensions
 
 final class FinalCutPro_FCPXML_RolesParsing: FCPXMLTestCase {
     override func setUp() { }
