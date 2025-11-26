@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension ProTools.SessionInfo {
     /// Represents a single marker and its related info.

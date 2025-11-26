@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 /// Collection of methods and structures related to Pro Tools.
 public enum ProTools {

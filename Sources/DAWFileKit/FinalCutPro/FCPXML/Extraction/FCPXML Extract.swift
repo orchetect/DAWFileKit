@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension XMLElement {
     /// Extract the element with timeline context.

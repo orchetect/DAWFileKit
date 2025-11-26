@@ -9,7 +9,7 @@
 import Foundation
 
 extension Cubase.TrackArchive {
-    public enum ParseMessage: Error {
+    public enum ParseMessage {
         /// Info message.
         /// Can be disregarded and only useful for debugging.
         case info(String)
@@ -19,6 +19,12 @@ extension Cubase.TrackArchive {
         case error(String)
     }
 }
+
+extension Cubase.TrackArchive.ParseMessage: Equatable { }
+
+extension Cubase.TrackArchive.ParseMessage: Hashable { }
+
+extension Cubase.TrackArchive.ParseMessage: Sendable { }
 
 // MARK: - Extensions
 

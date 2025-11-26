@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension FinalCutPro.FCPXML {
     /// Scope applied when extracting FCPXML elements.

@@ -7,10 +7,10 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 /// Protocol that DAWFileKit `Cubase.TrackArchive` markers conform to.
-public protocol CubaseTrackArchiveMarker {
+public protocol CubaseTrackArchiveMarker: Equatable, Hashable, Sendable {
     var name: String { get set }
     
     var startTimecode: Timecode { get set }

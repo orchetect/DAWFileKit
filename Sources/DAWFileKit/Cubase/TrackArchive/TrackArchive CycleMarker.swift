@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension Cubase.TrackArchive {
     /// Represents a cycle marker event and its contents.
@@ -37,5 +37,11 @@ extension Cubase.TrackArchive {
         }
     }
 }
+
+extension Cubase.TrackArchive.CycleMarker: Equatable { }
+
+extension Cubase.TrackArchive.CycleMarker: Hashable { }
+
+extension Cubase.TrackArchive.CycleMarker: Sendable { }
 
 #endif

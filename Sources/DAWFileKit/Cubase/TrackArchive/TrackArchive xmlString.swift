@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension Cubase.TrackArchive {
     // MARK: xmlString
@@ -303,10 +303,10 @@ extension Cubase.TrackArchive {
             // track-specific contents
             
             switch track {
-            case let typed as MarkerTrack:
+            case let .marker(markerTrack):
                 _addTrackMarker(
                     using: newTrack,
-                    track: typed,
+                    track: markerTrack,
                     idCounter: &idCounter,
                     messages: &messages
                 )
@@ -420,15 +420,15 @@ extension Cubase.TrackArchive {
             }
             
             switch event {
-            case is Marker: // MMarkerEvent
+            case .marker(_): // MMarkerEvent
                 newNode.addAttribute(withName: "class", value: "MMarkerEvent")
                 
-            case let marker as CycleMarker: // MRangeMarkerEvent
+            case let .cycleMarker(cycleMarker): // MRangeMarkerEvent
                 newNode.addAttribute(withName: "class", value: "MRangeMarkerEvent")
                 
                 // add length as real time if present, otherwise convert the
                 // timecode object to real time
-                if let markerLengthRealTime = marker.lengthRealTime {
+                if let markerLengthRealTime = cycleMarker.lengthRealTime {
                     newNode.addChild(XMLElement(
                         name: "float",
                         attributes: [
@@ -447,21 +447,13 @@ extension Cubase.TrackArchive {
                             ("name", "Length"),
                             (
                                 "value",
-                                marker.lengthTimecode
+                                cycleMarker.lengthTimecode
                                     .realTimeValue
                                     .stringValueHighPrecision
                             )
                         ]
                     ))
                 }
-                
-            default:
-                addEncodeMessage(
-                    .error(
-                        "Unhandled marker event type while building XML file: \(type(of: event))."
-                    )
-                )
-                continue
             }
             
             newNode.addChild(XMLElement(name: "string", attributes: [
@@ -470,7 +462,7 @@ extension Cubase.TrackArchive {
             ]))
             
             switch event {
-            case is Marker: // MMarkerEvent
+            case .marker(_): // MMarkerEvent
                 staticMarkerIDCounter += 1
                 newNode.addChild(XMLElement(name: "int", attributes: [
                     ("name", "ID"),
@@ -480,7 +472,7 @@ extension Cubase.TrackArchive {
                     )
                 ]))
                 
-            case is CycleMarker: // MRangeMarkerEvent
+            case .cycleMarker(_): // MRangeMarkerEvent
                 cycleMarkerIDCounter += 1
                 newNode.addChild(XMLElement(name: "int", attributes: [
                     ("name", "ID"),
@@ -489,14 +481,6 @@ extension Cubase.TrackArchive {
                         cycleMarkerIDCounter.string
                     )
                 ]))
-                
-            default:
-                addEncodeMessage(
-                    .error(
-                        "Unhandled marker event type while building XML file: \(type(of: event))."
-                    )
-                )
-                continue
             }
             newNode.addAttribute(withName: "ID", value: idCounter.getNewID().string)
             

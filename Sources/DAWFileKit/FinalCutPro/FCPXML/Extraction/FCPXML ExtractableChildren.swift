@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension FinalCutPro.FCPXML {
     /// Extractable children contained within the element.

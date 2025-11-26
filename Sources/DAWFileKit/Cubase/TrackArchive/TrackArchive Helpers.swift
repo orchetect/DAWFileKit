@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 // MARK: - Helper methods
 
@@ -202,7 +202,7 @@ extension Collection where Element: XMLElement {
 
 // MARK: - Debug Helpers
 
-extension Collection where Element == CubaseTrackArchiveMarker {
+extension Collection where Element: CubaseTrackArchiveMarker {
     /// Formatted/easy to read "pretty" description useful for debugging or logging.
     public var prettyDebugString: String {
         var outputString = ""

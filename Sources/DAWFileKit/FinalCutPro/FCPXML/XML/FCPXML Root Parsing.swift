@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension XMLElement {
     /// FCPXML: Returns the root-level `fcpxml` element.

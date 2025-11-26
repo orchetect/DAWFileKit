@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension Cubase.TrackArchive {
     /// Contains the global session meta-data.
@@ -39,7 +39,16 @@ extension Cubase.TrackArchive {
         
         // 'HmtType'
         public var hmtDepth: Int?                  // 'HmtDepth' (percentage)
+        
+        // NOTE: Intentionally no public initializer.
+        internal init() { }
     }
 }
+
+extension Cubase.TrackArchive.Main: Equatable { }
+
+extension Cubase.TrackArchive.Main: Hashable { }
+
+extension Cubase.TrackArchive.Main: Sendable { }
 
 #endif

@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 import SwiftExtensions
 
 public protocol FCPXMLElementTextStyleDefinitionChildren: FCPXMLElement {

@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension FCPXMLElement {
     /// Returns the timecode frame rate for the local timeline.

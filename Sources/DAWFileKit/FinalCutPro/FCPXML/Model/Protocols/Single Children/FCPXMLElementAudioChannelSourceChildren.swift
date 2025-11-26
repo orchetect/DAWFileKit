@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 public protocol FCPXMLElementAudioChannelSourceChildren: FCPXMLElement {
     /// Child `audio-channel-source` elements.

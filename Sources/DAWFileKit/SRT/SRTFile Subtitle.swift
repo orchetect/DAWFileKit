@@ -6,7 +6,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension SRTFile {
     /// An individual subtitle (caption) contained within an SRT file.

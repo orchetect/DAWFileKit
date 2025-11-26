@@ -13,10 +13,16 @@ extension Cubase.TrackArchive {
     public struct MarkerTrack: CubaseTrackArchiveTrack {
         public var name: String?
         
-        public var events: [CubaseTrackArchiveMarker] = []
+        public var events: [AnyMarker] = []
         
         public init() { }
     }
 }
+
+extension Cubase.TrackArchive.MarkerTrack: Equatable { }
+
+extension Cubase.TrackArchive.MarkerTrack: Hashable { }
+
+extension Cubase.TrackArchive.MarkerTrack: Sendable { }
 
 #endif

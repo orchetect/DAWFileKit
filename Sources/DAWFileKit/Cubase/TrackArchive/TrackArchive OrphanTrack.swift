@@ -17,4 +17,10 @@ extension Cubase.TrackArchive {
     }
 }
 
+extension Cubase.TrackArchive.OrphanTrack: Equatable { }
+
+extension Cubase.TrackArchive.OrphanTrack: Hashable { }
+
+extension Cubase.TrackArchive.OrphanTrack: Sendable { }
+
 #endif

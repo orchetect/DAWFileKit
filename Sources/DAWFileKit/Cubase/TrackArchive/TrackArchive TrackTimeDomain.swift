@@ -19,4 +19,10 @@ extension Cubase.TrackArchive {
     }
 }
 
+extension Cubase.TrackArchive.TrackTimeDomain: Equatable { }
+
+extension Cubase.TrackArchive.TrackTimeDomain: Hashable { }
+
+extension Cubase.TrackArchive.TrackTimeDomain: Sendable { }
+
 #endif

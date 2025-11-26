@@ -9,7 +9,7 @@
 import Foundation
 
 /// Protocol that DAWFileKit `Cubase.TrackArchive` tracks conform to.
-public protocol CubaseTrackArchiveTrack {
+public protocol CubaseTrackArchiveTrack: Equatable, Hashable, Sendable {
     var name: String? { get set }
 }
 

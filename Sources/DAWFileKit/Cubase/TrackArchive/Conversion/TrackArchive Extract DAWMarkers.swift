@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension Cubase.TrackArchive {
     /// Parses the contents and extracts marker events from marker tracks.
@@ -23,7 +23,12 @@ extension Cubase.TrackArchive {
         
         // filter just marker tracks (in case there are other non-marker tracks in the data set)
         
-        var markerTracks = tracks?.compactMap { $0 as? Cubase.TrackArchive.MarkerTrack } ?? []
+        var markerTracks: [MarkerTrack] = tracks?.compactMap {
+            switch $0 {
+            case let .marker(track): track
+            default: nil
+            }
+        } ?? []
         
         // if necessary, convert time values to be from zero (00:00:00:00) instead of offsets from session start time
         
@@ -66,8 +71,8 @@ extension Cubase.TrackArchive {
 
 // MARK: - Helpers
 
-extension Array where Element == CubaseTrackArchiveMarker {
-    /// Converts `[CubaseTrackArchiveMarker]` to `[DAWMarker]`.
+extension Array where Element: CubaseTrackArchiveMarker {
+    /// Converts `[any CubaseTrackArchiveMarker]` to `[DAWMarker]`.
     public func convertToDAWMarkers(
         originalFrameRate: TimecodeFrameRate
     ) -> [DAWMarker] {

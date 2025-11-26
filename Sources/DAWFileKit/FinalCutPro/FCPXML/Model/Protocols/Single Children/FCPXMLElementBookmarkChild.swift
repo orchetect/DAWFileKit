@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 public protocol FCPXMLElementBookmarkChild: FCPXMLElement {
     /// Security-scoped bookmark data in a base64-encoded string.

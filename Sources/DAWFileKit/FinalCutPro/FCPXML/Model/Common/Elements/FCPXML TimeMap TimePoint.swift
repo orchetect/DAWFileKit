@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension FinalCutPro.FCPXML.TimeMap {
     /// Time point on a time map.

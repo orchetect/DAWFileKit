@@ -4,7 +4,7 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-import TimecodeKit
+import TimecodeKitCore
 
 extension DAWMarker {
     public struct Storage {

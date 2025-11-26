@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension Cubase.TrackArchive {
     /// Creates a new Track Archive XML file by converting markers to marker track(s).
@@ -67,7 +67,7 @@ extension Cubase.TrackArchive {
             },
             buildMessages: &messages
         )
-        tracks?.append(markersTrack)
+        tracks?.append(.marker(markersTrack))
         
         // comments track
         if includeComments, separateCommentsTrack {
@@ -86,7 +86,7 @@ extension Cubase.TrackArchive {
                 },
                 buildMessages: &messages
             )
-            tracks?.append(commentsTrack)
+            tracks?.append(.marker(commentsTrack))
         }
     }
     
@@ -106,7 +106,8 @@ extension Cubase.TrackArchive {
             name: nameBlock,
             buildMessages: &messages
         )
-        track.events.append(contentsOf: convertedMarkers)
+        let boxed = convertedMarkers.map(AnyMarker.init)
+        track.events.append(contentsOf: boxed)
         return track
     }
 }

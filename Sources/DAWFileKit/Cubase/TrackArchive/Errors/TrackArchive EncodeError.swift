@@ -14,4 +14,10 @@ extension Cubase.TrackArchive {
     }
 }
 
+extension Cubase.TrackArchive.EncodeError: Equatable { }
+
+extension Cubase.TrackArchive.EncodeError: Hashable { }
+
+extension Cubase.TrackArchive.EncodeError: Sendable { }
+
 #endif

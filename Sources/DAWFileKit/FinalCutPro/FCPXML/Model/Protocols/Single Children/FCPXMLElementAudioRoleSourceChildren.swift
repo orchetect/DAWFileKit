@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 public protocol FCPXMLElementAudioRoleSourceChildren: FCPXMLElement {
     /// Child `audio-role-source` elements.

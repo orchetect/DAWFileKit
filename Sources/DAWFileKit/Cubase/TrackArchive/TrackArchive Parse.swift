@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 extension Cubase.TrackArchive {
     internal static func parse(fileContent xml: XMLDocument) throws -> (
@@ -247,21 +247,25 @@ extension Cubase.TrackArchive {
         for track in tracks {
             // get track type
             
-            let trackType = Self.trackTypeTable[track.stringValue(forAttributeNamed: "class") ?? ""]
+            let trackTypeString = track.stringValue(forAttributeNamed: "class") ?? ""
+            let trackType = TrackType(rawValue: trackTypeString)
             
             // create new track object
             
             // TODO: add additional track types in future
             
             switch trackType {
-            case is MarkerTrack.Type:
+            case .marker:
                 _parseTracks_MarkerTrack(track: track, messages: &messages)
+                
+            case .tempo:
+                print("Found additional tempo track. Not yet implemented.")
                 
             default:
                 let newTrack = OrphanTrack(
                     rawXMLContent: track.xmlString(options: .nodePrettyPrint)
                 )
-                self.tracks?.append(newTrack)
+                self.tracks?.append(.orphan(newTrack))
             }
         }
     }
@@ -314,7 +318,7 @@ extension Cubase.TrackArchive {
         for event in events {
             switch event.stringValue(forAttributeNamed: "class") {
             case "MMarkerEvent", "MRangeMarkerEvent": // all marker event types
-                var newMarker: CubaseTrackArchiveMarker?
+                var newMarker: AnyMarker?
                 
                 var name: String?
                 var tcStart: Timecode?
@@ -347,10 +351,12 @@ extension Cubase.TrackArchive {
                 switch event.stringValue(forAttributeNamed: "class") {
                 case "MMarkerEvent": // single marker
                     guard let tcStart = tcStart else { continue }
-                    newMarker = Marker(
-                        name: name ?? "",
-                        startTimecode: tcStart,
-                        startRealTime: tcStartRealTime
+                    newMarker = AnyMarker(
+                        Marker(
+                            name: name ?? "",
+                            startTimecode: tcStart,
+                            startRealTime: tcStartRealTime
+                        )
                     )
                     
                 case "MRangeMarkerEvent": // cycle marker
@@ -380,12 +386,14 @@ extension Cubase.TrackArchive {
                           let unwrappedTCLength = tcLength
                     else { continue }
                     
-                    newMarker = CycleMarker(
-                        name: name ?? "",
-                        startTimecode: tcStart,
-                        startRealTime: tcStartRealTime,
-                        lengthTimecode: unwrappedTCLength,
-                        lengthRealTime: tcLengthRealTime
+                    newMarker = AnyMarker(
+                        CycleMarker(
+                            name: name ?? "",
+                            startTimecode: tcStart,
+                            startRealTime: tcStartRealTime,
+                            lengthTimecode: unwrappedTCLength,
+                            lengthRealTime: tcLengthRealTime
+                        )
                     )
                     
                 default:
@@ -401,7 +409,7 @@ extension Cubase.TrackArchive {
             }
         }
         
-        tracks?.append(newTrack)
+        tracks?.append(.marker(newTrack))
     }
 }
 

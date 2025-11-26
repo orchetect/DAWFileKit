@@ -21,7 +21,7 @@ let package = Package(
             name: "DAWFileKit",
             dependencies: [
                 .product(name: "SwiftExtensions", package: "swift-extensions"),
-                "TimecodeKit",
+                .product(name: "TimecodeKitCore", package: "TimecodeKit"),
                 .product(name: "MIDIKitSMF", package: "MIDIKit")
             ]
         ),

@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 import SwiftExtensions
 
 /// Protocol for extracted elements that adds contextual properties.

@@ -18,4 +18,10 @@ extension Cubase.TrackArchive {
     }
 }
 
+extension Cubase.TrackArchive.TimeType: Equatable { }
+
+extension Cubase.TrackArchive.TimeType: Hashable { }
+
+extension Cubase.TrackArchive.TimeType: Sendable { }
+
 #endif

@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import TimecodeKit
+import TimecodeKitCore
 
 extension ProTools.SessionInfo {
     public enum TimeValue: Equatable, Hashable {
