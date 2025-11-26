@@ -7,7 +7,7 @@
 import XCTest
 @testable import DAWFileKit
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 class ProTools_SessionText_NewLinesAndTabs: XCTestCase {
     override func setUp() { }

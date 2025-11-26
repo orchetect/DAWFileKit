@@ -7,7 +7,7 @@
 @testable import DAWFileKit
 import SwiftExtensions
 import Testing
-import TimecodeKit
+import TimecodeKitCore
 
 @Suite struct SRTFileTimeUtilitiesTests {
     @Test

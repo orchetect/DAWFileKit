@@ -8,7 +8,7 @@
 
 @testable import DAWFileKit
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 import XCTest
 
 class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
@@ -46,7 +46,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         let tracks = try XCTUnwrap(trackArchive.tracks)
         XCTAssertEqual(tracks.count, 1)
         
-        let track1 = try XCTUnwrap(tracks[0] as? Cubase.TrackArchive.MarkerTrack)
+        guard case let .marker(track1) = tracks[0] else { XCTFail(); return }
         XCTAssertEqual(track1.name, "Markers")
         
         XCTAssertEqual(track1.events.count, 2)
@@ -93,7 +93,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         let tracks = try XCTUnwrap(trackArchive.tracks)
         XCTAssertEqual(tracks.count, 1)
         
-        let track1 = try XCTUnwrap(tracks[0] as? Cubase.TrackArchive.MarkerTrack)
+        guard case let .marker(track1) = tracks[0] else { XCTFail(); return }
         XCTAssertEqual(track1.name, "Markers")
         
         XCTAssertEqual(track1.events.count, 2)
@@ -143,7 +143,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         // track 1 (markers)
         
         do {
-            let track1 = try XCTUnwrap(tracks[0] as? Cubase.TrackArchive.MarkerTrack)
+            guard case let .marker(track1) = tracks[0] else { XCTFail(); return }
             XCTAssertEqual(track1.name, "Markers")
             
             XCTAssertEqual(track1.events.count, 2)
@@ -162,7 +162,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         // track 2 (comments)
         
         do {
-            let track2 = try XCTUnwrap(tracks[1] as? Cubase.TrackArchive.MarkerTrack)
+            guard case let .marker(track2) = tracks[1] else { XCTFail(); return }
             XCTAssertEqual(track2.name, "Comments")
             
             XCTAssertEqual(track2.events.count, 1)
@@ -205,7 +205,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         let tracks = try XCTUnwrap(trackArchive.tracks)
         XCTAssertEqual(tracks.count, 1)
         
-        let track1 = try XCTUnwrap(tracks[0] as? Cubase.TrackArchive.MarkerTrack)
+        guard case let .marker(track1) = tracks[0] else { XCTFail(); return }
         XCTAssertEqual(track1.name, "Markers")
         
         XCTAssertEqual(track1.events.count, 2)
@@ -252,7 +252,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         let tracks = try XCTUnwrap(trackArchive.tracks)
         XCTAssertEqual(tracks.count, 1)
         
-        let track1 = try XCTUnwrap(tracks[0] as? Cubase.TrackArchive.MarkerTrack)
+        guard case let .marker(track1) = tracks[0] else { XCTFail(); return }
         XCTAssertEqual(track1.name, "Markers")
         
         XCTAssertEqual(track1.events.count, 2)
@@ -299,7 +299,7 @@ class Cubase_TrackArchive_ConvertingDAWMarkers: XCTestCase {
         let tracks = try XCTUnwrap(trackArchive.tracks)
         XCTAssertEqual(tracks.count, 1)
         
-        let track1 = try XCTUnwrap(tracks[0] as? Cubase.TrackArchive.MarkerTrack)
+        guard case let .marker(track1) = tracks[0] else { XCTFail(); return }
         XCTAssertEqual(track1.name, "Markers")
         
         XCTAssertEqual(track1.events.count, 2)

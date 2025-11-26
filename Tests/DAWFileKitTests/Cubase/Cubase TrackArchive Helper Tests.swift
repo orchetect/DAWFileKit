@@ -9,7 +9,7 @@
 import XCTest
 @testable import DAWFileKit
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 class Cubase_Helper_Tests: XCTestCase {
     override func setUp() { }

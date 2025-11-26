@@ -8,7 +8,7 @@
 
 @testable import DAWFileKit
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 import XCTest
 
 class Cubase_TrackArchive_xmlString: XCTestCase {
@@ -24,10 +24,14 @@ class Cubase_TrackArchive_xmlString: XCTestCase {
         
         // markers
         var markerTrack = Cubase.TrackArchive.MarkerTrack()
-        markerTrack.events.append(Cubase.TrackArchive.Marker(name: "Marker1", startTimecode: try Timecode(.components(f: 12), at: .fps24), startRealTime: nil) )
-        markerTrack.events.append(Cubase.TrackArchive.Marker(name: "Marker2", startTimecode: try Timecode(.components(s: 1), at: .fps24), startRealTime: nil) )
         
-        trackArchive.tracks = [markerTrack]
+        let marker1 = Cubase.TrackArchive.Marker(name: "Marker1", startTimecode: try Timecode(.components(f: 12), at: .fps24), startRealTime: nil)
+        markerTrack.events.append(.marker(marker1))
+        
+        let marker2 = Cubase.TrackArchive.Marker(name: "Marker2", startTimecode: try Timecode(.components(s: 1), at: .fps24), startRealTime: nil)
+        markerTrack.events.append(.marker(marker2))
+        
+        trackArchive.tracks = [.marker(markerTrack)]
         
         let (xmlString, messages) = try trackArchive.xmlString()
         
@@ -94,11 +98,17 @@ class Cubase_TrackArchive_xmlString: XCTestCase {
         
         // markers
         var markerTrack = Cubase.TrackArchive.MarkerTrack()
-        markerTrack.events.append(Cubase.TrackArchive.Marker(name: "Marker1", startTimecode: try Timecode(.components(h: 23, s: 1), at: .fps24), startRealTime: nil) )
-        markerTrack.events.append(Cubase.TrackArchive.Marker(name: "Marker2", startTimecode: try Timecode(.components(h: 00), at: .fps24), startRealTime: nil) )
-        markerTrack.events.append(Cubase.TrackArchive.Marker(name: "Marker3", startTimecode: try Timecode(.components(h: 00, s: 1), at: .fps24), startRealTime: nil) )
         
-        trackArchive.tracks = [markerTrack]
+        let marker1 = Cubase.TrackArchive.Marker(name: "Marker1", startTimecode: try Timecode(.components(h: 23, s: 1), at: .fps24), startRealTime: nil)
+        markerTrack.events.append(.marker(marker1))
+        
+        let marker2 = Cubase.TrackArchive.Marker(name: "Marker2", startTimecode: try Timecode(.components(h: 00), at: .fps24), startRealTime: nil)
+        markerTrack.events.append(.marker(marker2))
+        
+        let marker3 = Cubase.TrackArchive.Marker(name: "Marker3", startTimecode: try Timecode(.components(h: 00, s: 1), at: .fps24), startRealTime: nil)
+        markerTrack.events.append(.marker(marker3))
+        
+        trackArchive.tracks = [.marker(markerTrack)]
         
         let (xmlString, messages) = try trackArchive.xmlString()
         

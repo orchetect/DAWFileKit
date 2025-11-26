@@ -6,7 +6,7 @@
 
 import XCTest
 @testable import DAWFileKit
-import TimecodeKit
+import TimecodeKitCore
 
 class DAWMarkerComparable_Tests: XCTestCase {
     override func setUp() { }

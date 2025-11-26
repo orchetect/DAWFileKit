@@ -8,7 +8,7 @@
 
 /* @testable */ import DAWFileKit
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 import XCTest
 
 final class FinalCutPro_FCPXML_TwoClipsMarkers: FCPXMLTestCase {

@@ -9,7 +9,7 @@
 import XCTest
 @testable import DAWFileKit
 import SwiftExtensions
-import TimecodeKit
+import TimecodeKitCore
 
 protocol FCPXMLUtilities { }
 
