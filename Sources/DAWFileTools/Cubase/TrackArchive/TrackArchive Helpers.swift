@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 // MARK: - Helper methods
 

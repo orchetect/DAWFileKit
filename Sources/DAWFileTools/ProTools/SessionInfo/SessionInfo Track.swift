@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension ProTools.SessionInfo {
     /// Represents a track and its contents.

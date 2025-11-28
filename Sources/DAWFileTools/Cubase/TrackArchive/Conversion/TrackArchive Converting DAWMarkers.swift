@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension Cubase.TrackArchive {
     /// Creates a new Track Archive XML file by converting markers to marker track(s).

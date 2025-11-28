@@ -7,7 +7,7 @@
 import XCTest
 @testable import DAWFileTools
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 class ProTools_SessionText_2023_12_Markers: XCTestCase {
     override func setUp() { }

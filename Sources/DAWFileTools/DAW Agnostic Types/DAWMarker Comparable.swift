@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension DAWMarker {
     /// Compare two ``DAWMarker`` instances, optionally using a timeline that does not start at

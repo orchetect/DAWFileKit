@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 public protocol FCPXMLElementNoteChild: FCPXMLElement {
     /// Optional note text.

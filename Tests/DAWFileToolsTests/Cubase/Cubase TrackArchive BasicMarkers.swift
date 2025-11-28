@@ -9,7 +9,7 @@
 import XCTest
 @testable import DAWFileTools
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 class Cubase_TrackArchive_BasicMarkers: XCTestCase {
     override func setUp() { }

@@ -33,7 +33,7 @@ To add this package to a Swift package, add the dependency to your package and t
 ```swift
 let package = Package(
     dependencies: [
-        .package(url: "https://github.com/orchetect/swift-daw-file-tools", from: "0.7.0")
+        .package(url: "https://github.com/orchetect/swift-daw-file-tools", from: "0.7.1")
     ],
     targets: [
         .target(
@@ -47,8 +47,8 @@ let package = Package(
 
 ## Dependencies
 
-- [TimecodeKit](https://github.com/orchetect/TimecodeKit) to represent timecode values
 - [MIDIKit](https://github.com/orchetect/MIDIKit) to read/write Standard MIDI Files
+- [swift-timecode](https://github.com/orchetect/swift-timecode) to represent timecode values
 
 ## Documentation
 

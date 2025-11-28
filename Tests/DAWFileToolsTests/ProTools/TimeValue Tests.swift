@@ -7,7 +7,7 @@
 import XCTest
 @testable import DAWFileTools
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 class ProTools_TimeValueTests: XCTestCase {
     override func setUp() { }
@@ -61,7 +61,7 @@ class ProTools_TimeValueTests: XCTestCase {
         )
         
         // malformed
-        // * - the non-throwing lines below are valid in TimecodeKit but are not valid
+        // * - the non-throwing lines below are valid in swift-timecode but are not valid
         //     in a Pro Tools session info text file, however this is not an error condition
         XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: ":::", at: .fps30))
         XCTAssertThrowsError(try PTSI.formTimeValue(timecodeString: ":::.", at: .fps30))

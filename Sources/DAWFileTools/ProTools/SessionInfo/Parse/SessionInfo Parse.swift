@@ -6,7 +6,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension ProTools.SessionInfo {
     /// Internal: Parse raw file content and return a new `SessionInfo` instance.

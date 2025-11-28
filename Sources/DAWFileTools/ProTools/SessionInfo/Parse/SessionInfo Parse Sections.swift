@@ -6,7 +6,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension ProTools.SessionInfo {
     struct ParsedHeader {

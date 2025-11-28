@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 public protocol FCPXMLElementTextChildren: FCPXMLElement {
     /// Child `text` elements.

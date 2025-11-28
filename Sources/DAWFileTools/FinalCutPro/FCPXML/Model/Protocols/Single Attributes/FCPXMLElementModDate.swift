@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 public protocol FCPXMLElementOptionalModDate: FCPXMLElement {
     /// Modification date.

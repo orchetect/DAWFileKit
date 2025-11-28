@@ -6,7 +6,7 @@
 
 #if os(macOS) // XMLNode only works on macOS
 
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension Cubase.TrackArchive {
     /// Array of file types for use with `NSOpenPanel` / `NSSavePanel`.

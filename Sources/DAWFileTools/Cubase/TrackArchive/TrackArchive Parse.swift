@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension Cubase.TrackArchive {
     internal static func parse(fileContent xml: XMLDocument) throws -> (

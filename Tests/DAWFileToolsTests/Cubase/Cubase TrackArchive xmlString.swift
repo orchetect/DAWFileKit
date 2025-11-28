@@ -8,7 +8,7 @@
 
 @testable import DAWFileTools
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 import XCTest
 
 class Cubase_TrackArchive_xmlString: XCTestCase {

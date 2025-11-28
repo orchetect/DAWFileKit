@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 /// Protocol which all FCPXML wrapper model objects conform.
 public protocol FCPXMLElement where Self: Equatable, Self: Hashable {

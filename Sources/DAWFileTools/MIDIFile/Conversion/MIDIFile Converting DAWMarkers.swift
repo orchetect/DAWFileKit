@@ -7,7 +7,7 @@
 import Foundation
 import SwiftExtensions
 import MIDIKitSMF
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension MIDIFile {
     /// Constructs a MIDI file based on a marker list.

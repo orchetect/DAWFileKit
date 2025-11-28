@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension Cubase.TrackArchive {
     /// Type-erased box for a Cubase marker.

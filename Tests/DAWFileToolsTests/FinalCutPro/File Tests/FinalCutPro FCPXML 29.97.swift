@@ -9,7 +9,7 @@
 import XCTest
 @testable import DAWFileTools
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 final class FinalCutPro_FCPXML_29_97: FCPXMLTestCase {
     override func setUp() { }

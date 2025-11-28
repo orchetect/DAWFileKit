@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftExtensions
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 /// A meta protocol that all timeline and pseudo-timeline elements conform to.
 ///

@@ -8,7 +8,7 @@
 
 import CoreMedia
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension FinalCutPro.FCPXML {
     /// Project element.

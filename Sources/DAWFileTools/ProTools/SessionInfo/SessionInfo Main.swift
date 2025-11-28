@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension ProTools.SessionInfo {
     /// Contains the global session meta data

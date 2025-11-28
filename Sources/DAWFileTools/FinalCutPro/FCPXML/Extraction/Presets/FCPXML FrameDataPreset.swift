@@ -7,7 +7,7 @@
 #if os(macOS) // XMLNode only works on macOS
 
 import Foundation
-import TimecodeKitCore
+import SwiftTimecodeCore
 
 extension FinalCutPro.FCPXML {
     /// FCPXML extraction preset that extracts markers,.
